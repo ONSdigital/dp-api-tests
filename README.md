@@ -1,21 +1,10 @@
-dp-repo-template
+dp-api-tests
 ================
 
-A template git repository for DP repos:
-
-* Standardised files for CHANGELOG, CONTRIBUTING, LICENSE and README
-* Default template for GitHub pull requests
 
 ### Getting started
 
-After creating a new repository on GitHub, use these commands to initialise
-it using this repository as a template:
-
-* `git clone git@github.com:ONSdigital/dp-repo-template dp-new-repo-name`
-* `cd dp-new-repo-name`
-* `git remote set-url origin git@github.com:ONSdigital/dp-new-repo-name`
-
-Remember to update the [README](README.md) and [CHANGELOG](CHANGELOG.md) files.
+`go test ./...` - run all the tests
 
 ### Configuration
 
@@ -24,7 +13,7 @@ environment variables, or with a link to a configuration guide.
 
 | Environment variable | Default | Description
 | -------------------- | ------- | -----------
-| BIND_ADDR            | :8080   | The host and port to bind to
+|                      |         | 
 
 ### Contributing
 
