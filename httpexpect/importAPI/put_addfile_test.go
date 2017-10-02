@@ -10,7 +10,12 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestPutAddFilesToJob(t *testing.T) {
+// Add a file into a job
+// Add a file into a job, for each file added an alias name needs to be given.
+// This name needs to link to the recipe
+
+// 200 - The file was added to the import job
+func TestPutAddFilesToJob_FileAddsToJob(t *testing.T) {
 
 	importAPI := httpexpect.New(t, config.ImportAPIURL())
 
@@ -41,6 +46,8 @@ func TestPutAddFilesToJob(t *testing.T) {
 
 	})
 }
+
+// 400 - Invalid json message was sent to the API
 func TestPUTAddFilesToJob_InvalidInput(t *testing.T) {
 
 	importAPI := httpexpect.New(t, config.ImportAPIURL())
@@ -64,6 +71,8 @@ func TestPUTAddFilesToJob_InvalidInput(t *testing.T) {
 	})
 }
 
+// BUG RAISED
+// 404 - JobId does not match any import jobs
 func TestPutAddFilesToJob_JobIDDoesNotExists(t *testing.T) {
 
 	importAPI := httpexpect.New(t, config.ImportAPIURL())

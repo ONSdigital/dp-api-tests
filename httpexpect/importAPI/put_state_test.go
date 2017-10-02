@@ -10,7 +10,9 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestGetUpdateJobState(t *testing.T) {
+// Update the jobs state
+// Update the state of the job. If this is set to submitted, this shall trigger the import process
+func TestPutUpdateJobState_JobInAQueue(t *testing.T) {
 
 	importAPI := httpexpect.New(t, config.ImportAPIURL())
 
@@ -56,6 +58,8 @@ func TestGetUpdateJobState(t *testing.T) {
 
 	})
 }
+
+// 400 - Invalid json message was sent to the API
 func TestPUTUpdateJobState_InvalidInput(t *testing.T) {
 
 	importAPI := httpexpect.New(t, config.ImportAPIURL())
@@ -79,6 +83,8 @@ func TestPUTUpdateJobState_InvalidInput(t *testing.T) {
 	})
 }
 
+// BUG RAISED
+// 404 - JobId does not match any import jobs
 func TestPutUpdateJobState_JobIDDoesNotExists(t *testing.T) {
 
 	importAPI := httpexpect.New(t, config.ImportAPIURL())

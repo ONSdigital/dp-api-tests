@@ -9,7 +9,10 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestGetJob(t *testing.T) {
+// Get a job
+// Get information about a single job
+// 200 - Return a single jobs information
+func TestGetJob_ReturnsSingleJob(t *testing.T) {
 
 	importAPI := httpexpect.New(t, config.ImportAPIURL())
 
@@ -51,6 +54,7 @@ func TestGetJob(t *testing.T) {
 	})
 }
 
+// 404 - JobId does not match any import jobs
 func TestGetJob_JobIDDoesNotExists(t *testing.T) {
 
 	importAPI := httpexpect.New(t, config.ImportAPIURL())

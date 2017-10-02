@@ -11,6 +11,12 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+// Create an import job
+// To import a dataset a job must be created first. To do this a data baker recipe is needed and the number
+// of instances which the recipe creates. Once a job is created files can be added to the job and the state
+// of the job can be changed.
+
+// 201 - An import job was successfully created
 func TestPostJob_CreatesJob(t *testing.T) {
 
 	importAPI := httpexpect.New(t, config.ImportAPIURL())
@@ -42,6 +48,7 @@ func TestPostJob_CreatesJob(t *testing.T) {
 
 }
 
+// 400 - Invalid json message was sent to the API
 func TestPostJob_InvalidInput(t *testing.T) {
 
 	importAPI := httpexpect.New(t, config.ImportAPIURL())
