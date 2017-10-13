@@ -5,7 +5,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -14,7 +13,7 @@ import (
 // 201 - Option was added
 func TestPostAddDimensionOptions_AddsOptions(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
 
@@ -46,7 +45,7 @@ func TestPostAddDimensionOptions_AddsOptions(t *testing.T) {
 // 400 - Filter job was not found
 func TestPostAddDimensionOptions_FilterJobIDDoesNotExists(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTMultipleDimensionsCreateFilterJSON)).
 		Expect().Status(http.StatusCreated).JSON().Object()
@@ -64,7 +63,7 @@ func TestPostAddDimensionOptions_FilterJobIDDoesNotExists(t *testing.T) {
 // 403 - Forbidden, the filter job has been locked as it has been submitted to be processed
 func TestPostAddDimensionOptions_SubmittedJobForbiddenError(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter with submitted state", t, func() {
 
@@ -84,7 +83,7 @@ func TestPostAddDimensionOptions_SubmittedJobForbiddenError(t *testing.T) {
 // 404 - Dimension name was not found
 func TestPostAddDimensionOptions_DimensionNameDoesNotExists(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTMultipleDimensionsCreateFilterJSON)).
 		Expect().Status(http.StatusCreated).JSON().Object()

@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -14,7 +13,7 @@ import (
 // Update the state of the job. If this is set to submitted, this shall trigger the import process
 func TestPutUpdateJobState_JobInAQueue(t *testing.T) {
 
-	importAPI := httpexpect.New(t, config.ImportAPIURL())
+	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
 	Convey("Given an existing job", t, func() {
 
@@ -62,7 +61,7 @@ func TestPutUpdateJobState_JobInAQueue(t *testing.T) {
 // 400 - Invalid json message was sent to the API
 func TestPUTUpdateJobState_InvalidInput(t *testing.T) {
 
-	importAPI := httpexpect.New(t, config.ImportAPIURL())
+	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
 	Convey("Given invalid json input to update job state", t, func() {
 
@@ -87,7 +86,7 @@ func TestPUTUpdateJobState_InvalidInput(t *testing.T) {
 // 404 - JobId does not match any import jobs
 func TestPutUpdateJobState_JobIDDoesNotExists(t *testing.T) {
 
-	importAPI := httpexpect.New(t, config.ImportAPIURL())
+	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
 	Convey("A get request for a job that does not exist returns 404 not found", t, func() {
 

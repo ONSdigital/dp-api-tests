@@ -5,7 +5,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -15,7 +14,7 @@ import (
 // 200 - The filter job was found and document is returned
 func TestGetFilterJob_JobFoundAndDocumentReturned(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
 
@@ -50,7 +49,7 @@ func TestGetFilterJob_JobFoundAndDocumentReturned(t *testing.T) {
 // 404 - Filter job not found
 func TestGetFilterJob_FilterJobIDDoesNotExists(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("A get request for a filter job that does not exist returns 404 not found", t, func() {
 

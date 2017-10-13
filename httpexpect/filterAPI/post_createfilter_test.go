@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -14,7 +13,7 @@ import (
 // 201- Job was created
 func TestPostCreateFilter_CreatesFilter(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given a valid json input to create a filter", t, func() {
 
@@ -34,7 +33,7 @@ func TestPostCreateFilter_CreatesFilter(t *testing.T) {
 // 400 -Invalid request body
 func TestPostCreateFilter_InvalidInput(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given invalid json input to create a filter", t, func() {
 

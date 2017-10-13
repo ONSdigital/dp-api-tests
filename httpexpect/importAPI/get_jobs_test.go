@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -14,7 +13,7 @@ import (
 // 200 - A list of jobs has been returned
 func TestGetJobs_ReturnsListOfJobs(t *testing.T) {
 
-	importAPI := httpexpect.New(t, config.ImportAPIURL())
+	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
 	Convey("Given an existing job", t, func() {
 

@@ -5,7 +5,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -15,7 +14,7 @@ import (
 // 200 - The filter job has been updated
 func TestPUTUpdateFilterJob_FilterJobUpdates(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
 
@@ -71,7 +70,7 @@ func TestPUTUpdateFilterJob_FilterJobUpdates(t *testing.T) {
 // 400 -Invalid request body
 func TestPUTUpdateFilterJob_InvalidInput(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given invalid json input to update filter job", t, func() {
 
@@ -93,7 +92,7 @@ func TestPUTUpdateFilterJob_InvalidInput(t *testing.T) {
 // 403 - Forbidden, the job has been locked as it has been submitted to be processed
 func TestPUTUpdateSubmittedFilterJob_ForbiddenError(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter with submitted state", t, func() {
 
@@ -113,7 +112,7 @@ func TestPUTUpdateSubmittedFilterJob_ForbiddenError(t *testing.T) {
 // 404 - Filter job not found
 func TestPUTUpdateFilterJob_FilterJobIDDoesNotExists(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTMultipleDimensionsCreateFilterJSON)).
 		Expect().Status(http.StatusCreated).JSON().Object()

@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -17,7 +16,7 @@ import (
 // 200 - The file was added to the import job
 func TestPutAddFilesToJob_FileAddsToJob(t *testing.T) {
 
-	importAPI := httpexpect.New(t, config.ImportAPIURL())
+	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
 	Convey("Given an existing job", t, func() {
 
@@ -50,7 +49,7 @@ func TestPutAddFilesToJob_FileAddsToJob(t *testing.T) {
 // 400 - Invalid json message was sent to the API
 func TestPUTAddFilesToJob_InvalidInput(t *testing.T) {
 
-	importAPI := httpexpect.New(t, config.ImportAPIURL())
+	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
 	Convey("Given invalid json input to add files to a job", t, func() {
 
@@ -75,7 +74,7 @@ func TestPUTAddFilesToJob_InvalidInput(t *testing.T) {
 // 404 - JobId does not match any import jobs
 func TestPutAddFilesToJob_JobIDDoesNotExists(t *testing.T) {
 
-	importAPI := httpexpect.New(t, config.ImportAPIURL())
+	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
 	Convey("A get request for a job that does not exist returns 404 not found", t, func() {
 

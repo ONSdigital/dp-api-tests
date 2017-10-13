@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -19,7 +18,7 @@ import (
 // 201 - An import job was successfully created
 func TestPostJob_CreatesJob(t *testing.T) {
 
-	importAPI := httpexpect.New(t, config.ImportAPIURL())
+	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
 	jsonMap := make(map[string]interface{})
 	json.Unmarshal([]byte(validJSON), &jsonMap)
@@ -51,7 +50,7 @@ func TestPostJob_CreatesJob(t *testing.T) {
 // 400 - Invalid json message was sent to the API
 func TestPostJob_InvalidInput(t *testing.T) {
 
-	importAPI := httpexpect.New(t, config.ImportAPIURL())
+	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
 	Convey("Given invalid json input to create a job", t, func() {
 

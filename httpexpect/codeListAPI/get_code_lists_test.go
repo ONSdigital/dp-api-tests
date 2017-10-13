@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -12,8 +11,7 @@ import (
 // Get a set of codes lists containing information about dimensions which are used for all datasets at the ONS
 // 200 - A Json message containing a set of code lists
 func TestGetCodeLists_ReturnsSetOfCodeLists(t *testing.T) {
-
-	codeListAPI := httpexpect.New(t, config.CodeListAPIURL())
+	codeListAPI := httpexpect.New(t, cfg.CodeListAPIURL)
 
 	Convey("Get a set of code lists", t, func() {
 

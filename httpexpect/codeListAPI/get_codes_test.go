@@ -5,7 +5,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -13,8 +12,7 @@ import (
 // Get information about a code list
 // 200 - Json object containing information about the code list
 func TestGetCodesWithInACodeList_ReturnsListOfCodesInACodeList(t *testing.T) {
-
-	codeListAPI := httpexpect.New(t, config.CodeListAPIURL())
+	codeListAPI := httpexpect.New(t, cfg.CodeListAPIURL)
 
 	Convey("Given a set of code lists", t, func() {
 
@@ -66,8 +64,7 @@ func TestGetCodesWithInACodeList_ReturnsListOfCodesInACodeList(t *testing.T) {
 // Bug Raised
 // 404 - Code list not found
 func TestGetCodesWithInACodeList_InvalidCodeList(t *testing.T) {
-
-	codeListAPI := httpexpect.New(t, config.CodeListAPIURL())
+	codeListAPI := httpexpect.New(t, cfg.CodeListAPIURL)
 
 	Convey("Given a set of code lists", t, func() {
 

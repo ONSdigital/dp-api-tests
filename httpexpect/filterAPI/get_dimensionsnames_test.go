@@ -5,7 +5,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -14,7 +13,7 @@ import (
 // 204 - Dimension exists for filter job
 func TestGetCheckDimensionExists_DimensionExists(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
 
@@ -51,7 +50,7 @@ func TestGetCheckDimensionExists_DimensionExists(t *testing.T) {
 // 400 - Filter job was not found
 func TestGetCheckDimensionsExists_FilterJobIDDoesNotExists(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTMultipleDimensionsCreateFilterJSON)).
 		Expect().Status(http.StatusCreated).JSON().Object()
@@ -68,7 +67,7 @@ func TestGetCheckDimensionsExists_FilterJobIDDoesNotExists(t *testing.T) {
 // 404 - Dimension name was not found
 func TestGetDimensionsExists_DimensionNameDoesNotExists(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTMultipleDimensionsCreateFilterJSON)).
 		Expect().Status(http.StatusCreated).JSON().Object()

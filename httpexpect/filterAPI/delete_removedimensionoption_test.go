@@ -5,7 +5,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -14,7 +13,7 @@ import (
 // 200 - Option was removed
 func TestDeleteRemoveDimensionOptions_RemovesOption(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
 
@@ -55,7 +54,7 @@ func TestDeleteRemoveDimensionOptions_RemovesOption(t *testing.T) {
 // . Dimension name was not found
 func TestDeleteRemoveDimensionOptions_FilterJobIDAndDimensionDoesNotExists(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTMultipleDimensionsCreateFilterJSON)).
 		Expect().Status(http.StatusCreated).JSON().Object()
@@ -78,7 +77,7 @@ func TestDeleteRemoveDimensionOptions_FilterJobIDAndDimensionDoesNotExists(t *te
 // 403 - Forbidden, the filter job has been locked as it has been submitted to be processed
 func TestDeleteRemoveDimensionOptions_SubmittedJobForbiddenError(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter with submitted state", t, func() {
 
@@ -97,7 +96,7 @@ func TestDeleteRemoveDimensionOptions_SubmittedJobForbiddenError(t *testing.T) {
 // 404 - Dimension option was not found
 func TestDeleteRemoveDimensionOptions_DimensionOptionDoesNotExists(t *testing.T) {
 
-	filterAPI := httpexpect.New(t, config.FilterAPIURL())
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTMultipleDimensionsCreateFilterJSON)).
 		Expect().Status(http.StatusCreated).JSON().Object()
