@@ -19,7 +19,8 @@ type ManyDocs struct {
 type Doc struct {
 	Database   string
 	Collection string
-	ID         string
+	Key        string
+	Value      string
 	Update     bson.M
 }
 
@@ -38,7 +39,7 @@ func newDatastore(uri string) error {
 }
 
 // Teardown is a way of cleaning up an individual document from mongo instance
-func Teardown(database, collection, id string) error {
+func Teardown(database, collection, key, value string) error {
 	config, err := config.Get()
 	if err != nil {
 		log.Error(err, nil)
@@ -53,7 +54,7 @@ func Teardown(database, collection, id string) error {
 	s := session.Copy()
 	defer s.Clone()
 
-	if err = s.DB(database).C(collection).Remove(bson.M{"_id": id}); err != nil {
+	if err = s.DB(database).C(collection).Remove(bson.M{key: value}); err != nil {
 		if err == mgo.ErrNotFound {
 			log.Info("data does not exist, continue", nil)
 			return nil
@@ -81,7 +82,7 @@ func TeardownMany(d ManyDocs) error {
 	defer s.Clone()
 
 	for _, doc := range d.Docs {
-		if err = s.DB(doc.Database).C(doc.Collection).Remove(bson.M{"_id": doc.ID}); err != nil {
+		if err = s.DB(doc.Database).C(doc.Collection).Remove(bson.M{doc.Key: doc.Value}); err != nil {
 			return err
 		}
 	}
@@ -90,7 +91,7 @@ func TeardownMany(d ManyDocs) error {
 }
 
 // Setup is a way of loading in an individual document into a mongo instance
-func Setup(database, collection, id string, update bson.M) error {
+func Setup(database, collection, key, value string, update bson.M) error {
 	config, err := config.Get()
 	if err != nil {
 		log.Error(err, nil)
@@ -105,7 +106,8 @@ func Setup(database, collection, id string, update bson.M) error {
 	s := session.Copy()
 	defer s.Clone()
 
-	if err = s.DB(database).C(collection).Update(bson.M{"_id": id}, update); err != nil {
+	if _, err = s.DB(database).C(collection).Upsert(bson.M{key: value}, update); err != nil {
+		log.ErrorC("mongodb datastore error", err, nil)
 		return err
 	}
 
@@ -120,7 +122,7 @@ func SetupMany(d ManyDocs) error {
 		log.Error(err, nil)
 		return err
 	}
-
+	//log.Debug("\n \ngot into mongo setup", log.Data{"docs": d, "config": config.MongoAddr})
 	if err = newDatastore(config.MongoAddr); err != nil {
 		log.ErrorC("mongodb datastore error", err, nil)
 		return err
@@ -130,7 +132,9 @@ func SetupMany(d ManyDocs) error {
 	defer s.Clone()
 
 	for _, doc := range d.Docs {
-		if err = s.DB(doc.Database).C(doc.Collection).Update(bson.M{"_id": doc.ID}, doc.Update); err != nil {
+		//log.Debug("got in for loop", log.Data{"key": key, "value": doc})
+		if _, err = s.DB(doc.Database).C(doc.Collection).Upsert(bson.M{doc.Key: doc.Value}, doc.Update); err != nil {
+			log.ErrorC("Unable to create document", err, nil)
 			return err
 		}
 	}
