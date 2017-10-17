@@ -10,9 +10,8 @@ import (
 
 var cfg *config.Config
 
-const database = "datasets"
-
 const (
+	database   = "datasets"
 	collection = "datasets"
 	datasetID  = "123"
 	editionID  = "456"
