@@ -18,7 +18,7 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validDatasetData,
+		Update:     validPublishedDatasetData,
 	}
 
 	editionDoc := mongo.Doc{
@@ -45,14 +45,13 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 		Update:     validUnpublishedInstanceData,
 	}
 
-	docs = append(docs, datasetDoc, editionDoc, instanceOneDoc, instanceTwoDoc)
+	docs = append(docs, datasetDoc, editionDoc, instanceTwoDoc, instanceOneDoc)
 
-	d := mongo.ManyDocs{
+	d := &mongo.ManyDocs{
 		Docs: docs,
 	}
 
 	mongo.TeardownMany(d)
-	mongo.SetupMany(d)
 
 	if err := mongo.SetupMany(d); err != nil {
 		os.Exit(1)
@@ -66,10 +65,10 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("items").Array().Length().Equal(2)
-			checkVersionResponse(response)
+			checkVersionResponse(response, 1)
 
-			response.Value("items").Array().Element(1).Object().Value("id").Equal("799")
-			response.Value("items").Array().Element(1).Object().Value("state").Equal("associated")
+			response.Value("items").Array().Element(0).Object().Value("id").Equal("799")
+			response.Value("items").Array().Element(0).Object().Value("state").Equal("associated")
 		})
 
 		Convey("When a user is not authenticated", func() {
@@ -77,17 +76,9 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("items").Array().Length().Equal(1)
-			checkVersionResponse(response)
+			checkVersionResponse(response, 0)
 		})
 	})
-
-	// instanceTwoDoc := mongo.Doc{
-	// 	Database:   "datasets",
-	// 	Collection: "instances",
-	// 	Key:        "_id",
-	// 	Value:      "799",
-	// 	Update:     validUnpublishedInstanceData,
-	// }
 
 	mongo.TeardownMany(d)
 }
@@ -100,7 +91,7 @@ func TestGetVersions_Failed(t *testing.T) {
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validDatasetData,
+		Update:     validPublishedDatasetData,
 	}
 
 	editionDoc := mongo.Doc{
@@ -113,7 +104,7 @@ func TestGetVersions_Failed(t *testing.T) {
 
 	docs = append(docs, datasetDoc, editionDoc)
 
-	d := mongo.ManyDocs{
+	d := &mongo.ManyDocs{
 		Docs: docs,
 	}
 
@@ -170,23 +161,23 @@ func TestGetVersions_Failed(t *testing.T) {
 	mongo.TeardownMany(d)
 }
 
-func checkVersionResponse(response *httpexpect.Object) {
-	response.Value("items").Array().Element(0).Object().Value("id").Equal("789")
-	response.Value("items").Array().Element(0).Object().Value("collection_id").Equal("108064B3-A808-449B-9041-EA3A2F72CFAA")
-	response.Value("items").Array().Element(0).Object().Value("downloads").Object().Value("csv").Object().Value("url").String().Match("(.+)/aws/census-2017-1-csv$")
-	response.Value("items").Array().Element(0).Object().Value("downloads").Object().Value("csv").Object().Value("size").Equal("10mb")
-	response.Value("items").Array().Element(0).Object().Value("downloads").Object().Value("xls").Object().Value("url").String().Match("(.+)/aws/census-2017-1-xls$")
-	response.Value("items").Array().Element(0).Object().Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
-	response.Value("items").Array().Element(0).Object().Value("edition").Equal("2017")
-	response.Value("items").Array().Element(0).Object().Value("license").Equal("ONS License")
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions$")
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("edition").Object().Value("id").Equal(edition)
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("edition").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
+func checkVersionResponse(response *httpexpect.Object, item int) {
+	response.Value("items").Array().Element(item).Object().Value("id").Equal("789")
+	response.Value("items").Array().Element(item).Object().Value("collection_id").Equal("108064B3-A808-449B-9041-EA3A2F72CFAA")
+	response.Value("items").Array().Element(item).Object().Value("downloads").Object().Value("csv").Object().Value("url").String().Match("(.+)/aws/census-2017-1-csv$")
+	response.Value("items").Array().Element(item).Object().Value("downloads").Object().Value("csv").Object().Value("size").Equal("10mb")
+	response.Value("items").Array().Element(item).Object().Value("downloads").Object().Value("xls").Object().Value("url").String().Match("(.+)/aws/census-2017-1-xls$")
+	response.Value("items").Array().Element(item).Object().Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
+	response.Value("items").Array().Element(item).Object().Value("edition").Equal("2017")
+	response.Value("items").Array().Element(item).Object().Value("license").Equal("ONS License")
+	response.Value("items").Array().Element(item).Object().Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
+	response.Value("items").Array().Element(item).Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
+	response.Value("items").Array().Element(item).Object().Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions$")
+	response.Value("items").Array().Element(item).Object().Value("links").Object().Value("edition").Object().Value("id").Equal(edition)
+	response.Value("items").Array().Element(item).Object().Value("links").Object().Value("edition").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
 	// TODO uncomment out line below whenapi has been fixed
-	// response.Value("items").Array().Element(0).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
-	response.Value("items").Array().Element(0).Object().Value("release_date").Equal("2017-12-12") // TODO Should be isodate
-	response.Value("items").Array().Element(0).Object().Value("state").Equal("published")
-	response.Value("items").Array().Element(0).Object().Value("version").Equal(1)
+	// response.Value("items").Array().Element(item).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
+	response.Value("items").Array().Element(item).Object().Value("release_date").Equal("2017-12-12") // TODO Should be isodate
+	response.Value("items").Array().Element(item).Object().Value("state").Equal("published")
+	response.Value("items").Array().Element(item).Object().Value("version").Equal(1)
 }
