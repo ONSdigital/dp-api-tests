@@ -220,3 +220,88 @@ var validUnpublishedInstanceData = bson.M{
 		"test_data":                   "true",
 	},
 }
+
+var validPOSTCreateDatasetJSON string = `
+{
+  "collection_id": "108064B3-A808-449B-9041-EA3A2F72CFAA",
+  "contacts": [
+    {
+      "email": "cpi@onstest.gov.uk",
+      "name": "Automation Tester",
+      "telephone": "+44 (0)1633 123456"
+    }
+  ],
+  "description": "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
+  "keywords": [
+    "cpi"
+  ],
+  "methodologies": [
+    {
+      "description": "Consumer price inflation is the rate at which the prices of the goods and services bought by households rise or fall, and is estimated by using consumer price indices.",
+      "href": "https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi",
+      "title": "Consumer Price Inflation (includes all 3 indices – CPIH, CPI and RPI)"
+    }
+  ],
+  "national_statistic": true,
+  "next_release": "17 October 2017",
+  "publications": [
+	  {
+		  "description": "Price indices, percentage changes and weights for the different measures of consumer price inflation.",
+      "href": "https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/consumerpriceinflation/aug2017",
+			"title": "UK consumer price inflation: August 2017"
+		}
+	],
+	"publisher": {
+	  "name": "Automation Tester",
+		"type": "publisher",
+		"href": "https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/consumerpriceinflation/aug2017"
+	},
+	"qmi": {
+	  "description": "Consumer price inflation is the rate at which the prices of goods and services bought by households rise and fall",
+		"href": "https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi",
+	  "title": "Consumer Price Inflation (includes all 3 indices – CPIH, CPI and RPI)"
+	},
+	"related_datasets": [
+	  {
+		  "href": "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceindices",
+			"title": "Consumer Price Inflation time series dataset"
+		}
+	],
+	"release_frequency": "Monthly",
+	"state": "created",
+	"theme": "Goods and services",
+	"title": "CPI",
+	"uri": "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation"
+}`
+
+var validPOSTCreateInstanceJSON string = `
+{
+  "links": {
+    "job": {
+    "id": "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+    "href": "http://localhost:21800/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35"
+   },
+   "dataset": {
+     "id": "34B13D18-B4D8-4227-9820-492B2971E221",
+     "href": "http://localhost:21800/datasets/34B13D18-B4D8-4227-9820-492B2971E221"
+    }
+  },
+  "state": "completed",
+  "edition": "2017",
+  "total_inserted_observations": 1000,
+  "total_observations": 1000,
+  "headers": [
+    "time",
+    "geography"
+  ]
+}`
+
+var validPUTUpdateInstanceJSON string = `
+{
+  "state": "edition-confirmed"
+}`
+
+var validPUTUpdateVersionJSON string = `
+{
+  "state": "associated"
+}`
