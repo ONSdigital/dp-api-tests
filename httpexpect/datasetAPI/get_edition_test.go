@@ -123,9 +123,8 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 	mongo.TeardownMany(d)
 	Convey("Fail to get an edition of a dataset", t, func() {
 		Convey("When dataset does not exist", func() {
-			// TODO reinstate test
-			// datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
-			// 	Expect().Status(http.StatusBadRequest)
+			datasetAPI.GET("/datasets/{id}/editions/{edition}", "133", "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+				Expect().Status(http.StatusBadRequest)
 		})
 
 		mongo.Setup(database, collection, "_id", datasetID, validPublishedDatasetData)

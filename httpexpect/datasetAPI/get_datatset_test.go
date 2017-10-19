@@ -9,9 +9,6 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-// The dataset contains all high level information, for additional details see editions or versions of a dataset.
-// 200 - A json object for a single Dataset
-
 func TestSuccessfullyGetADataset(t *testing.T) {
 
 	mongo.Teardown(database, collection, "_id", datasetID)
@@ -29,8 +26,6 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 			checkDatasetDoc(response.Value("current").Object())
 
 			response.Value("next").NotNull()
-			// TODO reinstate assertion
-			//response.Value("next").Object().Value("id").Equal(datasetID)
 			response.Value("next").Object().Value("state").Equal("created")
 		})
 
@@ -39,6 +34,7 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 			response := datasetAPI.GET("/datasets/{id}", datasetID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
+			response.Value("id").Equal(datasetID)
 			checkDatasetDoc(response)
 		})
 
@@ -77,8 +73,6 @@ func checkDatasetDoc(response *httpexpect.Object) {
 	response.Value("contacts").Array().Element(0).Object().Value("telephone").Equal("+44 (0)1633 123456")
 	response.Value("description").Equal("Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.")
 	response.Value("keywords").Array().Element(0).Equal("cpi")
-	// TODO reinstate assertion
-	//response.Value("id").Equal(datasetID)
 	response.Value("links").Object().Value("editions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions$")
 	response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
 	response.Value("methodologies").Array().Element(0).Object().Value("description").Equal("Consumer price inflation is the rate at which the prices of the goods and services bought by households rise or fall, and is estimated by using consumer price indices.")

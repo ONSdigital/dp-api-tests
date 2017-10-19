@@ -43,8 +43,7 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 			response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/2/dimensions$")
 			response.Value("links").Object().Value("edition").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
 			response.Value("links").Object().Value("edition").Object().Value("id").Equal(edition)
-			// TODO reinstate assertion
-			//response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/2$")
+			response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/2$")
 			response.Value("release_date").Equal("2017-12-12")
 			response.Value("state").Equal("associated")
 			response.Value("version").Equal(2)
@@ -67,8 +66,7 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 			response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions$")
 			response.Value("links").Object().Value("edition").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
 			response.Value("links").Object().Value("edition").Object().Value("id").Equal(edition)
-			// TODO reinstate assertion
-			//response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/2$")
+			response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
 			response.Value("release_date").Equal("2017-12-12")
 			response.Value("state").Equal("published")
 			response.Value("version").Equal(1)
@@ -89,17 +87,16 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 
 	Convey("Fail to get version document", t, func() {
 		Convey("and return status bad request", func() {
-			// TODO reinstate assertions below
-			// Convey("When the dataset does not exist", func() {
-			// 	datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
-			// 		Expect().Status(http.StatusBadRequest)
-			// })
-			//
-			// Convey("When the edition does not exist", func() {
-			// 	mongo.Setup(database, collection, "_id", datasetID, validPublishedDatasetData)
-			// 	datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
-			// 		Expect().Status(http.StatusBadRequest)
-			// })
+			Convey("When the dataset does not exist", func() {
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+					Expect().Status(http.StatusBadRequest)
+			})
+
+			Convey("When the edition does not exist", func() {
+				mongo.Setup(database, collection, "_id", datasetID, validPublishedDatasetData)
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+					Expect().Status(http.StatusBadRequest)
+			})
 		})
 		Convey("and return status not found", func() {
 			mongo.Setup(database, "editions", "_id", editionID, validPublishedEditionData)

@@ -119,16 +119,15 @@ func TestGetVersions_Failed(t *testing.T) {
 
 	Convey("Fail to get a list of versions for a dataset", t, func() {
 		Convey("When authenticated", func() {
-			// TODO Uncomment tests once code is fixed
-			// Convey("When the dataset does not exist", func() {
-			// 	datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", "1234", "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
-			// 		Expect().Status(http.StatusBadRequest)
-			// })
+			Convey("When the dataset does not exist", func() {
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", "1234", "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+					Expect().Status(http.StatusBadRequest)
+			})
 
-			// Convey("When the edition does not exist", func() {
-			// 	datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
-			// 		Expect().Status(http.StatusBadRequest)
-			// })
+			Convey("When the edition does not exist", func() {
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+					Expect().Status(http.StatusBadRequest)
+			})
 
 			Convey("When there are no versions", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
@@ -136,16 +135,15 @@ func TestGetVersions_Failed(t *testing.T) {
 			})
 		})
 		Convey("When unauthenticated", func() {
-			// TODO Uncomment tests once code is fixed
-			// Convey("When the dataset does not exist", func() {
-			// 	datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", "1234", "2018").
-			// 		Expect().Status(http.StatusBadRequest)
-			// })
+			Convey("When the dataset does not exist", func() {
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", "1234", "2018").
+					Expect().Status(http.StatusBadRequest)
+			})
 
-			// Convey("When the edition does not exist", func() {
-			// 	datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, "2018").
-			// 		Expect().Status(http.StatusBadRequest)
-			// })
+			Convey("When the edition does not exist", func() {
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, "2018").
+					Expect().Status(http.StatusBadRequest)
+			})
 
 			Convey("When there are no published versions", func() {
 				// Create an unpublished instance document
@@ -175,8 +173,7 @@ func checkVersionResponse(response *httpexpect.Object, item int) {
 	response.Value("items").Array().Element(item).Object().Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions$")
 	response.Value("items").Array().Element(item).Object().Value("links").Object().Value("edition").Object().Value("id").Equal(edition)
 	response.Value("items").Array().Element(item).Object().Value("links").Object().Value("edition").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
-	// TODO uncomment out line below whenapi has been fixed
-	// response.Value("items").Array().Element(item).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
+	response.Value("items").Array().Element(item).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
 	response.Value("items").Array().Element(item).Object().Value("release_date").Equal("2017-12-12") // TODO Should be isodate
 	response.Value("items").Array().Element(item).Object().Value("state").Equal("published")
 	response.Value("items").Array().Element(item).Object().Value("version").Equal(1)

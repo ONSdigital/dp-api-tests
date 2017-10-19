@@ -68,7 +68,6 @@ var validPublishedDatasetData = bson.M{
 		"current.theme":                     "Goods and services",
 		"current.title":                     "CPI",
 		"current.uri":                       "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation",
-		"current.test_data":                 "true",
 		"next.collection_id":                "208064B3-A808-449B-9041-EA3A2F72CFAB",
 		"next.contacts":                     []Contact{contact},
 		"next.description":                  "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",

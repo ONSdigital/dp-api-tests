@@ -86,9 +86,9 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 
 	Convey("Fail to get a list of editions for a dataset", t, func() {
 		Convey("When the dataset does not exist", func() {
-			// TODO reinstate test
-			// datasetAPI.GET("/datasets/{id}/editions", datasetID).
-			// 	Expect().Status(http.StatusBadRequest)
+
+			datasetAPI.GET("/datasets/{id}/editions", datasetID).
+				Expect().Status(http.StatusBadRequest)
 		})
 
 		mongo.Teardown(database, "editions", "links.dataset.id", datasetID)

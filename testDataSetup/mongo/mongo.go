@@ -60,6 +60,10 @@ func TeardownMany(d *ManyDocs) error {
 
 	for _, doc := range d.Docs {
 		if err := s.DB(doc.Database).C(doc.Collection).Remove(bson.M{doc.Key: doc.Value}); err != nil {
+			if err == mgo.ErrNotFound {
+				log.Info("data does not exist, continue", nil)
+				continue
+			}
 			return err
 		}
 	}

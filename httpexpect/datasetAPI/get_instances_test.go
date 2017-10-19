@@ -25,13 +25,12 @@ func TestGetAListOfDatasets(t *testing.T) {
 		})
 	})
 
-	// TODO reinstate assertion
-	// Convey("Fail to get a list of instances", t, func() {
-	// 	Convey("When the user is unauthorised", func() {
-	// 		datasetAPI.GET("/instances").
-	// 			Expect().Status(http.StatusUnauthorized)
-	// 	})
-	// })
+	Convey("Fail to get a list of instances", t, func() {
+		Convey("When the user is unauthorised", func() {
+			datasetAPI.GET("/instances").
+				Expect().Status(http.StatusUnauthorized)
+		})
+	})
 
 	mongo.Teardown(database, "instances", "_id", instanceID)
 }

@@ -64,14 +64,14 @@ func TestFailureToGetInstance(t *testing.T) {
 					Expect().Status(http.StatusNotFound)
 			})
 		})
-		// Convey("and return status unauthorised", func() {
-		// 	Convey("when an unauthorised user sends a GET request", func() {
-		// 		mongo.Setup(database, "instances", "_id", "799", validUnpublishedInstanceData)
-		//
-		// 		datasetAPI.GET("/instances/{id}", "799").
-		// 			Expect().Status(http.StatusUnauthorized)
-		// 	})
-		// })
+		Convey("and return status unauthorised", func() {
+			Convey("when an unauthorised user sends a GET request", func() {
+				mongo.Setup(database, "instances", "_id", "799", validUnpublishedInstanceData)
+
+				datasetAPI.GET("/instances/{id}", "799").
+					Expect().Status(http.StatusUnauthorized)
+			})
+		})
 	})
 
 	mongo.Teardown(database, "instances", "_id", "799")
