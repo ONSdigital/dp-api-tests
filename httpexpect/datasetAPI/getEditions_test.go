@@ -5,7 +5,10 @@ import (
 	"os"
 	"testing"
 
+	mgo "gopkg.in/mgo.v2"
+
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -44,9 +47,15 @@ func TestSuccessfullyGetListOfDatasetEditions(t *testing.T) {
 		Docs: docs,
 	}
 
-	mongo.TeardownMany(d)
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
+	}
 
 	if err := mongo.SetupMany(d); err != nil {
+		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
 
@@ -75,14 +84,24 @@ func TestSuccessfullyGetListOfDatasetEditions(t *testing.T) {
 			checkEditionsResponse(response)
 		})
 	})
-	mongo.TeardownMany(d)
+
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			os.Exit(1)
+		}
+	}
 }
 
 func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-	mongo.Teardown(database, collection, "_id", datasetID)
+	if err := mongo.Teardown(database, collection, "_id", datasetID); err != nil {
+		if err != mgo.ErrNotFound {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
+	}
 
 	Convey("Fail to get a list of editions for a dataset", t, func() {
 		Convey("When the dataset does not exist", func() {
@@ -91,9 +110,15 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 				Expect().Status(http.StatusBadRequest)
 		})
 
-		mongo.Teardown(database, "editions", "links.dataset.id", datasetID)
+		if err := mongo.Teardown(database, "editions", "links.dataset.id", datasetID); err != nil {
+			if err != mgo.ErrNotFound {
+				log.ErrorC("Was unable to run test", err, nil)
+				os.Exit(1)
+			}
+		}
 
 		if err := mongo.Setup(database, collection, "_id", datasetID, validPublishedDatasetData); err != nil {
+			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
 
@@ -104,16 +129,25 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 
 		Convey("When user is unauthenticated and there are no published editions", func() {
 			if err := mongo.Setup(database, "editions", "_id", "466", validUnpublishedEditionData); err != nil {
+				log.ErrorC("Was unable to run test", err, nil)
 				os.Exit(1)
 			}
 
 			datasetAPI.GET("/datasets/{id}/editions", datasetID).
 				Expect().Status(http.StatusNotFound)
 
-			mongo.Teardown(database, "editions", "_id", "466")
+			if err := mongo.Teardown(database, "editions", "_id", "466"); err != nil {
+				if err != mgo.ErrNotFound {
+					os.Exit(1)
+				}
+			}
 		})
 
-		mongo.Teardown(database, collection, "_id", datasetID)
+		if err := mongo.Teardown(database, collection, "_id", datasetID); err != nil {
+			if err != mgo.ErrNotFound {
+				os.Exit(1)
+			}
+		}
 	})
 }
 

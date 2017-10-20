@@ -5,6 +5,8 @@ import (
 	"os"
 	"testing"
 
+	mgo "gopkg.in/mgo.v2"
+
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
@@ -17,7 +19,7 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 
 	d, err := setupTestDataForGetAListOfDatasets()
 	if err != nil {
-		log.ErrorC("Failed setting up test data", err, nil)
+		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
 
@@ -65,7 +67,11 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 		})
 	})
 
-	mongo.TeardownMany(d)
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			os.Exit(1)
+		}
+	}
 }
 
 func checkDatasetResponse(response *httpexpect.Object) {
@@ -129,11 +135,15 @@ func setupTestDataForGetAListOfDatasets() (*mongo.ManyDocs, error) {
 	}
 
 	if err := mongo.TeardownMany(d); err != nil {
-		return nil, err
+		if err != mgo.ErrNotFound {
+			return nil, err
+		}
 	}
 
 	if err := mongo.SetupMany(d); err != nil {
-		return nil, err
+		if err != mgo.ErrNotFound {
+			return nil, err
+		}
 	}
 
 	return d, nil

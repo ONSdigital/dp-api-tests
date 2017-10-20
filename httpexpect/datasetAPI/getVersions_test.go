@@ -5,7 +5,10 @@ import (
 	"os"
 	"testing"
 
+	mgo "gopkg.in/mgo.v2"
+
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -51,9 +54,15 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 		Docs: docs,
 	}
 
-	mongo.TeardownMany(d)
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
+	}
 
 	if err := mongo.SetupMany(d); err != nil {
+		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
 
@@ -80,7 +89,11 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 		})
 	})
 
-	mongo.TeardownMany(d)
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			os.Exit(1)
+		}
+	}
 }
 
 func TestGetVersions_Failed(t *testing.T) {
@@ -108,10 +121,15 @@ func TestGetVersions_Failed(t *testing.T) {
 		Docs: docs,
 	}
 
-	mongo.TeardownMany(d)
-	mongo.SetupMany(d)
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
+	}
 
 	if err := mongo.SetupMany(d); err != nil {
+		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
 
@@ -156,7 +174,12 @@ func TestGetVersions_Failed(t *testing.T) {
 			})
 		})
 	})
-	mongo.TeardownMany(d)
+
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			os.Exit(1)
+		}
+	}
 }
 
 func checkVersionResponse(response *httpexpect.Object, item int) {

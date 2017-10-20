@@ -5,7 +5,10 @@ import (
 	"os"
 	"testing"
 
+	mgo "gopkg.in/mgo.v2"
+
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -44,9 +47,15 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 		Docs: docs,
 	}
 
-	mongo.TeardownMany(d)
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
+	}
 
 	if err := mongo.SetupMany(d); err != nil {
+		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
 
@@ -82,7 +91,11 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 		})
 	})
 
-	mongo.TeardownMany(d)
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			os.Exit(1)
+		}
+	}
 }
 
 func TestFailureToGetDatasetEdition(t *testing.T) {
@@ -120,14 +133,23 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 		Docs: docs,
 	}
 
-	mongo.TeardownMany(d)
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
+	}
+
 	Convey("Fail to get an edition of a dataset", t, func() {
 		Convey("When dataset does not exist", func() {
 			datasetAPI.GET("/datasets/{id}/editions/{edition}", "133", "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
 				Expect().Status(http.StatusBadRequest)
 		})
 
-		mongo.Setup(database, collection, "_id", datasetID, validPublishedDatasetData)
+		if err := mongo.Setup(database, collection, "_id", datasetID, validPublishedDatasetData); err != nil {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
 
 		Convey("When the edition does not exist against dataset", func() {
 			datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
@@ -135,12 +157,19 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 		})
 
 		Convey("When the user is unauthenticated and the edition state is NOT set to `published`", func() {
-			mongo.Setup(database, "editions", "_id", "466", validUnpublishedEditionData)
+			if err := mongo.Setup(database, "editions", "_id", "466", validUnpublishedEditionData); err != nil {
+				log.ErrorC("Was unable to run test", err, nil)
+				os.Exit(1)
+			}
 
 			datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, "2018").
 				Expect().Status(http.StatusNotFound)
 		})
 	})
 
-	mongo.TeardownMany(d)
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			os.Exit(1)
+		}
+	}
 }

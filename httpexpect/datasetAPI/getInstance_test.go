@@ -2,17 +2,30 @@ package datasetAPI
 
 import (
 	"net/http"
+	"os"
 	"testing"
 
+	mgo "gopkg.in/mgo.v2"
+
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestSuccessfullyGetInstance(t *testing.T) {
 
-	mongo.Teardown(database, "instances", "_id", "799")
-	mongo.Setup(database, "instances", "_id", "799", validUnpublishedInstanceData)
+	if err := mongo.Teardown(database, "instances", "_id", "799"); err != nil {
+		if err != mgo.ErrNotFound {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
+	}
+
+	if err := mongo.Setup(database, "instances", "_id", "799", validUnpublishedInstanceData); err != nil {
+		log.ErrorC("Was unable to run test", err, nil)
+		os.Exit(1)
+	}
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
@@ -48,12 +61,21 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 		})
 	})
 
-	mongo.Teardown(database, "instances", "_id", "799")
+	if err := mongo.Teardown(database, "instances", "_id", "799"); err != nil {
+		if err != mgo.ErrNotFound {
+			os.Exit(1)
+		}
+	}
 }
 
 func TestFailureToGetInstance(t *testing.T) {
 
-	mongo.Teardown(database, "instances", "_id", "799")
+	if err := mongo.Teardown(database, "instances", "_id", "799"); err != nil {
+		if err != mgo.ErrNotFound {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
+	}
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
@@ -66,7 +88,10 @@ func TestFailureToGetInstance(t *testing.T) {
 		})
 		Convey("and return status unauthorised", func() {
 			Convey("when an unauthorised user sends a GET request", func() {
-				mongo.Setup(database, "instances", "_id", "799", validUnpublishedInstanceData)
+				if err := mongo.Setup(database, "instances", "_id", "799", validUnpublishedInstanceData); err != nil {
+					log.ErrorC("Was unable to run test", err, nil)
+					os.Exit(1)
+				}
 
 				datasetAPI.GET("/instances/{id}", "799").
 					Expect().Status(http.StatusUnauthorized)
@@ -74,5 +99,9 @@ func TestFailureToGetInstance(t *testing.T) {
 		})
 	})
 
-	mongo.Teardown(database, "instances", "_id", "799")
+	if err := mongo.Teardown(database, "instances", "_id", "799"); err != nil {
+		if err != mgo.ErrNotFound {
+			os.Exit(1)
+		}
+	}
 }

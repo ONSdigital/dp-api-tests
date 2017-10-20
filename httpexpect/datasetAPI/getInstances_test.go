@@ -2,17 +2,30 @@ package datasetAPI
 
 import (
 	"net/http"
+	"os"
 	"testing"
 
+	mgo "gopkg.in/mgo.v2"
+
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestGetAListOfInstances(t *testing.T) {
 
-	mongo.Teardown(database, "instances", "_id", instanceID)
-	mongo.Setup(database, "instances", "_id", instanceID, validPublishedInstanceData)
+	if err := mongo.Teardown(database, "instances", "_id", instanceID); err != nil {
+		if err != mgo.ErrNotFound {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
+	}
+
+	if err := mongo.Setup(database, "instances", "_id", instanceID, validPublishedInstanceData); err != nil {
+		log.ErrorC("Was unable to run test", err, nil)
+		os.Exit(1)
+	}
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
@@ -48,9 +61,18 @@ func TestGetAListOfInstances(t *testing.T) {
 				Docs: docs,
 			}
 
-			mongo.TeardownMany(d)
+			if err := mongo.TeardownMany(d); err != nil {
+				if err != mgo.ErrNotFound {
+					log.ErrorC("Was unable to run test", err, nil)
+					os.Exit(1)
+				}
+			}
 
-			mongo.SetupMany(d)
+			if err := mongo.SetupMany(d); err != nil {
+				log.ErrorC("Was unable to run test", err, nil)
+				os.Exit(1)
+			}
+
 			response := datasetAPI.GET("/instances").WithQuery("state", "completed").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
 				Expect().Status(http.StatusOK).JSON().Object()
 
@@ -61,7 +83,12 @@ func TestGetAListOfInstances(t *testing.T) {
 				}
 			}
 
-			mongo.TeardownMany(d)
+			if err := mongo.TeardownMany(d); err != nil {
+				if err != mgo.ErrNotFound {
+					log.ErrorC("Was unable to run test", err, nil)
+					os.Exit(1)
+				}
+			}
 		})
 
 		Convey("when the user filters by multiple 'state' values", func() {
@@ -91,5 +118,9 @@ func TestGetAListOfInstances(t *testing.T) {
 		})
 	})
 
-	mongo.Teardown(database, "instances", "_id", instanceID)
+	if err := mongo.Teardown(database, "instances", "_id", instanceID); err != nil {
+		if err != mgo.ErrNotFound {
+			os.Exit(1)
+		}
+	}
 }

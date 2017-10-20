@@ -20,6 +20,7 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 	}
 
 	if err := mongo.SetupMany(d); err != nil {
+		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
 
@@ -73,7 +74,11 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 		})
 	})
 
-	mongo.TeardownMany(d)
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			os.Exit(1)
+		}
+	}
 }
 
 func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
@@ -93,7 +98,11 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 			})
 
 			Convey("When the edition does not exist", func() {
-				mongo.Setup(database, collection, "_id", datasetID, validPublishedDatasetData)
+				if err := mongo.Setup(database, collection, "_id", datasetID, validPublishedDatasetData); err != nil {
+					log.ErrorC("Was unable to run test", err, nil)
+					os.Exit(1)
+				}
+
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
 					Expect().Status(http.StatusBadRequest)
 			})
@@ -114,7 +123,11 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 		})
 	})
 
-	mongo.TeardownMany(d)
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			os.Exit(1)
+		}
+	}
 }
 
 func teardownVersion() (*mongo.ManyDocs, error) {
