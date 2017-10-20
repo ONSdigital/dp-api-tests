@@ -201,6 +201,7 @@ var validUnpublishedInstanceData = bson.M{
 		"headers":               []string{"time", "geography"},
 		"id":                    "799",
 		"last_updated":          "2017-09-08", // TODO Should be isodate
+		"license":               "ONS license",
 		"links.job.id":          "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
 		"links.job.href":        "http://localhost:8080/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
 		"links.dataset.id":      datasetID,
@@ -213,6 +214,37 @@ var validUnpublishedInstanceData = bson.M{
 		"links.version.id":      "2",
 		"release_date":          "2017-12-12", // TODO Should be isodate
 		"state":                 "associated",
+		"total_inserted_observations": 1000,
+		"total_observations":          1000,
+		"version":                     2,
+		"test_data":                   "true",
+	},
+}
+
+var validCompletedInstanceData = bson.M{
+	"$set": bson.M{
+		"collection_id":         "208064B3-A808-449B-9041-EA3A2F72CFAB",
+		"downloads.csv.url":     "http://localhost:8080/aws/census-2017-2-csv",
+		"downloads.csv.size":    "10mb",
+		"downloads.xls.url":     "http://localhost:8080/aws/census-2017-2-xls",
+		"downloads.xls.size":    "24mb",
+		"edition":               edition,
+		"headers":               []string{"time", "geography"},
+		"id":                    "799",
+		"last_updated":          "2017-09-08", // TODO Should be isodate
+		"license":               "ONS license",
+		"links.job.id":          "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+		"links.job.href":        "http://localhost:8080/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+		"links.dataset.id":      datasetID,
+		"links.dataset.href":    "http://localhost:8080/datasets/" + datasetID,
+		"links.dimensions.href": "http://localhost:8080/datasets/" + datasetID + "/editions/2017/versions/2/dimensions",
+		"links.edition.id":      edition,
+		"links.edition.href":    "http://localhost:8080/datasets/" + datasetID + "/editions/2017",
+		"links.self.href":       "http://localhost:8080/instances/" + "799",
+		"links.version.href":    "http://localhost:8080/datasets/" + datasetID + "/editions/2017/versions/2",
+		"links.version.id":      "2",
+		"release_date":          "2017-12-12", // TODO Should be isodate
+		"state":                 "completed",
 		"total_inserted_observations": 1000,
 		"total_observations":          1000,
 		"version":                     2,
@@ -273,6 +305,59 @@ var validPOSTCreateDatasetJSON string = `
 	"uri": "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation"
 }`
 
+var validPUTUpdateDatasetJSON string = `{
+
+		"collection_id": "308064B3-A808-449B-9041-EA3A2F72CFAC",
+		"contacts": [
+			{
+			"email": "rpi@onstest.gov.uk",
+			"name": "Test Automation",
+			"telephone": "+44 (0)1833 456123"
+			}
+		],
+		"description": "Producer Price Indices (PPIs) are a series of economic indicators that measure the price movement of goods bought and sold by UK manufacturers",
+		"keywords": [
+			"rpi"
+		],
+		"methodologies": [
+			{
+			"description": "The Producer Price Index (PPI) is a monthly survey that measures the price changes of goods bought and sold by UK manufacturers",
+			"href": "https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/producerpriceindicesqmi",
+			"title": "Producer price indices QMI"
+			}
+		],
+		"national_statistic": false,
+		"next_release": "18 September 2017",
+		"publications": [
+			{
+			"description": "Changes in the prices of goods bought and sold by UK manufacturers including price indices of materials and fuels purchased (input prices) and factory gate prices (output prices)",
+			"href": "https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/producerpriceinflation/september2017",
+			"title": "Producer price inflation, UK: September 2017"
+			}
+		],
+		"publisher": {
+			"name": "Test Automation Engineer",
+			"type": "publisher",
+			"href": "https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/producerpriceinflation/september2017"
+		},
+		"qmi": {
+			"description": "PPI provides an important measure of inflation",
+			"href": "https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/producerpriceindicesqmi",
+			"title": "The Producer Price Index (PPI) is a monthly survey that measures the price changes"
+		},
+		"related_datasets": [
+			{
+			"href": "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/producerpriceindex",
+			"title": "Producer Price Index time series dataset"
+			}
+		],
+		"release_frequency": "Quaterly",
+		"state": "created",
+		"theme": "Price movement of goods",
+		"title": "RPI",
+		"uri": "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/producerpriceindex"
+		}`
+
 var validPOSTCreateInstanceJSON string = `
 {
   "links": {
@@ -300,7 +385,12 @@ var validPUTUpdateInstanceJSON string = `
   "state": "edition-confirmed"
 }`
 
+var validPUTCompletedInstanceJSON string = `
+{
+  "state": "completed"
+}`
+
 var validPUTUpdateVersionJSON string = `
 {
-  "state": "associated"
+		"state": "published"
 }`

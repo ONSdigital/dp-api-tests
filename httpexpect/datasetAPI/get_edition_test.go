@@ -135,7 +135,7 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 		})
 
 		Convey("When the user is unauthenticated and the edition state is NOT set to `published`", func() {
-			mongo.Setup(database, collection, "_id", "466", validUnpublishedEditionData)
+			mongo.Setup(database, "editions", "_id", "466", validUnpublishedEditionData)
 
 			datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, "2018").
 				Expect().Status(http.StatusNotFound)

@@ -9,6 +9,8 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+// Create a dataset provided by the ONS that can be filtered using the filter API
+// 200 - A json object containing a dataset which has been created
 func TestPostCreateDataset_CreatesDataset(t *testing.T) {
 	mongo.Teardown(database, collection, "_id", datasetID)
 
@@ -32,9 +34,9 @@ func TestPostCreateDataset_CreatesDataset(t *testing.T) {
 		response.Value("next").Object().Value("keywords").Array().Element(0).Equal("cpi")
 
 		response.Value("next").Object().Value("id").Equal(datasetID)
-		response.Value("next").Object().Value("links").Object().Value("editions").Object().Value("href").String().Match("(.+)/datasets/34B13D18-B4D8-4227-9820-492B2971E221/editions$")
+		response.Value("next").Object().Value("links").Object().Value("editions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions$")
 
-		response.Value("next").Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/34B13D18-B4D8-4227-9820-492B2971E221$")
+		response.Value("next").Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
 
 		response.Value("next").Object().Value("methodologies").Array().Element(0).Object().Value("description").Equal("Consumer price inflation is the rate at which the prices of the goods and services bought by households rise or fall, and is estimated by using consumer price indices.")
 		response.Value("next").Object().Value("methodologies").Array().Element(0).Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi")
@@ -68,6 +70,7 @@ func TestPostCreateDataset_CreatesDataset(t *testing.T) {
 	})
 }
 
+// 401 - Unauthorised to create/overwrite dataset
 func TestPostCreateDataset_InvalidToken(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
@@ -80,6 +83,7 @@ func TestPostCreateDataset_InvalidToken(t *testing.T) {
 	})
 }
 
+// 401 - Unauthorised to create/overwrite dataset
 func TestPostCreateDataset_WithoutToken(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
@@ -92,6 +96,7 @@ func TestPostCreateDataset_WithoutToken(t *testing.T) {
 	})
 }
 
+// 400 - Invalid request body
 func TestPostCreateDataset_InvalidBody(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
@@ -103,3 +108,6 @@ func TestPostCreateDataset_InvalidBody(t *testing.T) {
 
 	})
 }
+
+// TODO
+// 403 - Forbidden to overwrite dataset, already published
