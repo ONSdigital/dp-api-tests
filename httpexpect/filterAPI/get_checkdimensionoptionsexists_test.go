@@ -13,6 +13,8 @@ import (
 // 204 - Option exists within the dimension
 func TestGetCheckDimensionOptionsExists_OptionsExists(t *testing.T) {
 
+	setupDatastores()
+
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
@@ -56,6 +58,8 @@ func TestGetCheckDimensionOptionsExists_OptionsExists(t *testing.T) {
 // 400 - Filter job or dimension name not found
 func TestGetCheckDimensionOptionsExists_FilterJobAndDimensionDoesNotExists(t *testing.T) {
 
+	setupDatastores()
+
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTMultipleDimensionsCreateFilterJSON)).
@@ -66,18 +70,20 @@ func TestGetCheckDimensionOptionsExists_FilterJobAndDimensionDoesNotExists(t *te
 	Convey("A GET request to check if an option exists for a filter job that does not exist returns 404 not found", t, func() {
 
 		filterAPI.GET("/filters/{filter_job_id}/dimensions/age/options/27", invalidFilterJobID).
-			Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - filter job not found")
+			Expect().Status(http.StatusBadRequest).Body().Contains("filter or dimension not found")
 	})
 
 	Convey("A GET request to check if an option exists for a dimension that does not exist returns 404 not found", t, func() {
 
 		filterAPI.GET("/filters/{filter_job_id}/dimensions/ages/options/27", filterJobID).
-			Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - dimension not found")
+			Expect().Status(http.StatusBadRequest).Body().Contains("filter or dimension not found")
 	})
 }
 
 // 404 - Dimension option was not found
 func TestGetCheckDimensionOptionsExists_DimensionOptionDoesNotExists(t *testing.T) {
+
+	setupDatastores()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 

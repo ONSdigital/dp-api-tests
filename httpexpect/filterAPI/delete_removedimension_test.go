@@ -14,6 +14,8 @@ import (
 // 200 - The dimension was removed
 func TestDeleteRemoveDimension_RemovesDimension(t *testing.T) {
 
+	setupDatastores()
+
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
@@ -34,6 +36,8 @@ func TestDeleteRemoveDimension_RemovesDimension(t *testing.T) {
 // 400 - Filter job was not found
 func TestDeleteRemoveDimension_FilterJobIDDoesNotExists(t *testing.T) {
 
+	setupDatastores()
+
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTMultipleDimensionsCreateFilterJSON)).
@@ -50,6 +54,8 @@ func TestDeleteRemoveDimension_FilterJobIDDoesNotExists(t *testing.T) {
 
 // 403 - Forbidden, the filter job has been locked as it has been submitted to be processed
 func TestDeleteRemoveDimension_UpdatingASubmittedFilterJobThrowsForbiddenError(t *testing.T) {
+
+	setupDatastores()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -69,6 +75,8 @@ func TestDeleteRemoveDimension_UpdatingASubmittedFilterJobThrowsForbiddenError(t
 
 // 404 - Dimension name was not found
 func TestDeleteRemoveDimension_DimensionDoesNotExists(t *testing.T) {
+
+	setupDatastores()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 

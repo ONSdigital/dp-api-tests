@@ -16,6 +16,8 @@ import (
 // 201 - The dimension was created
 func TestPostAddDimension_CreatesDimension(t *testing.T) {
 
+	setupDatastores()
+
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
@@ -34,6 +36,8 @@ func TestPostAddDimension_CreatesDimension(t *testing.T) {
 
 // 400 - Invalid request body
 func TestPostAddDimension_InvalidInput(t *testing.T) {
+
+	setupDatastores()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -54,6 +58,8 @@ func TestPostAddDimension_InvalidInput(t *testing.T) {
 // 403 - Forbidden, the filter job has been locked as it has been submitted to be processed
 func TestPostAddDimension_SubmittedJobForbiddenError(t *testing.T) {
 
+	setupDatastores()
+
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter with submitted state", t, func() {
@@ -72,6 +78,8 @@ func TestPostAddDimension_SubmittedJobForbiddenError(t *testing.T) {
 
 // 404 - Filter job was not found
 func TestPostAddDimension_FilterJobIDDoesNotExists(t *testing.T) {
+
+	setupDatastores()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 

@@ -13,6 +13,7 @@ var cfg *config.Config
 const (
 	database   = "filters"
 	collection = "filters"
+	instanceID = "789"
 )
 
 func init() {

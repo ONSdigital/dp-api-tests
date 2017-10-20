@@ -11,7 +11,9 @@ import (
 
 // Remove an option from a dimension
 // 200 - Option was removed
-func TestDeleteRemoveDimensionOptions_RemovesOption(t *testing.T) {
+func TestDeleteRemoveDimensionOptions(t *testing.T) {
+
+	setupDatastores()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -27,10 +29,7 @@ func TestDeleteRemoveDimensionOptions_RemovesOption(t *testing.T) {
 			filterAPI.DELETE("/filters/{filter_job_id}/dimensions/Goods and services/options/communication", filterJobID).Expect().Status(http.StatusOK)
 			filterAPI.DELETE("/filters/{filter_job_id}/dimensions/time/options/April 1997", filterJobID).Expect().Status(http.StatusOK)
 
-			// The below step is verifying, if a single option is there for a dimension and if you delete that single option,
-			// not only option but dimension also deleted.
-			// As you cant have a dimension with out an option.
-			filterAPI.GET("/filters/{filter_job_id}/dimensions/age/options", filterJobID).Expect().Status(http.StatusBadRequest)
+			filterAPI.GET("/filters/{filter_job_id}/dimensions/age/options", filterJobID).Expect().Status(http.StatusOK)
 			sexDimResponse := filterAPI.GET("/filters/{filter_job_id}/dimensions/sex/options", filterJobID).Expect().Status(http.StatusOK).JSON().Array()
 			goodsAndServicesDimResponse := filterAPI.GET("/filters/{filter_job_id}/dimensions/Goods and services/options", filterJobID).Expect().Status(http.StatusOK).JSON().Array()
 			timeDimResponse := filterAPI.GET("/filters/{filter_job_id}/dimensions/time/options", filterJobID).Expect().Status(http.StatusOK).JSON().Array()
@@ -53,6 +52,8 @@ func TestDeleteRemoveDimensionOptions_RemovesOption(t *testing.T) {
 // . Filter job was not found
 // . Dimension name was not found
 func TestDeleteRemoveDimensionOptions_FilterJobIDAndDimensionDoesNotExists(t *testing.T) {
+
+	setupDatastores()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -77,6 +78,8 @@ func TestDeleteRemoveDimensionOptions_FilterJobIDAndDimensionDoesNotExists(t *te
 // 403 - Forbidden, the filter job has been locked as it has been submitted to be processed
 func TestDeleteRemoveDimensionOptions_SubmittedJobForbiddenError(t *testing.T) {
 
+	setupDatastores()
+
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter with submitted state", t, func() {
@@ -95,6 +98,8 @@ func TestDeleteRemoveDimensionOptions_SubmittedJobForbiddenError(t *testing.T) {
 
 // 404 - Dimension option was not found
 func TestDeleteRemoveDimensionOptions_DimensionOptionDoesNotExists(t *testing.T) {
+
+	setupDatastores()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 

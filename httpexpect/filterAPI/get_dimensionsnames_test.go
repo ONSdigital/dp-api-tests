@@ -13,6 +13,8 @@ import (
 // 204 - Dimension exists for filter job
 func TestGetCheckDimensionExists_DimensionExists(t *testing.T) {
 
+	setupDatastores()
+
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
@@ -50,6 +52,8 @@ func TestGetCheckDimensionExists_DimensionExists(t *testing.T) {
 // 400 - Filter job was not found
 func TestGetCheckDimensionsExists_FilterJobIDDoesNotExists(t *testing.T) {
 
+	setupDatastores()
+
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTMultipleDimensionsCreateFilterJSON)).
@@ -66,6 +70,8 @@ func TestGetCheckDimensionsExists_FilterJobIDDoesNotExists(t *testing.T) {
 
 // 404 - Dimension name was not found
 func TestGetDimensionsExists_DimensionNameDoesNotExists(t *testing.T) {
+
+	setupDatastores()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 

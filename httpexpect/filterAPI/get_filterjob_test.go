@@ -14,6 +14,8 @@ import (
 // 200 - The filter job was found and document is returned
 func TestGetFilterJob_JobFoundAndDocumentReturned(t *testing.T) {
 
+	setupDatastores()
+
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
@@ -22,7 +24,7 @@ func TestGetFilterJob_JobFoundAndDocumentReturned(t *testing.T) {
 			Expect().Status(http.StatusCreated).JSON().Object()
 		filterJobID := expected.Value("filter_job_id").String().Raw()
 		expectedFilterJobID := expected.Value("filter_job_id").String().Raw()
-		expectedDatasetFilterID := expected.Value("dataset_filter_id").String().Raw()
+		expectedDatasetFilterID := expected.Value("instance_id").String().Raw()
 		expectedDimensionlistURL := expected.Value("dimension_list_url").String().Raw()
 		expectedState := expected.Value("state").String().Raw()
 
@@ -31,7 +33,7 @@ func TestGetFilterJob_JobFoundAndDocumentReturned(t *testing.T) {
 			actual := filterAPI.GET("/filters/{filter_job_id}", filterJobID).Expect().Status(http.StatusOK).JSON().Object()
 
 			actualFilterJobID := actual.Value("filter_job_id").String().Raw()
-			actualDatasetFilterID := actual.Value("dataset_filter_id").String().Raw()
+			actualDatasetFilterID := actual.Value("instance_id").String().Raw()
 			actualState := actual.Value("state").String().Raw()
 			actualDimensionlistURL := actual.Value("dimension_list_url").String().Raw()
 

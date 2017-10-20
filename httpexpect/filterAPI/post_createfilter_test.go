@@ -13,6 +13,8 @@ import (
 // 201- Job was created
 func TestPostCreateFilter_CreatesFilter(t *testing.T) {
 
+	setupDatastores()
+
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given a valid json input to create a filter", t, func() {
@@ -32,6 +34,8 @@ func TestPostCreateFilter_CreatesFilter(t *testing.T) {
 
 // 400 -Invalid request body
 func TestPostCreateFilter_InvalidInput(t *testing.T) {
+
+	setupDatastores()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
