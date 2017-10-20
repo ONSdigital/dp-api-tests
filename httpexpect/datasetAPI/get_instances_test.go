@@ -25,7 +25,8 @@ func TestGetAListOfInstances(t *testing.T) {
 		})
 
 		Convey("when the user filters by a 'state' value", func() {
-			mongo.Teardown(database, "instances", "_id", instanceID)
+			var docs []mongo.Doc
+
 			completedDoc := mongo.Doc{
 				Database:   database,
 				Collection: "instances",
@@ -41,8 +42,15 @@ func TestGetAListOfInstances(t *testing.T) {
 				Update:     validEditionConfirmedInstanceData,
 			}
 
-			docs := mongo.ManyDocs{[]mongo.Doc{completedDoc, editionConfirmedDoc}}
-			mongo.SetupMany(&docs)
+			docs = append(docs, completedDoc, editionConfirmedDoc)
+
+			d := &mongo.ManyDocs{
+				Docs: docs,
+			}
+
+			mongo.TeardownMany(d)
+
+			mongo.SetupMany(d)
 			response := datasetAPI.GET("/instances").WithQuery("state", "completed").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
 				Expect().Status(http.StatusOK).JSON().Object()
 
@@ -52,6 +60,8 @@ func TestGetAListOfInstances(t *testing.T) {
 					response.Value("items").Array().Element(i).Object().Value("state").Equal("completed")
 				}
 			}
+
+			mongo.TeardownMany(d)
 		})
 
 		Convey("when the user filters by multiple 'state' values", func() {
@@ -73,6 +83,11 @@ func TestGetAListOfInstances(t *testing.T) {
 		Convey("When the user is unauthorised", func() {
 			datasetAPI.GET("/instances").
 				Expect().Status(http.StatusUnauthorized)
+		})
+
+		Convey("When the user filters by the wrong 'state' value", func() {
+			datasetAPI.GET("/instances").WithQuery("state", "foo").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+				Expect().Status(http.StatusBadRequest)
 		})
 	})
 
