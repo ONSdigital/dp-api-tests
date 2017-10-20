@@ -9,7 +9,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestGetAListOfDatasets(t *testing.T) {
+func TestGetAListOfInstances(t *testing.T) {
 
 	mongo.Teardown(database, "instances", "_id", instanceID)
 	mongo.Setup(database, "instances", "_id", instanceID, validPublishedInstanceData)
@@ -22,6 +22,50 @@ func TestGetAListOfDatasets(t *testing.T) {
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("items").Array().Element(0).Object().Value("id").NotNull()
+		})
+
+		Convey("when the user filters by a 'state' value", func() {
+			mongo.Teardown(database, "instances", "_id", instanceID)
+			completedDoc := mongo.Doc{
+				Database:   database,
+				Collection: "instances",
+				Key:        "_id",
+				Value:      "799",
+				Update:     validCompletedInstanceData,
+			}
+			editionConfirmedDoc := mongo.Doc{
+				Database:   database,
+				Collection: "instances",
+				Key:        "_id",
+				Value:      "779",
+				Update:     validEditionConfirmedInstanceData,
+			}
+
+			docs := mongo.ManyDocs{[]mongo.Doc{completedDoc, editionConfirmedDoc}}
+			mongo.SetupMany(&docs)
+			response := datasetAPI.GET("/instances").WithQuery("state", "completed").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+				Expect().Status(http.StatusOK).JSON().Object()
+
+			for i := 0; i < len(response.Value("items").Array().Iter()); i++ {
+				response.Value("items").Array().Element(i).Object().Value("id").NotEqual("779")
+				if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == "799" {
+					response.Value("items").Array().Element(i).Object().Value("state").Equal("completed")
+				}
+			}
+		})
+
+		Convey("when the user filters by multiple 'state' values", func() {
+			response := datasetAPI.GET("/instances").WithQuery("state", "completed,edition-confirmed").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+				Expect().Status(http.StatusOK).JSON().Object()
+
+			for i := 0; i < len(response.Value("items").Array().Iter()); i++ {
+				if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == "799" {
+					response.Value("items").Array().Element(i).Object().Value("state").Equal("completed")
+				}
+				if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == "779" {
+					response.Value("items").Array().Element(i).Object().Value("state").Equal("edition-confirmed")
+				}
+			}
 		})
 	})
 
