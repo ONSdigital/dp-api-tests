@@ -14,6 +14,8 @@ import (
 // 200 - The filter job has been updated
 func TestPUTUpdateFilterJob_FilterJobUpdates(t *testing.T) {
 
+	setupDatastores()
+
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
@@ -22,7 +24,7 @@ func TestPUTUpdateFilterJob_FilterJobUpdates(t *testing.T) {
 			Expect().Status(http.StatusCreated).JSON().Object()
 		filterJobID := expected.Value("filter_job_id").String().Raw()
 		expectedFilterJobID := expected.Value("filter_job_id").String().Raw()
-		expectedDatasetFilterID := expected.Value("dataset_filter_id").String().Raw()
+		expectedDatasetFilterID := expected.Value("instance_id").String().Raw()
 		expectedDimensionlistURL := expected.Value("dimension_list_url").String().Raw()
 		expectedState := expected.Value("state").String().Raw()
 
@@ -35,7 +37,7 @@ func TestPUTUpdateFilterJob_FilterJobUpdates(t *testing.T) {
 				updated := filterAPI.GET("/filters/{filter_job_id}", filterJobID).Expect().Status(http.StatusOK).JSON().Object()
 
 				updatedFilterJobID := updated.Value("filter_job_id").String().Raw()
-				updatedDatasetFilterID := updated.Value("dataset_filter_id").String().Raw()
+				updatedDatasetFilterID := updated.Value("instance_id").String().Raw()
 				updatedState := updated.Value("state").String().Raw()
 				updatedDimensionListURL := updated.Value("dimension_list_url").String().Raw()
 
@@ -49,17 +51,17 @@ func TestPUTUpdateFilterJob_FilterJobUpdates(t *testing.T) {
 
 				dimResponse := filterAPI.GET("/filters/{filter_job_id}/dimensions", filterJobID).Expect().Status(http.StatusOK).JSON().Array()
 
-				dimResponse.Element(0).Object().Value("name").Equal("age")
+				dimResponse.Element(0).Object().Value("name").Equal("sex")
 				dimResponse.Element(0).Object().Value("dimension_url").NotNull()
 			})
 			Convey("Verify filter job dimension options are updated", func() {
 
-				dimOptionsResponse := filterAPI.GET("/filters/{filter_job_id}/dimensions/age/options", filterJobID).Expect().Status(http.StatusOK).JSON().Array()
+				dimOptionsResponse := filterAPI.GET("/filters/{filter_job_id}/dimensions/sex/options", filterJobID).Expect().Status(http.StatusOK).JSON().Array()
 
-				dimOptionsResponse.Element(0).Object().Value("option").Equal("27")
+				dimOptionsResponse.Element(0).Object().Value("option").Equal("male")
 				dimOptionsResponse.Element(0).Object().Value("dimension_option_url").NotNull()
 
-				dimOptionsResponse.Element(1).Object().Value("option").Equal("28")
+				dimOptionsResponse.Element(1).Object().Value("option").Equal("female")
 				dimOptionsResponse.Element(1).Object().Value("dimension_option_url").NotNull()
 			})
 		})
@@ -69,6 +71,8 @@ func TestPUTUpdateFilterJob_FilterJobUpdates(t *testing.T) {
 
 // 400 -Invalid request body
 func TestPUTUpdateFilterJob_InvalidInput(t *testing.T) {
+
+	setupDatastores()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -91,6 +95,8 @@ func TestPUTUpdateFilterJob_InvalidInput(t *testing.T) {
 
 // 403 - Forbidden, the job has been locked as it has been submitted to be processed
 func TestPUTUpdateSubmittedFilterJob_ForbiddenError(t *testing.T) {
+
+	setupDatastores()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 

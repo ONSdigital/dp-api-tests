@@ -14,6 +14,8 @@ import (
 // 200 - A list of dimension URLs
 func TestGetDimensions_AllDimensionUrlsReturns(t *testing.T) {
 
+	setupDatastores()
+
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
@@ -41,6 +43,8 @@ func TestGetDimensions_AllDimensionUrlsReturns(t *testing.T) {
 
 // 404- Filter job not found
 func TestGetDimensionsForFilterJob_FilterJobIDDoesNotExists(t *testing.T) {
+
+	setupDatastores()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 

@@ -53,6 +53,18 @@ func Teardown(database, collection, key, value string) error {
 	return nil
 }
 
+func RemoveAll(database, collection string) error {
+	s := session.Copy()
+	defer s.Clone()
+	_, err := s.DB(database).C(collection).RemoveAll(nil)
+	if err != nil {
+		log.Info("error removing all data", nil)
+		return err
+	}
+
+	return nil
+}
+
 // TeardownMany is a way of cleaning up many documents from mongo instance
 func TeardownMany(d *ManyDocs) error {
 	s := session.Copy()

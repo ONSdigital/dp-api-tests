@@ -14,6 +14,8 @@ import (
 // 200 - A list of all options for a dimension was returned
 func TestGetDimensionOptions_ListOfOptionsReturns(t *testing.T) {
 
+	setupDatastores()
+
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
@@ -34,10 +36,10 @@ func TestGetDimensionOptions_ListOfOptionsReturns(t *testing.T) {
 
 			response := filterAPI.GET("/filters/{filter_job_id}/dimensions/sex/options", filterJobID).Expect().Status(http.StatusOK).JSON().Array()
 
-			response.Element(0).Object().Value("option").Equal("female")
+			response.Element(0).Object().Value("option").Equal("male")
 			response.Element(0).Object().Value("dimension_option_url").NotNull()
 
-			response.Element(1).Object().Value("option").Equal("male")
+			response.Element(1).Object().Value("option").Equal("female")
 			response.Element(1).Object().Value("dimension_option_url").NotNull()
 		})
 
@@ -82,6 +84,8 @@ func TestGetDimensionOptions_ListOfOptionsReturns(t *testing.T) {
 // 400 - Filter job was not found
 func TestGetDimensionOptions_FilterJobIDDoesNotExists(t *testing.T) {
 
+    setupDatastores()
+
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTMultipleDimensionsCreateFilterJSON)).
@@ -99,6 +103,8 @@ func TestGetDimensionOptions_FilterJobIDDoesNotExists(t *testing.T) {
 
 // 404 - Dimension name was not found
 func TestGetDimensionOptions_DimensionNameDoesNotExists(t *testing.T) {
+
+	setupDatastores()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
