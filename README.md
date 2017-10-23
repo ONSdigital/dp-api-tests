@@ -1,10 +1,17 @@
 dp-api-tests
 ================
 
-
 ### Getting started
 
 `go test ./...` - run all the tests
+
+### Testing standards
+
+All tests should be written in the following structure:
+* Teardown all data related to test
+* Setup all data related to test, do NOT use API's to setup this data, if this fails then the test fails for the wrong reason.
+* Run test
+* Teardown all data related to test
 
 ### Configuration
 
@@ -22,6 +29,8 @@ environment variables, or with a link to a configuration guide.
 ### Contributing
 
 See [CONTRIBUTING](CONTRIBUTING.md) for details.
+
+####
 
 ### License
 
