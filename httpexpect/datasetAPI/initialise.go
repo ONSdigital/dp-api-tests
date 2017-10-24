@@ -11,12 +11,14 @@ import (
 var cfg *config.Config
 
 const (
-	database   = "datasets"
-	collection = "datasets"
-	datasetID  = "123"
-	editionID  = "456"
-	edition    = "2017"
-	instanceID = "789" // This maybe known as the version Id
+	database          = "datasets"
+	collection        = "datasets"
+	datasetID         = "123"
+	editionID         = "456"
+	edition           = "2017"
+	instanceID        = "789" // This maybe known as the version Id
+	dimensionID       = "999"
+	dimensionOptionID = "888"
 )
 
 func init() {
