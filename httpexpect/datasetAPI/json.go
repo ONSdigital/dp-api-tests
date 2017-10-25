@@ -137,7 +137,7 @@ var validTimeDimensionsData = bson.M{
 		"_id":                  "9811",
 		"instance_id":          instanceID,
 		"name":                 "time",
-		"value":                "202.45",
+		"option":               "202.45",
 		"links.code_list.id":   "64d384f1-ea3b-445c-8fb8-aa453f96e58a",
 		"links.code_list.href": "http://localhost:8080/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a",
 		"links.code.id":        "202.45",
@@ -155,7 +155,7 @@ var validAggregateDimensionsData = bson.M{
 		"_id":                  "9812",
 		"instance_id":          instanceID,
 		"name":                 "aggregate",
-		"value":                "cpi1dimA19",
+		"option":               "cpi1dimA19",
 		"label":                "CPI (Overall Index)",
 		"links.code_list.id":   "64d384f1-ea3b-445c-8fb8-aa453f96e58a",
 		"links.code_list.href": "http://localhost:8080/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a",
@@ -167,43 +167,6 @@ var validAggregateDimensionsData = bson.M{
 	},
 }
 
-// var validTimeDimensionsOptionsData = bson.M{
-// 	"$set": bson.M{
-
-// 		"_id":         dimensionOptionID,
-// 		"instance_id": instanceID,
-// 		"name":        "time",
-// 		"value":       "2050.56",
-
-// 		"label":         "",
-// 		"links.code.id": "2050.56",
-
-// 		"links.code.href":      "http://localhost:8080/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/2050.56",
-// 		"links.code_list.id":   "64d384f1-ea3b-445c-8fb8-aa453f96e58a",
-// 		"links.code_list.href": "http://localhost:8080/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a",
-// 		"node_id":              "90",
-// 		"test_data":            "true",
-// 	},
-// }
-
-// var validSexDimensionsOptionsData = bson.M{
-// 	"$set": bson.M{
-
-// 		"_id":         dimensionOptionID,
-// 		"instance_id": instanceID,
-// 		"name":        "sex",
-// 		"value":       "male",
-
-// 		"label":         "male",
-// 		"links.code.id": "2050.56",
-
-// 		"links.code.href":      "http://localhost:8080/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/2050.56",
-// 		"links.code_list.id":   "64d384f1-ea3b-445c-8fb8-aa453f96e58a",
-// 		"links.code_list.href": "http://localhost:8080/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a",
-// 		"node_id":              "92",
-// 		"test_data":            "true",
-// 	},
-// }
 var validPublishedEditionData = bson.M{
 	"$set": bson.M{
 		"edition":             "2017",

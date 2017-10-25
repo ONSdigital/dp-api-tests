@@ -12,7 +12,7 @@ import (
 	mgo "gopkg.in/mgo.v2"
 )
 
-func TestGetDimensionOptions_ReturnsAllOptionsOfAnDimension(t *testing.T) {
+func TestGetDimensionOptions_ReturnsAllDimensionOptionsFromADataset(t *testing.T) {
 	var docs []mongo.Doc
 
 	datasetDoc := mongo.Doc{
@@ -41,93 +41,86 @@ func TestGetDimensionOptions_ReturnsAllOptionsOfAnDimension(t *testing.T) {
 
 	dimensionOneDoc := mongo.Doc{
 		Database:   "datasets",
-		Collection: "dimensions",
+		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9811",
 		Update:     validTimeDimensionsData,
 	}
-	// dimensionTwoDoc := mongo.Doc{
-	// 	Database:   "datasets",
-	// 	Collection: "dimensions",
-	// 	Key:        "_id",
-	// 	Value:      "9812",
-	// 	Update:     validSexDimensionsData,
-	// }
+	dimensionTwoDoc := mongo.Doc{
+		Database:   "datasets",
+		Collection: "dimension.options",
+		Key:        "_id",
+		Value:      "9812",
+		Update:     validAggregateDimensionsData,
+	}
 
-	// dimensionTimeOptionsDoc := mongo.Doc{
-	// 	Database:   "datasets",
-	// 	Collection: "dimension.options",
-	// 	Key:        "_id",
-	// 	Value:      dimensionOptionID,
-	// 	Update:     validTimeDimensionsOptionsData,
-	// }
-
-	// dimensionSexOptionsDoc := mongo.Doc{
-	// 	Database:   "datasets",
-	// 	Collection: "dimension.options",
-	// 	Key:        "_id",
-	// 	Value:      dimensionOptionID,
-	// 	Update:     validSexDimensionsOptionsData,
-	// }
-
-	docs = append(docs, datasetDoc, editionDoc, dimensionOneDoc, instanceOneDoc)
+	docs = append(docs, datasetDoc, editionDoc, dimensionOneDoc, dimensionTwoDoc, instanceOneDoc)
 
 	d := &mongo.ManyDocs{
 		Docs: docs,
 	}
 
-	mongo.TeardownMany(d)
-
-	if err := mongo.SetupMany(d); err != nil {
-		os.Exit(1)
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
 	}
 
+	if err := mongo.SetupMany(d); err != nil {
+		log.ErrorC("Was unable to run test", err, nil)
+		os.Exit(1)
+	}
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-	Convey("Get a list of all options of a dimension", t, func() {
+	Convey("Get a list of time dimension options of a dataset", t, func() {
 		Convey("When user is authenticated", func() {
 
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/sex/options", datasetID, edition, 1).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/time/options", datasetID, edition, 1).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
 				Expect().Status(http.StatusOK).JSON().Object()
 
-			response.Value("items").Array().Length().Equal(1)
-			response.Value("items").Array().Element(0).Object().Value("dimension_id").Equal("sex")
-			response.Value("items").Array().Element(0).Object().Value("label").Equal("male")
-
-			response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("id").Equal("2050.56")
-			response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/2050.56$")
-
-			response.Value("items").Array().Element(0).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/instances/" + instanceID + "$")
-
-			response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("id").Equal("64d384f1-ea3b-445c-8fb8-aa453f96e58a")
-			response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")
-
-			// Why it is empty?
-			// response.Value("items").Array().Element(0).Object().Value("options").Equal("")
+			checkTimeDimensionResponse(response)
 
 		})
 
 		Convey("When a user is not authenticated", func() {
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/sex/options", datasetID, edition, 1).
+			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/time/options", datasetID, edition, 1).
 				Expect().Status(http.StatusOK).JSON().Object()
+
 			response.Value("items").Array().Length().Equal(1)
-			response.Value("items").Array().Element(0).Object().Value("dimension_id").Equal("sex")
-			response.Value("items").Array().Element(0).Object().Value("label").Equal("male")
 
-			response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("id").Equal("2050.56")
-			response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/2050.56$")
+			checkTimeDimensionResponse(response)
 
-			response.Value("items").Array().Element(0).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/instances/" + instanceID + "$")
-
-			response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("id").Equal("64d384f1-ea3b-445c-8fb8-aa453f96e58a")
-			response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")
-
-			// Why it is empty?
-			// response.Value("items").Array().Element(0).Object().Value("options").Equal("")
 		})
 	})
 
-	mongo.TeardownMany(d)
+	Convey("Get a list of aggregate dimension options of a dataset", t, func() {
+		Convey("When user is authenticated", func() {
+
+			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/aggregate/options", datasetID, edition, 1).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+				Expect().Status(http.StatusOK).JSON().Object()
+			response.Value("items").Array().Length().Equal(1)
+
+			checkAggregateDimensionResponse(response)
+
+		})
+
+		Convey("When a user is not authenticated", func() {
+			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/aggregate/options", datasetID, edition, 1).
+				Expect().Status(http.StatusOK).JSON().Object()
+
+			response.Value("items").Array().Length().Equal(1)
+
+			checkAggregateDimensionResponse(response)
+
+		})
+	})
+
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			os.Exit(1)
+		}
+	}
 }
 
 func TestGetDimensionOptions_Failed(t *testing.T) {
@@ -149,30 +142,7 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 		Update:     validPublishedEditionData,
 	}
 
-	instanceOneDoc := mongo.Doc{
-		Database:   "datasets",
-		Collection: "instances",
-		Key:        "_id",
-		Value:      instanceID,
-		Update:     validPublishedInstanceData,
-	}
-
-	dimensionOneDoc := mongo.Doc{
-		Database:   "datasets",
-		Collection: "dimensions",
-		Key:        "_id",
-		Value:      "9811",
-		Update:     validTimeDimensionsData,
-	}
-	// dimensionTwoDoc := mongo.Doc{
-	// 	Database:   "datasets",
-	// 	Collection: "dimensions",
-	// 	Key:        "_id",
-	// 	Value:      "9812",
-	// 	Update:     validSexDimensionsData,
-	// }
-
-	docs = append(docs, datasetDoc, editionDoc, instanceOneDoc, dimensionOneDoc)
+	docs = append(docs, datasetDoc, editionDoc)
 
 	d := &mongo.ManyDocs{
 		Docs: docs,
@@ -192,39 +162,39 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-	Convey("Fail to get a list of versions for a dataset", t, func() {
+	Convey("Fail to get a list of time dimension options for a dataset", t, func() {
 		Convey("When authenticated", func() {
 			Convey("When the dataset does not exist", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", "1234", "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
-					Expect().Status(http.StatusBadRequest)
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", "1234", "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+					Expect().Status(http.StatusNotFound)
 			})
 
 			Convey("When the edition does not exist", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
-					Expect().Status(http.StatusBadRequest)
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", datasetID, "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+					Expect().Status(http.StatusNotFound)
 			})
 
 			Convey("When there are no versions", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", datasetID, edition).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
 					Expect().Status(http.StatusNotFound)
 			})
 		})
 		Convey("When unauthenticated", func() {
 			Convey("When the dataset does not exist", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", "1234", "2018").
-					Expect().Status(http.StatusBadRequest)
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", "1234", "2018").
+					Expect().Status(http.StatusNotFound)
 			})
 
 			Convey("When the edition does not exist", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, "2018").
-					Expect().Status(http.StatusBadRequest)
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", datasetID, "2018").
+					Expect().Status(http.StatusNotFound)
 			})
 
 			Convey("When there are no published versions", func() {
 				// Create an unpublished instance document
 				mongo.Teardown(database, "instances", "_id", "799")
 				mongo.Setup(database, "instances", "_id", "799", validUnpublishedInstanceData)
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", datasetID, edition).
 					Expect().Status(http.StatusNotFound)
 
 				mongo.Teardown(database, "instances", "_id", "799")
@@ -237,4 +207,40 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 			os.Exit(1)
 		}
 	}
+}
+
+func checkTimeDimensionResponse(response *httpexpect.Object) {
+
+	response.Value("items").Array().Element(0).Object().Value("dimension_id").Equal("time")
+
+	response.Value("items").Array().Element(0).Object().Value("label").Equal("")
+
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("id").Equal("202.45")
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/202.45$")
+
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/instances/" + instanceID + "$")
+
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("id").Equal("64d384f1-ea3b-445c-8fb8-aa453f96e58a")
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")
+
+	response.Value("items").Array().Element(0).Object().Value("option").Equal("202.45")
+
+}
+
+func checkAggregateDimensionResponse(response *httpexpect.Object) {
+
+	response.Value("items").Array().Element(0).Object().Value("dimension_id").Equal("aggregate")
+
+	response.Value("items").Array().Element(0).Object().Value("label").Equal("CPI (Overall Index)")
+
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("id").Equal("cpi1dimA19")
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/cpi1dimA19$")
+
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/instances/" + instanceID + "$")
+
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("id").Equal("64d384f1-ea3b-445c-8fb8-aa453f96e58a")
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")
+
+	response.Value("items").Array().Element(0).Object().Value("option").Equal("cpi1dimA19")
+
 }
