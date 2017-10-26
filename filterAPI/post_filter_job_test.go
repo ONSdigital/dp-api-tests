@@ -5,8 +5,6 @@ import (
 	"os"
 	"testing"
 
-	mgo "gopkg.in/mgo.v2"
-
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
@@ -15,14 +13,12 @@ import (
 
 func TestSuccessfullyPostFilterJob(t *testing.T) {
 
-	err := teardownCreateFilterTestData()
-	if err != nil {
-		log.ErrorC("Failed to tear down test data", err, nil)
+	if err := setupInstance(); err != nil {
+		log.ErrorC("Unable to setup instance", err, nil)
 		os.Exit(1)
 	}
 
-	if err = mongo.Setup("datasets", "instances", "_id", instanceID, ValidPublishedInstanceData); err != nil {
-		log.ErrorC("Was unable to run test", err, nil)
+	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
 		os.Exit(1)
 	}
 
@@ -44,9 +40,12 @@ func TestSuccessfullyPostFilterJob(t *testing.T) {
 		})
 	})
 
-	err = teardownCreateFilterTestData()
-	if err != nil {
-		log.ErrorC("Failed to tear down test data", err, nil)
+	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+		os.Exit(1)
+	}
+
+	if err := teardownInstance(); err != nil {
+		log.ErrorC("Unable to teardown instance", err, nil)
 		os.Exit(1)
 	}
 }
@@ -63,43 +62,13 @@ func TestFailureToPostFilterJob(t *testing.T) {
 		})
 	})
 
-	err := teardownCreateFilterTestData()
-	if err != nil {
-		log.ErrorC("Failed to tear down test data", err, nil)
-		os.Exit(1)
-	}
-}
+	Convey("Given a request to create a filter", t, func() {
+		Convey("When the request body contains an instance id which does not exist", func() {
+			Convey("Then the response returns status not found (404)", func() {
 
-func teardownCreateFilterTestData() error {
-	var docs []mongo.Doc
-
-	instanceDoc := mongo.Doc{
-		Database:   "datasets",
-		Collection: "instances",
-		Key:        "_id",
-		Value:      instanceID,
-		Update:     ValidPublishedInstanceData,
-	}
-
-	filterJobDoc := mongo.Doc{
-		Database:   database,
-		Collection: collection,
-		Key:        "instance_id",
-		Value:      instanceID,
-		Update:     ValidCreatedFilterJob,
-	}
-
-	docs = append(docs, instanceDoc, filterJobDoc)
-
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
-
-	if err := mongo.TeardownMany(d); err != nil {
-		if err != mgo.ErrNotFound {
-			return err
-		}
-	}
-
-	return nil
+				filterAPI.POST("/filters").WithBytes([]byte(ValidPOSTCreateFilterJSON)).
+					Expect().Status(http.StatusNotFound).Body().Contains("Instance not found\n")
+			})
+		})
+	})
 }
