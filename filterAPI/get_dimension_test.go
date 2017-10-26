@@ -8,25 +8,24 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
+	uuid "github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestSuccessfullyGetDimension(t *testing.T) {
 
-	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
-		os.Exit(1)
-	}
-
-	if err := setupInstance(); err != nil {
-		log.ErrorC("Unable to setup instance", err, nil)
-		os.Exit(1)
-	}
+	filterID := uuid.NewV4().String()
+	filterJobID := uuid.NewV4().String()
+	instanceID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
 
-		if err := mongo.Setup(database, collection, "_id", filterID, ValidFilterJobWithMultipleDimensions); err != nil {
+		update := GetValidFilterJobWithMultipleDimensions(filterID, instanceID, filterJobID)
+
+		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
+			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
 
@@ -54,26 +53,17 @@ func TestSuccessfullyGetDimension(t *testing.T) {
 		})
 	})
 
-	if err := teardownInstance(); err != nil {
-		log.ErrorC("Unable to teardown instance", err, nil)
-		os.Exit(1)
-	}
-
 	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+		log.ErrorC("Unable to remove test data from mongo db", err, nil)
 		os.Exit(1)
 	}
 }
 
 func TestFailureToGetDimension(t *testing.T) {
 
-	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
-		os.Exit(1)
-	}
-
-	if err := setupInstance(); err != nil {
-		log.ErrorC("Unable to setup instance", err, nil)
-		os.Exit(1)
-	}
+	filterID := uuid.NewV4().String()
+	filterJobID := uuid.NewV4().String()
+	instanceID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -88,7 +78,11 @@ func TestFailureToGetDimension(t *testing.T) {
 	})
 
 	Convey("Given a filter job", t, func() {
-		if err := mongo.Setup(database, collection, "_id", filterID, ValidFilterJobWithMultipleDimensions); err != nil {
+
+		update := GetValidFilterJobWithMultipleDimensions(filterID, instanceID, filterJobID)
+
+		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
+			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
 		Convey("When a request is made to get a dimension for filter job and the dimension does not exist", func() {
@@ -100,13 +94,8 @@ func TestFailureToGetDimension(t *testing.T) {
 		})
 
 		if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+			log.ErrorC("Unable to remove test data from mongo db", err, nil)
 			os.Exit(1)
 		}
 	})
-
-	if err := teardownInstance(); err != nil {
-		log.ErrorC("Unable to teardown instance", err, nil)
-		os.Exit(1)
-	}
-
 }

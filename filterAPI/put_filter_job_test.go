@@ -8,28 +8,31 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
+	uuid "github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestSuccessfulPutFilterJob(t *testing.T) {
 
-	if err := setupInstance(); err != nil {
-		log.ErrorC("Unable to setup instance", err, nil)
-		os.Exit(1)
-	}
+	filterID := uuid.NewV4().String()
+	filterJobID := uuid.NewV4().String()
+	instanceID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter with a state of created", t, func() {
 
-		if err := mongo.Setup(database, collection, "_id", filterID, ValidFilterJobWithMultipleDimensions); err != nil {
+		update := GetValidFilterJobWithMultipleDimensions(filterID, instanceID, filterJobID)
+
+		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
+			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
 
 		Convey("When filter job is updated with new properties and a change of state to submitted", func() {
 
 			filterAPI.PUT("/filters/{filter_job_id}", filterJobID).
-				WithBytes([]byte(ValidPUTUpdateFilterJobJSON)).
+				WithBytes([]byte(GetValidPUTUpdateFilterJobJSON(instanceID))).
 				Expect().Status(http.StatusOK)
 
 			Convey("Then filter job state is updated and new dimension options are added", func() {
@@ -48,26 +51,17 @@ func TestSuccessfulPutFilterJob(t *testing.T) {
 		})
 
 		if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+			log.ErrorC("Unable to remove test data from mongo db", err, nil)
 			os.Exit(1)
 		}
 	})
-
-	if err := teardownInstance(); err != nil {
-		log.ErrorC("Unable to teardown instance", err, nil)
-		os.Exit(1)
-	}
 }
 
 func TestFailureToPutFilterJob(t *testing.T) {
 
-	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
-		os.Exit(1)
-	}
-
-	if err := setupInstance(); err != nil {
-		log.ErrorC("Unable to setup instance", err, nil)
-		os.Exit(1)
-	}
+	filterID := uuid.NewV4().String()
+	filterJobID := uuid.NewV4().String()
+	instanceID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -75,7 +69,7 @@ func TestFailureToPutFilterJob(t *testing.T) {
 		Convey("When a post request is made to update filter job", func() {
 			Convey("Then the request fails and returns status not found (404)", func() {
 
-				filterAPI.PUT("/filters/{filter_job_id}", filterJobID).WithBytes([]byte(ValidPUTUpdateFilterJobJSON)).
+				filterAPI.PUT("/filters/{filter_job_id}", filterJobID).WithBytes([]byte(GetValidPUTUpdateFilterJobJSON(instanceID))).
 					Expect().Status(http.StatusNotFound).Body().Contains("Filter job not found")
 			})
 		})
@@ -83,44 +77,47 @@ func TestFailureToPutFilterJob(t *testing.T) {
 
 	Convey("Given an existing filter job", t, func() {
 
-		if err := mongo.Setup(database, collection, "_id", filterID, ValidFilterJobWithMultipleDimensions); err != nil {
+		update := GetValidFilterJobWithMultipleDimensions(filterID, instanceID, filterJobID)
+
+		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
+			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
 
 		Convey("When an invalid json body is sent to update filter job", func() {
 			Convey("Then fail to update filter job and return status bad request (400)", func() {
 
-				filterAPI.PUT("/filters/{filter_job_id}", filterJobID).WithBytes([]byte(InvalidSyntaxJSON)).
+				filterAPI.PUT("/filters/{filter_job_id}", filterJobID).WithBytes([]byte(GetInvalidSyntaxJSON(instanceID))).
 					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - Invalid request body\n")
 			})
 		})
 
 		if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+			log.ErrorC("Unable to remove test data from mongo db", err, nil)
 			os.Exit(1)
 		}
 	})
 
 	Convey("Given an existing filter with submitted state", t, func() {
 
-		if err := mongo.Setup(database, collection, "_id", filterID, ValidSubmittedFilterJob); err != nil {
+		update := GetValidSubmittedFilterJob(filterID, instanceID, filterJobID)
+
+		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
+			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
 
 		Convey("When attempting to update filter job", func() {
 			Convey("Then fail to update filter job and return status forbidden (403)", func() {
 
-				filterAPI.PUT("/filters/{filter_job_id}", filterJobID).WithBytes([]byte(ValidPUTUpdateFilterJobJSON)).
+				filterAPI.PUT("/filters/{filter_job_id}", filterJobID).WithBytes([]byte(GetValidPUTUpdateFilterJobJSON(instanceID))).
 					Expect().Status(http.StatusForbidden).Body().Contains("Forbidden, the filter job has been locked as it has been submitted to be processed\n")
 			})
 		})
 
 		if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+			log.ErrorC("Unable to remove test data from mongo db", err, nil)
 			os.Exit(1)
 		}
 	})
-
-	if err := teardownInstance(); err != nil {
-		log.ErrorC("Unable to teardown instance", err, nil)
-		os.Exit(1)
-	}
 }

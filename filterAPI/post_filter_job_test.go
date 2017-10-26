@@ -8,17 +8,18 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
+	uuid "github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestSuccessfullyPostFilterJob(t *testing.T) {
 
-	if err := setupInstance(); err != nil {
-		log.ErrorC("Unable to setup instance", err, nil)
-		os.Exit(1)
-	}
+	instanceID := uuid.NewV4().String()
 
-	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+	update := GetValidPublishedInstanceData(instanceID)
+
+	if err := setupInstance(instanceID, update); err != nil {
+		log.ErrorC("Unable to setup instance", err, nil)
 		os.Exit(1)
 	}
 
@@ -27,7 +28,7 @@ func TestSuccessfullyPostFilterJob(t *testing.T) {
 	Convey("Given a valid json input to create a filter", t, func() {
 		Convey("Then the response returns a status of created (201)", func() {
 
-			response := filterAPI.POST("/filters").WithBytes([]byte(ValidPOSTCreateFilterJSON)).
+			response := filterAPI.POST("/filters").WithBytes([]byte(GetValidPOSTCreateFilterJSON(instanceID))).
 				Expect().Status(http.StatusCreated).JSON().Object()
 
 			// TODO Check all fields in response
@@ -40,11 +41,12 @@ func TestSuccessfullyPostFilterJob(t *testing.T) {
 		})
 	})
 
-	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+	if err := mongo.Teardown(database, collection, "instance_id", instanceID); err != nil {
+		log.ErrorC("Unable to remove test data from mongo db", err, nil)
 		os.Exit(1)
 	}
 
-	if err := teardownInstance(); err != nil {
+	if err := teardownInstance(instanceID); err != nil {
 		log.ErrorC("Unable to teardown instance", err, nil)
 		os.Exit(1)
 	}
@@ -52,12 +54,14 @@ func TestSuccessfullyPostFilterJob(t *testing.T) {
 
 func TestFailureToPostFilterJob(t *testing.T) {
 
+	instanceID := uuid.NewV4().String()
+
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given invalid json input to create a filter", t, func() {
 		Convey("Then the response returns status bad request (400)", func() {
 
-			filterAPI.POST("/filters").WithBytes([]byte(InvalidJSON)).
+			filterAPI.POST("/filters").WithBytes([]byte(GetInvalidJSON(instanceID))).
 				Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - Invalid request body\n")
 		})
 	})
@@ -66,7 +70,7 @@ func TestFailureToPostFilterJob(t *testing.T) {
 		Convey("When the request body contains an instance id which does not exist", func() {
 			Convey("Then the response returns status not found (404)", func() {
 
-				filterAPI.POST("/filters").WithBytes([]byte(ValidPOSTCreateFilterJSON)).
+				filterAPI.POST("/filters").WithBytes([]byte(GetValidPOSTCreateFilterJSON(instanceID))).
 					Expect().Status(http.StatusNotFound).Body().Contains("Instance not found\n")
 			})
 		})

@@ -27,7 +27,7 @@ var time = mongo.Dimension{
 }
 
 var residenceType = mongo.Dimension{
-	DimensionURL: "http://localhost:22100/filter/321/dimensions/Residence Type",
+	DimensionURL: "",
 	Name:         "Residence Type",
 	Options:      []string{"Lives in a communal establishment", "Lives in a household"},
 }
@@ -35,8 +35,6 @@ var residenceType = mongo.Dimension{
 // ExpectedFilterJob represents the expected data stored against a filter job with dimensions
 var ExpectedFilterJob = mongo.FilterJob{
 	DimensionListURL: "http://localhost:8080/instances/321/dimensions",
-	FilterID:         "321",
-	InstanceID:       "789",
 	Dimensions: []mongo.Dimension{
 		age,
 		sex,
@@ -80,8 +78,6 @@ var updatedTime = mongo.Dimension{
 // ExpectedFilterJobUpdated represents the expected data stored against a filter job with dimensions
 var ExpectedFilterJobUpdated = mongo.FilterJob{
 	DimensionListURL: "http://localhost:8080/instances/321/dimensions",
-	FilterID:         "321",
-	InstanceID:       "789",
 	Dimensions: []mongo.Dimension{
 		updatedAge,
 		updatedSex,

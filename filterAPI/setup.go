@@ -3,22 +3,23 @@ package filterAPI
 import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
-func setupInstance() error {
+func setupInstance(instanceID string, update bson.M) error {
 
-	if err := teardownInstance(); err != nil {
+	if err := teardownInstance(instanceID); err != nil {
 		return err
 	}
 
-	if err := mongo.Setup("datasets", "instances", "instance_id", instanceID, ValidPublishedInstanceData); err != nil {
+	if err := mongo.Setup("datasets", "instances", "instance_id", instanceID, update); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func teardownInstance() error {
+func teardownInstance(instanceID string) error {
 	if err := mongo.Teardown("datasets", "instances", "instance_id", instanceID); err != nil {
 		if err == mgo.ErrNotFound {
 			return nil
