@@ -2,134 +2,125 @@ package filterAPI
 
 import (
 	"net/http"
-	"strings"
+	"os"
 	"testing"
 
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-// Update filter job
-// Update the filter job by providing new properties
-// 200 - The filter job has been updated
-func TestPUTUpdateFilterJob_FilterJobUpdates(t *testing.T) {
+func TestSuccessfulPutFilterJob(t *testing.T) {
 
-	setupDatastores()
+	if err := setupInstance(); err != nil {
+		log.ErrorC("Unable to setup instance", err, nil)
+		os.Exit(1)
+	}
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
-	Convey("Given an existing filter", t, func() {
+	Convey("Given an existing filter with a state of created", t, func() {
 
-		expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTCreateFilterJSON)).
-			Expect().Status(http.StatusCreated).JSON().Object()
-		filterJobID := expected.Value("filter_job_id").String().Raw()
-		expectedFilterJobID := expected.Value("filter_job_id").String().Raw()
-		expectedDatasetFilterID := expected.Value("instance_id").String().Raw()
-		expectedDimensionlistURL := expected.Value("dimension_list_url").String().Raw()
-		expectedState := expected.Value("state").String().Raw()
+		if err := mongo.Setup(database, collection, "_id", filterID, ValidFilterJobWithMultipleDimensions); err != nil {
+			os.Exit(1)
+		}
 
-		Convey("Update filter job with new properties", func() {
+		Convey("When filter job is updated with new properties and a change of state to submitted", func() {
 
-			filterAPI.PUT("/filters/{filter_job_id}", filterJobID).WithBytes([]byte(validPUTUpdateFilterJobJSON)).Expect().Status(http.StatusOK)
+			filterAPI.PUT("/filters/{filter_job_id}", filterJobID).
+				WithBytes([]byte(ValidPUTUpdateFilterJobJSON)).
+				Expect().Status(http.StatusOK)
 
-			Convey("Verify filter job state is updated", func() {
+			Convey("Then filter job state is updated and new dimension options are added", func() {
 
-				updated := filterAPI.GET("/filters/{filter_job_id}", filterJobID).Expect().Status(http.StatusOK).JSON().Object()
+				filterJob, err := mongo.GetFilterJob(database, collection, "filter_job_id", filterJobID)
+				if err != nil {
+					log.ErrorC("Unable to retrieve updated document", err, nil)
+				}
 
-				updatedFilterJobID := updated.Value("filter_job_id").String().Raw()
-				updatedDatasetFilterID := updated.Value("instance_id").String().Raw()
-				updatedState := updated.Value("state").String().Raw()
-				updatedDimensionListURL := updated.Value("dimension_list_url").String().Raw()
-
-				So(updatedState, ShouldNotEqual, expectedState)
-				So(updatedFilterJobID, ShouldEqual, expectedFilterJobID)
-				So(updatedDatasetFilterID, ShouldEqual, expectedDatasetFilterID)
-				So(updatedDimensionListURL, ShouldEqual, expectedDimensionlistURL)
-
-			})
-			Convey("Verify filter job dimension is updated", func() {
-
-				dimResponse := filterAPI.GET("/filters/{filter_job_id}/dimensions", filterJobID).Expect().Status(http.StatusOK).JSON().Array()
-
-				dimResponse.Element(0).Object().Value("name").Equal("sex")
-				dimResponse.Element(0).Object().Value("dimension_url").NotNull()
-			})
-			Convey("Verify filter job dimension options are updated", func() {
-
-				dimOptionsResponse := filterAPI.GET("/filters/{filter_job_id}/dimensions/sex/options", filterJobID).Expect().Status(http.StatusOK).JSON().Array()
-
-				dimOptionsResponse.Element(0).Object().Value("option").Equal("male")
-				dimOptionsResponse.Element(0).Object().Value("dimension_option_url").NotNull()
-
-				dimOptionsResponse.Element(1).Object().Value("option").Equal("female")
-				dimOptionsResponse.Element(1).Object().Value("dimension_option_url").NotNull()
+				So(filterJob.State, ShouldNotEqual, "created") // It could be submitted or completed
+				So(filterJob.FilterID, ShouldEqual, filterJobID)
+				So(len(filterJob.Dimensions), ShouldEqual, 1)
+				So(filterJob.Dimensions[0].Name, ShouldEqual, "sex")
+				So(filterJob.Dimensions[0].Options, ShouldResemble, []string{"intersex", "other"})
 			})
 		})
 
+		if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+			os.Exit(1)
+		}
 	})
+
+	if err := teardownInstance(); err != nil {
+		log.ErrorC("Unable to teardown instance", err, nil)
+		os.Exit(1)
+	}
 }
 
-// 400 -Invalid request body
-func TestPUTUpdateFilterJob_InvalidInput(t *testing.T) {
+func TestFailureToPutFilterJob(t *testing.T) {
 
-	setupDatastores()
+	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+		os.Exit(1)
+	}
+
+	if err := setupInstance(); err != nil {
+		log.ErrorC("Unable to setup instance", err, nil)
+		os.Exit(1)
+	}
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
-	Convey("Given invalid json input to update filter job", t, func() {
+	Convey("Given a filter job does not exist", t, func() {
+		Convey("When a post request is made to update filter job", func() {
+			Convey("Then the request fails and returns status not found (404)", func() {
 
-		Convey("Given an existing filter job", func() {
-
-			expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTCreateFilterJSON)).
-				Expect().Status(http.StatusCreated).JSON().Object()
-			filterJobID := expected.Value("filter_job_id").String().Raw()
-
-			Convey("The filter job endpoint returns 400 invalid json message ", func() {
-
-				filterAPI.PUT("/filters/{filter_job_id}", filterJobID).WithBytes([]byte(invalidSyntaxJSON)).
-					Expect().Status(http.StatusBadRequest)
+				filterAPI.PUT("/filters/{filter_job_id}", filterJobID).WithBytes([]byte(ValidPUTUpdateFilterJobJSON)).
+					Expect().Status(http.StatusNotFound).Body().Contains("Filter job not found")
 			})
 		})
 	})
-}
 
-// 403 - Forbidden, the job has been locked as it has been submitted to be processed
-func TestPUTUpdateSubmittedFilterJob_ForbiddenError(t *testing.T) {
+	Convey("Given an existing filter job", t, func() {
 
-	setupDatastores()
+		if err := mongo.Setup(database, collection, "_id", filterID, ValidFilterJobWithMultipleDimensions); err != nil {
+			os.Exit(1)
+		}
 
-	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
+		Convey("When an invalid json body is sent to update filter job", func() {
+			Convey("Then fail to update filter job and return status bad request (400)", func() {
+
+				filterAPI.PUT("/filters/{filter_job_id}", filterJobID).WithBytes([]byte(InvalidSyntaxJSON)).
+					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - Invalid request body\n")
+			})
+		})
+
+		if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+			os.Exit(1)
+		}
+	})
 
 	Convey("Given an existing filter with submitted state", t, func() {
 
-		expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTCreateFilterSubmittedJobJSON)).
-			Expect().Status(http.StatusCreated).JSON().Object()
-		filterJobID := expected.Value("filter_job_id").String().Raw()
+		if err := mongo.Setup(database, collection, "_id", filterID, ValidSubmittedFilterJob); err != nil {
+			os.Exit(1)
+		}
 
-		Convey("Updating a submitted job throws forbidden error", func() {
+		Convey("When attempting to update filter job", func() {
+			Convey("Then fail to update filter job and return status forbidden (403)", func() {
 
-			filterAPI.PUT("/filters/{filter_job_id}", filterJobID).WithBytes([]byte(validPUTUpdateFilterJobJSON)).Expect().Status(http.StatusForbidden)
-
+				filterAPI.PUT("/filters/{filter_job_id}", filterJobID).WithBytes([]byte(ValidPUTUpdateFilterJobJSON)).
+					Expect().Status(http.StatusForbidden).Body().Contains("Forbidden, the filter job has been locked as it has been submitted to be processed\n")
+			})
 		})
 
+		if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+			os.Exit(1)
+		}
 	})
+
+	if err := teardownInstance(); err != nil {
+		log.ErrorC("Unable to teardown instance", err, nil)
+		os.Exit(1)
+	}
 }
-
-// 404 - Filter job not found
-func TestPUTUpdateFilterJob_FilterJobIDDoesNotExists(t *testing.T) {
-
-	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
-
-	expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTMultipleDimensionsCreateFilterJSON)).
-		Expect().Status(http.StatusCreated).JSON().Object()
-	filterJobID := expected.Value("filter_job_id").String().Raw()
-
-	invalidFilterJobID := strings.Replace(filterJobID, "-", "", 9)
-	Convey("A post request to add a dimension for a filter job that does not exist returns 404 not found", t, func() {
-
-		filterAPI.PUT("/filters/{filter_job_id}", invalidFilterJobID).WithBytes([]byte(validPUTUpdateFilterJobJSON)).
-			Expect().Status(http.StatusNotFound).Body().Contains("Filter job not found")
-	})
-}
-
-// 1 more tests need to write for 401 response

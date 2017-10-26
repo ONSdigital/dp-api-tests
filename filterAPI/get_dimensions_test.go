@@ -2,60 +2,91 @@ package filterAPI
 
 import (
 	"net/http"
-	"strings"
+	"os"
 	"testing"
 
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-// Get all dimensions used by this filter
-// Return a list of all dimensions which are going to be used to filter on
-// 200 - A list of dimension URLs
-func TestGetDimensions_AllDimensionUrlsReturns(t *testing.T) {
+func TestSuccessfullyGetListOfDimensions(t *testing.T) {
 
-	setupDatastores()
+	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+		os.Exit(1)
+	}
+
+	if err := setupInstance(); err != nil {
+		log.ErrorC("Unable to setup instance", err, nil)
+		os.Exit(1)
+	}
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
 
-		expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTMultipleDimensionsCreateFilterJSON)).
-			Expect().Status(http.StatusCreated).JSON().Object()
-		filterJobID := expected.Value("filter_job_id").String().Raw()
+		if err := mongo.Setup(database, collection, "_id", filterID, ValidFilterJobWithMultipleDimensions); err != nil {
+			os.Exit(1)
+		}
 
-		Convey("Get the list of all dimensions in a filter job", func() {
+		Convey("When requesting a list of dimensions in a filter job", func() {
+			Convey("Then return a list of all dimensions for filter job", func() {
 
-			actual := filterAPI.GET("/filters/{filter_job_id}/dimensions", filterJobID).Expect().Status(http.StatusOK).JSON().Array()
+				actual := filterAPI.GET("/filters/{filter_job_id}/dimensions", filterJobID).
+					Expect().Status(http.StatusOK).JSON().Array()
 
-			actual.Element(0).Object().Value("dimension_url").NotNull()
-			actual.Element(0).Object().Value("name").Equal("age")
-			actual.Element(1).Object().Value("dimension_url").NotNull()
-			actual.Element(1).Object().Value("name").Equal("sex")
-			actual.Element(2).Object().Value("dimension_url").NotNull()
-			actual.Element(2).Object().Value("name").Equal("Goods and services")
-			actual.Element(3).Object().Value("dimension_url").NotNull()
-			actual.Element(3).Object().Value("name").Equal("time")
+				actual.Element(0).Object().Value("dimension_url").NotNull()
+				actual.Element(0).Object().Value("name").Equal("age")
+				actual.Element(1).Object().Value("dimension_url").NotNull()
+				actual.Element(1).Object().Value("name").Equal("sex")
+				actual.Element(2).Object().Value("dimension_url").NotNull()
+				actual.Element(2).Object().Value("name").Equal("Goods and services")
+				actual.Element(3).Object().Value("dimension_url").NotNull()
+				actual.Element(3).Object().Value("name").Equal("time")
+			})
 		})
-
 	})
+
+	if err := teardownInstance(); err != nil {
+		log.ErrorC("Unable to teardown instance", err, nil)
+		os.Exit(1)
+	}
+
+	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+		os.Exit(1)
+	}
 }
 
-// 404- Filter job not found
-func TestGetDimensionsForFilterJob_FilterJobIDDoesNotExists(t *testing.T) {
+func TestFailureToGetListOfDimensions(t *testing.T) {
 
-	setupDatastores()
+	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+		os.Exit(1)
+	}
+
+	if err := setupInstance(); err != nil {
+		log.ErrorC("Unable to setup instance", err, nil)
+		os.Exit(1)
+	}
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
-	expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTMultipleDimensionsCreateFilterJSON)).
-		Expect().Status(http.StatusCreated).JSON().Object()
-	filterJobID := expected.Value("filter_job_id").String().Raw()
+	Convey("Given a filter job does not exist", t, func() {
+		Convey("When requesting a list of dimensions for filter job", func() {
+			Convey("Then return status not found (404)", func() {
 
-	invalidFilterJobID := strings.Replace(filterJobID, "-", "", 9)
-	Convey("A get request for dimensons for a filter job that does not exist returns 404 not found", t, func() {
-
-		filterAPI.GET("/filters/{filter_job_id}/dimensions", invalidFilterJobID).
-			Expect().Status(http.StatusNotFound)
+				filterAPI.GET("/filters/{filter_job_id}/dimensions", filterJobID).
+					Expect().Status(http.StatusNotFound).Body().Contains("Filter job not found")
+			})
+		})
 	})
+
+	if err := teardownInstance(); err != nil {
+		log.ErrorC("Unable to teardown instance", err, nil)
+		os.Exit(1)
+	}
+
+	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+		os.Exit(1)
+	}
 }

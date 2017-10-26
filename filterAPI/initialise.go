@@ -11,9 +11,11 @@ import (
 var cfg *config.Config
 
 const (
-	database   = "filters"
-	collection = "filters"
-	instanceID = "789"
+	database    = "filters"
+	collection  = "filters"
+	instanceID  = "789"
+	filterID    = "123"
+	filterJobID = "321"
 )
 
 func init() {

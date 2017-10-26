@@ -2,26 +2,34 @@ package filterAPI
 
 import (
 	"net/http"
-	"strings"
+	"os"
 	"testing"
 
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-// Remove an option from a dimension
-// 200 - Option was removed
-func TestDeleteRemoveDimensionOptions(t *testing.T) {
+func TestSuccessfullyDeleteRemoveDimensionOptions(t *testing.T) {
 
-	setupDatastores()
+	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+		os.Exit(1)
+	}
+
+	if err := setupInstance(); err != nil {
+		log.ErrorC("Unable to setup instance", err, nil)
+		os.Exit(1)
+	}
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
 
-		expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTMultipleDimensionsCreateFilterJSON)).
-			Expect().Status(http.StatusCreated).JSON().Object()
-		filterJobID := expected.Value("filter_job_id").String().Raw()
+		if err := mongo.Setup(database, collection, "_id", filterID, ValidFilterJobWithMultipleDimensions); err != nil {
+			os.Exit(1)
+		}
+
 		Convey("Remove an option to a dimension to filter on and Verify options are removed", func() {
 
 			filterAPI.DELETE("/filters/{filter_job_id}/dimensions/age/options/27", filterJobID).Expect().Status(http.StatusOK)
@@ -42,74 +50,93 @@ func TestDeleteRemoveDimensionOptions(t *testing.T) {
 			timeDimResponse.Element(1).Object().Value("option").NotEqual("April 1997").Equal("June 1997")
 			timeDimResponse.Element(2).Object().Value("option").NotEqual("April 1997").Equal("September 1997")
 			timeDimResponse.Element(3).Object().Value("option").NotEqual("April 1997").Equal("December 1997")
+		})
+	})
 
+	if err := teardownInstance(); err != nil {
+		log.ErrorC("Unable to teardown instance", err, nil)
+		os.Exit(1)
+	}
+
+	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+		os.Exit(1)
+	}
+}
+
+func TestFailureToDeleteRemoveDimensionOptions(t *testing.T) {
+
+	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+		os.Exit(1)
+	}
+
+	if err := setupInstance(); err != nil {
+		log.ErrorC("Unable to setup instance", err, nil)
+		os.Exit(1)
+	}
+
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
+
+	Convey("Given filter job does not exist", t, func() {
+		Convey("When requesting to delete an option from the filter job", func() {
+
+			Convey("Then the response returns status bad request (400)", func() {
+
+				filterAPI.DELETE("/filters/{filter_job_id}/dimensions/wages/options/27000", filterJobID).
+					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - filter job not found")
+			})
+		})
+	})
+
+	Convey("Given a filter job", t, func() {
+
+		if err := mongo.Setup(database, collection, "_id", filterID, ValidFilterJobWithMultipleDimensions); err != nil {
+			os.Exit(1)
+		}
+
+		// TODO Reinstate commented out code below once API has been updated
+		Convey("When requesting to delete an option from a dimension that does not exist against the filter job", func() {
+			Convey("Then the response returns status bad request (400)", func() {
+
+				filterAPI.DELETE("/filters/{filter_job_id}/dimensions/wages/options/27000", filterJobID).
+					Expect().Status(http.StatusBadRequest) //.Body().Contains("Bad request - dimension not found")
+			})
 		})
 
-	})
-}
+		Convey("When requesting to delete an option that does not exist", func() {
+			Convey("Then the response returns status not found (404)", func() {
 
-// 400 - This error code could be one or more of:
-// . Filter job was not found
-// . Dimension name was not found
-func TestDeleteRemoveDimensionOptions_FilterJobIDAndDimensionDoesNotExists(t *testing.T) {
-
-	setupDatastores()
-
-	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
-
-	expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTMultipleDimensionsCreateFilterJSON)).
-		Expect().Status(http.StatusCreated).JSON().Object()
-	filterJobID := expected.Value("filter_job_id").String().Raw()
-
-	invalidFilterJobID := strings.Replace(filterJobID, "-", "", 9)
-
-	Convey("A delete request to remove an option of a dimension of a filter job that does not exist returns 400 error", t, func() {
-
-		filterAPI.DELETE("/filters/{filter_job_id}/dimensions/age/options/27", invalidFilterJobID).
-			Expect().Status(http.StatusBadRequest)
-	})
-	Convey("A delete request to remove an option of a dimension that does not exist returns 400 error", t, func() {
-
-		filterAPI.DELETE("/filters/{filter_job_id}/dimensions/ages/options/27", filterJobID).
-			Expect().Status(http.StatusBadRequest)
-	})
-}
-
-// 403 - Forbidden, the filter job has been locked as it has been submitted to be processed
-func TestDeleteRemoveDimensionOptions_SubmittedJobForbiddenError(t *testing.T) {
-
-	setupDatastores()
-
-	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
-
-	Convey("Given an existing filter with submitted state", t, func() {
-
-		expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTCreateFilterSubmittedJobJSON)).
-			Expect().Status(http.StatusCreated).JSON().Object()
-		filterJobID := expected.Value("filter_job_id").String().Raw()
-		Convey("Deleting an option for a submitted job should throw forbidden error", func() {
-
-			filterAPI.DELETE("/filters/{filter_job_id}/dimensions/age/options/27", filterJobID).Expect().Status(http.StatusForbidden)
-
+				filterAPI.DELETE("/filters/{filter_job_id}/dimensions/age/options/44", filterJobID).
+					Expect().Status(http.StatusNotFound) //.Body().Contains("Dimension option not found")
+			})
 		})
 
+		if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+			os.Exit(1)
+		}
 	})
-}
 
-// 404 - Dimension option was not found
-func TestDeleteRemoveDimensionOptions_DimensionOptionDoesNotExists(t *testing.T) {
+	Convey("Given a submitted filter job", t, func() {
 
-	setupDatastores()
+		if err := mongo.Setup(database, collection, "_id", filterID, ValidSubmittedFilterJob); err != nil {
+			os.Exit(1)
+		}
 
-	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
+		Convey("When requesting to delete an option", func() {
+			Convey("Then the response returns status forbidden (403)", func() {
 
-	expected := filterAPI.POST("/filters").WithBytes([]byte(validPOSTMultipleDimensionsCreateFilterJSON)).
-		Expect().Status(http.StatusCreated).JSON().Object()
-	filterJobID := expected.Value("filter_job_id").String().Raw()
+				filterAPI.DELETE("/filters/{filter_job_id}/dimensions/age/options/27", filterJobID).
+					Expect().Status(http.StatusForbidden).Body().
+					Contains("Forbidden, the filter job has been locked as it has been submitted to be processed\n")
+			})
+		})
 
-	Convey("A delete request for a filter job to remove an option for a dimension that did not exists", t, func() {
-
-		filterAPI.DELETE("/filters/{filter_job_id}/dimensions/age/options/44", filterJobID).
-			Expect().Status(http.StatusNotFound)
+		if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+			os.Exit(1)
+		}
 	})
+
+	if err := teardownInstance(); err != nil {
+		log.ErrorC("Unable to teardown instance", err, nil)
+		os.Exit(1)
+	}
 }
