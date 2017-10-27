@@ -29,13 +29,13 @@ func TestSuccessfulyUpdateDataset(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Update the dataset", t, func() {
-		datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").WithBytes([]byte(validPUTUpdateDatasetJSON)).
+		datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPUTUpdateDatasetJSON)).
 			Expect().Status(http.StatusOK)
 	})
 
 	Convey("Get the updated dataset details", t, func() {
 
-		response := datasetAPI.GET("/datasets/{id}", datasetID).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+		response := datasetAPI.GET("/datasets/{id}", datasetID).WithHeader(internalToken, internalTokenID).
 			Expect().Status(http.StatusOK).JSON().Object()
 
 		response.Value("id").Equal(datasetID)
@@ -95,7 +95,7 @@ func TestFailureToUpdateDataset(t *testing.T) {
 
 	Convey("Fail to update a dataset with an invalid token value", t, func() {
 
-		datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F4651").WithBytes([]byte(validPUTUpdateDatasetJSON)).
+		datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader(internalToken, invalidInternalTokenID).WithBytes([]byte(validPUTUpdateDatasetJSON)).
 			Expect().Status(http.StatusUnauthorized)
 	})
 
@@ -107,7 +107,7 @@ func TestFailureToUpdateDataset(t *testing.T) {
 
 	Convey("Fail to update a dataset with an invalid json body", t, func() {
 
-		datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").WithBytes([]byte("{")).
+		datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader(internalToken, internalTokenID).WithBytes([]byte("{")).
 			Expect().Status(http.StatusBadRequest)
 	})
 

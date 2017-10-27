@@ -31,7 +31,7 @@ func TestGetAListOfInstances(t *testing.T) {
 
 	Convey("Get a list of instances", t, func() {
 		Convey("when the user is authorised", func() {
-			response := datasetAPI.GET("/instances").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			response := datasetAPI.GET("/instances").WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("items").Array().Element(0).Object().Value("id").NotNull()
@@ -73,7 +73,7 @@ func TestGetAListOfInstances(t *testing.T) {
 				os.Exit(1)
 			}
 
-			response := datasetAPI.GET("/instances").WithQuery("state", "completed").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			response := datasetAPI.GET("/instances").WithQuery("state", "completed").WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			for i := 0; i < len(response.Value("items").Array().Iter()); i++ {
@@ -92,7 +92,7 @@ func TestGetAListOfInstances(t *testing.T) {
 		})
 
 		Convey("when the user filters by multiple 'state' values", func() {
-			response := datasetAPI.GET("/instances").WithQuery("state", "completed,edition-confirmed").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			response := datasetAPI.GET("/instances").WithQuery("state", "completed,edition-confirmed").WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			for i := 0; i < len(response.Value("items").Array().Iter()); i++ {
@@ -113,7 +113,7 @@ func TestGetAListOfInstances(t *testing.T) {
 		})
 
 		Convey("When the user filters by the wrong 'state' value", func() {
-			datasetAPI.GET("/instances").WithQuery("state", "foo").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			datasetAPI.GET("/instances").WithQuery("state", "foo").WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusBadRequest)
 		})
 	})

@@ -25,7 +25,7 @@ func TestSuccessfullyPostDataset(t *testing.T) {
 
 	Convey("Create a dataset", t, func() {
 
-		response := datasetAPI.POST("/datasets/{id}", datasetID).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").WithBytes([]byte(validPOSTCreateDatasetJSON)).
+		response := datasetAPI.POST("/datasets/{id}", datasetID).WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPOSTCreateDatasetJSON)).
 			Expect().Status(http.StatusCreated).JSON().Object()
 
 		response.Value("id").Equal(datasetID)
@@ -74,7 +74,7 @@ func TestFailureToPostDataset(t *testing.T) {
 
 	Convey("Fail to create a dataset due to an invalid token value", t, func() {
 
-		datasetAPI.POST("/datasets/{id}", datasetID).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F4651").WithBytes([]byte(validPOSTCreateDatasetJSON)).
+		datasetAPI.POST("/datasets/{id}", datasetID).WithHeader(internalToken, invalidInternalTokenID).WithBytes([]byte(validPOSTCreateDatasetJSON)).
 			Expect().Status(http.StatusUnauthorized)
 	})
 
