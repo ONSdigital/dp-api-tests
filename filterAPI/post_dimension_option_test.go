@@ -32,6 +32,9 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 
 		filterAPI.POST("/filters/{filter_job_id}/dimensions/age/options/28", filterJobID).
 			Expect().Status(http.StatusCreated)
+		// Add a duplicate option, this should not be added into the dimension option
+		filterAPI.POST("/filters/{filter_job_id}/dimensions/age/options/28", filterJobID).
+			Expect().Status(http.StatusCreated)
 		filterAPI.POST("/filters/{filter_job_id}/dimensions/sex/options/unknown", filterJobID).
 			Expect().Status(http.StatusCreated)
 		filterAPI.POST("/filters/{filter_job_id}/dimensions/Goods and services/options/welfare", filterJobID).
