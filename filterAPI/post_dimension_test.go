@@ -58,6 +58,20 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 
 			So(filterJob, ShouldResemble, expectedFilterJob)
 		})
+
+		Convey("Check dimensions can not be duplicated", func() {
+			filterAPI.POST("/filters/{filter_job_id}/dimensions/age", filterJobID).
+				Expect().Status(http.StatusCreated)
+			filterAPI.POST("/filters/{filter_job_id}/dimensions/age", filterJobID).
+				Expect().Status(http.StatusCreated)
+
+			filterJob, err := mongo.GetFilterJob(database, collection, "filter_job_id", filterJobID)
+			if err != nil {
+				log.ErrorC("Unable to retrieve updated document", err, nil)
+			}
+			// No duplicate dimensions should be added, so the size should 5.
+			So(len(filterJob.Dimensions), ShouldEqual, 5)
+		})
 	})
 
 	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
