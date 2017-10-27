@@ -31,7 +31,7 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 
 	Convey("Get an instance", t, func() {
 		Convey("When user is authenticated", func() {
-			response := datasetAPI.GET("/instances/{id}", "799").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			response := datasetAPI.GET("/instances/{id}", "799").WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("id").Equal("799")
@@ -82,7 +82,7 @@ func TestFailureToGetInstance(t *testing.T) {
 	Convey("Fail to get instance document", t, func() {
 		Convey("and return status not found", func() {
 			Convey("when instance document does not exist", func() {
-				datasetAPI.GET("/instances/{id}", "799").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+				datasetAPI.GET("/instances/{id}", "799").WithHeader(internalToken, internalTokenID).
 					Expect().Status(http.StatusNotFound)
 			})
 		})

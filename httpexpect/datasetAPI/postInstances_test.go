@@ -17,7 +17,7 @@ func TestSuccessfullyPostInstance(t *testing.T) {
 
 	Convey("Successfully create an Instance", t, func() {
 
-		response := datasetAPI.POST("/instances").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").WithBytes([]byte(validPOSTCreateInstanceJSON)).
+		response := datasetAPI.POST("/instances").WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPOSTCreateInstanceJSON)).
 			Expect().Status(http.StatusCreated).JSON().Object()
 
 		instanceUniqueID := response.Value("id").String().Raw()
@@ -48,7 +48,7 @@ func TestFailureToPostInstance(t *testing.T) {
 
 	Convey("Fail to create an Instance due to an invalid token", t, func() {
 
-		datasetAPI.POST("/instances").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F4651").WithBytes([]byte(validPOSTCreateInstanceJSON)).
+		datasetAPI.POST("/instances").WithHeader(internalToken, invalidInternalTokenID).WithBytes([]byte(validPOSTCreateInstanceJSON)).
 			Expect().Status(http.StatusUnauthorized)
 	})
 

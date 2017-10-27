@@ -149,6 +149,24 @@ var validTimeDimensionsData = bson.M{
 		"test_data":    "true",
 	},
 }
+
+var validTimeDimensionsDataWithOutOptions = bson.M{
+	"$set": bson.M{
+
+		"_id":                  "9811",
+		"instance_id":          instanceID,
+		"name":                 "time",
+		"links.code_list.id":   "64d384f1-ea3b-445c-8fb8-aa453f96e58a",
+		"links.code_list.href": "http://localhost:8080/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a",
+		"links.code.id":        "202.45",
+		"links.code.href":      "http://localhost:8080/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/202.45",
+
+		"node_id": "",
+
+		"last_updated": "2017-09-09", // TODO Should be isodate
+		"test_data":    "true",
+	},
+}
 var validAggregateDimensionsData = bson.M{
 	"$set": bson.M{
 

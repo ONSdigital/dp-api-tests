@@ -11,14 +11,17 @@ import (
 var cfg *config.Config
 
 const (
-	database          = "datasets"
-	collection        = "datasets"
-	datasetID         = "123"
-	editionID         = "456"
-	edition           = "2017"
-	instanceID        = "789" // This maybe known as the version Id
-	dimensionID       = "999"
-	dimensionOptionID = "888"
+	database               = "datasets"
+	collection             = "datasets"
+	datasetID              = "123"
+	editionID              = "456"
+	edition                = "2017"
+	instanceID             = "789" // This maybe known as the version Id
+	dimensionID            = "999"
+	dimensionOptionID      = "888"
+	internalToken          = "Internal-Token"
+	internalTokenID        = "FD0108EA-825D-411C-9B1D-41EF7727F465"
+	invalidInternalTokenID = "FD0108EA-825D-411C-9B1D-41EF7727F465A"
 )
 
 func init() {

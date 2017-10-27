@@ -76,7 +76,7 @@ func TestGetDimensionOptions_ReturnsAllDimensionOptionsFromADataset(t *testing.T
 	Convey("Get a list of time dimension options of a dataset", t, func() {
 		Convey("When user is authenticated", func() {
 
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/time/options", datasetID, edition, 1).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/time/options", datasetID, edition, 1).WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			checkTimeDimensionResponse(response)
@@ -97,7 +97,7 @@ func TestGetDimensionOptions_ReturnsAllDimensionOptionsFromADataset(t *testing.T
 	Convey("Get a list of aggregate dimension options of a dataset", t, func() {
 		Convey("When user is authenticated", func() {
 
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/aggregate/options", datasetID, edition, 1).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/aggregate/options", datasetID, edition, 1).WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 			response.Value("items").Array().Length().Equal(1)
 
@@ -118,11 +118,14 @@ func TestGetDimensionOptions_ReturnsAllDimensionOptionsFromADataset(t *testing.T
 
 	if err := mongo.TeardownMany(d); err != nil {
 		if err != mgo.ErrNotFound {
+			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
 		}
 	}
 }
 
+// These tests will fail due to bugs in the code.
+// Raised bugs in trello card.
 func TestGetDimensionOptions_Failed(t *testing.T) {
 	var docs []mongo.Doc
 
@@ -142,7 +145,23 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 		Update:     validPublishedEditionData,
 	}
 
-	docs = append(docs, datasetDoc, editionDoc)
+	instanceOneDoc := mongo.Doc{
+		Database:   "datasets",
+		Collection: "instances",
+		Key:        "_id",
+		Value:      instanceID,
+		Update:     validPublishedInstanceData,
+	}
+
+	dimensionOneDoc := mongo.Doc{
+		Database:   "datasets",
+		Collection: "dimension.options",
+		Key:        "_id",
+		Value:      "9811",
+		Update:     validTimeDimensionsDataWithOutOptions,
+	}
+
+	docs = append(docs, datasetDoc, editionDoc, instanceOneDoc, dimensionOneDoc)
 
 	d := &mongo.ManyDocs{
 		Docs: docs,
@@ -165,45 +184,63 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 	Convey("Fail to get a list of time dimension options for a dataset", t, func() {
 		Convey("When authenticated", func() {
 			Convey("When the dataset does not exist", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", "1234", "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
-					Expect().Status(http.StatusNotFound)
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", "1234", edition).WithHeader(internalToken, internalTokenID).
+					Expect().Status(http.StatusBadRequest)
 			})
 
 			Convey("When the edition does not exist", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", datasetID, "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
-					Expect().Status(http.StatusNotFound)
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", datasetID, "2018").WithHeader(internalToken, internalTokenID).
+					Expect().Status(http.StatusBadRequest)
 			})
 
 			Convey("When there are no versions", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", datasetID, edition).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
-					Expect().Status(http.StatusNotFound)
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/5/dimensions/time/options", datasetID, edition).WithHeader(internalToken, internalTokenID).
+					Expect().Status(http.StatusBadRequest)
 			})
 		})
 		Convey("When unauthenticated", func() {
 			Convey("When the dataset does not exist", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", "1234", "2018").
-					Expect().Status(http.StatusNotFound)
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", "1234", edition).
+					Expect().Status(http.StatusBadRequest)
 			})
 
 			Convey("When the edition does not exist", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", datasetID, "2018").
-					Expect().Status(http.StatusNotFound)
+					Expect().Status(http.StatusBadRequest)
 			})
 
 			Convey("When there are no published versions", func() {
 				// Create an unpublished instance document
 				mongo.Teardown(database, "instances", "_id", "799")
 				mongo.Setup(database, "instances", "_id", "799", validUnpublishedInstanceData)
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", datasetID, edition).
-					Expect().Status(http.StatusNotFound)
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/5/dimensions/time/options", datasetID, edition).
+					Expect().Status(http.StatusBadRequest)
 
 				mongo.Teardown(database, "instances", "_id", "799")
 			})
 		})
 	})
 
+	Convey("Given a valid dataset id, edition and version with no dimensions", t, func() {
+		Convey("When authenticated and get the time dimension options", func() {
+			Convey("Then the error code should be 404", func() {
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", datasetID, edition).WithHeader(internalToken, internalTokenID).
+					Expect().Status(http.StatusNotFound)
+			})
+
+		})
+		Convey("When unauthenticated and get the time dimension options", func() {
+			Convey("Then the error code should be 404", func() {
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", datasetID, edition).
+					Expect().Status(http.StatusNotFound)
+			})
+
+		})
+	})
+
 	if err := mongo.TeardownMany(d); err != nil {
 		if err != mgo.ErrNotFound {
+			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
 		}
 	}

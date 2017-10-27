@@ -55,7 +55,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 
 	Convey("Update an instance properties", t, func() {
 
-		datasetAPI.PUT("/instances/{instance_id}", "799").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").WithBytes([]byte(validPUTCompletedInstanceJSON)).
+		datasetAPI.PUT("/instances/{instance_id}", "799").WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPUTCompletedInstanceJSON)).
 			Expect().Status(http.StatusOK)
 	})
 

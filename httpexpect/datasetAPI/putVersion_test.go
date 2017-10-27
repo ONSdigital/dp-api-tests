@@ -71,7 +71,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 
 	Convey("Fail to update a version for an edition of a dataset", t, func() {
 
-		datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/2", datasetID, edition).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").WithBytes([]byte(validPUTUpdateVersionJSON)).
+		datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/2", datasetID, edition).WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPUTUpdateVersionJSON)).
 			Expect().Status(http.StatusOK)
 	})
 

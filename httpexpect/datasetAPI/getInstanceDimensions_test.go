@@ -76,7 +76,7 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 	Convey("Get a list of all dimensions from an instance", t, func() {
 		Convey("When user is authenticated", func() {
 
-			response := datasetAPI.GET("/instances/{instance_id}/dimensions", instanceID).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			response := datasetAPI.GET("/instances/{instance_id}/dimensions", instanceID).WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("items").Array().Length().Equal(2)
@@ -98,6 +98,7 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 
 	if err := mongo.TeardownMany(d); err != nil {
 		if err != mgo.ErrNotFound {
+			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
 		}
 	}
@@ -119,7 +120,7 @@ func TestFailureToGetInstanceDimensions(t *testing.T) {
 	Convey("Fail to get instance document", t, func() {
 		Convey("and return status not found", func() {
 			Convey("when instance document does not exist", func() {
-				datasetAPI.GET("/instances/{id}/dimensions", "7990").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+				datasetAPI.GET("/instances/{id}/dimensions", "7990").WithHeader(internalToken, internalTokenID).
 					Expect().Status(http.StatusNotFound)
 			})
 		})
@@ -137,7 +138,7 @@ func TestFailureToGetInstanceDimensions(t *testing.T) {
 
 		Convey("and return status not unauthorised", func() {
 			Convey("when an invalid token is provided", func() {
-				datasetAPI.GET("/instances/{id}/dimensions", "789").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465999").
+				datasetAPI.GET("/instances/{id}/dimensions", "789").WithHeader(internalToken, invalidInternalTokenID).
 					Expect().Status(http.StatusUnauthorized)
 			})
 		})
@@ -145,6 +146,7 @@ func TestFailureToGetInstanceDimensions(t *testing.T) {
 
 	if err := mongo.Teardown(database, "instances", "_id", "799"); err != nil {
 		if err != mgo.ErrNotFound {
+			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
 		}
 	}

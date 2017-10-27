@@ -76,7 +76,7 @@ func TestGetInstanceDimensionOptions_ReturnsAllDimensionOptionsFromAnInstance(t 
 	Convey("Get a list of all unique time  dimension options from an instance", t, func() {
 		Convey("When user is authenticated", func() {
 
-			response := datasetAPI.GET("/instances/{instance_id}/dimensions/time/options", instanceID).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			response := datasetAPI.GET("/instances/{instance_id}/dimensions/time/options", instanceID).WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("dimension_id").Equal("time")
@@ -97,7 +97,7 @@ func TestGetInstanceDimensionOptions_ReturnsAllDimensionOptionsFromAnInstance(t 
 	Convey("Get a list of all unique aggregate dimension options from an instance", t, func() {
 		Convey("When user is authenticated", func() {
 
-			response := datasetAPI.GET("/instances/{instance_id}/dimensions/aggregate/options", instanceID).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			response := datasetAPI.GET("/instances/{instance_id}/dimensions/aggregate/options", instanceID).WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("dimension_id").Equal("aggregate")
@@ -138,7 +138,7 @@ func TestFailureToGetInstanceDimensionOptions(t *testing.T) {
 	Convey("Fail to get instance document", t, func() {
 		Convey("and return status bad request", func() {
 			Convey("when instance document does not exist", func() {
-				datasetAPI.GET("/instances/{id}/dimensions/time/options", "7990").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+				datasetAPI.GET("/instances/{id}/dimensions/time/options", "7990").WithHeader(internalToken, internalTokenID).
 					Expect().Status(http.StatusBadRequest)
 			})
 		})
@@ -156,14 +156,14 @@ func TestFailureToGetInstanceDimensionOptions(t *testing.T) {
 
 		Convey("and return status not unauthorised", func() {
 			Convey("when an invalid token is provided", func() {
-				datasetAPI.GET("/instances/{id}/dimensions/time/options", "789").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465999").
+				datasetAPI.GET("/instances/{id}/dimensions/time/options", "789").WithHeader(internalToken, invalidInternalTokenID).
 					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 
 		Convey("and return status not found", func() {
 			Convey("dimension_id does not match any dimensions within the instance", func() {
-				datasetAPI.GET("/instances/{id}/dimensions/timeeww2342/options", "789").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465999").
+				datasetAPI.GET("/instances/{id}/dimensions/timeeww2342/options", "789").WithHeader(internalToken, internalTokenID).
 					Expect().Status(http.StatusNotFound)
 			})
 		})
@@ -171,6 +171,7 @@ func TestFailureToGetInstanceDimensionOptions(t *testing.T) {
 
 	if err := mongo.Teardown(database, "instances", "_id", "799"); err != nil {
 		if err != mgo.ErrNotFound {
+			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
 		}
 	}
