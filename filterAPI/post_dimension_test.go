@@ -77,7 +77,6 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 			So(len(filterJob.Dimensions), ShouldEqual, 4)
 
 			for _, dimension := range filterJob.Dimensions {
-				log.Debug("dimension", log.Data{"dimension": dimension})
 				if dimension.Name == "age" {
 					So(dimension.Options, ShouldResemble, []string{"40"})
 					break
