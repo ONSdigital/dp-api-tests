@@ -45,7 +45,7 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 		})
 
 		Convey("when the user is authorised", func() {
-			response := datasetAPI.GET("/datasets").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			response := datasetAPI.GET("/datasets").WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("items").Array().Element(0).Object().Value("id").NotNull()

@@ -64,7 +64,7 @@ func TestSuccessfullyGetListOfDatasetEditions(t *testing.T) {
 	Convey("Get a list of editions for a dataset", t, func() {
 		Convey("When user is authenticated", func() {
 
-			response := datasetAPI.GET("/datasets/{id}/editions", datasetID).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			response := datasetAPI.GET("/datasets/{id}/editions", datasetID).WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("items").Array().Length().Equal(2)
@@ -123,7 +123,7 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 		}
 
 		Convey("When there are no editions for a dataset", func() {
-			datasetAPI.GET("/datasets/{id}/editions", datasetID).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			datasetAPI.GET("/datasets/{id}/editions", datasetID).WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusNotFound)
 		})
 

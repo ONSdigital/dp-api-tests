@@ -70,7 +70,7 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 
 	Convey("Get a list of all versions of a dataset", t, func() {
 		Convey("When user is authenticated", func() {
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("items").Array().Length().Equal(2)
@@ -138,17 +138,17 @@ func TestGetVersions_Failed(t *testing.T) {
 	Convey("Fail to get a list of versions for a dataset", t, func() {
 		Convey("When authenticated", func() {
 			Convey("When the dataset does not exist", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", "1234", "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", "1234", "2018").WithHeader(internalToken, internalTokenID).
 					Expect().Status(http.StatusBadRequest)
 			})
 
 			Convey("When the edition does not exist", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, "2018").WithHeader(internalToken, internalTokenID).
 					Expect().Status(http.StatusBadRequest)
 			})
 
 			Convey("When there are no versions", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(internalToken, internalTokenID).
 					Expect().Status(http.StatusNotFound)
 			})
 		})

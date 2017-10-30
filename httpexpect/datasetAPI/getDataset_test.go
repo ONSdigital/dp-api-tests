@@ -32,7 +32,7 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 	Convey("Get a dataset", t, func() {
 		Convey("When the user is authenticated", func() {
 
-			response := datasetAPI.GET("/datasets/{id}", datasetID).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			response := datasetAPI.GET("/datasets/{id}", datasetID).WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("id").Equal(datasetID)
@@ -73,7 +73,7 @@ func TestFailureToGetADataset(t *testing.T) {
 	Convey("Fail to get a dataset document", t, func() {
 		Convey("and return status not found", func() {
 			Convey("When the dataset document does not exist", func() {
-				datasetAPI.GET("/datasets/{id}", datasetID).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+				datasetAPI.GET("/datasets/{id}", datasetID).WithHeader(internalToken, internalTokenID).
 					Expect().Status(http.StatusNotFound)
 			})
 			Convey("When the user is not authenticated and the dataset document is not published", func() {

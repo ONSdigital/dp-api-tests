@@ -64,7 +64,7 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 	Convey("Get an edition of a dataset", t, func() {
 		Convey("When user is authenticated and edition is not published", func() {
 
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			response := datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, "2018").WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("id").Equal("466")
@@ -142,7 +142,7 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 
 	Convey("Fail to get an edition of a dataset", t, func() {
 		Convey("When dataset does not exist", func() {
-			datasetAPI.GET("/datasets/{id}/editions/{edition}", "133", "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			datasetAPI.GET("/datasets/{id}/editions/{edition}", "133", "2018").WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusBadRequest)
 		})
 
@@ -152,7 +152,7 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 		}
 
 		Convey("When the edition does not exist against dataset", func() {
-			datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, "2018").WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, "2018").WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusNotFound)
 		})
 

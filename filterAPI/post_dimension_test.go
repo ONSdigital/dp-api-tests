@@ -68,12 +68,12 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 				WithBytes([]byte(ageOptions)).
 				Expect().Status(http.StatusCreated)
 
-			// Check data has been updated as expected
 			filterJob, err := mongo.GetFilterJob(database, collection, "filter_job_id", filterJobID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve updated document", err, nil)
 			}
 
+			// Check data has been updated as expected
 			So(len(filterJob.Dimensions), ShouldEqual, 4)
 
 			for _, dimension := range filterJob.Dimensions {
