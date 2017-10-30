@@ -46,6 +46,8 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 			filterJob.Downloads = nil
 			filterJob.Events = nil
 
+			So(len(filterJob.Dimensions), ShouldEqual, 5)
+
 			// Check dimension url is set for residenceType before removing,
 			// so test can compare data to expected data
 			So(filterJob.Dimensions[4].Name, ShouldEqual, "Residence Type")
@@ -57,6 +59,30 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 			expectedFilterJob.FilterID = filterJobID
 
 			So(filterJob, ShouldResemble, expectedFilterJob)
+		})
+
+		Convey("Overwrite a dimension that already exists on a filter job", func() {
+			ageOptions := `{"options": ["40"]}`
+
+			filterAPI.POST("/filters/{filter_job_id}/dimensions/age", filterJobID).
+				WithBytes([]byte(ageOptions)).
+				Expect().Status(http.StatusCreated)
+
+			// Check data has been updated as expected
+			filterJob, err := mongo.GetFilterJob(database, collection, "filter_job_id", filterJobID)
+			if err != nil {
+				log.ErrorC("Unable to retrieve updated document", err, nil)
+			}
+
+			So(len(filterJob.Dimensions), ShouldEqual, 4)
+
+			for _, dimension := range filterJob.Dimensions {
+				log.Debug("dimension", log.Data{"dimension": dimension})
+				if dimension.Name == "age" {
+					So(dimension.Options, ShouldResemble, []string{"40"})
+					break
+				}
+			}
 		})
 	})
 
