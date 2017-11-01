@@ -12,7 +12,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestSuccessfullyPostFilterJob(t *testing.T) {
+func TestSuccessfullyPostfilterBlueprint(t *testing.T) {
 
 	instanceID := uuid.NewV4().String()
 
@@ -31,13 +31,12 @@ func TestSuccessfullyPostFilterJob(t *testing.T) {
 			response := filterAPI.POST("/filters").WithBytes([]byte(GetValidPOSTCreateFilterJSON(instanceID))).
 				Expect().Status(http.StatusCreated).JSON().Object()
 
-			// TODO Check all fields in response
-			response.Value("filter_job_id").NotNull()
-			response.Value("dimension_list_url").String().Match("(.+)/filters/(.+)/dimensions$")
+			response.Value("filter_id").NotNull()
 			response.Value("instance_id").Equal(instanceID)
+			response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/filters/(.+)/dimensions$")
+			response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/filters/(.+)$")
 			response.Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/datasets/123/editions/2017/versions/1$")
 			response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
-			response.Value("state").Equal("created")
 		})
 	})
 
@@ -52,7 +51,7 @@ func TestSuccessfullyPostFilterJob(t *testing.T) {
 	}
 }
 
-func TestFailureToPostFilterJob(t *testing.T) {
+func TestFailureToPostfilterBlueprint(t *testing.T) {
 
 	instanceID := uuid.NewV4().String()
 

@@ -16,103 +16,100 @@ import (
 func TestSuccessfullyPostDimension(t *testing.T) {
 
 	filterID := uuid.NewV4().String()
-	filterJobID := uuid.NewV4().String()
+	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
 
-		update := GetValidFilterJobWithMultipleDimensions(filterID, instanceID, filterJobID)
+		update := GetValidFilterWithMultipleDimensions(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
 
-		Convey("Add a dimension to the filter job", func() {
+		Convey("Add a dimension to the filter blueprint", func() {
 
-			filterAPI.POST("/filters/{filter_job_id}/dimensions/Residence Type", filterJobID).
-				WithBytes([]byte(GetValidPOSTAddDimensionToFilterJobJSON())).
+			filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/Residence Type", filterBlueprintID).
+				WithBytes([]byte(GetValidPOSTAddDimensionToFilterBlueprintJSON())).
 				Expect().Status(http.StatusCreated)
 
 			// Check data has been updated as expected
-			filterJob, err := mongo.GetFilterJob(database, collection, "filter_job_id", filterJobID)
+			filterBlueprint, err := mongo.GetFilter(database, collection, "filter_id", filterBlueprintID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve updated document", err, nil)
 			}
 
 			// Set these empty objects to nil to be able to compare other fields
-			filterJob.Downloads = nil
-			filterJob.Events = nil
+			filterBlueprint.Downloads = nil
+			filterBlueprint.Events = nil
 
-			So(len(filterJob.Dimensions), ShouldEqual, 5)
+			So(len(filterBlueprint.Dimensions), ShouldEqual, 5)
 
-			// Check dimension url is set for residenceType before removing,
-			// so test can compare data to expected data
-			So(filterJob.Dimensions[4].Name, ShouldEqual, "Residence Type")
-			So(filterJob.Dimensions[4].DimensionURL, ShouldNotBeEmpty)
-			filterJob.Dimensions[4].DimensionURL = ""
+			// Check dimension has been added to the end of the array
+			So(filterBlueprint.Dimensions[4].Name, ShouldEqual, "Residence Type")
 
-			expectedFilterJob := expectedTestData.ExpectedFilterJob
-			expectedFilterJob.InstanceID = instanceID
-			expectedFilterJob.FilterID = filterJobID
+			expectedfilterBlueprint := expectedTestData.ExpectedFilterBlueprint(cfg.FilterAPIURL, instanceID, filterBlueprintID)
+			expectedfilterBlueprint.InstanceID = instanceID
+			expectedfilterBlueprint.FilterID = filterBlueprintID
 
-			So(filterJob, ShouldResemble, expectedFilterJob)
+			So(filterBlueprint, ShouldResemble, expectedfilterBlueprint)
 		})
 
-		Convey("Overwrite a dimension that already exists on a filter job", func() {
+		Convey("Overwrite a dimension that already exists on a filter blueprint", func() {
 			ageOptions := `{"options": ["40"]}`
 
-			filterAPI.POST("/filters/{filter_job_id}/dimensions/age", filterJobID).
+			filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/age", filterBlueprintID).
 				WithBytes([]byte(ageOptions)).
 				Expect().Status(http.StatusCreated)
 
-			filterJob, err := mongo.GetFilterJob(database, collection, "filter_job_id", filterJobID)
+			filterBlueprint, err := mongo.GetFilter(database, collection, "filter_id", filterBlueprintID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve updated document", err, nil)
 			}
 
 			// Check data has been updated as expected
-			So(len(filterJob.Dimensions), ShouldEqual, 4)
+			So(len(filterBlueprint.Dimensions), ShouldEqual, 4)
 
-			for _, dimension := range filterJob.Dimensions {
+			for _, dimension := range filterBlueprint.Dimensions {
 				if dimension.Name == "age" {
 					So(dimension.Options, ShouldResemble, []string{"40"})
 					break
 				}
 			}
 		})
-	})
 
-	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
-		log.ErrorC("Unable to remove test data from mongo db", err, nil)
-		os.Exit(1)
-	}
+		if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+			log.ErrorC("Unable to remove test data from mongo db", err, nil)
+			os.Exit(1)
+		}
+	})
 }
 
 func TestFailureToPostDimension(t *testing.T) {
 
 	filterID := uuid.NewV4().String()
-	filterJobID := uuid.NewV4().String()
+	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
 
-		update := GetValidFilterJobWithMultipleDimensions(filterID, instanceID, filterJobID)
+		update := GetValidFilterWithMultipleDimensions(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
 
-		Convey("Fail to add a dimension to the filter job", func() {
+		Convey("Fail to add a dimension to the filter blueprint", func() {
 			Convey("When the request body is invalid return status bad request (400)", func() {
 
-				filterAPI.POST("/filters/{filter_job_id}/dimensions/Residence Type", filterJobID).
-					WithBytes([]byte(GetInvalidPOSTAddDimensionToFilterJobJSON())).
+				filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/Residence Type", filterBlueprintID).
+					WithBytes([]byte(GetInvalidPOSTAddDimensionToFilterBlueprintJSON())).
 					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - Invalid request body")
 			})
 
@@ -121,32 +118,33 @@ func TestFailureToPostDimension(t *testing.T) {
 				os.Exit(1)
 			}
 
-			Convey("When the filter job has a state of `submitted` return status forbidden (403)", func() {
-
-				update := GetValidSubmittedFilterJob(filterID, instanceID, filterJobID)
-
-				// Add submitted filter job to filters collection
-				if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
-					log.ErrorC("Unable to setup test data", err, nil)
-					os.Exit(1)
-				}
-
-				filterAPI.POST("/filters/{filter_job_id}/dimensions/Residence Type", filterJobID).
-					WithBytes([]byte(GetValidPOSTAddDimensionToFilterJobJSON())).
-					Expect().Status(http.StatusForbidden).Body().Contains("Forbidden, the filter job has been locked as it has been submitted to be processed\n")
-
-			})
+			// TODO Remove test once filter output tests have been written
+			// Convey("When the filter blueprint has a state of `submitted` return status forbidden (403)", func() {
+			//
+			// 	update := GetValidSubmittedfilterBlueprint(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
+			//
+			// 	// Add submitted filter blueprint to filters collection
+			// 	if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
+			// 		log.ErrorC("Unable to setup test data", err, nil)
+			// 		os.Exit(1)
+			// 	}
+			//
+			// 	filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/Residence Type", filterBlueprintID).
+			// 		WithBytes([]byte(GetValidPOSTAddDimensionToFilterBlueprintJSON())).
+			// 		Expect().Status(http.StatusForbidden).Body().Contains("Forbidden, the filter blueprint has been locked as it has been submitted to be processed\n")
+			//
+			// })
 
 			if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
 				log.ErrorC("Unable to remove test data from mongo db", err, nil)
 				os.Exit(1)
 			}
 
-			Convey("When filter job does not exist returns status not found (404)", func() {
+			Convey("When filter blueprint does not exist returns status not found (404)", func() {
 
-				filterAPI.POST("/filters/{filter_job_id}/dimensions/Residence Type", filterJobID).
-					WithBytes([]byte(GetValidPOSTAddDimensionToFilterJobJSON())).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter job not found")
+				filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/Residence Type", filterBlueprintID).
+					WithBytes([]byte(GetValidPOSTAddDimensionToFilterBlueprintJSON())).
+					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found\n")
 			})
 		})
 	})

@@ -114,34 +114,35 @@ func SetupMany(d *ManyDocs) error {
 	return nil
 }
 
-// FilterJob represents a structure for a filter job
-type FilterJob struct {
-	InstanceID       string      `bson:"instance_id"          json:"instance_id"`
-	DimensionListURL string      `bson:"dimension_list_url"   json:"dimension_list_url,omitempty"`
-	Dimensions       []Dimension `bson:"dimensions,omitempty" json:"dimensions,omitempty"`
-	Downloads        *Downloads  `bson:"downloads,omitempty" json:"downloads,omitempty"`
-	Events           *Events     `bson:"events,omitempty"    json:"events,omitempty"`
-	FilterID         string      `bson:"filter_job_id"        json:"filter_job_id,omitempty"`
-	State            string      `bson:"state"                json:"state,omitempty"`
-	Links            LinkMap     `bson:"links"                json:"links,omitempty"`
+// Filter represents a structure for a filter job
+type Filter struct {
+	InstanceID string      `bson:"instance_id"          json:"instance_id"`
+	Dimensions []Dimension `bson:"dimensions,omitempty" json:"dimensions,omitempty"`
+	Downloads  *Downloads  `bson:"downloads,omitempty"  json:"downloads,omitempty"`
+	Events     *Events     `bson:"events,omitempty"     json:"events,omitempty"`
+	FilterID   string      `bson:"filter_id"            json:"filter_id,omitempty"`
+	State      string      `bson:"state,omitempty"      json:"state,omitempty"`
+	Links      LinkMap     `bson:"links"                json:"links,omitempty"`
 }
 
 // LinkMap contains a named LinkObject for each link to other resources
 type LinkMap struct {
-	Version LinkObject `bson:"version" json:"version,omitempty"`
+	Dimensions LinkObject `bson:"dimensions" json:"dimensions,omitempty"`
+	Self       LinkObject `bson:"self"       json:"self,omitempty"`
+	Version    LinkObject `bson:"version"    json:"version,omitempty"`
 }
 
 // LinkObject represents a generic structure for all links
 type LinkObject struct {
-	ID   string `bson:"id"   json:"id,omitempty"`
-	HRef string `bson:"href" json:"href,omitempty"`
+	ID   string `bson:"id,omitempty"   json:"id,omitempty"`
+	HRef string `bson:"href"           json:"href,omitempty"`
 }
 
 // Dimension represents an object containing a list of dimension values and the dimension name
 type Dimension struct {
-	DimensionURL string   `bson:"dimension_url"           json:"dimension_url"`
-	Name         string   `bson:"name"                    json:"name"`
-	Options      []string `bson:"options"                 json:"options"`
+	URL     string   `bson:"dimension_url"           json:"dimension_url"`
+	Name    string   `bson:"name"                    json:"name"`
+	Options []string `bson:"options"                 json:"options"`
 }
 
 // Downloads represents a list of file types possible to download
@@ -170,15 +171,15 @@ type EventItem struct {
 	Type    string `bson:"type,omitempty"    json:"type,omitempty"`
 }
 
-// GetFilterJob retrieves a document from mongo
-func GetFilterJob(database, collection, key, value string) (FilterJob, error) {
+// GetFilter retrieves a document from mongo
+func GetFilter(database, collection, key, value string) (Filter, error) {
 	s := session.Copy()
 	defer s.Close()
 
-	var filterJob FilterJob
-	if err := s.DB(database).C(collection).Find(bson.M{key: value}).One(&filterJob); err != nil {
-		return filterJob, err
+	var filter Filter
+	if err := s.DB(database).C(collection).Find(bson.M{key: value}).One(&filter); err != nil {
+		return filter, err
 	}
 
-	return filterJob, nil
+	return filter, nil
 }

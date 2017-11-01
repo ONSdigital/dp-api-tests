@@ -1,6 +1,10 @@
 package filterAPI
 
-import "gopkg.in/mgo.v2/bson"
+import (
+	"time"
+
+	"gopkg.in/mgo.v2/bson"
+)
 
 func GetValidPublishedInstanceData(instanceID string) bson.M {
 	return bson.M{
@@ -37,80 +41,97 @@ func GetValidPublishedInstanceData(instanceID string) bson.M {
 }
 
 type Dimension struct {
-	DimensionURL string   `bson:"dimension_url"`
-	Name         string   `bson:"name"`
-	Options      []string `bson:"options"`
+	URL     string   `bson:"dimension_url"`
+	Name    string   `bson:"name"`
+	Options []string `bson:"options"`
 }
 
-var dimension = Dimension{
-	DimensionURL: "",
-	Name:         "age",
-	Options:      []string{"27", "28"},
+func dimension(host, filterBlueprintID string) Dimension {
+	return Dimension{
+		URL:     host + "/filters/" + filterBlueprintID + "/dimensions/age",
+		Name:    "age",
+		Options: []string{"27", "28"},
+	}
 }
 
-func GetValidCreatedFilterJob(filterID, instanceID, filterJobID string) bson.M {
+func GetValidCreatedFilterBlueprint(host, filterID, instanceID, filterBlueprintID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"_id":                filterID,
-			"dimension_list_url": "http://localhost:8080/instances/321/dimensions",
-			"dimensions":         []Dimension{dimension},
-			"filter_job_id":      filterJobID,
-			"instance_id":        instanceID,
-			"links.version.id":   "1",
-			"links.version.href": "http://localhost:8080/datasets/123/editions/2017/versions/1",
-			"state":              "created",
-			"test_data":          "true",
+			"_id": filterID,
+			"dimensions": []Dimension{
+				dimension(host, filterBlueprintID),
+			},
+			"filter_id":             filterBlueprintID,
+			"instance_id":           instanceID,
+			"links.dimensions.href": host + "/filters/" + filterBlueprintID + "/dimensions",
+			"links.self.href":       host + "/filters/" + filterBlueprintID,
+			"links.version.id":      "1",
+			"links.version.href":    "http://localhost:8080/datasets/123/editions/2017/versions/1",
+			"test_data":             "true",
 		},
 	}
 }
 
-var ageDimension = Dimension{
-	Name:    "age",
-	Options: []string{"27"},
+func ageDimension(host, filterBlueprintID string) Dimension {
+	return Dimension{
+		URL:     host + "/filters/" + filterBlueprintID + "/dimensions/age",
+		Name:    "age",
+		Options: []string{"27"},
+	}
 }
 
-var sexDimension = Dimension{
-	Name:    "sex",
-	Options: []string{"male", "female"},
-}
-var goodsAndServicesDimension = Dimension{
-	Name:    "Goods and services",
-	Options: []string{"Education", "health", "communication"},
-}
-
-var timeDimension = Dimension{
-	Name:    "time",
-	Options: []string{"March 1997", "April 1997", "June 1997", "September 1997", "December 1997"},
+func sexDimension(host, filterBlueprintID string) Dimension {
+	return Dimension{
+		URL:     host + "/filters/" + filterBlueprintID + "/dimensions/sex",
+		Name:    "sex",
+		Options: []string{"male", "female"},
+	}
 }
 
-func GetValidFilterJobWithMultipleDimensions(filterID, instanceID, filterJobID string) bson.M {
+func goodsAndServicesDimension(host, filterBlueprintID string) Dimension {
+	return Dimension{
+		URL:     host + "/filters/" + filterBlueprintID + "/dimensions/Goods and services",
+		Name:    "Goods and services",
+		Options: []string{"Education", "health", "communication"},
+	}
+}
+
+func timeDimension(host, filterBlueprintID string) Dimension {
+	return Dimension{
+		URL:     host + "/filters/" + filterBlueprintID + "/dimensions/time",
+		Name:    "time",
+		Options: []string{"March 1997", "April 1997", "June 1997", "September 1997", "December 1997"},
+	}
+}
+
+func GetValidFilterWithMultipleDimensions(host, filterID, instanceID, filterBlueprintID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"_id":                filterID,
-			"dimension_list_url": "http://localhost:8080/instances/321/dimensions",
-			"dimensions":         []Dimension{ageDimension, sexDimension, goodsAndServicesDimension, timeDimension},
-			"instance_id":        instanceID,
-			"filter_job_id":      filterJobID,
-			"links.version.id":   "1",
-			"links.version.href": "http://localhost:8080/datasets/123/editions/2017/versions/1",
-			"state":              "created",
-			"test_data":          "true",
+			"_id":                   filterID,
+			"dimensions":            []Dimension{ageDimension(host, filterBlueprintID), sexDimension(host, filterBlueprintID), goodsAndServicesDimension(host, filterBlueprintID), timeDimension(host, filterBlueprintID)},
+			"instance_id":           instanceID,
+			"filter_id":             filterBlueprintID,
+			"links.dimensions.href": host + "/filters/" + filterBlueprintID + "/dimensions",
+			"links.self.href":       host + "/filters/" + filterBlueprintID,
+			"links.version.id":      "1",
+			"links.version.href":    "http://localhost:8080/datasets/123/editions/2017/versions/1",
+			"test_data":             "true",
 		},
 	}
 }
 
-func GetValidSubmittedFilterJob(filterID, instanceID, filterJobID string) bson.M {
+func GetValidSubmittedFilterJob(host, filterID, instanceID, filterBlueprintID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"_id":                filterID,
-			"dimension_list_url": "http://localhost:8080/instances/321/dimensions",
-			"dimensions":         []Dimension{ageDimension, sexDimension, goodsAndServicesDimension, timeDimension},
-			"instance_id":        instanceID,
-			"filter_job_id":      filterJobID,
-			"links.version.id":   "1",
-			"links.version.href": "http://localhost:8080/datasets/123/editions/2017/versions/1",
-			"state":              "submitted",
-			"test_data":          "true",
+			"_id":                   filterID,
+			"dimensions":            []Dimension{ageDimension(host, filterBlueprintID), sexDimension(host, filterBlueprintID), goodsAndServicesDimension(host, filterBlueprintID), timeDimension(host, filterBlueprintID)},
+			"instance_id":           instanceID,
+			"filter_id":             filterBlueprintID,
+			"links.dimensions.href": host + "/filters/" + filterBlueprintID + "/dimensions",
+			"links.self.href":       host + "/filters/" + filterBlueprintID,
+			"links.version.id":      "1",
+			"links.version.href":    "http://localhost:8080/datasets/123/editions/2017/versions/1",
+			"test_data":             "true",
 		},
 	}
 }
@@ -118,7 +139,6 @@ func GetValidSubmittedFilterJob(filterID, instanceID, filterJobID string) bson.M
 func GetValidPOSTCreateFilterJSON(instanceID string) string {
 	return `{
 	"instance_id": "` + instanceID + `" ,
-	"state": "created",
 	"dimensions": [
 	  {
 		"name": "age",
@@ -134,7 +154,6 @@ func GetValidPOSTCreateFilterJSON(instanceID string) string {
 func GetInvalidJSON(instanceID string) string {
 	return `
 {
-	"state": "created",
 	"dimensions": [
 	  {
 		"name": "age",
@@ -146,12 +165,11 @@ func GetInvalidJSON(instanceID string) string {
 	}`
 }
 
-// GetValidPUTUpdateFilterJobJSON Json body with state and new dimension options
-func GetValidPUTUpdateFilterJobJSON(instanceID string) string {
+// GetValidPUTUpdateFilterBlueprintJSON Json body with state and new dimension options
+func GetValidPUTUpdateFilterBlueprintJSON(instanceID string) string {
 	return `
 {
 	"instance_id": "` + instanceID + `" ,
-	"state": "submitted",
 	"dimensions": [
 	  {
 		"name": "sex",
@@ -168,7 +186,6 @@ func GetInvalidSyntaxJSON(instanceID string) string {
 	return `
 {
 	"instance_id": "` + instanceID + `" ,
-	"state": "created",
 	"dimensions": [
 	  {
 		"name": "age",
@@ -183,7 +200,6 @@ func GetInvalidSyntaxJSON(instanceID string) string {
 func GetValidPOSTMultipleDimensionsCreateFilterJSON(instanceID string) string {
 	return `{
 	"instance_id": "` + instanceID + `" ,
-	"state": "created",
 	"dimensions": [
 	  {
 		"name": "age",
@@ -213,7 +229,7 @@ func GetValidPOSTMultipleDimensionsCreateFilterJSON(instanceID string) string {
 	}`
 }
 
-func GetValidPOSTAddDimensionToFilterJobJSON() string {
+func GetValidPOSTAddDimensionToFilterBlueprintJSON() string {
 	return `
 {
   "options": [
@@ -222,7 +238,7 @@ func GetValidPOSTAddDimensionToFilterJobJSON() string {
 }`
 }
 
-func GetInvalidPOSTAddDimensionToFilterJobJSON() string {
+func GetInvalidPOSTAddDimensionToFilterBlueprintJSON() string {
 	return `
 {
   "options": [
@@ -234,7 +250,6 @@ func GetInvalidPOSTAddDimensionToFilterJobJSON() string {
 func GetValidPOSTCreateFilterSubmittedJobJSON(instanceID string) string {
 	return `{
 	"instance_id": "` + instanceID + `" ,
-	"state": "submitted",
 	"dimensions": [
 	  {
 		"name": "age",
@@ -243,5 +258,20 @@ func GetValidPOSTCreateFilterSubmittedJobJSON(instanceID string) string {
 		]
 	  }
 	]
+  }`
+}
+
+func GetValidPUTFilterBlueprintJSON(instanceID string, time time.Time) string {
+	return `{
+	  "instance_id": "` + instanceID + `",
+	  "events": {
+		  "info": [
+		    {
+		      "message": "blueprint has created filter output resource",
+					"time": "` + time.String() + `",
+					"type": "info"
+	      }
+	    ]
+		}
   }`
 }

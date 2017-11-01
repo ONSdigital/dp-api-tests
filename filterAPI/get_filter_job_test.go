@@ -12,34 +12,35 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestSuccessfullyGetFilterJob(t *testing.T) {
+func TestSuccessfullyGetFilterBlueprint(t *testing.T) {
 
 	filterID := uuid.NewV4().String()
-	filterJobID := uuid.NewV4().String()
+	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
 
-		update := GetValidFilterJobWithMultipleDimensions(filterID, instanceID, filterJobID)
+		update := GetValidFilterWithMultipleDimensions(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
 
-		Convey("When requesting to get filter job", func() {
-			Convey("Then filter job is returned in the response body", func() {
+		Convey("When requesting to get filter blueprint", func() {
+			Convey("Then filter blueprint is returned in the response body", func() {
 
-				response := filterAPI.GET("/filters/{filter_job_id}", filterJobID).
+				response := filterAPI.GET("/filters/{filter_blueprint_id}", filterBlueprintID).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				response.Value("dimension_list_url").String().Match("(.+)/filters/" + filterJobID + "/dimensions$")
-				response.Value("filter_job_id").Equal(filterJobID)
+				response.Value("filter_id").Equal(filterBlueprintID)
 				response.Value("instance_id").Equal(instanceID)
+				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/filters/" + filterBlueprintID + "/dimensions$")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/filters/(.+)$")
 				response.Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/datasets/123/editions/2017/versions/1$")
-				response.Value("state").Equal("created")
+				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
 			})
 		})
 
@@ -50,18 +51,18 @@ func TestSuccessfullyGetFilterJob(t *testing.T) {
 	})
 }
 
-func TestFailureToGetFilterJob(t *testing.T) {
+func TestFailureToGetFilterBlueprint(t *testing.T) {
 
 	filterID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
-	Convey("Given filter job does not exist", t, func() {
-		Convey("When requesting to get filter job", func() {
+	Convey("Given filter blueprint does not exist", t, func() {
+		Convey("When requesting to get filter blueprint", func() {
 			Convey("Then the response returns status not found (404)", func() {
 
-				filterAPI.GET("/filters/{filter_job_id}", filterID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter job not found")
+				filterAPI.GET("/filters/{filter_blueprint_id}", filterID).
+					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found\n")
 			})
 		})
 	})
