@@ -14,7 +14,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestSuccessfulPutFilterJob(t *testing.T) {
+func TestSuccessfulPutFilterBlueprint(t *testing.T) {
 
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
@@ -107,7 +107,7 @@ func TestSuccessfulPutFilterJob(t *testing.T) {
 	})
 }
 
-func TestFailureToPutFilterJob(t *testing.T) {
+func TestFailureToPutFilterBlueprint(t *testing.T) {
 
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
@@ -116,7 +116,7 @@ func TestFailureToPutFilterJob(t *testing.T) {
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given a filter blueprint does not exist", t, func() {
-		Convey("When a post request is made to update filter job", func() {
+		Convey("When a post request is made to update filter blueprint", func() {
 			Convey("Then the request fails and returns status not found (404)", func() {
 
 				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetValidPUTUpdateFilterBlueprintJSON(instanceID))).
@@ -125,7 +125,7 @@ func TestFailureToPutFilterJob(t *testing.T) {
 		})
 	})
 
-	Convey("Given an existing filter job", t, func() {
+	Convey("Given an existing filter blueprint", t, func() {
 
 		update := GetValidFilterWithMultipleDimensions(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
@@ -134,7 +134,7 @@ func TestFailureToPutFilterJob(t *testing.T) {
 			os.Exit(1)
 		}
 
-		Convey("When an invalid json body is sent to update filter job", func() {
+		Convey("When an invalid json body is sent to update filter blueprint", func() {
 			Convey("Then fail to update filter blueprint and return status bad request (400)", func() {
 
 				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetInvalidSyntaxJSON(instanceID))).
