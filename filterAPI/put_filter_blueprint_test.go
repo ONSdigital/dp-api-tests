@@ -22,7 +22,7 @@ func TestSuccessfulPutFilterBlueprint(t *testing.T) {
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
-	update := GetValidPublishedInstanceData(instanceID)
+	update := GetValidPublishedInstanceDataBSON(instanceID)
 
 	if err := setupInstance(instanceID, update); err != nil {
 		log.ErrorC("Unable to setup instance", err, nil)
@@ -31,7 +31,7 @@ func TestSuccessfulPutFilterBlueprint(t *testing.T) {
 
 	Convey("Given an existing filter blueprint", t, func() {
 
-		update := GetValidFilterWithMultipleDimensions(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
+		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
@@ -75,18 +75,18 @@ func TestSuccessfulPutFilterBlueprint(t *testing.T) {
 
 			Convey("Then filter blueprint creates a filter output document and in the response is a link to this resource", func() {
 
-				filterOutputLinkObject := response.Value("links").Object().Value("filter_output")
-				filterOutputLinkObject.Object().Value("href").String().Match("(.+)/filter-outputs/(.+)$")
-				filterOutputLinkObject.Object().Value("id").NotNull()
+				filterOutputLinkObject := response.Value("links").Object()
+				filterOutputLinkObject.Value("filter_output").Object().Value("href").String().Match("(.+)/filter-outputs/(.+)$")
+				filterOutputLinkObject.Value("filter_output").Object().Value("id").NotNull()
 
-				filterOutputID := filterOutputLinkObject.Object().Value("id").String().Raw()
+				filterOutputID := filterOutputLinkObject.Value("filter_output").Object().Value("id").String().Raw()
 
 				filterOutput, err := mongo.GetFilter(database, "filterOutputs", "filter_id", filterOutputID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated document", err, nil)
 				}
 
-				So(filterOutput, ShouldResemble, expectedTestData.ExpectedFilterOutput(cfg.FilterAPIURL, instanceID, filterOutputID))
+				So(filterOutput, ShouldResemble, expectedTestData.ExpectedFilterOutput(cfg.FilterAPIURL, instanceID, filterOutputID, filterBlueprintID))
 
 				if err := mongo.Teardown(database, "filterOutputs", "filter_id", filterOutputID); err != nil {
 					log.ErrorC("Unable to remove test data from mongo db", err, nil)
@@ -127,7 +127,7 @@ func TestFailureToPutFilterBlueprint(t *testing.T) {
 
 	Convey("Given an existing filter blueprint", t, func() {
 
-		update := GetValidFilterWithMultipleDimensions(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
+		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)

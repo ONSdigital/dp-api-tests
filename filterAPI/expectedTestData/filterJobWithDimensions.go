@@ -77,7 +77,7 @@ func residenceType(host, filterBlueprintID string) mongo.Dimension {
 	}
 }
 
-// ExpectedFilterJob represents the expected data stored against a filter blueprint resource
+// ExpectedFilterBlueprint represents the expected data stored against a filter blueprint resource
 func ExpectedFilterBlueprint(host, instanceID, filterBlueprintID string) mongo.Filter {
 	return mongo.Filter{
 		Dimensions: []mongo.Dimension{
@@ -103,7 +103,7 @@ func ExpectedFilterBlueprint(host, instanceID, filterBlueprintID string) mongo.F
 }
 
 // ExpectedFilterOutput represents the expected data stored against a filter output resource
-func ExpectedFilterOutput(host, instanceID, filterOutputID string) mongo.Filter {
+func ExpectedFilterOutput(host, instanceID, filterOutputID, filterBlueprintID string) mongo.Filter {
 	return mongo.Filter{
 		FilterID:   filterOutputID,
 		InstanceID: instanceID,
@@ -128,6 +128,49 @@ func ExpectedFilterOutput(host, instanceID, filterOutputID string) mongo.Filter 
 			},
 		},
 		Links: mongo.LinkMap{
+			FilterBlueprint: mongo.LinkObject{
+				HRef: host + "/filters/" + filterBlueprintID,
+				ID:   filterBlueprintID,
+			},
+			Self: mongo.LinkObject{
+				HRef: host + "/filter-outputs/" + filterOutputID,
+			},
+			Version: mongo.LinkObject{
+				ID:   "1",
+				HRef: "http://localhost:8080/datasets/123/editions/2017/versions/1",
+			},
+		},
+		State: "created",
+	}
+}
+
+// ExpectedFilterOutputOnPost represents the expected data stored against a filter output resource
+func ExpectedFilterOutputOnPost(host, instanceID, filterOutputID, filterBlueprintID string) mongo.Filter {
+	return mongo.Filter{
+		FilterID:   filterOutputID,
+		InstanceID: instanceID,
+		Dimensions: []mongo.Dimension{
+			updatedAge(host, ""),
+		},
+		Downloads: &mongo.Downloads{
+			CSV: &mongo.DownloadItem{
+				Size: "",
+				URL:  "",
+			},
+			JSON: &mongo.DownloadItem{
+				Size: "",
+				URL:  "",
+			},
+			XLS: &mongo.DownloadItem{
+				Size: "",
+				URL:  "",
+			},
+		},
+		Links: mongo.LinkMap{
+			FilterBlueprint: mongo.LinkObject{
+				HRef: host + "/filters/" + filterBlueprintID,
+				ID:   filterBlueprintID,
+			},
 			Self: mongo.LinkObject{
 				HRef: host + "/filter-outputs/" + filterOutputID,
 			},
@@ -141,6 +184,13 @@ func ExpectedFilterOutput(host, instanceID, filterOutputID string) mongo.Filter 
 }
 
 func updatedAge(host, filterBlueprintID string) mongo.Dimension {
+	if filterBlueprintID == "" {
+		return mongo.Dimension{
+			Name:    "age",
+			Options: []string{"27", "28"},
+		}
+	}
+
 	return mongo.Dimension{
 		URL:     host + "/filters/" + filterBlueprintID + "/dimensions/age",
 		Name:    "age",

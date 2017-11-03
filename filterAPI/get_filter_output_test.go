@@ -16,13 +16,14 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 
 	filterID := uuid.NewV4().String()
 	filterOutputID := uuid.NewV4().String()
+	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter output with downloads", t, func() {
 
-		update := GetValidFilterOutputWithMultipleDimensions(cfg.FilterAPIURL, filterID, instanceID, filterOutputID)
+		update := GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID)
 
 		if err := mongo.Setup(database, "filterOutputs", "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
@@ -47,8 +48,10 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
 				response.Value("filter_id").Equal(filterOutputID)
 				response.Value("instance_id").Equal(instanceID)
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/filters/" + filterOutputID + "$")
-				response.Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/datasets/123/editions/2017/versions/1$")
+				response.Value("links").Object().Value("filter_blueprint").Object().Value("href").String().Match("/filters/" + filterBlueprintID + "$")
+				response.Value("links").Object().Value("filter_blueprint").Object().Value("id").Equal(filterBlueprintID)
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filter-outputs/" + filterOutputID + "$")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
 			})
 		})

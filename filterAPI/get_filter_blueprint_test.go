@@ -22,7 +22,7 @@ func TestSuccessfullyGetFilterBlueprint(t *testing.T) {
 
 	Convey("Given an existing filter", t, func() {
 
-		update := GetValidFilterWithMultipleDimensions(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
+		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
@@ -37,9 +37,9 @@ func TestSuccessfullyGetFilterBlueprint(t *testing.T) {
 
 				response.Value("filter_id").Equal(filterBlueprintID)
 				response.Value("instance_id").Equal(instanceID)
-				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/filters/" + filterBlueprintID + "/dimensions$")
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/filters/(.+)$")
-				response.Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/datasets/123/editions/2017/versions/1$")
+				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("/filters/" + filterBlueprintID + "/dimensions$")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filters/(.+)$")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
 			})
 		})

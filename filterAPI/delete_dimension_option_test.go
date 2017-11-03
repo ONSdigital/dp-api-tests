@@ -22,7 +22,7 @@ func TestSuccessfullyDeleteRemoveDimensionOptions(t *testing.T) {
 
 	Convey("Given an existing filter", t, func() {
 
-		update := GetValidFilterWithMultipleDimensions(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
+		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
@@ -80,7 +80,7 @@ func TestFailureToDeleteRemoveDimensionOptions(t *testing.T) {
 
 	Convey("Given a filter job", t, func() {
 
-		update := GetValidFilterWithMultipleDimensions(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
+		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)

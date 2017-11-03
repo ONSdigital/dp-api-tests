@@ -6,7 +6,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-func GetValidPublishedInstanceData(instanceID string) bson.M {
+func GetValidPublishedInstanceDataBSON(instanceID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"_id":                   instanceID,
@@ -54,7 +54,7 @@ func dimension(host, filterBlueprintID string) Dimension {
 	}
 }
 
-func GetValidCreatedFilterBlueprint(host, filterID, instanceID, filterBlueprintID string) bson.M {
+func GetValidCreatedFilterBlueprintBSON(host, filterID, instanceID, filterBlueprintID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"_id": filterID,
@@ -128,7 +128,7 @@ func timeDimension(host, filterID string) Dimension {
 	}
 }
 
-func GetValidFilterWithMultipleDimensions(host, filterID, instanceID, filterBlueprintID string) bson.M {
+func GetValidFilterWithMultipleDimensionsBSON(host, filterID, instanceID, filterBlueprintID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"_id":                   filterID,
@@ -144,29 +144,31 @@ func GetValidFilterWithMultipleDimensions(host, filterID, instanceID, filterBlue
 	}
 }
 
-func GetValidFilterOutputWithMultipleDimensions(host, filterID, instanceID, filterOutputID string) bson.M {
+func GetValidFilterOutputWithMultipleDimensionsBSON(host, filterID, instanceID, filterOutputID, filterBlueprintID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"_id":                 filterID,
-			"dimensions":          []Dimension{ageDimension(host, ""), sexDimension(host, ""), goodsAndServicesDimension(host, ""), timeDimension(host, "")},
-			"downloads.csv.url":   "s3-csv-location",
-			"downloads.csv.size":  "12mb",
-			"downloads.json.url":  "s3-json-location",
-			"downloads.json.size": "6mb",
-			"downloads.xls.url":   "s3-xls-location",
-			"downloads.xls.size":  "24mb",
-			"instance_id":         instanceID,
-			"filter_id":           filterOutputID,
-			"links.self.href":     host + "/filters/" + filterOutputID,
-			"links.version.id":    "1",
-			"links.version.href":  "http://localhost:8080/datasets/123/editions/2017/versions/1",
-			"state":               "completed",
-			"test_data":           "true",
+			"_id":                         filterID,
+			"dimensions":                  []Dimension{ageDimension(host, ""), sexDimension(host, ""), goodsAndServicesDimension(host, ""), timeDimension(host, "")},
+			"downloads.csv.url":           "s3-csv-location",
+			"downloads.csv.size":          "12mb",
+			"downloads.json.url":          "s3-json-location",
+			"downloads.json.size":         "6mb",
+			"downloads.xls.url":           "s3-xls-location",
+			"downloads.xls.size":          "24mb",
+			"instance_id":                 instanceID,
+			"filter_id":                   filterOutputID,
+			"links.filter_blueprint.href": host + "/filters/" + filterBlueprintID,
+			"links.filter_blueprint.id":   filterBlueprintID,
+			"links.self.href":             host + "/filter-outputs/" + filterOutputID,
+			"links.version.id":            "1",
+			"links.version.href":          "http://localhost:8080/datasets/123/editions/2017/versions/1",
+			"state":                       "completed",
+			"test_data":                   "true",
 		},
 	}
 }
 
-func GetValidFilterOutputWithoutDownloads(host, filterID, instanceID, filterOutputID string) bson.M {
+func GetValidFilterOutputWithoutDownloadsBSON(host, filterID, instanceID, filterOutputID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"_id":                filterID,
@@ -178,22 +180,6 @@ func GetValidFilterOutputWithoutDownloads(host, filterID, instanceID, filterOutp
 			"links.version.href": "http://localhost:8080/datasets/123/editions/2017/versions/1",
 			"state":              "created",
 			"test_data":          "true",
-		},
-	}
-}
-
-func GetValidSubmittedFilterJob(host, filterID, instanceID, filterBlueprintID string) bson.M {
-	return bson.M{
-		"$set": bson.M{
-			"_id":                   filterID,
-			"dimensions":            []Dimension{ageDimension(host, filterBlueprintID), sexDimension(host, filterBlueprintID), goodsAndServicesDimension(host, filterBlueprintID), timeDimension(host, filterBlueprintID)},
-			"instance_id":           instanceID,
-			"filter_id":             filterBlueprintID,
-			"links.dimensions.href": host + "/filters/" + filterBlueprintID + "/dimensions",
-			"links.self.href":       host + "/filters/" + filterBlueprintID,
-			"links.version.id":      "1",
-			"links.version.href":    "http://localhost:8080/datasets/123/editions/2017/versions/1",
-			"test_data":             "true",
 		},
 	}
 }
@@ -253,45 +239,12 @@ func GetInvalidSyntaxJSON(instanceID string) string {
 		"name": "age",
 		"options": [
 		  "27", "28"
-
 	  }
 	]
 	}`
 }
 
-func GetValidPOSTMultipleDimensionsCreateFilterJSON(instanceID string) string {
-	return `{
-	"instance_id": "` + instanceID + `" ,
-	"dimensions": [
-	  {
-		"name": "age",
-		"options": [
-		  "27"
-		]
-	  },
-	  {
-		"name": "sex",
-		"options": [
-		  "male", "female"
-		]
-	  },
-	  {
-		"name": "Goods and services",
-		"options": [
-		  "Education", "health", "communication"
-		]
-	  },
-	  {
-		"name": "time",
-		"options": [
-		  "March 1997", "April 1997", "June 1997", "September 1997", "December 1997"
-		]
-	  }
-	]
-	}`
-}
-
-func GetValidPOSTAddDimensionToFilterBlueprintJSON() string {
+func GetValidPOSTDimensionToFilterBlueprintJSON() string {
 	return `
 {
   "options": [
@@ -300,27 +253,13 @@ func GetValidPOSTAddDimensionToFilterBlueprintJSON() string {
 }`
 }
 
-func GetInvalidPOSTAddDimensionToFilterBlueprintJSON() string {
+func GetInvalidPOSTDimensionToFilterBlueprintJSON() string {
 	return `
 {
   "options": [
     "Lives in a communal establishment", "Lives in a household"
 
 }`
-}
-
-func GetValidPOSTCreateFilterSubmittedJobJSON(instanceID string) string {
-	return `{
-	"instance_id": "` + instanceID + `" ,
-	"dimensions": [
-	  {
-		"name": "age",
-		"options": [
-		  "27", "28"
-		]
-	  }
-	]
-  }`
 }
 
 func GetValidPUTFilterBlueprintJSON(instanceID string, time time.Time) string {
@@ -338,7 +277,7 @@ func GetValidPUTFilterBlueprintJSON(instanceID string, time time.Time) string {
   }`
 }
 
-func PutFilterOutputWithCSVDownload() string {
+func GetValidPUTFilterOutputWithCSVDownloadJSON() string {
 	return `{
 	  "downloads": {
 			"csv": {
@@ -349,7 +288,7 @@ func PutFilterOutputWithCSVDownload() string {
   }`
 }
 
-func PutFilterOutputWithXLSDownload() string {
+func GetValidPUTFilterOutputWithXLSDownloadJSON() string {
 	return `{
 	  "downloads": {
 			"xls": {
@@ -360,15 +299,15 @@ func PutFilterOutputWithXLSDownload() string {
   }`
 }
 
-func PutFilterOutputWithDimensions() string {
+func GetValidPUTFilterOutputWithDimensionsJSON() string {
 	return `{
 	  "dimensions": [
 		  {
-			"name": "age",
-			"options": [
-			  "27", "28"
-			]
+			  "name": "age",
+			  "options": [
+			    "27", "28"
+			  ]
 		  }
 		]
-	  }`
+	}`
 }

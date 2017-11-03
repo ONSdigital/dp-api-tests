@@ -23,7 +23,7 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 
 	Convey("Given an existing filter", t, func() {
 
-		update := GetValidFilterWithMultipleDimensions(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
+		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
@@ -33,7 +33,7 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 		Convey("Add a dimension to the filter blueprint", func() {
 
 			filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/Residence Type", filterBlueprintID).
-				WithBytes([]byte(GetValidPOSTAddDimensionToFilterBlueprintJSON())).
+				WithBytes([]byte(GetValidPOSTDimensionToFilterBlueprintJSON())).
 				Expect().Status(http.StatusCreated)
 
 			// Check data has been updated as expected
@@ -98,7 +98,7 @@ func TestFailureToPostDimension(t *testing.T) {
 
 	Convey("Given an existing filter", t, func() {
 
-		update := GetValidFilterWithMultipleDimensions(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
+		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
@@ -109,31 +109,9 @@ func TestFailureToPostDimension(t *testing.T) {
 			Convey("When the request body is invalid return status bad request (400)", func() {
 
 				filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/Residence Type", filterBlueprintID).
-					WithBytes([]byte(GetInvalidPOSTAddDimensionToFilterBlueprintJSON())).
+					WithBytes([]byte(GetInvalidPOSTDimensionToFilterBlueprintJSON())).
 					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - Invalid request body")
 			})
-
-			if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
-				log.ErrorC("Unable to remove test data from mongo db", err, nil)
-				os.Exit(1)
-			}
-
-			// TODO Remove test once filter output tests have been written
-			// Convey("When the filter blueprint has a state of `submitted` return status forbidden (403)", func() {
-			//
-			// 	update := GetValidSubmittedfilterBlueprint(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
-			//
-			// 	// Add submitted filter blueprint to filters collection
-			// 	if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
-			// 		log.ErrorC("Unable to setup test data", err, nil)
-			// 		os.Exit(1)
-			// 	}
-			//
-			// 	filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/Residence Type", filterBlueprintID).
-			// 		WithBytes([]byte(GetValidPOSTAddDimensionToFilterBlueprintJSON())).
-			// 		Expect().Status(http.StatusForbidden).Body().Contains("Forbidden, the filter blueprint has been locked as it has been submitted to be processed\n")
-			//
-			// })
 
 			if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
 				log.ErrorC("Unable to remove test data from mongo db", err, nil)
@@ -143,7 +121,7 @@ func TestFailureToPostDimension(t *testing.T) {
 			Convey("When filter blueprint does not exist returns status not found (404)", func() {
 
 				filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/Residence Type", filterBlueprintID).
-					WithBytes([]byte(GetValidPOSTAddDimensionToFilterBlueprintJSON())).
+					WithBytes([]byte(GetValidPOSTDimensionToFilterBlueprintJSON())).
 					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found\n")
 			})
 		})

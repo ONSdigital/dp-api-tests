@@ -114,7 +114,7 @@ func SetupMany(d *ManyDocs) error {
 	return nil
 }
 
-// Filter represents a structure for a filter job
+// Filter represents a structure for a filter blueprint or output
 type Filter struct {
 	InstanceID string      `bson:"instance_id"          json:"instance_id"`
 	Dimensions []Dimension `bson:"dimensions,omitempty" json:"dimensions,omitempty"`
@@ -127,9 +127,10 @@ type Filter struct {
 
 // LinkMap contains a named LinkObject for each link to other resources
 type LinkMap struct {
-	Dimensions LinkObject `bson:"dimensions" json:"dimensions,omitempty"`
-	Self       LinkObject `bson:"self"       json:"self,omitempty"`
-	Version    LinkObject `bson:"version"    json:"version,omitempty"`
+	Dimensions      LinkObject `bson:"dimensions"       json:"dimensions,omitempty"`
+	FilterBlueprint LinkObject `bson:"filter_blueprint" json:"filter_blueprint,omitempty"`
+	Self            LinkObject `bson:"self"             json:"self,omitempty"`
+	Version         LinkObject `bson:"version"          json:"version,omitempty"`
 }
 
 // LinkObject represents a generic structure for all links
@@ -158,7 +159,7 @@ type DownloadItem struct {
 	URL  string `bson:"url"  json:"url"`
 }
 
-// Events represents a list of array objects containing event information against the filter job
+// Events represents a list of array objects containing event information against the filter blueprint or output
 type Events struct {
 	Error *[]EventItem `bson:"error,omitempty" json:"error,omitempty"`
 	Info  *[]EventItem `bson:"info,omitempty"  json:"info,omitempty"`

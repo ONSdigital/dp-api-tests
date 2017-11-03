@@ -14,7 +14,7 @@ const (
 	database   = "filters"
 	collection = "filters"
 
-	internalToken          = "Internal-Token"
+	internalTokenHeader    = "Internal-Token"
 	internalTokenID        = "FD0108EA-825D-411C-9B1D-41EF7727F465"
 	invalidInternalTokenID = "FD0108EA-825D-411C-9B1D-41EF7727F465A"
 )

@@ -23,7 +23,7 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 
 	Convey("Given an existing filter", t, func() {
 
-		update := GetValidFilterWithMultipleDimensions(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
+		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
@@ -85,7 +85,7 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 
 	Convey("Given a filter blueprint exists", t, func() {
 
-		update := GetValidCreatedFilterBlueprint(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
+		update := GetValidCreatedFilterBlueprintBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
@@ -105,27 +105,4 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 			os.Exit(1)
 		}
 	})
-	// TODO Remove test, for now it'll be useful to keep for filter output tests
-	// 	Convey("Given a filter blueprint with a state of submitted exists", t, func() {
-	//
-	// 		update := GetValidSubmittedFilterJob(filterID, instanceID, filterBlueprintID)
-	//
-	// 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
-	// 			log.ErrorC("Unable to setup test data", err, nil)
-	// 			os.Exit(1)
-	// 		}
-	//
-	// 		Convey("When a post request to add an option for a dimension against that filter blueprint", func() {
-	// 			Convey("Then return status forbidden (403)", func() {
-	//
-	// 				filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
-	// 					Expect().Status(http.StatusForbidden).Body().Contains("Forbidden, the filter blueprint has been locked as it has been submitted to be processed\n")
-	// 			})
-	// 		})
-	//
-	// 		if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
-	// 			log.ErrorC("Unable to remove test data from mongo db", err, nil)
-	// 			os.Exit(1)
-	// 		}
-	// 	})
 }
