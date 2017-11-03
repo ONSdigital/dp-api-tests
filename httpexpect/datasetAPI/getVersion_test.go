@@ -29,7 +29,7 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 	Convey("Get an existing version for an edition of a dataset", t, func() {
 		Convey("When user is authenticated and version is not published", func() {
 
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2", datasetID, edition).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2", datasetID, edition).WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("id").Equal("799")
@@ -93,7 +93,7 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 	Convey("Fail to get version document", t, func() {
 		Convey("and return status bad request", func() {
 			Convey("When the dataset does not exist", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeader(internalToken, internalTokenID).
 					Expect().Status(http.StatusBadRequest)
 			})
 
@@ -103,7 +103,7 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 					os.Exit(1)
 				}
 
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeader(internalToken, internalTokenID).
 					Expect().Status(http.StatusBadRequest)
 			})
 		})
@@ -111,7 +111,7 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 			mongo.Setup(database, "editions", "_id", editionID, validPublishedEditionData)
 
 			Convey("When the version does not exist", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeader("internal-token", "FD0108EA-825D-411C-9B1D-41EF7727F465").
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeader(internalToken, internalTokenID).
 					Expect().Status(http.StatusNotFound)
 			})
 			Convey("When user is unauthenticated and version is not published", func() {

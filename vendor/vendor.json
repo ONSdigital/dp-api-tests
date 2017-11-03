@@ -114,6 +114,12 @@
 			"revisionTime": "2017-07-05T02:17:15Z"
 		},
 		{
+			"checksumSHA1": "zmC8/3V4ls53DJlNTKDZwPSC/dA=",
+			"path": "github.com/satori/go.uuid",
+			"revision": "5bf94b69c6b68ee1b541973bb8e1144db23a194b",
+			"revisionTime": "2017-03-21T23:07:31Z"
+		},
+		{
 			"checksumSHA1": "ZZ3sHehq/vG9sgKB7IFIHg3Uq98=",
 			"origin": "github.com/yudai/gojsondiff/vendor/github.com/sergi/go-diff/diffmatchpatch",
 			"path": "github.com/sergi/go-diff/diffmatchpatch",

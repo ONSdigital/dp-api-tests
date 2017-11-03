@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
-	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 	mgo "gopkg.in/mgo.v2"
@@ -48,7 +47,6 @@ func TestSuccessfullyPostImportJob(t *testing.T) {
 
 			if err := mongo.Teardown(database, collection, "id", importJobID); err != nil {
 				if err != mgo.ErrNotFound {
-					log.ErrorC("Was unable to run test", err, nil)
 					os.Exit(1)
 				}
 			}
