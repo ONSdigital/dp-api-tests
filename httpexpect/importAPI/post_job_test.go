@@ -1,13 +1,15 @@
 package importAPI
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
+	"os"
 	"testing"
 
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
+	mgo "gopkg.in/mgo.v2"
 )
 
 // Create an import job
@@ -16,48 +18,52 @@ import (
 // of the job can be changed.
 
 // 201 - An import job was successfully created
-func TestPostJob_CreatesJob(t *testing.T) {
+
+func TestSuccessfullyPostImportJob(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
-
-	jsonMap := make(map[string]interface{})
-	json.Unmarshal([]byte(validJSON), &jsonMap)
 
 	Convey("Given a valid json input to create a job", t, func() {
 
 		Convey("The jobs endpoint returns 201 created", func() {
 
-			r := importAPI.POST("/jobs").WithBytes([]byte(validJSON)).
+			response := importAPI.POST("/jobs").WithBytes([]byte(validPOSTCreateJobJSON)).
 				Expect().Status(http.StatusCreated).JSON().Object()
 
-			fmt.Println(r)
+			importJobID := response.Value("id").String().Raw()
+			response.Value("id").NotNull()
+			response.Value("recipe").Equal("b944be78-f56d-409b-9ebd-ab2b77ffe187")
+			response.Value("state").Equal("created")
 
-			r.Value("recipe").Equal(jsonMap["recipe"])
-			r.Value("recipe").Equal("b944be78-f56d-409b-9ebd-ab2b77ffe187")
-			r.Value("state").Equal("created")
+			response.Value("files").Array().Element(0).Object().Value("alias_name").Equal("v4")
+			response.Value("files").Array().Element(0).Object().Value("url").Equal("https://s3-eu-west-1.amazonaws.com/dp-publish-content-test/OCIGrowth.csv")
 
-			r.Value("files").Array().Element(0).Object().Value("alias_name").Equal("v4")
-			r.Value("files").Array().Element(0).Object().Value("url").Equal("https://s3-eu-west-1.amazonaws.com/dp-publish-content-test/OCIGrowth.csv")
+			response.Value("links").Object().Value("instances").Array().Element(0).Object().Value("id").NotNull()
+			response.Value("links").Object().Value("instances").Array().Element(0).Object().Value("href").NotNull()
 
-			r.Value("links").Object().Value("instances").Array().Element(0).Object().Value("id").NotNull()
-			r.Value("links").Object().Value("instances").Array().Element(0).Object().Value("href").NotNull()
+			response.Value("links").Object().Value("self").Object().Value("id").Equal("")
+			response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/jobs/" + importJobID + "$")
+
+			response.Value("last_updated").NotNull()
+
+			if err := mongo.Teardown(database, collection, "id", importJobID); err != nil {
+				if err != mgo.ErrNotFound {
+					log.ErrorC("Was unable to run test", err, nil)
+					os.Exit(1)
+				}
+			}
 		})
-
 	})
-
 }
 
 // 400 - Invalid json message was sent to the API
-func TestPostJob_InvalidInput(t *testing.T) {
+func TestFailureToPostImportJob(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
-	Convey("Given invalid json input to create a job", t, func() {
+	Convey("Fail to create a import job due to an invalid json body", t, func() {
 
-		Convey("The jobs endpoint returns 400 invalid json message ", func() {
-
-			importAPI.POST("/jobs").WithBytes([]byte(invalidJSON)).
-				Expect().Status(http.StatusBadRequest)
-		})
+		importAPI.POST("/jobs").WithBytes([]byte("{")).
+			Expect().Status(http.StatusBadRequest)
 	})
 }
