@@ -15,54 +15,54 @@ import (
 func TestSuccessfullyDeleteDimension(t *testing.T) {
 
 	filterID := uuid.NewV4().String()
-	filterJobID := uuid.NewV4().String()
+	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
-	Convey("Given an existing filter job", t, func() {
-		update := GetValidFilterJobWithMultipleDimensions(filterID, instanceID, filterJobID)
+	Convey("Given an existing filter blueprint", t, func() {
+		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
 
-		Convey("When sending a delete request to remove an existing dimension on the filter job", func() {
-			Convey("Then the filter job should not contain that dimension", func() {
-				filterAPI.DELETE("/filters/{filter_job_id}/dimensions/Goods and services", filterJobID).
+		Convey("When sending a delete request to remove an existing dimension on the filter blueprint", func() {
+			Convey("Then the filter blueprint should not contain that dimension", func() {
+				filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/Goods and services", filterBlueprintID).
 					Expect().Status(http.StatusOK)
 
 				var expectedDimensions []mongo.Dimension
 
 				dimensionAge := mongo.Dimension{
-					DimensionURL: "",
-					Name:         "age",
-					Options:      []string{"27"},
+					URL:     cfg.FilterAPIURL + "/filters/" + filterBlueprintID + "/dimensions/age",
+					Name:    "age",
+					Options: []string{"27"},
 				}
 
 				dimensionSex := mongo.Dimension{
-					DimensionURL: "",
-					Name:         "sex",
-					Options:      []string{"male", "female"},
+					URL:     cfg.FilterAPIURL + "/filters/" + filterBlueprintID + "/dimensions/sex",
+					Name:    "sex",
+					Options: []string{"male", "female"},
 				}
 
 				dimensionTime := mongo.Dimension{
-					DimensionURL: "",
-					Name:         "time",
-					Options:      []string{"March 1997", "April 1997", "June 1997", "September 1997", "December 1997"},
+					URL:     cfg.FilterAPIURL + "/filters/" + filterBlueprintID + "/dimensions/time",
+					Name:    "time",
+					Options: []string{"March 1997", "April 1997", "June 1997", "September 1997", "December 1997"},
 				}
 
 				expectedDimensions = append(expectedDimensions, dimensionAge, dimensionSex, dimensionTime)
 
-				// Check dimension has been removed from filter job
-				filterJob, err := mongo.GetFilterJob(database, collection, "filter_job_id", filterJobID)
+				// Check dimension has been removed from filter blueprint
+				filterBlueprint, err := mongo.GetFilter(database, collection, "filter_id", filterBlueprintID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated document", err, nil)
 					os.Exit(1)
 				}
 
-				So(filterJob.Dimensions, ShouldResemble, expectedDimensions)
+				So(filterBlueprint.Dimensions, ShouldResemble, expectedDimensions)
 			})
 		})
 	})
@@ -76,58 +76,34 @@ func TestSuccessfullyDeleteDimension(t *testing.T) {
 func TestFailureToDeleteDimension(t *testing.T) {
 
 	filterID := uuid.NewV4().String()
-	filterJobID := uuid.NewV4().String()
+	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
-	Convey("Given filter job does not exist", t, func() {
-		Convey("When requesting to delete a dimension from filter job", func() {
+	Convey("Given filter blueprint does not exist", t, func() {
+		Convey("When requesting to delete a dimension from filter blueprint", func() {
 			Convey("Then response returns status bad request (400)", func() {
 
-				filterAPI.DELETE("/filters/{filter_job_id}/dimensions/age", filterJobID).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - filter job not found")
+				filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/age", filterBlueprintID).
+					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - filter blueprint not found")
 			})
 		})
-	})
-
-	Convey("Given an existing filter job with submitted state", t, func() {
-
-		update := GetValidSubmittedFilterJob(filterID, instanceID, filterJobID)
-
-		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
-			log.ErrorC("Unable to setup test data", err, nil)
-			os.Exit(1)
-		}
-
-		Convey("When requesting to delete a dimension from filter job", func() {
-			Convey("Then response returns status forbidden (403)", func() {
-
-				filterAPI.DELETE("/filters/{filter_job_id}/dimensions/age", filterJobID).
-					Expect().Status(http.StatusForbidden).Body().
-					Contains("Forbidden, the filter job has been locked as it has been submitted to be processed\n")
-			})
-		})
-
-		if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
-			log.ErrorC("Unable to remove test data from mongo db", err, nil)
-			os.Exit(1)
-		}
 	})
 
 	Convey("Given an existing filter", t, func() {
 
-		update := GetValidFilterJobWithMultipleDimensions(filterID, instanceID, filterJobID)
+		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
 
-		Convey("When requesting to delete a dimension from filter job where the dimension does not exist", func() {
+		Convey("When requesting to delete a dimension from filter blueprint where the dimension does not exist", func() {
 			Convey("Then response returns status not found (404)", func() {
 
-				filterAPI.DELETE("/filters/{filter_job_id}/dimensions/wage", filterJobID).
+				filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/wage", filterBlueprintID).
 					Expect().Status(http.StatusNotFound).Body().Contains("Dimension not found")
 			})
 		})
