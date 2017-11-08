@@ -12,9 +12,6 @@ import (
 	mgo "gopkg.in/mgo.v2"
 )
 
-// Add a file into a job, for each file added an alias name needs to be given.
-// This name needs to link to the recipe
-// 200 - The file was added to the import job
 func TestAddFileToImportJob(t *testing.T) {
 
 	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {
@@ -32,22 +29,22 @@ func TestAddFileToImportJob(t *testing.T) {
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
 	// These tests needs to refine when authentication was handled in the code.
-	Convey("Add file to an import job", t, func() {
+	Convey("Given an import job exists", t, func() {
+		Convey("When a request to add a file into a job and the user is authenticated", func() {
+			Convey("Then the response returns status OK (200)", func() {
 
-		Convey("When the user is authenticated", func() {
-
-			importAPI.PUT("/jobs/{id}/files", jobID).WithHeader(internalToken, internalTokenID).
-				WithBytes([]byte(validPUTAddFilesJSON)).Expect().Status(http.StatusOK)
-
+				importAPI.PUT("/jobs/{id}/files", jobID).WithHeader(internalToken, internalTokenID).
+					WithBytes([]byte(validPUTAddFilesJSON)).Expect().Status(http.StatusOK)
+			})
 		})
 
-		Convey("When the user is unauthenticated", func() {
+		Convey("When a request to add a file into a job and the user is unauthenticated", func() {
+			Convey("Then the response returns status OK (200)", func() {
 
-			importAPI.PUT("/jobs/{id}/files", jobID).WithBytes([]byte(validPUTAddFilesJSON)).
-				Expect().Status(http.StatusOK)
-
+				importAPI.PUT("/jobs/{id}/files", jobID).WithBytes([]byte(validPUTAddFilesJSON)).
+					Expect().Status(http.StatusOK)
+			})
 		})
-
 	})
 
 	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {
@@ -76,18 +73,18 @@ func TestFailureToAddFileToAnImportJob(t *testing.T) {
 
 	// This test fails.
 	// Bug raised.
-	Convey("Fail to add file to an import job", t, func() {
-		Convey("and return status not found", func() {
-			Convey("When the job id does not exist", func() {
+	Convey("Given an import job exists", t, func() {
+		Convey("When a request to add a file into a job with job id that does not exist", func() {
+			Convey("Then the response returns status not found (404)", func() {
 				importAPI.PUT("/jobs/{id}/files", invalidJobID).WithBytes([]byte(validPUTAddFilesJSON)).
 					Expect().Status(http.StatusNotFound)
 			})
 		})
 	})
 
-	Convey("Fail to add file to an import job", t, func() {
-		Convey("and return status bad request", func() {
-			Convey("When the invalid json was sent to API", func() {
+	Convey("Given an import job exists", t, func() {
+		Convey("When a request to add a file into a job with invalid json", func() {
+			Convey("Then the response returns status bad request(400)", func() {
 				importAPI.PUT("/jobs/{id}/files", jobID).WithHeader(internalToken, internalTokenID).WithBytes([]byte("{")).
 					Expect().Status(http.StatusBadRequest)
 			})

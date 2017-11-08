@@ -12,8 +12,6 @@ import (
 	mgo "gopkg.in/mgo.v2"
 )
 
-// Update the state of the job. If this is set to submitted, this shall trigger the import process.
-// 200 - The job is in a queue
 func TestUpdateImportJobState(t *testing.T) {
 
 	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {
@@ -33,22 +31,22 @@ func TestUpdateImportJobState(t *testing.T) {
 	// This test fails.
 	// Bug raised in Trello.
 	// These tests needs to refine when authentication was handled in the code.
-	Convey("Update the state of the import job", t, func() {
+	Convey("Given an import job exists", t, func() {
+		Convey("When a request to update the jobs state with a specific id and the user is authenticated", func() {
+			Convey("Then the response returns status OK (200)", func() {
 
-		Convey("When the user is authenticated", func() {
-
-			importAPI.PUT("/jobs/{id}", jobID).WithHeader(internalToken, internalTokenID).
-				WithBytes([]byte(validPUTJobJSON)).Expect().Status(http.StatusOK)
-
+				importAPI.PUT("/jobs/{id}", jobID).WithHeader(internalToken, internalTokenID).
+					WithBytes([]byte(validPUTJobJSON)).Expect().Status(http.StatusOK)
+			})
 		})
 
-		Convey("When the user is unauthenticated", func() {
+		Convey("When a request to update the jobs state with a specific id and the user is unauthenticated", func() {
+			Convey("When the user is unauthenticated", func() {
 
-			importAPI.PUT("/jobs/{id}", jobID).WithBytes([]byte(validPUTJobJSON)).
-				Expect().Status(http.StatusOK)
-
+				importAPI.PUT("/jobs/{id}", jobID).WithBytes([]byte(validPUTJobJSON)).
+					Expect().Status(http.StatusOK)
+			})
 		})
-
 	})
 
 	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {
@@ -77,26 +75,22 @@ func TestFailureToUpdateAnImportJob(t *testing.T) {
 
 	// This test fails.
 	// Bug raised.
-	Convey("Fail to update an import job", t, func() {
-		Convey("and return status not found", func() {
-			Convey("When the job id does not exist", func() {
+	Convey("Given an import job exists", t, func() {
+		Convey("When a request to change job state with job id that does not exist", func() {
+			Convey("Then the response returns status not found (404)", func() {
 				importAPI.PUT("/jobs/{id}", invalidJobID).WithBytes([]byte(validPUTJobJSON)).
 					Expect().Status(http.StatusNotFound)
 			})
-
 		})
-
 	})
 
-	Convey("Fail to update an import job", t, func() {
-		Convey("and return status bad request", func() {
-			Convey("When the invalid json was sent to API", func() {
+	Convey("Given an import job exists", t, func() {
+		Convey("When a request to change job state with job id that does not exist", func() {
+			Convey("Then the response returns status bad request (400)", func() {
 				importAPI.PUT("/jobs/{id}", jobID).WithHeader(internalToken, internalTokenID).WithBytes([]byte("{")).
 					Expect().Status(http.StatusBadRequest)
 			})
-
 		})
-
 	})
 
 	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {

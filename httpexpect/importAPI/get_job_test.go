@@ -12,8 +12,6 @@ import (
 	mgo "gopkg.in/mgo.v2"
 )
 
-// Get information about a single job
-// 200 - Return a single job information
 func TestSuccessfullyGetAnImportJob(t *testing.T) {
 
 	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {
@@ -31,24 +29,23 @@ func TestSuccessfullyGetAnImportJob(t *testing.T) {
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
 	// These tests needs to refine when authentication was handled in the code.
-	Convey("Get information about a single job", t, func() {
+	Convey("Given an import job exists", t, func() {
+		Convey("When a request to get the job with a specific id and the user is authenticated", func() {
+			Convey("Then the response returns status OK (200)", func() {
 
-		Convey("When the user is authenticated", func() {
-
-			response := importAPI.GET("/jobs/{id}", jobID).WithHeader(internalToken, internalTokenID).Expect().Status(http.StatusOK).JSON().Object()
-
-			checkImportJobResponse(response)
-
+				response := importAPI.GET("/jobs/{id}", jobID).WithHeader(internalToken, internalTokenID).Expect().Status(http.StatusOK).JSON().Object()
+				checkImportJobResponse(response)
+			})
 		})
 
-		Convey("When the user is unauthenticated", func() {
+		Convey("When a request to get the job with a specific id and the user is unauthenticated", func() {
+			Convey("Then the response returns status OK (200)", func() {
 
-			response := importAPI.GET("/jobs/{id}", jobID).Expect().Status(http.StatusOK).JSON().Object()
+				response := importAPI.GET("/jobs/{id}", jobID).Expect().Status(http.StatusOK).JSON().Object()
+				checkImportJobResponse(response)
 
-			checkImportJobResponse(response)
-
+			})
 		})
-
 	})
 
 	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {
@@ -59,7 +56,6 @@ func TestSuccessfullyGetAnImportJob(t *testing.T) {
 	}
 }
 
-// 404 - JobId does not match any import jobs
 func TestFailureToGetAnImportJob(t *testing.T) {
 
 	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {
@@ -76,15 +72,13 @@ func TestFailureToGetAnImportJob(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
-	Convey("Fail to get an import job", t, func() {
-		Convey("and return status not found", func() {
-			Convey("When the job id does not exist", func() {
+	Convey("Given an import job exists", t, func() {
+		Convey("When a request to get the job with id does not exist", func() {
+			Convey("Then the response returns status not found (404)", func() {
 				importAPI.GET("/jobs/{id}", invalidJobID).WithHeader(internalToken, internalTokenID).
 					Expect().Status(http.StatusNotFound)
 			})
-
 		})
-
 	})
 
 	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {

@@ -12,9 +12,6 @@ import (
 	mgo "gopkg.in/mgo.v2"
 )
 
-// Get a list of all jobs
-// Lists can be filtered by the job state
-// 200 - A list of jobs has been returned
 func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 
 	var docs []mongo.Doc
@@ -55,24 +52,22 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
 	// These tests needs to refine when authentication was handled in the code.
-	Convey("Get a list of all jobs", t, func() {
+	Convey("Given an import job exists", t, func() {
+		Convey("When a request to get a list of all jobs and the user is authenticated", func() {
+			Convey("Then the response returns status OK (200)", func() {
 
-		Convey("When the user is authenticated", func() {
-
-			response := importAPI.GET("/jobs").WithHeader(internalToken, internalTokenID).Expect().Status(http.StatusOK).JSON().Array()
-
-			checkImportJobsResponse(response)
-
+				response := importAPI.GET("/jobs").WithHeader(internalToken, internalTokenID).Expect().Status(http.StatusOK).JSON().Array()
+				checkImportJobsResponse(response)
+			})
 		})
 
-		Convey("When the user is unauthenticated", func() {
+		Convey("When a request to get a list of all jobs and the user is authenticated", func() {
+			Convey("Then the response returns status OK (200)", func() {
 
-			response := importAPI.GET("/jobs").Expect().Status(http.StatusOK).JSON().Array()
-
-			checkImportJobsResponse(response)
-
+				response := importAPI.GET("/jobs").Expect().Status(http.StatusOK).JSON().Array()
+				checkImportJobsResponse(response)
+			})
 		})
-
 	})
 
 	if err := mongo.TeardownMany(d); err != nil {
@@ -85,7 +80,6 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 
 func checkImportJobsResponse(response *httpexpect.Array) {
 
-	// Import Job - 1
 	response.Element(0).Object().Value("id").Equal(jobID)
 	response.Element(0).Object().Value("recipe").Equal("2080CACA-1A82-411E-AA46-F00804968E78")
 	response.Element(0).Object().Value("state").Equal("Created")
@@ -104,7 +98,6 @@ func checkImportJobsResponse(response *httpexpect.Array) {
 	// Raised a bug for this
 	response.Element(0).Object().NotContainsKey("last_updated")
 
-	// Import Job - 2
 	response.Element(1).Object().Value("id").Equal("01C24F0D-24BE-479F-962B-C76BCCD0AD00")
 	response.Element(1).Object().Value("recipe").Equal("6C9D2696-131F-40C3-B598-12200C90415C")
 	response.Element(1).Object().Value("state").Equal("Submitted")
