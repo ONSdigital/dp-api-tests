@@ -1,127 +1,141 @@
 package codeListAPI
 
 import (
-	"fmt"
 	"net/http"
-	"strings"
+	"os"
 	"testing"
 
+	mgo "gopkg.in/mgo.v2"
+
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-// Get in depth information about a code within a code list
-// 200 - Get in depth information about a code
-func TestGetCodeInformationWithInACodeList_ReturnsListOfCodes(t *testing.T) {
+func TestSuccessfullyGetCodeInformationAboutACode(t *testing.T) {
+
+	var docs []mongo.Doc
+
+	firstCodeListDoc := mongo.Doc{
+		Database:   "codelists",
+		Collection: "codelists",
+		Key:        "_id",
+		Value:      firstCodeListID,
+		Update:     validFirstCodeListData,
+	}
+
+	firstCodeListCodesDoc := mongo.Doc{
+		Database:   "codelists",
+		Collection: "codes",
+		Key:        "_id",
+		Value:      firstCodeListFirstCodeID,
+		Update:     validFirstCodeListFirstCodeData,
+	}
+
+	secondCodeListCodesDoc := mongo.Doc{
+		Database:   "codelists",
+		Collection: "codes",
+		Key:        "_id",
+		Value:      firstCodeListSecondCodeID,
+		Update:     validFirstCodeListSecondCodeData,
+	}
+
+	thirdCodeListCodesDoc := mongo.Doc{
+		Database:   "codelists",
+		Collection: "codes",
+		Key:        "_id",
+		Value:      firstCodeListThirdCodeID,
+		Update:     validFirstCodeListThirdCodeData,
+	}
+	docs = append(docs, firstCodeListDoc, firstCodeListCodesDoc, secondCodeListCodesDoc, thirdCodeListCodesDoc)
+
+	d := &mongo.ManyDocs{
+		Docs: docs,
+	}
+
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
+	}
+
+	if err := mongo.SetupMany(d); err != nil {
+		log.ErrorC("Was unable to run test", err, nil)
+		os.Exit(1)
+	}
+
 	codeListAPI := httpexpect.New(t, cfg.CodeListAPIURL)
 
-	Convey("Given a set of code lists", t, func() {
+	Convey("Given a code list and codes exists", t, func() {
+		Convey("When you request a specific code information", func() {
+			Convey("Then that particular code information about that code should appear", func() {
 
-		response := codeListAPI.GET("/code-lists").Expect().Status(http.StatusOK).JSON().Object()
+				// first code information
+				firstCodeResponse := codeListAPI.GET("/code-lists/{id}/codes/{code_id}", firstCodeListID, firstCode).
+					Expect().Status(http.StatusOK).JSON().Object()
 
-		cpiCodeID := response.Value("items").Array().Element(0).Object().Value("id").String().Raw()
-		timeID := response.Value("items").Array().Element(1).Object().Value("id").String().Raw()
+				firstCodeResponse.Value("id").Equal(firstCode)
+				firstCodeResponse.Value("label").Equal("First Code List label one")
+				firstCodeResponse.Value("links").Object().Value("code_list").Object().ValueEqual("id", firstCodeListID)
+				firstCodeResponse.Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/codes$")
+				firstCodeResponse.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
 
-		geographyID := response.Value("items").Array().Element(2).Object().Value("id").String().Raw()
+				// second code information
+				secondCodeResponse := codeListAPI.GET("/code-lists/{id}/codes/{code_id}", firstCodeListID, secondCode).
+					Expect().Status(http.StatusOK).JSON().Object()
 
-		Convey("Then get the list of all code with in a CPI code", func() {
-			cpiCodesResponse := codeListAPI.GET("/code-lists/{id}/codes", cpiCodeID).Expect().Status(http.StatusOK).JSON().Object()
+				secondCodeResponse.Value("id").Equal(secondCode)
+				secondCodeResponse.Value("label").Equal("First Code List label two")
+				secondCodeResponse.Value("links").Object().Value("code_list").Object().ValueEqual("id", firstCodeListID)
+				secondCodeResponse.Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/codes$")
+				secondCodeResponse.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
 
-			cpiFourthCode := cpiCodesResponse.Value("items").Array().Element(3).Object().Value("id").String().Raw()
+				// third code information
+				thirdCodeResponse := codeListAPI.GET("/code-lists/{id}/codes/{code_id}", firstCodeListID, thirdCode).
+					Expect().Status(http.StatusOK).JSON().Object()
 
-			Convey("Then get the list of all code with in a CPI code", func() {
-
-				codeInfoResponse := codeListAPI.GET("/code-lists/{id}/codes/{code_id}", cpiCodeID, cpiFourthCode).Expect().Status(http.StatusOK).JSON().Object()
-
-				codeInfoResponse.Value("id").Equal(cpiFourthCode)
-				codeInfoResponse.Value("label").Equal("Education")
-				codeInfoResponse.Value("links").Object().Value("code_list").Object().Value("id").Equal(cpiCodeID)
-				codeInfoResponse.Value("links").Object().Value("code_list").Object().Value("href").String().Contains(cpiCodeID)
-
-				codeInfoResponse.Value("links").Object().Value("self").Object().Value("href").String().Contains(cpiCodeID).Contains("codes").Contains(cpiFourthCode)
-
-			})
-
-		})
-
-		Convey("And get the list of all codes with in a time code", func() {
-			timeListResponse := codeListAPI.GET("/code-lists/{id}/codes", timeID).Expect().Status(http.StatusOK).JSON().Object()
-
-			timeFifthCode := timeListResponse.Value("items").Array().Element(4).Object().Value("id").String().Raw()
-			Convey("Then get the list of all code with in a CPI code", func() {
-
-				timeInfoResponse := codeListAPI.GET("/code-lists/{id}/codes/{code_id}", timeID, timeFifthCode).Expect().Status(http.StatusOK).JSON().Object()
-
-				timeInfoResponse.Value("id").Equal(timeFifthCode)
-
-				timeInfoResponse.Value("label").Equal(timeFifthCode)
-
-				timeInfoResponse.Value("links").Object().Value("code_list").Object().Value("id").Equal(timeID)
-
-				timeInfoResponse.Value("links").Object().Value("code_list").Object().Value("href").String().Contains(timeID)
-
-				timeInfoResponse.Value("links").Object().Value("self").Object().Value("href").String().Contains(timeID).Contains("codes").Contains(timeFifthCode)
+				thirdCodeResponse.Value("id").Equal(thirdCode)
+				thirdCodeResponse.Value("label").Equal("First Code List label three")
+				thirdCodeResponse.Value("links").Object().Value("code_list").Object().ValueEqual("id", firstCodeListID)
+				thirdCodeResponse.Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/codes$")
+				thirdCodeResponse.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
 
 			})
-		})
-
-		Convey("And get the list of all codes with in a geography code", func() {
-			geographyListResponse := codeListAPI.GET("/code-lists/{id}/codes", geographyID).Expect().Status(http.StatusOK).JSON().Object()
-
-			geographyListResponse.Value("items").Null()
-
 		})
 
 	})
+
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			log.ErrorC("Failed to tear down test data", err, nil)
+			os.Exit(1)
+		}
+	}
 }
 
+// This test fails.
 // Bug Raised
-// 400 - Code List not found/Invalid code list
-func TestGetCodeInformationWithInACodeList_InvalidCodeList(t *testing.T) {
+// 404 - Code list not found
+func TestFailureToGetInDepthInformationAboutACode(t *testing.T) {
 	codeListAPI := httpexpect.New(t, cfg.CodeListAPIURL)
 
-	Convey("Given a set of code lists", t, func() {
-
-		codeListID := codeListAPI.GET("/code-lists").Expect().Status(http.StatusOK).JSON().Object().Value("items").Array().Element(0).Object().Value("id").String().Raw()
-
-		Convey("Then get the list of all code with in a CPI code", func() {
-
-			cpiCodesResponse := codeListAPI.GET("/code-lists/{id}/codes", codeListID).Expect().Status(http.StatusOK).JSON().Object()
-
-			cpiFourthCode := cpiCodesResponse.Value("items").Array().Element(3).Object().Value("id").String().Raw()
-
-			Convey("With an invalid code list throws 404 error", func() {
-				invalidCodeListID := strings.Replace(codeListID, "-", "", 9)
-
-				codeListAPI.GET("/code-lists/{id}/codes/{code_id}", invalidCodeListID, cpiFourthCode).Expect().Status(http.StatusNotFound)
-
+	Convey("Given a code list and codes exists", t, func() {
+		Convey("When you pass a code list that does not exist", func() {
+			Convey("Then the response should be status not found (404)", func() {
+				codeListAPI.GET("/code-lists/{id}/codes/{code_id}", invalidCodeListID, firstCode).
+					Expect().Status(http.StatusNotFound)
 			})
+
 		})
-	})
-}
 
-// Bug Raised
-// 400 - Code not found/Invalid code
-func TestGetCodeInformationWithInACodeList_InvalidCode(t *testing.T) {
-	codeListAPI := httpexpect.New(t, cfg.CodeListAPIURL)
-
-	Convey("Given a set of code lists", t, func() {
-
-		codeListID := codeListAPI.GET("/code-lists").Expect().Status(http.StatusOK).JSON().Object().Value("items").Array().Element(0).Object().Value("id").String().Raw()
-
-		Convey("Then get the list of all code with in a CPI code", func() {
-
-			cpiCodesResponse := codeListAPI.GET("/code-lists/{id}/codes", codeListID).Expect().Status(http.StatusOK).JSON().Object()
-
-			cpiFourthCode := cpiCodesResponse.Value("items").Array().Element(3).Object().Value("id").String().Raw()
-
-			Convey("With an invalid code throws 404 error", func() {
-				invalidCodeID := strings.Replace(cpiFourthCode, "_", "", 5)
-
-				fmt.Println(invalidCodeID)
-				codeListAPI.GET("/code-lists/{id}/codes/{code_id}", codeListID, invalidCodeID).Expect().Status(http.StatusNotFound)
-
+		Convey("When you pass a code that does not exist", func() {
+			Convey("Then the response should be status not found (404)", func() {
+				codeListAPI.GET("/code-lists/{id}/codes/{code_id}", firstCodeListID, invalidCode).
+					Expect().Status(http.StatusNotFound)
 			})
+
 		})
 	})
 }

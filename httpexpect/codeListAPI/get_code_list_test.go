@@ -2,83 +2,73 @@ package codeListAPI
 
 import (
 	"net/http"
-	"strings"
+	"os"
 	"testing"
 
+	mgo "gopkg.in/mgo.v2"
+
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-// Get information about a code list
-// 200 - Json object containing information about the code list
-func TestGetACodeList_ReturnsSingleCodeList(t *testing.T) {
+func TestSuccessfullyGetACodeList(t *testing.T) {
+
+	if err := mongo.Teardown(database, collection, "_id", secondCodeListID); err != nil {
+		if err != mgo.ErrNotFound {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
+	}
+
+	if err := mongo.Setup(database, collection, "_id", secondCodeListID, validSecondCodeListData); err != nil {
+		log.ErrorC("Was unable to run test", err, nil)
+		os.Exit(1)
+	}
+
 	codeListAPI := httpexpect.New(t, cfg.CodeListAPIURL)
 
-	Convey("Given a set of code lists", t, func() {
+	Convey("Given a code list exists", t, func() {
+		Convey("When you request a specific code list with id", func() {
+			Convey("Then the code list data should appear", func() {
 
-		response := codeListAPI.GET("/code-lists").Expect().Status(http.StatusOK).JSON().Object()
+				response := codeListAPI.GET("/code-lists/{id}", secondCodeListID).
+					Expect().Status(http.StatusOK).JSON().Object()
 
-		cpiCodeID := response.Value("items").Array().Element(0).Object().Value("id").String().Raw()
-		timeID := response.Value("items").Array().Element(1).Object().Value("id").String().Raw()
-		geographyID := response.Value("items").Array().Element(2).Object().Value("id").String().Raw()
+				response.Value("id").Equal(secondCodeListID)
+				response.Value("name").Equal("Second Code List")
+				response.Value("links").Object().Value("self").Object().Value("id").Equal(secondCodeListID)
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + secondCodeListID + "$")
 
-		Convey("Then get the information about CPI code list", func() {
-			cpiCodesResponse := codeListAPI.GET("/code-lists/{id}", cpiCodeID).Expect().Status(http.StatusOK).JSON().Object()
+				response.Value("links").Object().Value("codes").Object().Value("id").Equal("code")
+				response.Value("links").Object().Value("codes").Object().Value("href").String().Match("(.+)/code-lists/" + secondCodeListID + "/codes$")
 
-			cpiCodesResponse.Value("id").Equal(cpiCodeID)
-			cpiCodesResponse.Value("name").Equal("CPI Codes")
-			cpiCodesResponse.Value("links").Object().Value("self").Object().Value("id").Equal(cpiCodeID)
-
-			cpiCodesResponse.Value("links").Object().Value("self").Object().Value("href").String().Contains(cpiCodeID)
-			cpiCodesResponse.Value("links").Object().Value("codes").Object().Value("id").Equal("code")
-			cpiCodesResponse.Value("links").Object().Value("codes").Object().Value("href").String().Contains(cpiCodeID).Contains("codes")
-
-		})
-
-		Convey("And get the information about time code list", func() {
-			timeListResponse := codeListAPI.GET("/code-lists/{id}", timeID).Expect().Status(http.StatusOK).JSON().Object()
-
-			timeListResponse.Value("id").Equal(timeID)
-			timeListResponse.Value("name").Equal("time")
-			timeListResponse.Value("links").Object().Value("self").Object().Value("id").Equal(timeID)
-
-			timeListResponse.Value("links").Object().Value("self").Object().Value("href").String().Contains(timeID)
-			timeListResponse.Value("links").Object().Value("codes").Object().Value("id").Equal("code")
-			timeListResponse.Value("links").Object().Value("codes").Object().Value("href").String().Contains(timeID).Contains("codes")
-
-		})
-
-		Convey("And get the information about geography code list", func() {
-			geographyListResponse := codeListAPI.GET("/code-lists/{id}", geographyID).Expect().Status(http.StatusOK).JSON().Object()
-
-			geographyListResponse.Value("id").Equal(geographyID)
-			geographyListResponse.Value("name").Equal("geography")
-			geographyListResponse.Value("links").Object().Value("self").Object().Value("id").Equal(geographyID)
-
-			geographyListResponse.Value("links").Object().Value("self").Object().Value("href").String().Contains(geographyID)
-			geographyListResponse.Value("links").Object().Value("codes").Object().Value("id").Equal("code")
-			geographyListResponse.Value("links").Object().Value("codes").Object().Value("href").String().Contains(geographyID).Contains("codes")
-
+			})
 		})
 
 	})
+
+	if err := mongo.Teardown(database, collection, "_id", secondCodeListID); err != nil {
+		if err != mgo.ErrNotFound {
+			os.Exit(1)
+		}
+	}
 }
 
-// Bug Raised
-// 404 - Code list not found
-func TestGetACodeList_InvalidCodeList(t *testing.T) {
+// This test fails.
+// Bug raised in trello. Instead of returning 404, returning 500 code.
+func TestFailureToGetACodeList(t *testing.T) {
+
 	codeListAPI := httpexpect.New(t, cfg.CodeListAPIURL)
 
-	Convey("Given a set of code lists", t, func() {
-
-		codeListID := codeListAPI.GET("/code-lists").Expect().Status(http.StatusOK).JSON().Object().Value("items").Array().Element(0).Object().Value("id").String().Raw()
-
-		Convey("With an invalid code list throws 404 error", func() {
-			invalidCodeListID := strings.Replace(codeListID, "-", "", 9)
-
-			codeListAPI.GET("/code-lists/{id}", invalidCodeListID).Expect().Status(http.StatusNotFound)
+	Convey("Given a code list exists", t, func() {
+		Convey("When you pass a code list that does not exist", func() {
+			Convey("Then the response should be status not found (404)", func() {
+				codeListAPI.GET("/code-lists/{id}", invalidCodeListID).
+					Expect().Status(http.StatusNotFound)
+			})
 
 		})
-
 	})
 }

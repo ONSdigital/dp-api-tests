@@ -68,11 +68,11 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 
 	})
 
-	// if err := mongo.TeardownMany(d); err != nil {
-	// 	if err != mgo.ErrNotFound {
-	// 		os.Exit(1)
-	// 	}
-	// }
+	if err := mongo.TeardownMany(d); err != nil {
+		if err != mgo.ErrNotFound {
+			os.Exit(1)
+		}
+	}
 }
 
 func checkImportJobsResponse(response *httpexpect.Array) {
