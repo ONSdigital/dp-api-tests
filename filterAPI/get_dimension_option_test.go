@@ -15,14 +15,14 @@ import (
 func TestSuccessfullyGetDimensionOption(t *testing.T) {
 
 	filterID := uuid.NewV4().String()
-	filterJobID := uuid.NewV4().String()
+	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given an existing filter", t, func() {
 
-		update := GetValidFilterJobWithMultipleDimensions(filterID, instanceID, filterJobID)
+		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
@@ -32,40 +32,40 @@ func TestSuccessfullyGetDimensionOption(t *testing.T) {
 		Convey("When checking the dimension options", func() {
 			Convey("Then return status no content (204) for dimension `age` options", func() {
 
-				filterAPI.GET("/filters/{filter_job_id}/dimensions/age/options/27", filterJobID).
+				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age/options/27", filterBlueprintID).
 					Expect().Status(http.StatusNoContent)
 			})
 
 			Convey("Then return status no content (204) for dimension `sex` options", func() {
 
-				filterAPI.GET("/filters/{filter_job_id}/dimensions/sex/options/male", filterJobID).
+				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
 					Expect().Status(http.StatusNoContent)
-				filterAPI.GET("/filters/{filter_job_id}/dimensions/sex/options/female", filterJobID).
+				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex/options/female", filterBlueprintID).
 					Expect().Status(http.StatusNoContent)
 
 			})
 
 			Convey("Then return status no content (204) for dimension `goods and services` options", func() {
 
-				filterAPI.GET("/filters/{filter_job_id}/dimensions/Goods and services/options/Education", filterJobID).
+				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/Goods and services/options/Education", filterBlueprintID).
 					Expect().Status(http.StatusNoContent)
-				filterAPI.GET("/filters/{filter_job_id}/dimensions/Goods and services/options/health", filterJobID).
+				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/Goods and services/options/health", filterBlueprintID).
 					Expect().Status(http.StatusNoContent)
-				filterAPI.GET("/filters/{filter_job_id}/dimensions/Goods and services/options/communication", filterJobID).
+				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/Goods and services/options/communication", filterBlueprintID).
 					Expect().Status(http.StatusNoContent)
 			})
 
 			Convey("Then return status no content (204) for dimension `time` options", func() {
 
-				filterAPI.GET("/filters/{filter_job_id}/dimensions/time/options/March 1997", filterJobID).
+				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/March 1997", filterBlueprintID).
 					Expect().Status(http.StatusNoContent)
-				filterAPI.GET("/filters/{filter_job_id}/dimensions/time/options/April 1997", filterJobID).
+				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/April 1997", filterBlueprintID).
 					Expect().Status(http.StatusNoContent)
-				filterAPI.GET("/filters/{filter_job_id}/dimensions/time/options/June 1997", filterJobID).
+				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/June 1997", filterBlueprintID).
 					Expect().Status(http.StatusNoContent)
-				filterAPI.GET("/filters/{filter_job_id}/dimensions/time/options/September 1997", filterJobID).
+				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/September 1997", filterBlueprintID).
 					Expect().Status(http.StatusNoContent)
-				filterAPI.GET("/filters/{filter_job_id}/dimensions/time/options/December 1997", filterJobID).
+				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/December 1997", filterBlueprintID).
 					Expect().Status(http.StatusNoContent)
 			})
 		})
@@ -80,24 +80,24 @@ func TestSuccessfullyGetDimensionOption(t *testing.T) {
 func TestFailureToGetDimensionOption(t *testing.T) {
 
 	filterID := uuid.NewV4().String()
-	filterJobID := uuid.NewV4().String()
+	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
-	Convey("Given a filter job does not exist", t, func() {
-		Convey("When a request to get a dimension option against filter job", func() {
+	Convey("Given a filter blueprint does not exist", t, func() {
+		Convey("When a request to get a dimension option against filter blueprint", func() {
 			Convey("Then return a status bad request (400)", func() {
 
-				filterAPI.GET("/filters/{filter_job_id}/dimensions/age/options/27", filterJobID).
+				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age/options/27", filterBlueprintID).
 					Expect().Status(http.StatusBadRequest).Body().Contains("filter or dimension not found")
 			})
 		})
 	})
 
-	Convey("Given a filter job containing dimension options", t, func() {
+	Convey("Given a filter blueprint containing dimension options", t, func() {
 
-		update := GetValidFilterJobWithMultipleDimensions(filterID, instanceID, filterJobID)
+		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
@@ -107,7 +107,7 @@ func TestFailureToGetDimensionOption(t *testing.T) {
 		Convey("When a request to get a dimension option where the dimension does not exist", func() {
 			Convey("Then return a status bad request (400)", func() {
 
-				filterAPI.GET("/filters/{filter_job_id}/dimensions/ages/options/27", filterJobID).
+				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/ages/options/27", filterBlueprintID).
 					Expect().Status(http.StatusBadRequest).Body().Contains("filter or dimension not found")
 			})
 		})
@@ -115,7 +115,7 @@ func TestFailureToGetDimensionOption(t *testing.T) {
 		Convey("When a request to get a dimension option that does not exist", func() {
 			Convey("Then return a status not found (404)", func() {
 
-				filterAPI.GET("/filters/{filter_job_id}/dimensions/sex/options/unknown", filterJobID).
+				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex/options/unknown", filterBlueprintID).
 					Expect().Status(http.StatusNotFound).Body().Contains("Option not found")
 			})
 		})

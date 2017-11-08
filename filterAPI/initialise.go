@@ -13,6 +13,10 @@ var cfg *config.Config
 const (
 	database   = "filters"
 	collection = "filters"
+
+	internalTokenHeader    = "Internal-Token"
+	internalTokenID        = "FD0108EA-825D-411C-9B1D-41EF7727F465"
+	invalidInternalTokenID = "FD0108EA-825D-411C-9B1D-41EF7727F465A"
 )
 
 func init() {
@@ -29,6 +33,11 @@ func init() {
 	}
 
 	if err = mongo.Teardown(database, collection, "test_data", "true"); err != nil {
+		log.ErrorC("Unable to remove all test data from mongo db", err, nil)
+		os.Exit(1)
+	}
+
+	if err = mongo.Teardown(database, "filterOutputs", "test_data", "true"); err != nil {
 		log.ErrorC("Unable to remove all test data from mongo db", err, nil)
 		os.Exit(1)
 	}
