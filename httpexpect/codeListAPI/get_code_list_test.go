@@ -46,7 +46,6 @@ func TestSuccessfullyGetACodeList(t *testing.T) {
 
 			})
 		})
-
 	})
 
 	if err := mongo.Teardown(database, collection, "_id", secondCodeListID); err != nil {
@@ -68,7 +67,6 @@ func TestFailureToGetACodeList(t *testing.T) {
 				codeListAPI.GET("/code-lists/{id}", invalidCodeListID).
 					Expect().Status(http.StatusNotFound)
 			})
-
 		})
 	})
 }

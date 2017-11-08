@@ -75,21 +75,18 @@ func TestSuccessfullyGetAListOfAllCodesWithinCodeList(t *testing.T) {
 				response := codeListAPI.GET("/code-lists/{id}/codes", firstCodeListID).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				// code 1 data
 				response.Value("items").Array().Element(0).Object().Value("id").Equal(firstCode)
 				response.Value("items").Array().Element(0).Object().Value("label").Equal("First Code List label one")
 				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().ValueEqual("id", firstCodeListID)
 				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/codes$")
 				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
 
-				// code 2 data
 				response.Value("items").Array().Element(1).Object().Value("id").Equal(secondCode)
 				response.Value("items").Array().Element(1).Object().Value("label").Equal("First Code List label two")
 				response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code_list").Object().ValueEqual("id", firstCodeListID)
 				response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/codes$")
 				response.Value("items").Array().Element(1).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
 
-				// code 3 data
 				response.Value("items").Array().Element(2).Object().Value("id").Equal(thirdCode)
 				response.Value("items").Array().Element(2).Object().Value("label").Equal("First Code List label three")
 				response.Value("items").Array().Element(2).Object().Value("links").Object().Value("code_list").Object().ValueEqual("id", firstCodeListID)
@@ -98,7 +95,6 @@ func TestSuccessfullyGetAListOfAllCodesWithinCodeList(t *testing.T) {
 
 			})
 		})
-
 	})
 
 	if err := mongo.TeardownMany(d); err != nil {
@@ -121,7 +117,6 @@ func TestFailureToGetAListOfAllCodesWithinCodeList(t *testing.T) {
 				codeListAPI.GET("/code-lists/{id}/codes", invalidCodeListID).
 					Expect().Status(http.StatusNotFound)
 			})
-
 		})
 	})
 }

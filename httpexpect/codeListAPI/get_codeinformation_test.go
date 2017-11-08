@@ -101,10 +101,8 @@ func TestSuccessfullyGetCodeInformationAboutACode(t *testing.T) {
 				thirdCodeResponse.Value("links").Object().Value("code_list").Object().ValueEqual("id", firstCodeListID)
 				thirdCodeResponse.Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/codes$")
 				thirdCodeResponse.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
-
 			})
 		})
-
 	})
 
 	if err := mongo.TeardownMany(d); err != nil {
@@ -127,7 +125,6 @@ func TestFailureToGetInDepthInformationAboutACode(t *testing.T) {
 				codeListAPI.GET("/code-lists/{id}/codes/{code_id}", invalidCodeListID, firstCode).
 					Expect().Status(http.StatusNotFound)
 			})
-
 		})
 
 		Convey("When you pass a code that does not exist", func() {
@@ -135,7 +132,6 @@ func TestFailureToGetInDepthInformationAboutACode(t *testing.T) {
 				codeListAPI.GET("/code-lists/{id}/codes/{code_id}", firstCodeListID, invalidCode).
 					Expect().Status(http.StatusNotFound)
 			})
-
 		})
 	})
 }

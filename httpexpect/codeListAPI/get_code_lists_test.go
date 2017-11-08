@@ -85,7 +85,6 @@ func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 				//response.Value("number_of_results").Equal(6)
 			})
 		})
-
 	})
 
 	if err := mongo.TeardownMany(d); err != nil {
