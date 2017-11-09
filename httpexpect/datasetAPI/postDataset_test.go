@@ -29,6 +29,7 @@ func TestSuccessfullyPostDataset(t *testing.T) {
 			Expect().Status(http.StatusCreated).JSON().Object()
 
 		response.Value("id").Equal(datasetID)
+		response.Value("next").Object().Value("access_right").Equal("http://ons.gov.uk/accessrights")
 		response.Value("next").Object().Value("collection_id").Equal("108064B3-A808-449B-9041-EA3A2F72CFAA")
 		response.Value("next").Object().Value("contacts").Array().Element(0).Object().Value("email").Equal("cpi@onstest.gov.uk")
 		response.Value("next").Object().Value("contacts").Array().Element(0).Object().Value("name").Equal("Automation Tester")
@@ -36,6 +37,7 @@ func TestSuccessfullyPostDataset(t *testing.T) {
 		response.Value("next").Object().Value("description").Equal("Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.")
 		response.Value("next").Object().Value("keywords").Array().Element(0).Equal("cpi")
 		response.Value("next").Object().Value("id").Equal(datasetID)
+		response.Value("next").Object().Value("license").Equal("ONS license")
 		response.Value("next").Object().Value("links").Object().Value("editions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions$")
 		response.Value("next").Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
 		response.Value("next").Object().Value("methodologies").Array().Element(0).Object().Value("description").Equal("Consumer price inflation is the rate at which the prices of the goods and services bought by households rise or fall, and is estimated by using consumer price indices.")

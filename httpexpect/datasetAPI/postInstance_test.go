@@ -23,16 +23,17 @@ func TestSuccessfullyPostInstance(t *testing.T) {
 		instanceUniqueID := response.Value("id").String().Raw()
 
 		response.Value("id").NotNull()
-		response.Value("edition").Equal("2017")
-		response.Value("headers").Array().Element(0).Equal("time")
-		response.Value("headers").Array().Element(1).Equal("geography")
-		response.Value("total_inserted_observations").Equal(1000)
+		response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("The age ranging from 16 to 75+")
+		response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("(.+)/code-lists/43513D18-B4D8-4227-9820-492B2971E7T5$")
+		response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("43513D18-B4D8-4227-9820-492B2971E7T5")
+		response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
 		response.Value("links").Object().Value("job").Object().Value("id").Equal("042e216a-7822-4fa0-a3d6-e3f5248ffc35")
 		response.Value("links").Object().Value("job").Object().Value("href").String().Match("(.+)/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35$")
 		response.Value("links").Object().Value("dataset").Object().Value("id").Equal("34B13D18-B4D8-4227-9820-492B2971E221")
 		response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/34B13D18-B4D8-4227-9820-492B2971E221$")
-		response.Value("state").Equal("completed")
-		response.Value("total_observations").Equal(1000)
+		// TODO Reinstate once API has been fixed
+		// response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/instances" + instanceUniqueID + "$")
+		response.Value("state").Equal("created")
 		response.Value("last_updated").NotNull()
 
 		if err := mongo.Teardown(database, "instances", "id", instanceUniqueID); err != nil {

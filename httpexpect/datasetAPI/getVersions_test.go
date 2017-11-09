@@ -74,7 +74,7 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("items").Array().Length().Equal(2)
-			checkVersionResponse(response, 1)
+			checkVersionResponse(response.Value("items").Array().Element(1).Object())
 
 			response.Value("items").Array().Element(0).Object().Value("id").Equal("799")
 			response.Value("items").Array().Element(0).Object().Value("state").Equal("associated")
@@ -85,7 +85,7 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("items").Array().Length().Equal(1)
-			checkVersionResponse(response, 0)
+			checkVersionResponse(response.Value("items").Array().Element(0).Object())
 		})
 	})
 
@@ -182,22 +182,29 @@ func TestGetVersions_Failed(t *testing.T) {
 	}
 }
 
-func checkVersionResponse(response *httpexpect.Object, item int) {
-	response.Value("items").Array().Element(item).Object().Value("id").Equal("789")
-	response.Value("items").Array().Element(item).Object().Value("collection_id").Equal("108064B3-A808-449B-9041-EA3A2F72CFAA")
-	response.Value("items").Array().Element(item).Object().Value("downloads").Object().Value("csv").Object().Value("url").String().Match("(.+)/aws/census-2017-1-csv$")
-	response.Value("items").Array().Element(item).Object().Value("downloads").Object().Value("csv").Object().Value("size").Equal("10mb")
-	response.Value("items").Array().Element(item).Object().Value("downloads").Object().Value("xls").Object().Value("url").String().Match("(.+)/aws/census-2017-1-xls$")
-	response.Value("items").Array().Element(item).Object().Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
-	response.Value("items").Array().Element(item).Object().Value("edition").Equal("2017")
-	response.Value("items").Array().Element(item).Object().Value("license").Equal("ONS License")
-	response.Value("items").Array().Element(item).Object().Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
-	response.Value("items").Array().Element(item).Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
-	response.Value("items").Array().Element(item).Object().Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions$")
-	response.Value("items").Array().Element(item).Object().Value("links").Object().Value("edition").Object().Value("id").Equal(edition)
-	response.Value("items").Array().Element(item).Object().Value("links").Object().Value("edition").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
-	response.Value("items").Array().Element(item).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
-	response.Value("items").Array().Element(item).Object().Value("release_date").Equal("2017-12-12") // TODO Should be isodate
-	response.Value("items").Array().Element(item).Object().Value("state").Equal("published")
-	response.Value("items").Array().Element(item).Object().Value("version").Equal(1)
+func checkVersionResponse(response *httpexpect.Object) {
+	response.Value("id").Equal("789")
+	response.Value("collection_id").Equal("108064B3-A808-449B-9041-EA3A2F72CFAA")
+	response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
+	response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("(.+)/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
+	response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
+	response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
+	response.Value("downloads").Object().Value("csv").Object().Value("url").String().Match("(.+)/aws/census-2017-1-csv$")
+	response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10mb")
+	response.Value("downloads").Object().Value("xls").Object().Value("url").String().Match("(.+)/aws/census-2017-1-xls$")
+	response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
+	response.Value("edition").Equal("2017")
+	response.Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
+	response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
+	response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions$")
+	response.Value("links").Object().Value("edition").Object().Value("id").Equal(edition)
+	response.Value("links").Object().Value("edition").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
+	response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
+	response.Value("release_date").Equal("2017-12-12") // TODO Should be isodate
+	response.Value("spatial").Equal("http://ons.gov.uk/geographylist")
+	response.Value("state").Equal("published")
+	response.Value("temporal").Array().Element(0).Object().Value("start_date").Equal("2014-09-09")
+	response.Value("temporal").Array().Element(0).Object().Value("end_date").Equal("2017-09-09")
+	response.Value("temporal").Array().Element(0).Object().Value("frequency").Equal("monthly")
+	response.Value("version").Equal(1)
 }

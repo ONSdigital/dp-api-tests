@@ -9,11 +9,26 @@ type Contact struct {
 	Telephone string
 }
 
+// Dimension represents information regarding a dimension and it's codelist
+type Dimension struct {
+	Description string
+	HRef        string
+	ID          string
+	Name        string
+}
+
 // GenericObject represents a generic object structure
 type GenericObject struct {
 	Description string
 	HRef        string
 	Title       string
+}
+
+// TemporalFrequency represents
+type TemporalFrequency struct {
+	EndDate   string `bson:"end_date"`
+	Frequency string
+	StartDate string `bson:"start_date"`
 }
 
 var contact = Contact{
@@ -39,15 +54,30 @@ var relatedDatasets = GenericObject{
 	Title: "Consumer Price Inflation time series dataset",
 }
 
+var dimension = Dimension{
+	Description: "A list of ages between 18 and 75+",
+	HRef:        "http://localhost:8080/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC",
+	ID:          "408064B3-A808-449B-9041-EA3A2F72CFAC",
+	Name:        "age",
+}
+
+var temporal = TemporalFrequency{
+	EndDate:   "2017-09-09",
+	Frequency: "monthly",
+	StartDate: "2014-09-09",
+}
+
 var validPublishedDatasetData = bson.M{
 	"$set": bson.M{
 		"id": datasetID,
+		"current.access_right":              "http://ons.gov.uk/accessrights",
 		"current.collection_id":             "108064B3-A808-449B-9041-EA3A2F72CFAA",
 		"current.contacts":                  []Contact{contact},
 		"current.description":               "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
 		"current.id":                        datasetID,
 		"current.keywords":                  []string{"cpi", "boy"},
 		"current.last_updated":              "2017-06-06", // TODO this should be an isodate
+		"current.license":                   "ONS license",
 		"current.links.editions.href":       "http://localhost:8080/datasets/" + datasetID + "/editions",
 		"current.links.latest_version.id":   "1",
 		"current.links.latest_version.href": "http://localhost:8080/datasets/" + datasetID + "/editions/2017/versions/1",
@@ -68,12 +98,14 @@ var validPublishedDatasetData = bson.M{
 		"current.theme":                     "Goods and services",
 		"current.title":                     "CPI",
 		"current.uri":                       "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation",
+		"next.access_right":                 "http://ons.gov.uk/accessrights",
 		"next.collection_id":                "208064B3-A808-449B-9041-EA3A2F72CFAB",
 		"next.contacts":                     []Contact{contact},
 		"next.description":                  "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
 		"next.id":                           datasetID,
 		"next.keywords":                     []string{"cpi", "boy"},
 		"next.last_updated":                 "2017-10-11", // TODO this should be an isodate
+		"next.license":                      "ONS license",
 		"next.links.editions.href":          "http://localhost:8080/datasets/" + datasetID + "/editions",
 		"next.links.latest_version.id":      "1",
 		"next.links.latest_version.href":    "http://localhost:8080/datasets/" + datasetID + "/editions/2018/versions/1",
@@ -215,28 +247,31 @@ var validUnpublishedEditionData = bson.M{
 
 var validPublishedInstanceData = bson.M{
 	"$set": bson.M{
-		"collection_id":         "108064B3-A808-449B-9041-EA3A2F72CFAA",
-		"downloads.csv.url":     "http://localhost:8080/aws/census-2017-1-csv",
-		"downloads.csv.size":    "10mb",
-		"downloads.xls.url":     "http://localhost:8080/aws/census-2017-1-xls",
-		"downloads.xls.size":    "24mb",
-		"edition":               "2017",
-		"headers":               []string{"time", "geography"},
-		"id":                    instanceID,
-		"last_updated":          "2017-09-08", // TODO Should be isodate
-		"license":               "ONS License",
-		"links.job.id":          "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
-		"links.job.href":        "http://localhost:8080/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
-		"links.dataset.id":      datasetID,
-		"links.dataset.href":    "http://localhost:8080/datasets/" + datasetID,
-		"links.dimensions.href": "http://localhost:8080/datasets/" + datasetID + "/editions/2017/versions/1/dimensions",
-		"links.edition.id":      edition,
-		"links.edition.href":    "http://localhost:8080/datasets/" + datasetID + "/editions/2017",
-		"links.self.href":       "http://localhost:8080/instances/" + instanceID,
-		"links.version.href":    "http://localhost:8080/datasets/" + datasetID + "/editions/2017/versions/1",
-		"links.version.id":      "1",
-		"release_date":          "2017-12-12", // TODO Should be isodate
-		"state":                 "published",
+		"collection_id":               "108064B3-A808-449B-9041-EA3A2F72CFAA",
+		"dimensions":                  []Dimension{dimension},
+		"downloads.csv.url":           "http://localhost:8080/aws/census-2017-1-csv",
+		"downloads.csv.size":          "10mb",
+		"downloads.xls.url":           "http://localhost:8080/aws/census-2017-1-xls",
+		"downloads.xls.size":          "24mb",
+		"edition":                     "2017",
+		"headers":                     []string{"time", "geography"},
+		"id":                          instanceID,
+		"last_updated":                "2017-09-08", // TODO Should be isodate
+		"license":                     "ONS License",
+		"links.job.id":                "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+		"links.job.href":              "http://localhost:8080/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+		"links.dataset.id":            datasetID,
+		"links.dataset.href":          "http://localhost:8080/datasets/" + datasetID,
+		"links.dimensions.href":       "http://localhost:8080/datasets/" + datasetID + "/editions/2017/versions/1/dimensions",
+		"links.edition.id":            edition,
+		"links.edition.href":          "http://localhost:8080/datasets/" + datasetID + "/editions/2017",
+		"links.self.href":             "http://localhost:8080/instances/" + instanceID,
+		"links.version.href":          "http://localhost:8080/datasets/" + datasetID + "/editions/2017/versions/1",
+		"links.version.id":            "1",
+		"release_date":                "2017-12-12", // TODO Should be isodate
+		"spatial":                     "http://ons.gov.uk/geographylist",
+		"state":                       "published",
+		"temporal":                    []TemporalFrequency{temporal},
 		"total_inserted_observations": 1000,
 		"total_observations":          1000,
 		"version":                     1,
@@ -246,28 +281,31 @@ var validPublishedInstanceData = bson.M{
 
 var validUnpublishedInstanceData = bson.M{
 	"$set": bson.M{
-		"collection_id":         "208064B3-A808-449B-9041-EA3A2F72CFAB",
-		"downloads.csv.url":     "http://localhost:8080/aws/census-2017-2-csv",
-		"downloads.csv.size":    "10mb",
-		"downloads.xls.url":     "http://localhost:8080/aws/census-2017-2-xls",
-		"downloads.xls.size":    "24mb",
-		"edition":               edition,
-		"headers":               []string{"time", "geography"},
-		"id":                    "799",
-		"last_updated":          "2017-09-08", // TODO Should be isodate
-		"license":               "ONS license",
-		"links.job.id":          "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
-		"links.job.href":        "http://localhost:8080/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
-		"links.dataset.id":      datasetID,
-		"links.dataset.href":    "http://localhost:8080/datasets/" + datasetID,
-		"links.dimensions.href": "http://localhost:8080/datasets/" + datasetID + "/editions/2017/versions/2/dimensions",
-		"links.edition.id":      edition,
-		"links.edition.href":    "http://localhost:8080/datasets/" + datasetID + "/editions/2017",
-		"links.self.href":       "http://localhost:8080/instances/" + "799",
-		"links.version.href":    "http://localhost:8080/datasets/" + datasetID + "/editions/2017/versions/2",
-		"links.version.id":      "2",
-		"release_date":          "2017-12-12", // TODO Should be isodate
-		"state":                 "associated",
+		"collection_id":               "208064B3-A808-449B-9041-EA3A2F72CFAB",
+		"dimensions":                  []Dimension{dimension},
+		"downloads.csv.url":           "http://localhost:8080/aws/census-2017-2-csv",
+		"downloads.csv.size":          "10mb",
+		"downloads.xls.url":           "http://localhost:8080/aws/census-2017-2-xls",
+		"downloads.xls.size":          "24mb",
+		"edition":                     edition,
+		"headers":                     []string{"time", "geography"},
+		"id":                          "799",
+		"last_updated":                "2017-09-08", // TODO Should be isodate
+		"license":                     "ONS license",
+		"links.job.id":                "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+		"links.job.href":              "http://localhost:8080/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+		"links.dataset.id":            datasetID,
+		"links.dataset.href":          "http://localhost:8080/datasets/" + datasetID,
+		"links.dimensions.href":       "http://localhost:8080/datasets/" + datasetID + "/editions/2017/versions/2/dimensions",
+		"links.edition.id":            edition,
+		"links.edition.href":          "http://localhost:8080/datasets/" + datasetID + "/editions/2017",
+		"links.self.href":             "http://localhost:8080/instances/" + "799",
+		"links.version.href":          "http://localhost:8080/datasets/" + datasetID + "/editions/2017/versions/2",
+		"links.version.id":            "2",
+		"release_date":                "2017-12-12", // TODO Should be isodate
+		"spatial":                     "http://ons.gov.uk/geographylist",
+		"state":                       "associated",
+		"temporal":                    []TemporalFrequency{temporal},
 		"total_inserted_observations": 1000,
 		"total_observations":          1000,
 		"version":                     2,
@@ -339,6 +377,7 @@ var validEditionConfirmedInstanceData = bson.M{
 
 var validPOSTCreateDatasetJSON string = `
 {
+	"access_right": "http://ons.gov.uk/accessrights",
   "collection_id": "108064B3-A808-449B-9041-EA3A2F72CFAA",
   "contacts": [
     {
@@ -351,6 +390,7 @@ var validPOSTCreateDatasetJSON string = `
   "keywords": [
     "cpi"
   ],
+	"license": "ONS license",
   "methodologies": [
     {
       "description": "Consumer price inflation is the rate at which the prices of the goods and services bought by households rise or fall, and is estimated by using consumer price indices.",
@@ -447,22 +487,22 @@ var validPOSTCreateInstanceJSON string = `
 {
   "links": {
     "job": {
-    "id": "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
-    "href": "http://localhost:21800/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35"
-   },
-   "dataset": {
-     "id": "34B13D18-B4D8-4227-9820-492B2971E221",
-     "href": "http://localhost:21800/datasets/34B13D18-B4D8-4227-9820-492B2971E221"
+      "id": "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+      "href": "http://localhost:21800/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35"
+    },
+    "dataset": {
+    	"id": "34B13D18-B4D8-4227-9820-492B2971E221",
+      "href": "http://localhost:21800/datasets/34B13D18-B4D8-4227-9820-492B2971E221"
     }
   },
-  "state": "completed",
-  "edition": "2017",
-  "total_inserted_observations": 1000,
-  "total_observations": 1000,
-  "headers": [
-    "time",
-    "geography"
-  ]
+	"dimensions": [
+	  {
+			"description": "The age ranging from 16 to 75+",
+			"href": "http://localhost:22400//code-lists/43513D18-B4D8-4227-9820-492B2971E7T5",
+			"id": "43513D18-B4D8-4227-9820-492B2971E7T5",
+			"name": "age"
+	  }
+	]
 }`
 
 var validPUTUpdateInstanceJSON string = `

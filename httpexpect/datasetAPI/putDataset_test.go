@@ -39,16 +39,19 @@ func TestSuccessfulyUpdateDataset(t *testing.T) {
 			Expect().Status(http.StatusOK).JSON().Object()
 
 		response.Value("id").Equal(datasetID)
+		response.Value("next").Object().Value("access_right").Equal("http://ons.gov.uk/accessrights")
 		response.Value("next").Object().Value("collection_id").Equal("308064B3-A808-449B-9041-EA3A2F72CFAC")
 		response.Value("next").Object().Value("contacts").Array().Element(0).Object().Value("email").Equal("rpi@onstest.gov.uk")
 		response.Value("next").Object().Value("contacts").Array().Element(0).Object().Value("name").Equal("Test Automation")
 		response.Value("next").Object().Value("contacts").Array().Element(0).Object().Value("telephone").Equal("+44 (0)1833 456123")
 		response.Value("next").Object().Value("description").Equal("Producer Price Indices (PPIs) are a series of economic indicators that measure the price movement of goods bought and sold by UK manufacturers")
 		response.Value("next").Object().Value("keywords").Array().Element(0).Equal("rpi")
+		response.Value("next").Object().Value("license").Equal("ONS license")
 		response.Value("next").Object().Value("methodologies").Array().Element(0).Object().Value("description").Equal("The Producer Price Index (PPI) is a monthly survey that measures the price changes of goods bought and sold by UK manufacturers")
 		response.Value("next").Object().Value("methodologies").Array().Element(0).Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/producerpriceindicesqmi")
 		response.Value("next").Object().Value("methodologies").Array().Element(0).Object().Value("title").Equal("Producer price indices QMI")
 
+		// TODO Reinstate once API has been fixed
 		// response.Value("next").Object().Value("national_statistic").Boolean().False()
 
 		response.Value("next").Object().Value("next_release").Equal("18 September 2017")

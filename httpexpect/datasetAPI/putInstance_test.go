@@ -53,6 +53,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
+	// TODO should consider all types of data in Put Request (currently only checking if state is set to completed)
 	Convey("Update an instance properties", t, func() {
 
 		datasetAPI.PUT("/instances/{instance_id}", "799").WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPUTCompletedInstanceJSON)).
@@ -65,3 +66,5 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 		}
 	}
 }
+
+// TODO Test failure scenarios

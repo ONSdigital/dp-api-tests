@@ -75,6 +75,7 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 }
 
 func checkDatasetResponse(response *httpexpect.Object) {
+	response.Value("access_right").Equal("http://ons.gov.uk/accessrights")
 	response.Value("collection_id").Equal("108064B3-A808-449B-9041-EA3A2F72CFAA")
 	response.Value("contacts").Array().Element(0).Object().Value("email").Equal("cpi@onstest.gov.uk")
 	response.Value("contacts").Array().Element(0).Object().Value("name").Equal("Automation Tester")
@@ -82,6 +83,7 @@ func checkDatasetResponse(response *httpexpect.Object) {
 	response.Value("description").Equal("Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.")
 	response.Value("keywords").Array().Element(0).String().Equal("cpi")
 	response.Value("keywords").Array().Element(1).String().Equal("boy")
+	response.Value("license").Equal("ONS license")
 	response.Value("links").Object().Value("editions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions$")
 	response.Value("links").Object().Value("latest_version").Object().Value("id").Equal("1")
 	response.Value("links").Object().Value("latest_version").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/2017/versions/1$")

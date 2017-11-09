@@ -69,8 +69,10 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
+	// TODO test name incorrect
 	Convey("Fail to update a version for an edition of a dataset", t, func() {
 
+		// TODO Test only checks that a version state is updated, we should test all possible fields that could be updated
 		datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/2", datasetID, edition).WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPUTUpdateVersionJSON)).
 			Expect().Status(http.StatusOK)
 	})
@@ -81,3 +83,5 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		}
 	}
 }
+
+// TODO acceptance tests for failure scenarios

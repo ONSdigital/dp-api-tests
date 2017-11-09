@@ -92,12 +92,14 @@ func TestFailureToGetADataset(t *testing.T) {
 }
 
 func checkDatasetDoc(response *httpexpect.Object) {
+	response.Value("access_right").Equal("http://ons.gov.uk/accessrights")
 	response.Value("collection_id").Equal("108064B3-A808-449B-9041-EA3A2F72CFAA")
 	response.Value("contacts").Array().Element(0).Object().Value("email").Equal("cpi@onstest.gov.uk")
 	response.Value("contacts").Array().Element(0).Object().Value("name").Equal("Automation Tester")
 	response.Value("contacts").Array().Element(0).Object().Value("telephone").Equal("+44 (0)1633 123456")
 	response.Value("description").Equal("Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.")
 	response.Value("keywords").Array().Element(0).Equal("cpi")
+	response.Value("license").Equal("ONS license")
 	response.Value("links").Object().Value("editions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions$")
 	response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
 	response.Value("methodologies").Array().Element(0).Object().Value("description").Equal("Consumer price inflation is the rate at which the prices of the goods and services bought by households rise or fall, and is estimated by using consumer price indices.")
