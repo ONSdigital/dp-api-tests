@@ -12,7 +12,7 @@ import (
 	mgo "gopkg.in/mgo.v2"
 )
 
-func TestSuccessfullyGetAnImportJob(t *testing.T) {
+func TestAddFileToImportJob(t *testing.T) {
 
 	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {
 		if err != mgo.ErrNotFound {
@@ -30,20 +30,19 @@ func TestSuccessfullyGetAnImportJob(t *testing.T) {
 
 	// These tests needs to refine when authentication was handled in the code.
 	Convey("Given an import job exists", t, func() {
-		Convey("When a request to get the job with a specific id and the user is authenticated", func() {
+		Convey("When a request to add a file into a job and the user is authenticated", func() {
 			Convey("Then the response returns status OK (200)", func() {
 
-				response := importAPI.GET("/jobs/{id}", jobID).WithHeader(internalToken, internalTokenID).Expect().Status(http.StatusOK).JSON().Object()
-				checkImportJobResponse(response)
+				importAPI.PUT("/jobs/{id}/files", jobID).WithHeader(internalToken, internalTokenID).
+					WithBytes([]byte(validPUTAddFilesJSON)).Expect().Status(http.StatusOK)
 			})
 		})
 
-		Convey("When a request to get the job with a specific id and the user is unauthenticated", func() {
+		Convey("When a request to add a file into a job and the user is unauthenticated", func() {
 			Convey("Then the response returns status OK (200)", func() {
 
-				response := importAPI.GET("/jobs/{id}", jobID).Expect().Status(http.StatusOK).JSON().Object()
-				checkImportJobResponse(response)
-
+				importAPI.PUT("/jobs/{id}/files", jobID).WithBytes([]byte(validPUTAddFilesJSON)).
+					Expect().Status(http.StatusOK)
 			})
 		})
 	})
@@ -56,7 +55,7 @@ func TestSuccessfullyGetAnImportJob(t *testing.T) {
 	}
 }
 
-func TestFailureToGetAnImportJob(t *testing.T) {
+func TestFailureToAddFileToAnImportJob(t *testing.T) {
 
 	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {
 		if err != mgo.ErrNotFound {
@@ -72,11 +71,22 @@ func TestFailureToGetAnImportJob(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
+	// This test fails.
+	// Bug raised.
 	Convey("Given an import job exists", t, func() {
-		Convey("When a request to get the job with id does not exist", func() {
+		Convey("When a request to add a file into a job with job id that does not exist", func() {
 			Convey("Then the response returns status not found (404)", func() {
-				importAPI.GET("/jobs/{id}", invalidJobID).WithHeader(internalToken, internalTokenID).
+				importAPI.PUT("/jobs/{id}/files", invalidJobID).WithBytes([]byte(validPUTAddFilesJSON)).
 					Expect().Status(http.StatusNotFound)
+			})
+		})
+	})
+
+	Convey("Given an import job exists", t, func() {
+		Convey("When a request to add a file into a job with invalid json", func() {
+			Convey("Then the response returns status bad request(400)", func() {
+				importAPI.PUT("/jobs/{id}/files", jobID).WithHeader(internalToken, internalTokenID).WithBytes([]byte("{")).
+					Expect().Status(http.StatusBadRequest)
 			})
 		})
 	})
@@ -87,25 +97,4 @@ func TestFailureToGetAnImportJob(t *testing.T) {
 			os.Exit(1)
 		}
 	}
-}
-
-func checkImportJobResponse(response *httpexpect.Object) {
-
-	response.Value("id").Equal(jobID)
-	response.Value("recipe").Equal("2080CACA-1A82-411E-AA46-F00804968E78")
-	response.Value("state").Equal("Created")
-
-	//Raised bug for this
-	response.Value("files").Array().Element(0).Object().Value("alias_name").Equal("v4")
-
-	response.Value("files").Array().Element(0).Object().Value("url").Equal("https://s3-eu-west-1.amazonaws.com/dp-publish-content-test/CPIGrowth.csv")
-
-	response.Value("links").Object().Value("instances").Array().Element(0).Object().Value("id").Equal(instanceID)
-	response.Value("links").Object().Value("instances").Array().Element(0).Object().Value("href").String().Match("(.+)/instances/" + instanceID + "$")
-
-	response.Value("links").Object().Value("self").Object().Value("id").Equal(jobID)
-	response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/jobs/" + jobID + "$")
-
-	// Raised a bug for this
-	response.NotContainsKey("last_updated")
 }
