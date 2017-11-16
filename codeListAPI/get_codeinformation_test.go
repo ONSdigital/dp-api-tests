@@ -56,13 +56,13 @@ func TestSuccessfullyGetCodeInformationAboutACode(t *testing.T) {
 
 	if err := mongo.TeardownMany(d); err != nil {
 		if err != mgo.ErrNotFound {
-			log.ErrorC("Was unable to run test", err, nil)
+			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
 		}
 	}
 
 	if err := mongo.SetupMany(d); err != nil {
-		log.ErrorC("Was unable to run test", err, nil)
+		log.ErrorC("Failed to set up test data", err, nil)
 		os.Exit(1)
 	}
 
@@ -114,7 +114,7 @@ func TestSuccessfullyGetCodeInformationAboutACode(t *testing.T) {
 }
 
 // This test fails.
-// Bug Raised
+// Bug Raised-When you given an invalid codelist id, its returning 200 instead of 400.
 // 404 - Code list not found
 func TestFailureToGetInDepthInformationAboutACode(t *testing.T) {
 	codeListAPI := httpexpect.New(t, cfg.CodeListAPIURL)

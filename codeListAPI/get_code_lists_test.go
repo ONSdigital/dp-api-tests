@@ -49,13 +49,13 @@ func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 
 	if err := mongo.TeardownMany(d); err != nil {
 		if err != mgo.ErrNotFound {
-			log.ErrorC("Was unable to run test", err, nil)
+			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
 		}
 	}
 
 	if err := mongo.SetupMany(d); err != nil {
-		log.ErrorC("Was unable to run test", err, nil)
+		log.ErrorC("Failed to set up test data", err, nil)
 		os.Exit(1)
 	}
 
@@ -68,9 +68,8 @@ func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 				response := codeListAPI.GET("/code-lists").
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				//checking array length is alwaysgreather than or equal to 3
-				response.Value("items").Array().Length().Ge(3)
-
+				//checking array length is alwaysgreather than 3
+				response.Value("items").Array().Length().Gt(3)
 				response.Value("items").Array().Element(3).Object().ValueEqual("id", firstCodeListID)
 				response.Value("items").Array().Element(3).Object().ValueEqual("name", "First Code List")
 				response.Value("items").Array().Element(3).Object().Value("links").Object().Value("self").Object().Value("id").Equal(firstCodeListID)
