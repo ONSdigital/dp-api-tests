@@ -67,7 +67,7 @@ func TestSuccessfulyUpdateDataset(t *testing.T) {
 		response.Value("next").Object().Value("related_datasets").Array().Element(0).Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/producerpriceindex")
 		response.Value("next").Object().Value("related_datasets").Array().Element(0).Object().Value("title").Equal("Producer Price Index time series dataset")
 		response.Value("next").Object().Value("release_frequency").Equal("Quaterly")
-		response.Value("next").Object().Value("state").Equal("created")
+		response.Value("next").Object().Value("state").Equal("associated")
 		response.Value("next").Object().Value("theme").Equal("Price movement of goods")
 		response.Value("next").Object().Value("title").Equal("RPI")
 		response.Value("next").Object().Value("uri").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/producerpriceindex")
