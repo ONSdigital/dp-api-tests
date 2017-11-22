@@ -2,30 +2,17 @@ package datasetAPI
 
 import (
 	"net/http"
-	"os"
 	"testing"
 
-	mgo "gopkg.in/mgo.v2"
-
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
-	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestSuccessfullyGetADataset(t *testing.T) {
 
-	if err := mongo.Teardown(database, collection, "_id", datasetID); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Was unable to run test", err, nil)
-			os.Exit(1)
-		}
-	}
-
-	if err := mongo.Setup(database, collection, "_id", datasetID, validPublishedDatasetData); err != nil {
-		log.ErrorC("Was unable to run test", err, nil)
-		os.Exit(1)
-	}
+	setupDataset(datasetID, validPublishedDatasetData)
+	defer removeDataset(datasetID)
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
@@ -51,22 +38,12 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 			checkDatasetDoc(response)
 		})
 	})
-
-	if err := mongo.Teardown(database, collection, "_id", datasetID); err != nil {
-		if err != mgo.ErrNotFound {
-			os.Exit(1)
-		}
-	}
 }
 
 func TestFailureToGetADataset(t *testing.T) {
 
-	if err := mongo.Teardown(database, collection, "_id", "133"); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Was unable to run test", err, nil)
-			os.Exit(1)
-		}
-	}
+	removeExistingDataset(datasetID)
+	defer removeDataset(datasetID)
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
@@ -83,12 +60,6 @@ func TestFailureToGetADataset(t *testing.T) {
 			})
 		})
 	})
-
-	if err := mongo.Teardown(database, collection, "_id", "133"); err != nil {
-		if err != mgo.ErrNotFound {
-			os.Exit(1)
-		}
-	}
 }
 
 func checkDatasetDoc(response *httpexpect.Object) {

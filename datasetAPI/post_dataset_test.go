@@ -2,24 +2,16 @@ package datasetAPI
 
 import (
 	"net/http"
-	"os"
 	"testing"
 
-	mgo "gopkg.in/mgo.v2"
-
-	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
-	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestSuccessfullyPostDataset(t *testing.T) {
-	if err := mongo.Teardown(database, collection, "_id", datasetID); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Was unable to run test", err, nil)
-			os.Exit(1)
-		}
-	}
+
+	removeExistingDataset(datasetID)
+	defer removeDataset(datasetID)
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
@@ -61,12 +53,6 @@ func TestSuccessfullyPostDataset(t *testing.T) {
 		response.Value("next").Object().Value("theme").Equal("Goods and services")
 		response.Value("next").Object().Value("title").Equal("CPI")
 		response.Value("next").Object().Value("uri").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation")
-
-		if err := mongo.Teardown(database, collection, "_id", datasetID); err != nil {
-			if err != mgo.ErrNotFound {
-				os.Exit(1)
-			}
-		}
 	})
 }
 
