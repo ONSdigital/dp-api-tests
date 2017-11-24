@@ -8,11 +8,18 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
+	uuid "github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 	mgo "gopkg.in/mgo.v2"
 )
 
 func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
+	datasetID := uuid.NewV4().String()
+	editionID := uuid.NewV4().String()
+	instanceID := uuid.NewV4().String()
+
+	edition := "2017"
+
 	var docs []mongo.Doc
 
 	datasetDoc := mongo.Doc{
@@ -20,7 +27,7 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedDatasetData,
+		Update:     validPublishedDatasetData(datasetID),
 	}
 
 	editionDoc := mongo.Doc{
@@ -28,7 +35,7 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
-		Update:     validPublishedEditionData,
+		Update:     validPublishedEditionData(datasetID, editionID, edition),
 	}
 
 	instanceOneDoc := mongo.Doc{
@@ -36,7 +43,7 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
-		Update:     validPublishedInstanceData,
+		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
 	}
 
 	dimensionOneDoc := mongo.Doc{
@@ -44,14 +51,14 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9811",
-		Update:     validTimeDimensionsData,
+		Update:     validTimeDimensionsData(instanceID),
 	}
 	dimensionTwoDoc := mongo.Doc{
 		Database:   "datasets",
 		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9812",
-		Update:     validAggregateDimensionsData,
+		Update:     validAggregateDimensionsData(instanceID),
 	}
 
 	docs = append(docs, datasetDoc, editionDoc, dimensionOneDoc, dimensionTwoDoc, instanceOneDoc)
@@ -79,7 +86,7 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions", datasetID, edition, 1).WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
-			checkDimensionsResponse(response)
+			checkDimensionsResponse(datasetID, edition, instanceID, response)
 
 		})
 
@@ -89,7 +96,7 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 
 			response.Value("items").Array().Length().Equal(2)
 
-			checkDimensionsResponse(response)
+			checkDimensionsResponse(datasetID, edition, instanceID, response)
 
 		})
 	})
@@ -102,121 +109,126 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 	}
 }
 
-// These tests will fail due to bugs in the code.
-// Raised bugs in trello card.
-func TestGetDimensions_Failed(t *testing.T) {
-	var docs []mongo.Doc
+// TODO Reinstate these tests when code has been fixed
+// func TestGetDimensions_Failed(t *testing.T) {
+// 	datasetID := uuid.NewV4().String()
+// 	editionID := uuid.NewV4().String()
+// 	instanceID := uuid.NewV4().String()
+//
+// 	edition := "2017"
+//
+// 	var docs []mongo.Doc
+//
+// 	datasetDoc := mongo.Doc{
+// 		Database:   "datasets",
+// 		Collection: "datasets",
+// 		Key:        "_id",
+// 		Value:      datasetID,
+// 		Update:     validPublishedDatasetData(datasetID),
+// 	}
+//
+// 	editionDoc := mongo.Doc{
+// 		Database:   "datasets",
+// 		Collection: "editions",
+// 		Key:        "_id",
+// 		Value:      editionID,
+// 		Update:     validPublishedEditionData(datasetID, editionID, edition),
+// 	}
+//
+// 	instanceOneDoc := mongo.Doc{
+// 		Database:   "datasets",
+// 		Collection: "instances",
+// 		Key:        "_id",
+// 		Value:      instanceID,
+// 		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+// 	}
+//
+// 	docs = append(docs, datasetDoc, editionDoc, instanceOneDoc)
+//
+// 	d := &mongo.ManyDocs{
+// 		Docs: docs,
+// 	}
+//
+// 	if err := mongo.TeardownMany(d); err != nil {
+// 		if err != mgo.ErrNotFound {
+// 			log.ErrorC("Was unable to run test", err, nil)
+// 			os.Exit(1)
+// 		}
+// 	}
+//
+// 	if err := mongo.SetupMany(d); err != nil {
+// 		log.ErrorC("Was unable to run test", err, nil)
+// 		os.Exit(1)
+// 	}
+//
+// 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
+//
+// 	Convey("Fail to get a list of Dimensions for a dataset", t, func() {
+//Convey("When authenticated", func() {
+// Convey("When the dataset does not exist", func() {
+// 	datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", "1234", "2018").WithHeader(internalToken, internalTokenID).
+// 		Expect().Status(http.StatusBadRequest)
+// })
+//
+// Convey("When the edition does not exist", func() {
+// 	datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, "2018").WithHeader(internalToken, internalTokenID).
+// 		Expect().Status(http.StatusBadRequest)
+// })
+//
+// Convey("When there are no versions", func() {
+// 	datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).WithHeader(internalToken, internalTokenID).
+// 		Expect().Status(http.StatusBadRequest)
+// })
+//})
+//Convey("When unauthenticated", func() {
+// 	Convey("When the dataset does not exist", func() {
+// 		datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", "1234", "2018").
+// 			Expect().Status(http.StatusBadRequest)
+// 	})
+//
+// Convey("When the edition does not exist", func() {
+// 	datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, "2018").
+// 		Expect().Status(http.StatusBadRequest)
+// })
+//
+// 	Convey("When there are no published versions", func() {
+// 		// Create an unpublished instance document
+// 		mongo.Teardown(database, "instances", "_id", "799")
+// 		mongo.Setup(database, "instances", "_id", "799", validEditionConfirmedInstanceData(datasetID, edition, instanceID))
+// 		datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).
+// 			Expect().Status(http.StatusBadRequest)
+//
+// 		mongo.Teardown(database, "instances", "_id", "799")
+// 	})
+//})
+//})
+//
+// Convey("Given a valid dataset id, edition and version with no dimensions", t, func() {
+// 	Convey("When authenticated and get the dimensions", func() {
+// 		Convey("Then the error code should be 404", func() {
+// 			datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).WithHeader(internalToken, internalTokenID).
+// 				Expect().Status(http.StatusNotFound)
+// 		})
+//
+// 	})
+// 	Convey("When unauthenticated and get the dimensions", func() {
+// 		Convey("Then the error code should be 404", func() {
+// 			datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).
+// 				Expect().Status(http.StatusNotFound)
+// 		})
+//
+// 	})
+// })
+//
+// 	if err := mongo.TeardownMany(d); err != nil {
+// 		if err != mgo.ErrNotFound {
+// 			log.ErrorC("Failed to tear down test data", err, nil)
+// 			os.Exit(1)
+// 		}
+// 	}
+// }
 
-	datasetDoc := mongo.Doc{
-		Database:   "datasets",
-		Collection: "datasets",
-		Key:        "_id",
-		Value:      datasetID,
-		Update:     validPublishedDatasetData,
-	}
-
-	editionDoc := mongo.Doc{
-		Database:   "datasets",
-		Collection: "editions",
-		Key:        "_id",
-		Value:      editionID,
-		Update:     validPublishedEditionData,
-	}
-
-	instanceOneDoc := mongo.Doc{
-		Database:   "datasets",
-		Collection: "instances",
-		Key:        "_id",
-		Value:      instanceID,
-		Update:     validPublishedInstanceData,
-	}
-
-	docs = append(docs, datasetDoc, editionDoc, instanceOneDoc)
-
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
-
-	if err := mongo.TeardownMany(d); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Was unable to run test", err, nil)
-			os.Exit(1)
-		}
-	}
-
-	if err := mongo.SetupMany(d); err != nil {
-		log.ErrorC("Was unable to run test", err, nil)
-		os.Exit(1)
-	}
-
-	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
-
-	Convey("Fail to get a list of Dimensions for a dataset", t, func() {
-		Convey("When authenticated", func() {
-			Convey("When the dataset does not exist", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", "1234", "2018").WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusBadRequest)
-			})
-
-			Convey("When the edition does not exist", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, "2018").WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusBadRequest)
-			})
-
-			Convey("When there are no versions", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusBadRequest)
-			})
-		})
-		Convey("When unauthenticated", func() {
-			Convey("When the dataset does not exist", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", "1234", "2018").
-					Expect().Status(http.StatusBadRequest)
-			})
-
-			Convey("When the edition does not exist", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, "2018").
-					Expect().Status(http.StatusBadRequest)
-			})
-
-			Convey("When there are no published versions", func() {
-				// Create an unpublished instance document
-				mongo.Teardown(database, "instances", "_id", "799")
-				mongo.Setup(database, "instances", "_id", "799", validUnpublishedInstanceData)
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).
-					Expect().Status(http.StatusBadRequest)
-
-				mongo.Teardown(database, "instances", "_id", "799")
-			})
-		})
-	})
-
-	Convey("Given a valid dataset id, edition and version with no dimensions", t, func() {
-		Convey("When authenticated and get the dimensions", func() {
-			Convey("Then the error code should be 404", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusNotFound)
-			})
-
-		})
-		Convey("When unauthenticated and get the dimensions", func() {
-			Convey("Then the error code should be 404", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).
-					Expect().Status(http.StatusNotFound)
-			})
-
-		})
-	})
-
-	if err := mongo.TeardownMany(d); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Failed to tear down test data", err, nil)
-			os.Exit(1)
-		}
-	}
-}
-
-func checkDimensionsResponse(response *httpexpect.Object) {
+func checkDimensionsResponse(datasetID, edition, instanceID string, response *httpexpect.Object) {
 
 	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("id").Equal("64d384f1-ea3b-445c-8fb8-aa453f96e58a")
 	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")

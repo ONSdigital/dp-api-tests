@@ -10,45 +10,45 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
+	uuid "github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestSuccessfullyGetADataset(t *testing.T) {
 
-	if err := mongo.Teardown(database, collection, "_id", datasetID); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Was unable to run test", err, nil)
-			os.Exit(1)
-		}
-	}
+	datasetID := uuid.NewV4().String()
 
-	if err := mongo.Setup(database, collection, "_id", datasetID, validPublishedDatasetData); err != nil {
+	if err := mongo.Setup(database, collection, "_id", datasetID, validPublishedDatasetData(datasetID)); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-	Convey("Get a dataset", t, func() {
+	Convey("Given a dataset exists", t, func() {
 		Convey("When the user is authenticated", func() {
+			Convey("Then response includes the expected current and next sub documents and returns a status ok (200)", func() {
 
-			response := datasetAPI.GET("/datasets/{id}", datasetID).WithHeader(internalToken, internalTokenID).
-				Expect().Status(http.StatusOK).JSON().Object()
+				response := datasetAPI.GET("/datasets/{id}", datasetID).WithHeader(internalToken, internalTokenID).
+					Expect().Status(http.StatusOK).JSON().Object()
 
-			response.Value("id").Equal(datasetID)
-			checkDatasetDoc(response.Value("current").Object())
+				response.Value("id").Equal(datasetID)
+				checkDatasetDoc(datasetID, response.Value("current").Object())
 
-			response.Value("next").NotNull()
-			response.Value("next").Object().Value("state").Equal("created")
+				response.Value("next").NotNull()
+				response.Value("next").Object().Value("state").Equal("created")
+			})
 		})
 
 		Convey("When the user is unauthenticated", func() {
+			Convey("Then response only includes the expected current subdoc data and returns a status ok (200)", func() {
 
-			response := datasetAPI.GET("/datasets/{id}", datasetID).
-				Expect().Status(http.StatusOK).JSON().Object()
+				response := datasetAPI.GET("/datasets/{id}", datasetID).
+					Expect().Status(http.StatusOK).JSON().Object()
 
-			response.Value("id").Equal(datasetID)
-			checkDatasetDoc(response)
+				response.Value("id").Equal(datasetID)
+				checkDatasetDoc(datasetID, response)
+			})
 		})
 	})
 
@@ -61,38 +61,40 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 
 func TestFailureToGetADataset(t *testing.T) {
 
-	if err := mongo.Teardown(database, collection, "_id", "133"); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Was unable to run test", err, nil)
-			os.Exit(1)
-		}
-	}
+	datasetID := uuid.NewV4().String()
+	secondDatasetID := uuid.NewV4().String()
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-	Convey("Fail to get a dataset document", t, func() {
-		Convey("and return status not found", func() {
-			Convey("When the dataset document does not exist", func() {
+	Convey("Given the dataset document does not exist", t, func() {
+		Convey("When requesting for document", func() {
+			Convey("Then return a status not found (404)", func() {
 				datasetAPI.GET("/datasets/{id}", datasetID).WithHeader(internalToken, internalTokenID).
 					Expect().Status(http.StatusNotFound)
 			})
-			Convey("When the user is not authenticated and the dataset document is not published", func() {
-				mongo.Setup(database, collection, "_id", "133", validUnpublishedDatasetData)
+		})
+	})
+
+	Convey("Given an unpublished dataset exists and the dataset document is not published", t, func() {
+		mongo.Setup(database, collection, "_id", secondDatasetID, validAssociatedDatasetData(secondDatasetID))
+
+		Convey("When requesting for document for an unauthorised user", func() {
+			Convey("Then return a status not found (404)", func() {
+
 				datasetAPI.GET("/datasets/{id}", datasetID).
 					Expect().Status(http.StatusNotFound)
 			})
 		})
 	})
 
-	if err := mongo.Teardown(database, collection, "_id", "133"); err != nil {
+	if err := mongo.Teardown(database, collection, "_id", secondDatasetID); err != nil {
 		if err != mgo.ErrNotFound {
 			os.Exit(1)
 		}
 	}
 }
 
-func checkDatasetDoc(response *httpexpect.Object) {
-	response.Value("access_right").Equal("http://ons.gov.uk/accessrights")
+func checkDatasetDoc(datasetID string, response *httpexpect.Object) {
 	response.Value("collection_id").Equal("108064B3-A808-449B-9041-EA3A2F72CFAA")
 	response.Value("contacts").Array().Element(0).Object().Value("email").Equal("cpi@onstest.gov.uk")
 	response.Value("contacts").Array().Element(0).Object().Value("name").Equal("Automation Tester")
@@ -100,6 +102,7 @@ func checkDatasetDoc(response *httpexpect.Object) {
 	response.Value("description").Equal("Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.")
 	response.Value("keywords").Array().Element(0).Equal("cpi")
 	response.Value("license").Equal("ONS license")
+	response.Value("links").Object().Value("access_rights").Object().Value("href").Equal("http://ons.gov.uk/accessrights")
 	response.Value("links").Object().Value("editions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions$")
 	response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
 	response.Value("methodologies").Array().Element(0).Object().Value("description").Equal("Consumer price inflation is the rate at which the prices of the goods and services bought by households rise or fall, and is estimated by using consumer price indices.")
