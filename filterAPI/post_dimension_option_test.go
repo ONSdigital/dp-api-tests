@@ -53,7 +53,7 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 			Expect().Status(http.StatusCreated)
 		filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/sex/options/unknown", filterBlueprintID).
 			Expect().Status(http.StatusCreated)
-		filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/Goods and services/options/welfare", filterBlueprintID).
+		filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1T60000", filterBlueprintID).
 			Expect().Status(http.StatusCreated)
 		filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/time/options/February 2007", filterBlueprintID).
 			Expect().Status(http.StatusCreated)

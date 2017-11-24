@@ -23,13 +23,18 @@ func TestSuccessfullyGetFilterOutputPreview(t *testing.T) {
 
 	Convey("Given an existing filter output exists", t, func() {
 
-		update := GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID)
+		dimensions := goodsAndServicesDimension("localhost", "")
+		update := GetValidFilterOutputBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, dimensions)
 
 		if err := mongo.Setup(database, "filterOutputs", "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
-		graphData := neo4j.NewDatastore("bolt://localhost:7687", instanceID, neo4j.ObservationTestData)
+		graphData, err := neo4j.NewDatastore(cfg.Neo4jAddr, instanceID, neo4j.ObservationTestData)
+		if err != nil {
+			log.ErrorC("Unable to connect to s neo4j instance", err, nil)
+			os.Exit(1)
+		}
 
 		if err := graphData.Setup(); err != nil {
 			log.ErrorC("Unable to setup graph data", err, nil)
@@ -42,6 +47,8 @@ func TestSuccessfullyGetFilterOutputPreview(t *testing.T) {
 					Expect().Status(http.StatusOK).JSON().Object()
 				response.Value("rows").Array().Length().Equal(3)
 				response.Value("headers").Array().Length().Equal(7)
+				response.Value("number_of_rows").Number().Equal(3)
+				response.Value("number_of_columns").Number().Equal(7)
 			})
 		})
 
@@ -60,13 +67,17 @@ func TestErrorCasesGetFilterOutputPreview(t *testing.T) {
 
 	Convey("Given an existing filter output exists", t, func() {
 
-		update := GetValidFilterOutputBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, nil)
+		update := GetValidFilterOutputNoDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID)
 
 		if err := mongo.Setup(database, "filterOutputs", "_id", filterID, update); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
-		graphData := neo4j.NewDatastore("bolt://localhost:7687", instanceID, neo4j.ObservationTestData)
+		graphData, err := neo4j.NewDatastore(cfg.Neo4jAddr, instanceID, neo4j.ObservationTestData)
+		if err != nil {
+			log.ErrorC("Unable to connect to s neo4j instance", err, nil)
+			os.Exit(1)
+		}
 
 		if err := graphData.Setup(); err != nil {
 			log.ErrorC("Unable to setup graph data", err, nil)
