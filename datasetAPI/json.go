@@ -483,7 +483,6 @@ var validPOSTCreateDatasetJSON string = `
 }`
 
 var validPUTUpdateDatasetJSON string = `{
-
 		"collection_id": "308064B3-A808-449B-9041-EA3A2F72CFAC",
 		"contacts": [
 			{
@@ -529,11 +528,11 @@ var validPUTUpdateDatasetJSON string = `{
 			}
 		],
 		"release_frequency": "Quarterly",
-		"state": "created",
+		"state": "associated",
 		"theme": "Price movement of goods",
 		"title": "RPI",
 		"uri": "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/producerpriceindex"
-		}`
+}`
 
 var validPOSTCreateInstanceJSON string = `
 {

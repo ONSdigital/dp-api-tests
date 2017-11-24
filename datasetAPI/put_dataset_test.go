@@ -59,12 +59,6 @@ func TestSuccessfulyUpdateDataset(t *testing.T) {
 				So(dataset.Next, ShouldResemble, expectedNextSubDoc)
 			})
 		})
-
-		if err := mongo.Teardown(database, "datasets", "_id", datasetID); err != nil {
-			if err != mgo.ErrNotFound {
-				os.Exit(1)
-			}
-		}
 	})
 }
 
@@ -73,7 +67,7 @@ func TestFailureToUpdateDataset(t *testing.T) {
 	datasetID := uuid.NewV4().String()
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-	Convey("Given published dataset does not exist", t, func() {
+	Convey("Given a published dataset does not exist", t, func() {
 		Convey("When an authorised PUT request is made to update dataset resource", func() {
 			Convey("Then fail to update resource and return a status of not found (404) with a message `Dataset not found`", func() {
 
@@ -223,7 +217,7 @@ func expectedNextSubDoc(datasetID, edition string) *mongo.Dataset {
 		Title: "Producer Price Index time series dataset",
 	}
 
-	currentSubDoc := &mongo.Dataset{
+	nextSubDoc := &mongo.Dataset{
 		CollectionID: "308064B3-A808-449B-9041-EA3A2F72CFAC",
 		Contacts:     []mongo.ContactDetails{contactDetails},
 		Description:  "Producer Price Indices (PPIs) are a series of economic indicators that measure the price movement of goods bought and sold by UK manufacturers",
@@ -261,11 +255,11 @@ func expectedNextSubDoc(datasetID, edition string) *mongo.Dataset {
 		},
 		RelatedDatasets:  []mongo.GeneralDetails{relatedDataset},
 		ReleaseFrequency: "Quarterly",
-		State:            "created",
+		State:            "associated",
 		Theme:            "Price movement of goods",
 		Title:            "RPI",
 		URI:              "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/producerpriceindex",
 	}
 
-	return currentSubDoc
+	return nextSubDoc
 }

@@ -22,6 +22,8 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
+	//setupDataset(datasetID, validPublishedDatasetData)
+	//defer removeDataset(datasetID)
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
@@ -51,12 +53,6 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 			})
 		})
 	})
-
-	if err := mongo.Teardown(database, collection, "_id", datasetID); err != nil {
-		if err != mgo.ErrNotFound {
-			os.Exit(1)
-		}
-	}
 }
 
 func TestFailureToGetADataset(t *testing.T) {
