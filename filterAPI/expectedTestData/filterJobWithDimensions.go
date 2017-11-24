@@ -35,15 +35,15 @@ func sex(host, filterBlueprintID string) mongo.Dimension {
 func goodsAndServices(host, filterBlueprintID string) mongo.Dimension {
 	if filterBlueprintID == "" {
 		return mongo.Dimension{
-			Name:    "Goods and services",
-			Options: []string{"Education", "health", "communication"},
+			Name:    "aggregate",
+			Options: []string{"cpi1dim1T60000", "cpi1dim1S10201", "cpi1dim1S10105"},
 		}
 	}
 
 	return mongo.Dimension{
-		URL:     host + "/filters/" + filterBlueprintID + "/dimensions/Goods and services",
-		Name:    "Goods and services",
-		Options: []string{"Education", "health", "communication"},
+		URL:     host + "/filters/" + filterBlueprintID + "/dimensions/aggregate",
+		Name:    "aggregate",
+		Options: []string{"cpi1dim1T60000", "cpi1dim1S10201", "cpi1dim1S10105"},
 	}
 }
 
@@ -208,9 +208,9 @@ func updatedSex(host, filterBlueprintID string) mongo.Dimension {
 
 func updatedGoodsAndServices(host, filterBlueprintID string) mongo.Dimension {
 	return mongo.Dimension{
-		URL:     host + "/filters/" + filterBlueprintID + "/dimensions/Goods and services",
-		Name:    "Goods and services",
-		Options: []string{"Education", "health", "communication", "welfare"},
+		URL:     host + "/filters/" + filterBlueprintID + "/dimensions/aggregate",
+		Name:    "aggregate",
+		Options: []string{"cpi1dim1T60000", "cpi1dim1S10201", "cpi1dim1S10105"},
 	}
 }
 

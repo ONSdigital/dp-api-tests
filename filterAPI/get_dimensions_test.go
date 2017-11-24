@@ -40,7 +40,7 @@ func TestSuccessfullyGetListOfDimensions(t *testing.T) {
 				actual.Element(1).Object().Value("dimension_url").NotNull()
 				actual.Element(1).Object().Value("name").Equal("sex")
 				actual.Element(2).Object().Value("dimension_url").NotNull()
-				actual.Element(2).Object().Value("name").Equal("Goods and services")
+				actual.Element(2).Object().Value("name").Equal("aggregate")
 				actual.Element(3).Object().Value("dimension_url").NotNull()
 				actual.Element(3).Object().Value("name").Equal("time")
 			})
