@@ -22,8 +22,6 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
-	//setupDataset(datasetID, validPublishedDatasetData)
-	//defer removeDataset(datasetID)
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
