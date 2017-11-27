@@ -123,7 +123,7 @@ func expectedCurrentSubDoc(datasetID, edition string) *mongo.Dataset {
 		Telephone: "+44 (0)1633 123456",
 	}
 
-	methodology := mongo.GeneralDetails{
+	expectedCurrentMethodology := mongo.GeneralDetails{
 		Description: "Consumer price inflation is the rate at which the prices of the goods and services bought by households rise or fall, and is estimated by using consumer price indices.",
 		HRef:        "https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi",
 		Title:       "Consumer Price Inflation (includes all 3 indices – CPIH, CPI and RPI)",
@@ -131,7 +131,7 @@ func expectedCurrentSubDoc(datasetID, edition string) *mongo.Dataset {
 
 	nationalStatistic := true
 
-	publication := mongo.GeneralDetails{
+	expectedCurrentPublication := mongo.GeneralDetails{
 		Description: "Price indices, percentage changes and weights for the different measures of consumer price inflation.",
 		HRef:        "https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/consumerpriceinflation/aug2017",
 		Title:       "UK consumer price inflation: August 2017",
@@ -164,10 +164,10 @@ func expectedCurrentSubDoc(datasetID, edition string) *mongo.Dataset {
 				HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID,
 			},
 		},
-		Methodologies:     []mongo.GeneralDetails{methodology},
+		Methodologies:     []mongo.GeneralDetails{expectedCurrentMethodology},
 		NationalStatistic: &nationalStatistic,
 		NextRelease:       "2017-10-10",
-		Publications:      []mongo.GeneralDetails{publication},
+		Publications:      []mongo.GeneralDetails{expectedCurrentPublication},
 		Publisher: &mongo.Publisher{
 			Name: "Automation Tester",
 			Type: "publisher",
@@ -197,7 +197,7 @@ func expectedNextSubDoc(datasetID, edition string) *mongo.Dataset {
 		Telephone: "+44 (0)1833 456123",
 	}
 
-	methodology := mongo.GeneralDetails{
+	expectedMethodology := mongo.GeneralDetails{
 		Description: "The Producer Price Index (PPI) is a monthly survey that measures the price changes of goods bought and sold by UK manufacturers",
 		HRef:        "https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/producerpriceindicesqmi",
 		Title:       "Producer price indices QMI",
@@ -205,7 +205,7 @@ func expectedNextSubDoc(datasetID, edition string) *mongo.Dataset {
 
 	nationalStatistic := false
 
-	publication := mongo.GeneralDetails{
+	expectedPublication := mongo.GeneralDetails{
 		Description: "Changes in the prices of goods bought and sold by UK manufacturers including price indices of materials and fuels purchased (input prices) and factory gate prices (output prices)",
 		HRef:        "https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/producerpriceinflation/september2017",
 		Title:       "Producer price inflation, UK: September 2017",
@@ -238,10 +238,10 @@ func expectedNextSubDoc(datasetID, edition string) *mongo.Dataset {
 				HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID,
 			},
 		},
-		Methodologies:     []mongo.GeneralDetails{methodology},
+		Methodologies:     []mongo.GeneralDetails{expectedMethodology},
 		NationalStatistic: &nationalStatistic,
 		NextRelease:       "18 September 2017",
-		Publications:      []mongo.GeneralDetails{publication},
+		Publications:      []mongo.GeneralDetails{expectedPublication},
 		Publisher: &mongo.Publisher{
 			Name: "Test Automation Engineer",
 			Type: "publisher",

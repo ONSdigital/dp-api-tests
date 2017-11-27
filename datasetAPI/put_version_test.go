@@ -382,8 +382,6 @@ func TestFailureToUpdateVersion(t *testing.T) {
 
 	// test for updating a version that does not exist (not found)
 	Convey("Given a dataset and edition exist but the version for the dataset edition does not", t, func() {
-		edition := "2018"
-		version := "2"
 
 		d, err := setupResources(datasetID, editionID, edition, instanceID, 6)
 		if err != nil {

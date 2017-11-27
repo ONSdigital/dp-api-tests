@@ -443,7 +443,7 @@ func validCreatedInstanceData(datasetID, edition, instanceID string) bson.M {
 	}
 }
 
-var validPOSTCreateDatasetJSON string = `
+var validPOSTCreateDatasetJSON = `
 {
   "collection_id": "108064B3-A808-449B-9041-EA3A2F72CFAA",
   "contacts": [
@@ -503,7 +503,7 @@ var validPOSTCreateDatasetJSON string = `
 	"uri": "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation"
 }`
 
-var validPUTUpdateDatasetJSON string = `{
+var validPUTUpdateDatasetJSON = `{
 		"collection_id": "308064B3-A808-449B-9041-EA3A2F72CFAC",
 		"contacts": [
 			{
@@ -556,7 +556,7 @@ var validPUTUpdateDatasetJSON string = `{
 		"uri": "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/producerpriceindex"
 }`
 
-var validPOSTCreateInstanceJSON string = `
+var validPOSTCreateInstanceJSON = `
 {
   "links": {
     "job": {
@@ -566,7 +566,7 @@ var validPOSTCreateInstanceJSON string = `
   }
 }`
 
-var validPOSTCreateFullInstanceJSON string = `
+var validPOSTCreateFullInstanceJSON = `
 {
   "links": {
     "job": {
@@ -588,17 +588,17 @@ var validPOSTCreateFullInstanceJSON string = `
 	]
 }`
 
-var validPUTUpdateInstanceJSON string = `
+var validPUTUpdateInstanceJSON = `
 {
   "state": "edition-confirmed"
 }`
 
-var validPUTCompletedInstanceJSON string = `
+var validPUTCompletedInstanceJSON = `
 {
   "state": "completed"
 }`
 
-var validPUTFullInstanceJSON string = `
+var validPUTFullInstanceJSON = `
 {
 	"alerts": [
 	  {
@@ -639,7 +639,7 @@ var validPUTFullInstanceJSON string = `
 	"total_inserted_observations": 1000
 }`
 
-var validPUTEditionConfirmedInstanceJSON string = `
+var validPUTEditionConfirmedInstanceJSON = `
 {
   "alerts": [
 	  {
@@ -680,7 +680,7 @@ var validPUTEditionConfirmedInstanceJSON string = `
 	"total_inserted_observations": 1000
 }`
 
-var validPUTUpdateVersionMetaDataJSON string = `
+var validPUTUpdateVersionMetaDataJSON = `
 {
 "alerts": [
 	{
@@ -714,7 +714,7 @@ var validPUTUpdateVersionMetaDataJSON string = `
 ]
 }`
 
-var validPUTUpdateVersionAlertsJSON string = `
+var validPUTUpdateVersionAlertsJSON = `
 {
 "alerts": [
 	{
@@ -725,29 +725,29 @@ var validPUTUpdateVersionAlertsJSON string = `
 ],
 }`
 
-var validPUTUpdateVersionToAssociatedJSON string = `
+var validPUTUpdateVersionToAssociatedJSON = `
 {
 	"state": "associated",
 	"collection_id": "45454545"
 }`
 
-var validPUTUpdateVersionFromAssociatedToEditionConfirmedJSON string = `
+var validPUTUpdateVersionFromAssociatedToEditionConfirmedJSON = `
 {
 	"collection_id": ""
 }`
 
-var validPUTUpdateVersionToPublishedWithCollectionIDJSON string = `
+var validPUTUpdateVersionToPublishedWithCollectionIDJSON = `
 {
 	"collection_id": "33333333",
 	"state": "published"
 }`
 
-var validPUTUpdateVersionToPublishedJSON string = `
+var validPUTUpdateVersionToPublishedJSON = `
 {
 	"state": "published"
 }`
 
-var invalidPOSTCreateInstanceJSON string = `
+var invalidPOSTCreateInstanceJSON = `
 {
   "links": {
     "dataset": {
