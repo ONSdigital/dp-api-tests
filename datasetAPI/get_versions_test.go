@@ -284,7 +284,7 @@ func setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpu
 		Update:     validAssociatedInstanceData(datasetID, edition, unpublishedInstanceID),
 	}
 
-	docs = append(docs, datasetDoc, editionDoc, instanceDoc, unpublishedInstanceDoc) //, instanceDoc)
+	docs = append(docs, datasetDoc, editionDoc, instanceDoc, unpublishedInstanceDoc)
 
 	d := &mongo.ManyDocs{
 		Docs: docs,

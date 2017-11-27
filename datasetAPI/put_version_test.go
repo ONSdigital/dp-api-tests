@@ -152,35 +152,36 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			os.Exit(1)
 		}
 
-		// TODO reinstate test once dataset API has been fixed
-		// Convey("When a PUT request to update version resource to remove collection id", func() {
-		// 	Convey("Then the dataset and version resources are updated accordingly and returns a status ok (200)", func() {
-		// 		datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).WithHeader(internalToken, internalTokenID).
-		// 			WithBytes([]byte(validPUTUpdateVersionFromAssociatedToEditionConfirmedJSON)).Expect().Status(http.StatusOK)
-		//
-		// 		updatedVersion, err := mongo.GetVersion(database, "instances", "_id", instanceID)
-		// 		if err != nil {
-		// 			log.ErrorC("Unable to retrieve updated version document", err, nil)
-		// 			os.Exit(1)
-		// 		}
-		//
-		// 		// Check version has been updated
-		// 		So(updatedVersion.ID, ShouldEqual, instanceID)
-		// 		So(updatedVersion.CollectionID, ShouldEqual, "")
-		// 		So(updatedVersion.State, ShouldEqual, "edition-confirmed")
-		//
-		// 		updatedDataset, err := mongo.GetDataset(database, collection, "_id", datasetID)
-		// 		if err != nil {
-		// 			log.ErrorC("Unable to retrieve updated version document", err, nil)
-		// 			os.Exit(1)
-		// 		}
-		//
-		// 		// Check dataset has been updated
-		// 		So(updatedDataset.ID, ShouldEqual, datasetID)
-		// 		So(updatedDataset.Next.CollectionID, ShouldEqual, "")
-		// 		So(updatedDataset.Next.State, ShouldEqual, "edition-confirmed")
-		// 	})
-		// })
+		// TODO Remove skipped tests when code has been refactored (and hence fixed)
+		// 1 test skipped
+		SkipConvey("When a PUT request to update version resource to remove collection id", func() {
+			Convey("Then the dataset and version resources are updated accordingly and returns a status ok (200)", func() {
+				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).WithHeader(internalToken, internalTokenID).
+					WithBytes([]byte(validPUTUpdateVersionFromAssociatedToEditionConfirmedJSON)).Expect().Status(http.StatusOK)
+
+				updatedVersion, err := mongo.GetVersion(database, "instances", "_id", instanceID)
+				if err != nil {
+					log.ErrorC("Unable to retrieve updated version document", err, nil)
+					os.Exit(1)
+				}
+
+				// Check version has been updated
+				So(updatedVersion.ID, ShouldEqual, instanceID)
+				So(updatedVersion.CollectionID, ShouldEqual, "")
+				So(updatedVersion.State, ShouldEqual, "edition-confirmed")
+
+				updatedDataset, err := mongo.GetDataset(database, collection, "_id", datasetID)
+				if err != nil {
+					log.ErrorC("Unable to retrieve updated version document", err, nil)
+					os.Exit(1)
+				}
+
+				// Check dataset has been updated
+				So(updatedDataset.ID, ShouldEqual, datasetID)
+				So(updatedDataset.Next.CollectionID, ShouldEqual, "")
+				So(updatedDataset.Next.State, ShouldEqual, "edition-confirmed")
+			})
+		})
 
 		Convey("When a PUT request to update version resource with a state of published", func() {
 			Convey("Then the dataset, edition and version resources are updated and returns a status ok (200)", func() {
