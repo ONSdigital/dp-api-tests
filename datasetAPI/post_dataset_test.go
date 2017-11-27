@@ -107,10 +107,10 @@ func TestFailureToPostDataset(t *testing.T) {
 		}
 
 		Convey("When an authorised POST request to create the same dataset resource is made", func() {
-			Convey("Then return a status of forbidden with a message `Forbidden - dataset already exists`", func() {
+			Convey("Then return a status of forbidden with a message `forbidden - dataset already exists`", func() {
 
 				datasetAPI.POST("/datasets/{id}", datasetID).WithBytes([]byte(validPOSTCreateDatasetJSON)).WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusForbidden).Body().Contains("Forbidden - dataset already exists\n")
+					Expect().Status(http.StatusForbidden).Body().Contains("forbidden - dataset already exists\n")
 			})
 		})
 
