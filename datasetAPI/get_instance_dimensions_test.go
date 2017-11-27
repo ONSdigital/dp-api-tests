@@ -111,49 +111,50 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 	}
 }
 
-// TODO Reinstate tests once endpoint is fixed
-// func TestFailureToGetInstanceDimensions(t *testing.T) {
-// 	datasetID := uuid.NewV4().String()
-// 	instanceID := uuid.NewV4().String()
-//
-// 	edition := "2017"
-//
-// 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
-//
-// 	Convey("Fail to get instance document", t, func() {
-// 		Convey("and return status not found", func() {
-// 			Convey("when instance document does not exist", func() {
-// 				datasetAPI.GET("/instances/{id}/dimensions", "7990").WithHeader(internalToken, internalTokenID).
-// 					Expect().Status(http.StatusNotFound)
-// 			})
-// 		})
-// 		Convey("and return status request is forbidden", func() {
-// 			Convey("when an unauthorised user sends a GET request", func() {
-// 				if err := mongo.Setup(database, "instances", "_id", "799", validEditionConfirmedInstanceData(datasetID, edition, instanceID)); err != nil {
-// 					log.ErrorC("Was unable to run test", err, nil)
-// 					os.Exit(1)
-// 				}
-//
-// 				datasetAPI.GET("/instances/{id}/dimensions", "789").
-// 					Expect().Status(http.StatusForbidden)
-// 			})
-// 		})
-//
-// 		Convey("and return status not unauthorised", func() {
-// 			Convey("when an invalid token is provided", func() {
-// 				datasetAPI.GET("/instances/{id}/dimensions", "789").WithHeader(internalToken, invalidInternalTokenID).
-// 					Expect().Status(http.StatusUnauthorized)
-// 			})
-// 		})
-// 	})
-//
-// 	if err := mongo.Teardown(database, "instances", "_id", "799"); err != nil {
-// 		if err != mgo.ErrNotFound {
-// 			log.ErrorC("Failed to tear down test data", err, nil)
-// 			os.Exit(1)
-// 		}
-// 	}
-// }
+// TODO Remove skipped tests when code has been refactored (and hence fixed)
+// 1 test skipped
+func TestFailureToGetInstanceDimensions(t *testing.T) {
+	datasetID := uuid.NewV4().String()
+	instanceID := uuid.NewV4().String()
+
+	edition := "2017"
+
+	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
+
+	SkipConvey("Fail to get instance document", t, func() {
+		Convey("and return status not found", func() {
+			Convey("when instance document does not exist", func() {
+				datasetAPI.GET("/instances/{id}/dimensions", "7990").WithHeader(internalToken, internalTokenID).
+					Expect().Status(http.StatusNotFound)
+			})
+		})
+		Convey("and return status request is forbidden", func() {
+			Convey("when an unauthorised user sends a GET request", func() {
+				if err := mongo.Setup(database, "instances", "_id", "799", validEditionConfirmedInstanceData(datasetID, edition, instanceID)); err != nil {
+					log.ErrorC("Was unable to run test", err, nil)
+					os.Exit(1)
+				}
+
+				datasetAPI.GET("/instances/{id}/dimensions", "789").
+					Expect().Status(http.StatusForbidden)
+			})
+		})
+
+		Convey("and return status not unauthorised", func() {
+			Convey("when an invalid token is provided", func() {
+				datasetAPI.GET("/instances/{id}/dimensions", "789").WithHeader(internalToken, invalidInternalTokenID).
+					Expect().Status(http.StatusUnauthorized)
+			})
+		})
+	})
+
+	if err := mongo.Teardown(database, "instances", "_id", "799"); err != nil {
+		if err != mgo.ErrNotFound {
+			log.ErrorC("Failed to tear down test data", err, nil)
+			os.Exit(1)
+		}
+	}
+}
 
 func checkInstanceDimensionsResponse(response *httpexpect.Object) {
 

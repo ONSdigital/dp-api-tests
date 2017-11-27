@@ -52,7 +52,7 @@ func TestSuccessfullyGetListOfDatasetEditions(t *testing.T) {
 		Docs: docs,
 	}
 
-	Convey("Given a dataset has and edition that is published and one that is unpublished", t, func() {
+	Convey("Given a dataset has an edition that is published and one that is unpublished", t, func() {
 
 		if err := mongo.SetupMany(d); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)

@@ -116,8 +116,6 @@ func TestFailureToUpdateDataset(t *testing.T) {
 	})
 }
 
-// ------------------------------------------------------------------------
-
 func expectedCurrentSubDoc(datasetID, edition string) *mongo.Dataset {
 	contactDetails := mongo.ContactDetails{
 		Email:     "cpi@onstest.gov.uk",
