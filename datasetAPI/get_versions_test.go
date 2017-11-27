@@ -224,6 +224,9 @@ func TestGetVersions_Failed(t *testing.T) {
 
 func checkVersionResponse(datasetID, editionID, instanceID, edition string, response *httpexpect.Object) {
 	response.Value("id").Equal(instanceID)
+	response.Value("alerts").Array().Element(0).Object().Value("date").String().Equal("2017-12-10")
+	response.Value("alerts").Array().Element(0).Object().Value("description").String().Equal("A correction to an observation for males of age 25, previously 11 now changed to 12")
+	response.Value("alerts").Array().Element(0).Object().Value("type").String().Equal("Correction")
 	response.Value("collection_id").Equal("108064B3-A808-449B-9041-EA3A2F72CFAA")
 	response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
 	response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("(.+)/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
@@ -234,6 +237,9 @@ func checkVersionResponse(datasetID, editionID, instanceID, edition string, resp
 	response.Value("downloads").Object().Value("xls").Object().Value("url").String().Match("(.+)/aws/census-2017-1-xls$")
 	response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
 	response.Value("edition").Equal("2017")
+	response.Value("latest_changes").Array().Element(0).Object().Value("description").String().Equal("The border of Southampton changed after the south east cliff face fell into the sea.")
+	response.Value("latest_changes").Array().Element(0).Object().Value("name").String().Equal("Changes in Classification")
+	response.Value("latest_changes").Array().Element(0).Object().Value("type").String().Equal("Summary of Changes")
 	response.Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
 	response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
 	response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions$")

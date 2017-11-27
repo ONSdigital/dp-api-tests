@@ -5,10 +5,22 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+var alert = mongo.Alert{
+	Date:        "2017-12-10",
+	Description: "A correction to an observation for males of age 25, previously 11 now changed to 12",
+	Type:        "Correction",
+}
+
 var contact = mongo.ContactDetails{
 	Email:     "cpi@onstest.gov.uk",
 	Name:      "Automation Tester",
 	Telephone: "+44 (0)1633 123456",
+}
+
+var latestChanges = mongo.LatestChange{
+	Description: "The border of Southampton changed after the south east cliff face fell into the sea.",
+	Name:        "Changes in Classification",
+	Type:        "Summary of Changes",
 }
 
 var methodology = mongo.GeneralDetails{
@@ -72,6 +84,7 @@ func validPublishedDatasetData(datasetID string) bson.M {
 			"current.state":                     "published",
 			"current.theme":                     "Goods and services",
 			"current.title":                     "CPI",
+			"current.unit_of_measure":           "Pounds Sterling",
 			"current.uri":                       "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation",
 			"next.collection_id":                "208064B3-A808-449B-9041-EA3A2F72CFAB",
 			"next.contacts":                     []mongo.ContactDetails{contact},
@@ -100,6 +113,7 @@ func validPublishedDatasetData(datasetID string) bson.M {
 			"next.state":                        "created",
 			"next.theme":                        "Goods and services",
 			"next.title":                        "CPI",
+			"next.unit_of_measure":              "Pounds Sterling",
 			"next.uri":                          "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation",
 			"test_data":                         "true",
 		},
@@ -136,6 +150,7 @@ func validAssociatedDatasetData(datasetID string) bson.M {
 			"next.state":                     "associated",
 			"next.theme":                     "Goods and services",
 			"next.title":                     "CPI",
+			"next.unit_of_measure":           "Pounds Sterling",
 			"next.uri":                       "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation",
 			"test_data":                      "true",
 		},
@@ -171,6 +186,7 @@ func validCreatedDatasetData(datasetID string) bson.M {
 			"next.state":                     "created",
 			"next.theme":                     "Goods and services",
 			"next.title":                     "CPI",
+			"next.unit_of_measure":           "Pounds Sterling",
 			"next.uri":                       "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation",
 			"test_data":                      "true",
 		},
@@ -267,6 +283,7 @@ func validUnpublishedEditionData(datasetID, editionID, edition string) bson.M {
 func validPublishedInstanceData(datasetID, edition, instanceID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
+			"alerts":                      []mongo.Alert{alert},
 			"collection_id":               "108064B3-A808-449B-9041-EA3A2F72CFAA",
 			"dimensions":                  []mongo.CodeList{dimension},
 			"downloads.csv.url":           cfg.DatasetAPIURL + "/aws/census-2017-1-csv",
@@ -276,6 +293,7 @@ func validPublishedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"edition":                     edition,
 			"headers":                     []string{"time", "geography"},
 			"id":                          instanceID,
+			"latest_changes":              []mongo.LatestChange{latestChanges},
 			"last_updated":                "2017-09-08", // TODO Should be isodate
 			"license":                     "ONS License",
 			"links.job.id":                "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
@@ -313,6 +331,7 @@ func validAssociatedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"headers":                     []string{"time", "geography"},
 			"id":                          instanceID,
 			"last_updated":                "2017-09-08", // TODO Should be isodate
+			"latest_changes":              []mongo.LatestChange{latestChanges},
 			"license":                     "ONS license",
 			"links.job.id":                "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
 			"links.job.href":              cfg.DatasetAPIURL + "/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
@@ -383,6 +402,7 @@ func validCompletedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"headers":               []string{"time", "geography"},
 			"id":                    instanceID,
 			"last_updated":          "2017-09-08", // TODO Should be isodate
+			"latest_changes":        []mongo.LatestChange{latestChanges},
 			"license":               "ONS license",
 			"links.job.id":          "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
 			"links.job.href":        cfg.DatasetAPIURL + "/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
@@ -479,6 +499,7 @@ var validPOSTCreateDatasetJSON string = `
 	"state": "created",
 	"theme": "Goods and services",
 	"title": "CPI",
+	"unit_of_measure": "Pounds Sterling",
 	"uri": "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation"
 }`
 
@@ -531,6 +552,7 @@ var validPUTUpdateDatasetJSON string = `{
 		"state": "associated",
 		"theme": "Price movement of goods",
 		"title": "RPI",
+		"unit_of_measure": "Pounds",
 		"uri": "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/producerpriceindex"
 }`
 
@@ -578,6 +600,13 @@ var validPUTCompletedInstanceJSON string = `
 
 var validPUTFullInstanceJSON string = `
 {
+	"alerts": [
+	  {
+		  "date": "2017-04-05",
+		  "description": "All data entries (observations) for Plymouth have been updated",
+			"type": "Correction"
+	  }
+	],
 	"dimensions": [
 		{
 			"description": "The age ranging from 16 to 75+",
@@ -585,6 +614,13 @@ var validPUTFullInstanceJSON string = `
 			"id": "43513D18-B4D8-4227-9820-492B2971E7T5",
 			"name": "age"
 		}
+	],
+	"latest_changes": [
+	  {
+		  "description": "change to the period frequency from quarterly to monthly",
+			"name": "Changes to the period frequency",
+			"type": "Summary of Changes"
+	  }
 	],
 	"links": {
 		"spatial": {
@@ -605,6 +641,13 @@ var validPUTFullInstanceJSON string = `
 
 var validPUTEditionConfirmedInstanceJSON string = `
 {
+  "alerts": [
+	  {
+		  "date": "2017-04-05",
+		  "description": "All data entries (observations) for Plymouth have been updated",
+		  "type": "Correction"
+	  }
+  ],
 	"dimensions": [
 		{
 			"description": "The age ranging from 16 to 75+",
@@ -612,6 +655,13 @@ var validPUTEditionConfirmedInstanceJSON string = `
 			"id": "43513D18-B4D8-4227-9820-492B2971E7T5",
 			"name": "age"
 		}
+	],
+	"latest_changes": [
+	  {
+		  "description": "change to the period frequency from quarterly to monthly",
+			"name": "Changes to the period frequency",
+			"type": "Summary of Changes"
+	  }
 	],
 	"links": {
 		"spatial": {
@@ -632,6 +682,20 @@ var validPUTEditionConfirmedInstanceJSON string = `
 
 var validPUTUpdateVersionMetaDataJSON string = `
 {
+"alerts": [
+	{
+		"date": "2017-04-05",
+		"description": "All data entries (observations) for Plymouth have been updated",
+		"type": "Correction"
+	}
+],
+"latest_changes": [
+	{
+		"description": "change to the period frequency from quarterly to monthly",
+		"name": "Changes to the period frequency",
+		"type": "Summary of Changes"
+	}
+],
 "links": {
   "spatial": {
 	  "href": "http://ons.gov.uk/new-geography-list"
@@ -648,6 +712,17 @@ var validPUTUpdateVersionMetaDataJSON string = `
 		"frequency": "monthly"
 	}
 ]
+}`
+
+var validPUTUpdateVersionAlertsJSON string = `
+{
+"alerts": [
+	{
+		"date": "2017-04-05",
+		"description": "All data entries (observations) for Plymouth have been updated",
+		"type": "Correction"
+	}
+],
 }`
 
 var validPUTUpdateVersionToAssociatedJSON string = `

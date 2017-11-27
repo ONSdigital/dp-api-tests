@@ -114,6 +114,8 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 	})
 }
 
+// TODO test to be able to update version after being published with an alert?
+
 func TestFailureToPutInstance(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
@@ -245,11 +247,23 @@ func setupInstance(datasetID, edition, instanceID string) (*mongo.ManyDocs, erro
 }
 
 func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instance) {
+	alert := mongo.Alert{
+		Date:        "2017-04-05",
+		Description: "All data entries (observations) for Plymouth have been updated",
+		Type:        "Correction",
+	}
+
 	dimension := mongo.CodeList{
 		Description: "The age ranging from 16 to 75+",
 		HRef:        "http://localhost:22400//code-lists/43513D18-B4D8-4227-9820-492B2971E7T5",
 		ID:          "43513D18-B4D8-4227-9820-492B2971E7T5",
 		Name:        "age",
+	}
+
+	latestChange := mongo.LatestChange{
+		Description: "change to the period frequency from quarterly to monthly",
+		Name:        "Changes to the period frequency",
+		Type:        "Summary of Changes",
 	}
 
 	links := mongo.InstanceLinks{
@@ -291,10 +305,12 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 		StartDate: "2014-10-10",
 	}
 
+	So(instance.Alerts, ShouldResemble, &[]mongo.Alert{alert})
 	So(instance.Dimensions, ShouldResemble, []mongo.CodeList{dimension})
 	So(instance.Edition, ShouldEqual, "2017")
 	So(instance.Headers, ShouldResemble, &[]string{"time", "geography"})
 	So(instance.LastUpdated, ShouldNotBeNil)
+	So(instance.LatestChanges, ShouldResemble, &[]mongo.LatestChange{latestChange})
 	So(instance.Links, ShouldResemble, links)
 	So(instance.ReleaseDate, ShouldEqual, "2017-11-11")
 	So(instance.State, ShouldEqual, state)

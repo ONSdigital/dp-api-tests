@@ -119,5 +119,6 @@ func checkDatasetDoc(datasetID string, response *httpexpect.Object) {
 	response.Value("state").Equal("published")
 	response.Value("theme").Equal("Goods and services")
 	response.Value("title").Equal("CPI")
+	response.Value("unit_of_measure").Equal("Pounds Sterling")
 	response.Value("uri").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation")
 }

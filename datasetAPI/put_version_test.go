@@ -47,7 +47,29 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				// Check version has been updated
 				So(updatedVersion.ID, ShouldEqual, instanceID)
 				So(updatedVersion.ReleaseDate, ShouldEqual, "2018-11-11")
+
+				alert := mongo.Alert{
+					Description: "All data entries (observations) for Plymouth have been updated",
+					Date:        "2017-04-05",
+					Type:        "Correction",
+				}
+
+				alertList := &[]mongo.Alert{alert}
+
+				So(updatedVersion.Alerts, ShouldResemble, alertList)
+
+				latestChange := mongo.LatestChange{
+					Description: "change to the period frequency from quarterly to monthly",
+					Name:        "Changes to the period frequency",
+					Type:        "Summary of Changes",
+				}
+
+				latestChangesList := &[]mongo.LatestChange{latestChange}
+
+				So(updatedVersion.LatestChanges, ShouldResemble, latestChangesList)
+
 				So(updatedVersion.Links.Spatial.HRef, ShouldEqual, "http://ons.gov.uk/new-geography-list")
+
 				// Check self link does not update - the only link that can be updated is `spatial`
 				So(updatedVersion.Links.Self.HRef, ShouldNotEqual, "http://bogus/bad-link")
 
@@ -642,6 +664,7 @@ func expectedDatasetResource(datasetID string, resource int) mongo.DatasetUpdate
 		State:            "published",
 		Theme:            "Goods and services",
 		Title:            "CPI",
+		UnitOfMeasure:    "Pounds Sterling",
 		URI:              "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation",
 	}
 

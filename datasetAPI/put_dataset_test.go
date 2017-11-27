@@ -185,6 +185,7 @@ func expectedCurrentSubDoc(datasetID, edition string) *mongo.Dataset {
 		State:            "published",
 		Theme:            "Goods and services",
 		Title:            "CPI",
+		UnitOfMeasure:    "Pounds Sterling",
 		URI:              "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation",
 	}
 
@@ -258,6 +259,7 @@ func expectedNextSubDoc(datasetID, edition string) *mongo.Dataset {
 		State:            "associated",
 		Theme:            "Price movement of goods",
 		Title:            "RPI",
+		UnitOfMeasure:    "Pounds",
 		URI:              "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/producerpriceindex",
 	}
 

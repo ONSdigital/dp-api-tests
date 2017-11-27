@@ -56,6 +56,7 @@ func TestSuccessfullyPostDataset(t *testing.T) {
 				response.Value("next").Object().Value("state").Equal("created")
 				response.Value("next").Object().Value("theme").Equal("Goods and services")
 				response.Value("next").Object().Value("title").Equal("CPI")
+				response.Value("next").Object().Value("unit_of_measure").Equal("Pounds Sterling")
 				response.Value("next").Object().Value("uri").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation")
 
 				if err := mongo.Teardown(database, collection, "_id", datasetID); err != nil {

@@ -144,6 +144,7 @@ type Dataset struct {
 	State             string           `bson:"state,omitempty"                  json:"state,omitempty"`
 	Theme             string           `bson:"theme,omitempty"                  json:"theme,omitempty"`
 	Title             string           `bson:"title,omitempty"                  json:"title,omitempty"`
+	UnitOfMeasure     string           `bson:"unit_of_measure,omitempty"        json:"unit_of_measure,omitempty"`
 	URI               string           `bson:"uri,omitempty"                    json:"uri,omitempty"`
 }
 
@@ -201,17 +202,26 @@ type EditionLinks struct {
 
 // Version represents information related to a single version for an edition of a dataset
 type Version struct {
-	CollectionID string               `bson:"collection_id,omitempty" json:"collection_id,omitempty"`
-	Dimensions   []CodeList           `bson:"dimensions,omitempty"    json:"dimensions,omitempty"`
-	Downloads    *DownloadList        `bson:"downloads,omitempty"     json:"downloads,omitempty"`
-	Edition      string               `bson:"edition,omitempty"       json:"edition,omitempty"`
-	ID           string               `bson:"id,omitempty"            json:"id,omitempty"`
-	Links        *VersionLinks        `bson:"links,omitempty"         json:"links,omitempty"`
-	ReleaseDate  string               `bson:"release_date,omitempty"  json:"release_date,omitempty"`
-	State        string               `bson:"state,omitempty"         json:"state,omitempty"`
-	Temporal     *[]TemporalFrequency `bson:"temporal,omitempty"      json:"temporal,omitempty"`
-	LastUpdated  time.Time            `bson:"last_updated,omitempty"  json:"-"`
-	Version      int                  `bson:"version,omitempty"       json:"version,omitempty"`
+	Alerts        *[]Alert             `bson:"alerts,omitempty"         json:"alerts,omitempty"`
+	CollectionID  string               `bson:"collection_id,omitempty"  json:"collection_id,omitempty"`
+	Dimensions    []CodeList           `bson:"dimensions,omitempty"     json:"dimensions,omitempty"`
+	Downloads     *DownloadList        `bson:"downloads,omitempty"      json:"downloads,omitempty"`
+	Edition       string               `bson:"edition,omitempty"        json:"edition,omitempty"`
+	ID            string               `bson:"id,omitempty"             json:"id,omitempty"`
+	LatestChanges *[]LatestChange      `bson:"latest_changes,omitempty" json:"latest_changes,omitempty"`
+	Links         *VersionLinks        `bson:"links,omitempty"          json:"links,omitempty"`
+	ReleaseDate   string               `bson:"release_date,omitempty"   json:"release_date,omitempty"`
+	State         string               `bson:"state,omitempty"          json:"state,omitempty"`
+	Temporal      *[]TemporalFrequency `bson:"temporal,omitempty"       json:"temporal,omitempty"`
+	LastUpdated   time.Time            `bson:"last_updated,omitempty"   json:"-"`
+	Version       int                  `bson:"version,omitempty"        json:"version,omitempty"`
+}
+
+// Alert represents an object containing information on an alert
+type Alert struct {
+	Date        string `bson:"date,omitempty"        json:"date,omitempty"`
+	Description string `bson:"description,omitempty" json:"description,omitempty"`
+	Type        string `bson:"type,omitempty"        json:"type,omitempty"`
 }
 
 // CodeList for a dimension within an instance
@@ -241,6 +251,14 @@ type TemporalFrequency struct {
 	StartDate string `bson:"start_date,omitempty"  json:"start_date,omitempty"`
 }
 
+// LatestChange represents an object contining
+// information on a single change between versions
+type LatestChange struct {
+	Description string `bson:"description,omitempty" json:"description,omitempty"`
+	Name        string `bson:"name,omitempty"        json:"name,omitempty"`
+	Type        string `bson:"type,omitempty"        json:"type,omitempty"`
+}
+
 // VersionLinks represents a list of specific links related to the version resource for an edition of a dataset
 type VersionLinks struct {
 	Dataset    *LinkObject `bson:"dataset,omitempty"     json:"dataset,omitempty"`
@@ -253,6 +271,7 @@ type VersionLinks struct {
 
 // Instance which presents a single dataset being imported
 type Instance struct {
+	Alerts               *[]Alert             `bson:"alerts,omitempty"         json:"alerts,omitempty"`
 	InstanceID           string               `bson:"id,omitempty"                          json:"id,omitempty"`
 	CollectionID         string               `bson:"collection_id,omitempty"               json:"collection_id,omitempty"`
 	Dimensions           []CodeList           `bson:"dimensions,omitempty"                  json:"dimensions,omitempty"`
@@ -261,6 +280,7 @@ type Instance struct {
 	Events               *[]Event             `bson:"events,omitempty"                      json:"events,omitempty"`
 	Headers              *[]string            `bson:"headers,omitempty"                     json:"headers,omitempty"`
 	InsertedObservations *int                 `bson:"total_inserted_observations,omitempty" json:"total_inserted_observations,omitempty"`
+	LatestChanges        *[]LatestChange      `bson:"latest_changes,omitempty" json:"latest_changes,omitempty"`
 	Links                InstanceLinks        `bson:"links,omitempty"                       json:"links,omitempty"`
 	ReleaseDate          string               `bson:"release_date,omitempty"                json:"release_date,omitempty"`
 	State                string               `bson:"state,omitempty"                       json:"state,omitempty"`
