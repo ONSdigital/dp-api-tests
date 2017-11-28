@@ -306,7 +306,7 @@ func validPublishedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"links.self.href":             cfg.DatasetAPIURL + "/instances/" + instanceID,
 			"links.spatial.href":          "http://ons.gov.uk/geographylist",
 			"links.version.href":          cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/1",
-			"links.version.id":            "2",
+			"links.version.id":            "1",
 			"release_date":                "2017-12-12", // TODO Should be isodate
 			"state":                       "published",
 			"temporal":                    []mongo.TemporalFrequency{temporal},

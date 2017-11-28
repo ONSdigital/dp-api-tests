@@ -155,7 +155,7 @@ func checkResponse(datasetID, edition, instanceID, version string, response *htt
 	response.Value("links").Object().Value("edition").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
 	response.Value("links").Object().Value("edition").Object().Value("id").Equal(edition)
 	response.Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/" + version + "$")
-	response.Value("links").Object().Value("version").Object().Value("id").Equal("2")
+	response.Value("links").Object().Value("version").Object().Value("id").Equal(version)
 	response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/instances/" + instanceID + "$")
 	response.Value("links").Object().Value("spatial").Object().Value("href").Equal("http://ons.gov.uk/geographylist")
 	response.Value("release_date").Equal("2017-12-12")
