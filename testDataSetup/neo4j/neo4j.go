@@ -8,7 +8,7 @@ import (
 )
 
 const ObservationTestData = "../testDataSetup/neo4j/instance.cypher"
-const HierarchyTestData = "testDataSetup/neo4j/hierarchy.cypher"
+const HierarchyTestData = "../testDataSetup/neo4j/hierarchy.cypher"
 
 // Datastore used to setup data within neo4j
 type Datastore struct {
