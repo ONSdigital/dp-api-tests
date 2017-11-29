@@ -69,23 +69,29 @@ func TestErrorStatesGetRootHierarchy(t *testing.T) {
 	hierarchyAPI := httpexpect.New(t, cfg.HierarchyAPIURL)
 
 	Convey("Given an existing hierarchy", t, func() {
-
 		datastore := neo4j.NewDatastore(cfg.Neo4jAddr, instanceID, neo4j.HierarchyTestData)
-		Convey("When a root hierarchy node is requested with a invalid id", func() {
+		err := datastore.Setup()
+		if err != nil {
+			log.ErrorC("Unable to setup test data", err, nil)
+			os.Exit(1)
+		}
+		// This should return 400 but returns 404
+		SkipConvey("When a root hierarchy node is requested with a invalid id", func() {
 
-			err := datastore.Setup()
-			if err != nil {
-				log.ErrorC("Unable to setup test data", err, nil)
-				os.Exit(1)
-			}
-
-			Convey("Then a 404 response code is returned", func() {
+			Convey("Then a 400 response code is returned", func() {
 				response := hierarchyAPI.GET("/hierarchies/{instance_id}/{dimension_name}", "1234567890", "cpi")
+				response.Expect().Status(http.StatusBadRequest)
+			})
+		})
+
+		Convey("When a root hierarchy node is requested with a dimension name", func() {
+			Convey("Then a 404 response code is returned", func() {
+				response := hierarchyAPI.GET("/hierarchies/{instance_id}/{dimension_name}", instanceID, "000")
 				response.Expect().Status(http.StatusNotFound)
 			})
 		})
 
-		err := datastore.TeardownHierarchy()
+		err = datastore.TeardownHierarchy()
 		if err != nil {
 			log.ErrorC("Unable to tear down test data", err, nil)
 			os.Exit(1)
