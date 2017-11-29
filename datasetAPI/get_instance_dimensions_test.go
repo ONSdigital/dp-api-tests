@@ -158,7 +158,7 @@ func TestFailureToGetInstanceDimensions(t *testing.T) {
 
 func checkInstanceDimensionsResponse(response *httpexpect.Object) {
 
-	response.Value("items").Array().Element(0).Object().Value("dimension_id").Equal("time")
+	response.Value("items").Array().Element(0).Object().Value("dimension").Equal("time")
 
 	response.Value("items").Array().Element(0).Object().Value("label").Equal("")
 
@@ -174,7 +174,7 @@ func checkInstanceDimensionsResponse(response *httpexpect.Object) {
 
 	response.Value("items").Array().Element(0).Object().Value("node_id").Equal("")
 
-	response.Value("items").Array().Element(1).Object().Value("dimension_id").Equal("aggregate")
+	response.Value("items").Array().Element(1).Object().Value("dimension").Equal("aggregate")
 
 	response.Value("items").Array().Element(1).Object().Value("label").Equal("CPI (Overall Index)")
 

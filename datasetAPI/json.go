@@ -47,6 +47,20 @@ var dimension = mongo.CodeList{
 	Name:        "age",
 }
 
+var dimensionTwo = mongo.CodeList{
+	Description: "An aggregate of the data",
+	HRef:        "http://localhost:8080/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD",
+	ID:          "508064B3-A808-449B-9041-EA3A2F72CFAD",
+	Name:        "aggregate",
+}
+
+var dimensionThree = mongo.CodeList{
+	Description: "The time in which this dataset spans",
+	HRef:        "http://localhost:8080/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD",
+	ID:          "508064B3-A808-449B-9041-EA3A2F72CFAD",
+	Name:        "time",
+}
+
 var temporal = mongo.TemporalFrequency{
 	EndDate:   "2017-09-09",
 	Frequency: "monthly",
@@ -285,7 +299,7 @@ func validPublishedInstanceData(datasetID, edition, instanceID string) bson.M {
 		"$set": bson.M{
 			"alerts":                      []mongo.Alert{alert},
 			"collection_id":               "108064B3-A808-449B-9041-EA3A2F72CFAA",
-			"dimensions":                  []mongo.CodeList{dimension},
+			"dimensions":                  []mongo.CodeList{dimension, dimensionTwo, dimensionThree},
 			"downloads.csv.url":           cfg.DatasetAPIURL + "/aws/census-2017-1-csv",
 			"downloads.csv.size":          "10mb",
 			"downloads.xls.url":           cfg.DatasetAPIURL + "/aws/census-2017-1-xls",

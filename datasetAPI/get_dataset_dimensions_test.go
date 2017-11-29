@@ -67,13 +67,6 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 		Docs: docs,
 	}
 
-	if err := mongo.TeardownMany(d); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Was unable to run test", err, nil)
-			os.Exit(1)
-		}
-	}
-
 	if err := mongo.SetupMany(d); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
@@ -87,7 +80,6 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			checkDimensionsResponse(datasetID, edition, instanceID, response)
-
 		})
 
 		Convey("When a user is not authenticated", func() {
@@ -97,7 +89,6 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 			response.Value("items").Array().Length().Equal(2)
 
 			checkDimensionsResponse(datasetID, edition, instanceID, response)
-
 		})
 	})
 
@@ -110,11 +101,11 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 }
 
 // TODO Remove skipped tests when code has been refactored (and hence fixed)
-// 2 tests skipped
 func TestGetDimensions_Failed(t *testing.T) {
 	datasetID := uuid.NewV4().String()
 	editionID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	unpublishedInstancID := uuid.NewV4().String()
 
 	edition := "2017"
 
@@ -150,13 +141,6 @@ func TestGetDimensions_Failed(t *testing.T) {
 		Docs: docs,
 	}
 
-	if err := mongo.TeardownMany(d); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Was unable to run test", err, nil)
-			os.Exit(1)
-		}
-	}
-
 	if err := mongo.SetupMany(d); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
@@ -164,60 +148,65 @@ func TestGetDimensions_Failed(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-	SkipConvey("Fail to get a list of Dimensions for a dataset", t, func() {
+	Convey("Fail to get a list of Dimensions for a dataset", t, func() {
 		Convey("When authenticated", func() {
-			Convey("When the dataset does not exist", func() {
+
+			// TODO Remove skip on test once endpoint fixed
+			SkipConvey("When the dataset does not exist", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", "1234", "2018").WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusBadRequest)
+					Expect().Status(http.StatusBadRequest).Body().Contains("Dataset not found\n")
 			})
 
-			Convey("When the edition does not exist", func() {
+			// TODO Remove skip on test once endpoint fixed
+			SkipConvey("When the edition does not exist", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, "2018").WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusBadRequest)
+					Expect().Status(http.StatusBadRequest).Body().Contains("Edition not found\n")
 			})
 
 			Convey("When there are no versions", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusBadRequest)
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/3/dimensions", datasetID, edition).WithHeader(internalToken, internalTokenID).
+					Expect().Status(http.StatusBadRequest).Body().Contains("Version not found\n")
 			})
 		})
+
 		Convey("When unauthenticated", func() {
-			Convey("When the dataset does not exist", func() {
+
+			// TODO Remove skip on test once endpoint fixed
+			SkipConvey("When the dataset does not exist", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", "1234", "2018").
-					Expect().Status(http.StatusBadRequest)
+					Expect().Status(http.StatusBadRequest).Body().Contains("Dataset not found\n")
 			})
 
-			Convey("When the edition does not exist", func() {
+			// TODO Remove skip on test once endpoint fixed
+			SkipConvey("When the edition does not exist", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, "2018").
-					Expect().Status(http.StatusBadRequest)
+					Expect().Status(http.StatusBadRequest).Body().Contains("Edition not found\n")
 			})
 
 			Convey("When there are no published versions", func() {
 				// Create an unpublished instance document
-				mongo.Teardown(database, "instances", "_id", "799")
-				mongo.Setup(database, "instances", "_id", "799", validEditionConfirmedInstanceData(datasetID, edition, instanceID))
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).
-					Expect().Status(http.StatusBadRequest)
+				mongo.Setup(database, "instances", "_id", unpublishedInstancID, validEditionConfirmedInstanceData(datasetID, edition, unpublishedInstancID))
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/3/dimensions", datasetID, edition).
+					Expect().Status(http.StatusBadRequest).Body().Contains("Version not found\n")
 
-				mongo.Teardown(database, "instances", "_id", "799")
+				mongo.Teardown(database, "instances", "_id", unpublishedInstancID)
 			})
 		})
 	})
 
-	SkipConvey("Given a valid dataset id, edition and version with no dimensions", t, func() {
+	Convey("Given a valid dataset id, edition and version with no dimensions", t, func() {
 		Convey("When authenticated and get the dimensions", func() {
 			Convey("Then the error code should be 404", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusNotFound)
+					Expect().Status(http.StatusNotFound).Body().Contains("Dimensions not found\n")
 			})
-
 		})
+
 		Convey("When unauthenticated and get the dimensions", func() {
 			Convey("Then the error code should be 404", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).
-					Expect().Status(http.StatusNotFound)
+					Expect().Status(http.StatusNotFound).Body().Contains("Dimensions not found\n")
 			})
-
 		})
 	})
 
@@ -239,7 +228,8 @@ func checkDimensionsResponse(datasetID, edition, instanceID string, response *ht
 
 	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/instances/" + instanceID + "$")
 
-	response.Value("items").Array().Element(0).Object().Value("dimension_id").Equal("aggregate")
+	response.Value("items").Array().Element(0).Object().Value("dimension").Equal("aggregate")
+	response.Value("items").Array().Element(0).Object().Value("description").Equal("An aggregate of the data")
 
 	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code_list").Object().Value("id").Equal("64d384f1-ea3b-445c-8fb8-aa453f96e58a")
 	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")
@@ -249,5 +239,6 @@ func checkDimensionsResponse(datasetID, edition, instanceID string, response *ht
 
 	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/instances/" + instanceID + "$")
 
-	response.Value("items").Array().Element(1).Object().Value("dimension_id").Equal("time")
+	response.Value("items").Array().Element(1).Object().Value("dimension").Equal("time")
+	response.Value("items").Array().Element(1).Object().Value("description").Equal("The time in which this dataset spans")
 }
