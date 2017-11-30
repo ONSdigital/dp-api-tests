@@ -19,7 +19,11 @@ func TestSuccessfullyGetNodeHierarchy(t *testing.T) {
 
 	Convey("Given an existing hierarchy", t, func() {
 
-		datastore := neo4j.NewDatastore(cfg.Neo4jAddr, instanceID, neo4j.HierarchyTestData)
+		datastore, err := neo4j.NewDatastore(cfg.Neo4jAddr, instanceID, neo4j.HierarchyTestData)
+		if err != nil {
+			log.ErrorC("Unable to connect to neo4j", err, nil)
+			os.Exit(1)
+		}
 		Convey("When a root hierarchy node is requested", func() {
 
 			err := datastore.Setup()
@@ -56,7 +60,7 @@ func TestSuccessfullyGetNodeHierarchy(t *testing.T) {
 			})
 		})
 
-		err := datastore.TeardownHierarchy()
+		err = datastore.TeardownHierarchy()
 		if err != nil {
 			log.ErrorC("Unable to tear down test data", err, nil)
 			os.Exit(1)
@@ -70,9 +74,13 @@ func TestErrorStatesGetNodeHierarchy(t *testing.T) {
 
 	Convey("Given an existing hierarchy", t, func() {
 
-		datastore := neo4j.NewDatastore(cfg.Neo4jAddr, instanceID, neo4j.HierarchyTestData)
+		datastore, err := neo4j.NewDatastore(cfg.Neo4jAddr, instanceID, neo4j.HierarchyTestData)
+		if err != nil {
+			log.ErrorC("Unable to connect to neo4j", err, nil)
+			os.Exit(1)
+		}
 
-		err := datastore.Setup()
+		err = datastore.Setup()
 		if err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)

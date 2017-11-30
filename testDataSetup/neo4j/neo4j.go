@@ -23,12 +23,12 @@ type CypherTemplate struct {
 }
 
 // NewDatastore creates a new datastore for a test
-func NewDatastore(uri, instance, testdata string) *Datastore {
+func NewDatastore(uri, instance, testdata string) (*Datastore, error) {
 	driver, err := bolt.NewDriver().OpenNeo(uri)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return &Datastore{connection: driver, instance: instance, testData: testdata}
+	return &Datastore{connection: driver, instance: instance, testData: testdata}, nil
 }
 
 // TeardownInstance removes all instance nodes within neo4j
