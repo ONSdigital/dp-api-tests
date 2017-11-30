@@ -39,6 +39,23 @@ func NewDatastore(uri string) error {
 	return nil
 }
 
+// DropDatabases cleans out all data by removing the databases specified
+func DropDatabases(databases []string) error {
+	log.Info("the following databases about to be dropped in mongo", log.Data{"databases": databases})
+
+	s := session.Copy()
+	defer s.Close()
+
+	for _, db := range databases {
+		log.Info("dropping database", log.Data{"database": db})
+		if err := s.DB(db).DropDatabase(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // Teardown is a way of cleaning up an individual document from mongo instance
 func Teardown(database, collection, key, value string) error {
 	s := session.Copy()

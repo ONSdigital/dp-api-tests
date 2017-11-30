@@ -3,8 +3,10 @@ package neo4j
 import (
 	"bytes"
 	"fmt"
-	bolt "github.com/johnnadratowski/golang-neo4j-bolt-driver"
 	"html/template"
+
+	"github.com/ONSdigital/go-ns/log"
+	bolt "github.com/johnnadratowski/golang-neo4j-bolt-driver"
 )
 
 const ObservationTestData = "../testDataSetup/neo4j/instance.cypher"
@@ -40,6 +42,29 @@ func (ds *Datastore) TeardownInstance() error {
 	}
 	results.Close()
 	return ds.connection.Close()
+}
+
+// DropDatabases cleans out all data that exists on neo4j
+func DropDatabases(uri string) error {
+	log.Info("dropping neo4j database", log.Data{"uri": uri})
+	pool, err := bolt.NewDriverPool(uri, 1)
+	if err != nil {
+		return err
+	}
+
+	conn, err := pool.OpenPool()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	if _, err := conn.ExecNeo("MATCH(n) DETACH DELETE n", nil); err != nil {
+		return err
+	}
+
+	log.Info("dropping databases complete", nil)
+
+	return nil
 }
 
 // TeardownHierarchy removes all hierarchy nodes within neo4j

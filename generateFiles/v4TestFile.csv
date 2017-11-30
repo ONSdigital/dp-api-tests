@@ -1,0 +1,1514 @@
+V4_0,Time_codelist,Time,Geography_codelist,Geography,cpi1dim1aggid,Aggregate
+86.8,Month,Jan-96,K02000001,,cpi1dim1A0,CPI (overall index)
+90.3,Month,Jan-96,K02000001,,cpi1dim1G10100,01.1 Food
+93.8,Month,Jan-96,K02000001,,cpi1dim1G10200,01.2 Non-alcoholic beverages
+95.6,Month,Jan-96,K02000001,,cpi1dim1G20100,02.1 Alcoholic beverages
+57.2,Month,Jan-96,K02000001,,cpi1dim1G20200,02.2 Tobacco
+163.7,Month,Jan-96,K02000001,,cpi1dim1G30100,03.1 Clothing
+142.3,Month,Jan-96,K02000001,,cpi1dim1G30200,03.2 Footwear including repairs
+75.7,Month,Jan-96,K02000001,,cpi1dim1G40100,04.1 Actual rentals for housing
+74,Month,Jan-96,K02000001,,cpi1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+71.6,Month,Jan-96,K02000001,,cpi1dim1G40400,04.4 Water supply and misc. services for the dwelling
+85.1,Month,Jan-96,K02000001,,cpi1dim1G40500,"04.5 Electricity , gas and other fuels"
+92.9,Month,Jan-96,K02000001,,cpi1dim1G50100,"05.1 Furniture, furnishings and carpets"
+118.9,Month,Jan-96,K02000001,,cpi1dim1G50200,05.2 Household textiles
+121.5,Month,Jan-96,K02000001,,cpi1dim1G50300,"05.3 Household appliances, fitting and repairs"
+113.7,Month,Jan-96,K02000001,,cpi1dim1G50400,"05.4 Glassware, tableware and household utensils"
+119,Month,Jan-96,K02000001,,cpi1dim1G50500,05.5 Tools and equipment for house and garden
+83.4,Month,Jan-96,K02000001,,cpi1dim1G50600,05.6 Goods and services for routine maintenance
+86.4,Month,Jan-96,K02000001,,cpi1dim1G60100,"06.1 Medical products, appliances and equipment"
+110.4,Month,Jan-96,K02000001,,cpi1dim1G70100,07.1 Purchase of vehicles
+64.2,Month,Jan-96,K02000001,,cpi1dim1G70200,07.2 Operation of personal transport equipment
+67.8,Month,Jan-96,K02000001,,cpi1dim1G70300,07.3 Transport services
+82,Month,Jan-96,K02000001,,cpi1dim1G80100,08.1 Postal services
+127.3,Month,Jan-96,K02000001,,cpi1dim1G80200,08.2/3 Telephone and telefax equip
+258.8,Month,Jan-96,K02000001,,cpi1dim1G90100,09.1 Audio-visual equipment and related products
+113.6,Month,Jan-96,K02000001,,cpi1dim1G90300,"09.3 Other recreational items, gardens and pets"
+73.5,Month,Jan-96,K02000001,,cpi1dim1G90400,09.4 Recreational and cultural services
+79.5,Month,Jan-96,K02000001,,cpi1dim1G90500,"09.5 Books, newspapers and stationery"
+64.7,Month,Jan-96,K02000001,,cpi1dim1G90600,09.6 Package holidays
+59.9,Month,Jan-96,K02000001,,cpi1dim1G100000,10.0 Education
+73.6,Month,Jan-96,K02000001,,cpi1dim1G110100,11.1 Catering services
+66.4,Month,Jan-96,K02000001,,cpi1dim1G110200,11.2 Accommodation services
+87.5,Month,Jan-96,K02000001,,cpi1dim1G120100,12.1 Personal care
+102.2,Month,Jan-96,K02000001,,cpi1dim1G120300,12.3 Personal effects (nec)
+60.6,Month,Jan-96,K02000001,,cpi1dim1G120500,12.5 Insurance
+132.5,Month,Jan-96,K02000001,,cpi1dim1G120600,12.6 Financial services (nec)
+56.3,Month,Jan-96,K02000001,,cpi1dim1G120700,12.7 Other services (nec)
+94.2,Month,Jan-96,K02000001,,cpi1dim1S10101,01.1.1 Bread and cereals
+91.9,Month,Jan-96,K02000001,,cpi1dim1S10102,01.1.2 Meat
+81,Month,Jan-96,K02000001,,cpi1dim1S10103,01.1.3 Fish
+91.7,Month,Jan-96,K02000001,,cpi1dim1S10104,"01.1.4 Milk, cheese and eggs"
+100.7,Month,Jan-96,K02000001,,cpi1dim1S10105,01.1.5 Oils and fats
+85.2,Month,Jan-96,K02000001,,cpi1dim1S10106,01.1.6 Fruit
+98.2,Month,Jan-96,K02000001,,cpi1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+81,Month,Jan-96,K02000001,,cpi1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+93.7,Month,Jan-96,K02000001,,cpi1dim1S10109,01.1.9 Food products (nec)
+103.6,Month,Jan-96,K02000001,,cpi1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+90.5,Month,Jan-96,K02000001,,cpi1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+95.4,Month,Jan-96,K02000001,,cpi1dim1S20101,02.1.1 Spirits
+93.6,Month,Jan-96,K02000001,,cpi1dim1S20102,02.1.2 Wine
+99.9,Month,Jan-96,K02000001,,cpi1dim1S20103,02.1.3 Beer
+57.2,Month,Jan-96,K02000001,,cpi1dim1S20200,02.2.0 Tobacco
+170.1,Month,Jan-96,K02000001,,cpi1dim1S30102,03.1.2 Garments
+120.4,Month,Jan-96,K02000001,,cpi1dim1S30103,03.1.3 Other clothing and clothing accessories
+72.7,Month,Jan-96,K02000001,,cpi1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+142.3,Month,Jan-96,K02000001,,cpi1dim1S30200,03.2.0 Footwear including repairs
+75.7,Month,Jan-96,K02000001,,cpi1dim1S40100,04.1.0 Actual rentals for housing
+97.4,Month,Jan-96,K02000001,,cpi1dim1S40301,04.3.1 Materials for maintenance and repair
+56.5,Month,Jan-96,K02000001,,cpi1dim1S40302,04.3.2 Services for maintenance and repair
+70.9,Month,Jan-96,K02000001,,cpi1dim1S40401,04.4.1 Water supply
+72.7,Month,Jan-96,K02000001,,cpi1dim1S40403,04.4.3 Sewerage collection
+96.7,Month,Jan-96,K02000001,,cpi1dim1S40501,04.5.1 Electricity
+78.1,Month,Jan-96,K02000001,,cpi1dim1S40502,04.5.2 Gas
+51.4,Month,Jan-96,K02000001,,cpi1dim1S40503,04.5.3 Liquid fuels
+73.3,Month,Jan-96,K02000001,,cpi1dim1S40504,04.5.4 Solid fuels
+93.8,Month,Jan-96,K02000001,,cpi1dim1S50101,05.1.1 Furniture and furnishings
+89.7,Month,Jan-96,K02000001,,cpi1dim1S50102,05.1.2 Carpets and other floor coverings
+118.9,Month,Jan-96,K02000001,,cpi1dim1S50200,05.2.0 Household Textiles
+132.5,Month,Jan-96,K02000001,,cpi1dim1S50301,05.3.1/2 Major appliances and small electric goods
+66.2,Month,Jan-96,K02000001,,cpi1dim1S50303,05.3.3 Repair of household appliances
+113.7,Month,Jan-96,K02000001,,cpi1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+119,Month,Jan-96,K02000001,,cpi1dim1S50500,05.5.0 Tools and equipment for House and Garden
+111.7,Month,Jan-96,K02000001,,cpi1dim1S50601,05.6.1 Non-durable household goods
+61.4,Month,Jan-96,K02000001,,cpi1dim1S50602,05.6.2 Domestic services and household services
+92.2,Month,Jan-96,K02000001,,cpi1dim1S60101,06.1.1 Pharmaceutical products
+81.6,Month,Jan-96,K02000001,,cpi1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+112.5,Month,Jan-96,K02000001,,cpi1dim1S70102,07.1.2/3 Motorcycles and bicycles
+98.5,Month,Jan-96,K02000001,,cpi1dim1S70181,07.1.1 New Cars
+124.9,Month,Jan-96,K02000001,,cpi1dim1S70191,07.1.1b Second Hand Cars
+89.6,Month,Jan-96,K02000001,,cpi1dim1S70201,07.2.1 Spare parts and accessories
+64.3,Month,Jan-96,K02000001,,cpi1dim1S70202,07.2.2 Fuels and lubricants
+59.4,Month,Jan-96,K02000001,,cpi1dim1S70203,07.2.3 Maintenance and repairs
+66.2,Month,Jan-96,K02000001,,cpi1dim1S70204,07.2.4 Other services
+76.2,Month,Jan-96,K02000001,,cpi1dim1S70301,07.3.1 Passenger transport by railway
+66,Month,Jan-96,K02000001,,cpi1dim1S70302,07.3.2 Passenger transport by road
+85.5,Month,Jan-96,K02000001,,cpi1dim1S70303,07.3.3 Passenger transport by air
+63.3,Month,Jan-96,K02000001,,cpi1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+82,Month,Jan-96,K02000001,,cpi1dim1S80100,08.1.0 Postal Services
+127.3,Month,Jan-96,K02000001,,cpi1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+274.1,Month,Jan-96,K02000001,,cpi1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+217.7,Month,Jan-96,K02000001,,cpi1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+1324.7,Month,Jan-96,K02000001,,cpi1dim1S90103,09.1.3 Data processing equipment
+128.7,Month,Jan-96,K02000001,,cpi1dim1S90104,09.1.4 Recording media
+65.3,Month,Jan-96,K02000001,,cpi1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+140.9,Month,Jan-96,K02000001,,cpi1dim1S90301,"09.3.1 Games, toys and hobbies"
+131.7,Month,Jan-96,K02000001,,cpi1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+105.2,Month,Jan-96,K02000001,,cpi1dim1S90303,"09.3.3 Gardens, plants and flowers"
+82.1,Month,Jan-96,K02000001,,cpi1dim1S90304,"09.3.4/5 Pets, related products and services"
+68.9,Month,Jan-96,K02000001,,cpi1dim1S90401,09.4.1 Recreational and sporting services
+76.8,Month,Jan-96,K02000001,,cpi1dim1S90402,09.4.2 Cultural services
+79.4,Month,Jan-96,K02000001,,cpi1dim1S90501,09.5.1 Books
+72.5,Month,Jan-96,K02000001,,cpi1dim1S90502,09.5.2 Newspapers and periodicals
+90.7,Month,Jan-96,K02000001,,cpi1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+64.7,Month,Jan-96,K02000001,,cpi1dim1S90600,09.6.0 Package Holidays
+59.9,Month,Jan-96,K02000001,,cpi1dim1S100000,10.0.0 Education
+74.2,Month,Jan-96,K02000001,,cpi1dim1S110101,"11.1.1 Restaurants, cafes"
+66.3,Month,Jan-96,K02000001,,cpi1dim1S110102,11.1.2 Canteens
+66.4,Month,Jan-96,K02000001,,cpi1dim1S110200,11.2.0 Accommodation Services
+62.2,Month,Jan-96,K02000001,,cpi1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+100.1,Month,Jan-96,K02000001,,cpi1dim1S120102,12.1.2/3 Appliances and products for personal care
+95.6,Month,Jan-96,K02000001,,cpi1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+114.3,Month,Jan-96,K02000001,,cpi1dim1S120302,12.3.2 Other personal effects
+78.3,Month,Jan-96,K02000001,,cpi1dim1S120502,12.5.2 House contents insurance
+55.4,Month,Jan-96,K02000001,,cpi1dim1S120504,12.5.4 Transport insurance
+132.5,Month,Jan-96,K02000001,,cpi1dim1S120602,12.6.2 Other financial services (nec)
+56.3,Month,Jan-96,K02000001,,cpi1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+90.7,Month,Jan-96,K02000001,,cpi1dim1T10000,01 Food and non-alcoholic beverages
+71.9,Month,Jan-96,K02000001,,cpi1dim1T20000,02 Alcoholic beverages and tobacco
+160.8,Month,Jan-96,K02000001,,cpi1dim1T30000,03 Clothing and footwear
+78.3,Month,Jan-96,K02000001,,cpi1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+100.1,Month,Jan-96,K02000001,,cpi1dim1T50000,"05 Furniture, household equipment and maintenance"
+75.3,Month,Jan-96,K02000001,,cpi1dim1T60000,06 Health
+78,Month,Jan-96,K02000001,,cpi1dim1T70000,07 Transport
+122.8,Month,Jan-96,K02000001,,cpi1dim1T80000,08 Communication
+97.4,Month,Jan-96,K02000001,,cpi1dim1T90000,09 Recreation and culture
+59.9,Month,Jan-96,K02000001,,cpi1dim1T100000,10 Education
+72.5,Month,Jan-96,K02000001,,cpi1dim1T110000,11 Restaurants and hotels
+75.5,Month,Jan-96,K02000001,,cpi1dim1T120000,12 Miscellaneous goods and services
+87.2,Month,Feb-96,K02000001,,cpi1dim1A0,CPI (overall index)
+91.2,Month,Feb-96,K02000001,,cpi1dim1G10100,01.1 Food
+96,Month,Feb-96,K02000001,,cpi1dim1G10200,01.2 Non-alcoholic beverages
+97.1,Month,Feb-96,K02000001,,cpi1dim1G20100,02.1 Alcoholic beverages
+57.4,Month,Feb-96,K02000001,,cpi1dim1G20200,02.2 Tobacco
+164.2,Month,Feb-96,K02000001,,cpi1dim1G30100,03.1 Clothing
+141.8,Month,Feb-96,K02000001,,cpi1dim1G30200,03.2 Footwear including repairs
+75.7,Month,Feb-96,K02000001,,cpi1dim1G40100,04.1 Actual rentals for housing
+74.2,Month,Feb-96,K02000001,,cpi1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+71.6,Month,Feb-96,K02000001,,cpi1dim1G40400,04.4 Water supply and misc. services for the dwelling
+85.1,Month,Feb-96,K02000001,,cpi1dim1G40500,"04.5 Electricity , gas and other fuels"
+95,Month,Feb-96,K02000001,,cpi1dim1G50100,"05.1 Furniture, furnishings and carpets"
+121.3,Month,Feb-96,K02000001,,cpi1dim1G50200,05.2 Household textiles
+122.5,Month,Feb-96,K02000001,,cpi1dim1G50300,"05.3 Household appliances, fitting and repairs"
+114.5,Month,Feb-96,K02000001,,cpi1dim1G50400,"05.4 Glassware, tableware and household utensils"
+119,Month,Feb-96,K02000001,,cpi1dim1G50500,05.5 Tools and equipment for house and garden
+83.3,Month,Feb-96,K02000001,,cpi1dim1G50600,05.6 Goods and services for routine maintenance
+86.7,Month,Feb-96,K02000001,,cpi1dim1G60100,"06.1 Medical products, appliances and equipment"
+112.3,Month,Feb-96,K02000001,,cpi1dim1G70100,07.1 Purchase of vehicles
+63.3,Month,Feb-96,K02000001,,cpi1dim1G70200,07.2 Operation of personal transport equipment
+67.9,Month,Feb-96,K02000001,,cpi1dim1G70300,07.3 Transport services
+82,Month,Feb-96,K02000001,,cpi1dim1G80100,08.1 Postal services
+127.4,Month,Feb-96,K02000001,,cpi1dim1G80200,08.2/3 Telephone and telefax equip
+259,Month,Feb-96,K02000001,,cpi1dim1G90100,09.1 Audio-visual equipment and related products
+113.9,Month,Feb-96,K02000001,,cpi1dim1G90300,"09.3 Other recreational items, gardens and pets"
+73.5,Month,Feb-96,K02000001,,cpi1dim1G90400,09.4 Recreational and cultural services
+80,Month,Feb-96,K02000001,,cpi1dim1G90500,"09.5 Books, newspapers and stationery"
+64.8,Month,Feb-96,K02000001,,cpi1dim1G90600,09.6 Package holidays
+60,Month,Feb-96,K02000001,,cpi1dim1G100000,10.0 Education
+73.7,Month,Feb-96,K02000001,,cpi1dim1G110100,11.1 Catering services
+66.4,Month,Feb-96,K02000001,,cpi1dim1G110200,11.2 Accommodation services
+88.7,Month,Feb-96,K02000001,,cpi1dim1G120100,12.1 Personal care
+102.9,Month,Feb-96,K02000001,,cpi1dim1G120300,12.3 Personal effects (nec)
+60.6,Month,Feb-96,K02000001,,cpi1dim1G120500,12.5 Insurance
+132.5,Month,Feb-96,K02000001,,cpi1dim1G120600,12.6 Financial services (nec)
+56.7,Month,Feb-96,K02000001,,cpi1dim1G120700,12.7 Other services (nec)
+94.7,Month,Feb-96,K02000001,,cpi1dim1S10101,01.1.1 Bread and cereals
+93,Month,Feb-96,K02000001,,cpi1dim1S10102,01.1.2 Meat
+80.7,Month,Feb-96,K02000001,,cpi1dim1S10103,01.1.3 Fish
+91.8,Month,Feb-96,K02000001,,cpi1dim1S10104,"01.1.4 Milk, cheese and eggs"
+101.4,Month,Feb-96,K02000001,,cpi1dim1S10105,01.1.5 Oils and fats
+86.2,Month,Feb-96,K02000001,,cpi1dim1S10106,01.1.6 Fruit
+101.7,Month,Feb-96,K02000001,,cpi1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+80.8,Month,Feb-96,K02000001,,cpi1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+93.9,Month,Feb-96,K02000001,,cpi1dim1S10109,01.1.9 Food products (nec)
+102.8,Month,Feb-96,K02000001,,cpi1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+93.9,Month,Feb-96,K02000001,,cpi1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+96.5,Month,Feb-96,K02000001,,cpi1dim1S20101,02.1.1 Spirits
+94.2,Month,Feb-96,K02000001,,cpi1dim1S20102,02.1.2 Wine
+103,Month,Feb-96,K02000001,,cpi1dim1S20103,02.1.3 Beer
+57.4,Month,Feb-96,K02000001,,cpi1dim1S20200,02.2.0 Tobacco
+170.7,Month,Feb-96,K02000001,,cpi1dim1S30102,03.1.2 Garments
+121.1,Month,Feb-96,K02000001,,cpi1dim1S30103,03.1.3 Other clothing and clothing accessories
+72.6,Month,Feb-96,K02000001,,cpi1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+141.8,Month,Feb-96,K02000001,,cpi1dim1S30200,03.2.0 Footwear including repairs
+75.7,Month,Feb-96,K02000001,,cpi1dim1S40100,04.1.0 Actual rentals for housing
+98.1,Month,Feb-96,K02000001,,cpi1dim1S40301,04.3.1 Materials for maintenance and repair
+56.5,Month,Feb-96,K02000001,,cpi1dim1S40302,04.3.2 Services for maintenance and repair
+70.9,Month,Feb-96,K02000001,,cpi1dim1S40401,04.4.1 Water supply
+72.7,Month,Feb-96,K02000001,,cpi1dim1S40403,04.4.3 Sewerage collection
+96.7,Month,Feb-96,K02000001,,cpi1dim1S40501,04.5.1 Electricity
+78.1,Month,Feb-96,K02000001,,cpi1dim1S40502,04.5.2 Gas
+50.8,Month,Feb-96,K02000001,,cpi1dim1S40503,04.5.3 Liquid fuels
+73.3,Month,Feb-96,K02000001,,cpi1dim1S40504,04.5.4 Solid fuels
+95.8,Month,Feb-96,K02000001,,cpi1dim1S50101,05.1.1 Furniture and furnishings
+92,Month,Feb-96,K02000001,,cpi1dim1S50102,05.1.2 Carpets and other floor coverings
+121.3,Month,Feb-96,K02000001,,cpi1dim1S50200,05.2.0 Household Textiles
+133.7,Month,Feb-96,K02000001,,cpi1dim1S50301,05.3.1/2 Major appliances and small electric goods
+66.2,Month,Feb-96,K02000001,,cpi1dim1S50303,05.3.3 Repair of household appliances
+114.5,Month,Feb-96,K02000001,,cpi1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+119,Month,Feb-96,K02000001,,cpi1dim1S50500,05.5.0 Tools and equipment for House and Garden
+111.6,Month,Feb-96,K02000001,,cpi1dim1S50601,05.6.1 Non-durable household goods
+61.4,Month,Feb-96,K02000001,,cpi1dim1S50602,05.6.2 Domestic services and household services
+92.7,Month,Feb-96,K02000001,,cpi1dim1S60101,06.1.1 Pharmaceutical products
+81.7,Month,Feb-96,K02000001,,cpi1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+113.3,Month,Feb-96,K02000001,,cpi1dim1S70102,07.1.2/3 Motorcycles and bicycles
+100.4,Month,Feb-96,K02000001,,cpi1dim1S70181,07.1.1 New Cars
+127,Month,Feb-96,K02000001,,cpi1dim1S70191,07.1.1b Second Hand Cars
+90.2,Month,Feb-96,K02000001,,cpi1dim1S70201,07.2.1 Spare parts and accessories
+62.6,Month,Feb-96,K02000001,,cpi1dim1S70202,07.2.2 Fuels and lubricants
+59.4,Month,Feb-96,K02000001,,cpi1dim1S70203,07.2.3 Maintenance and repairs
+66.3,Month,Feb-96,K02000001,,cpi1dim1S70204,07.2.4 Other services
+76.2,Month,Feb-96,K02000001,,cpi1dim1S70301,07.3.1 Passenger transport by railway
+66.2,Month,Feb-96,K02000001,,cpi1dim1S70302,07.3.2 Passenger transport by road
+85,Month,Feb-96,K02000001,,cpi1dim1S70303,07.3.3 Passenger transport by air
+63.3,Month,Feb-96,K02000001,,cpi1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+82,Month,Feb-96,K02000001,,cpi1dim1S80100,08.1.0 Postal Services
+127.4,Month,Feb-96,K02000001,,cpi1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+273.4,Month,Feb-96,K02000001,,cpi1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+219.4,Month,Feb-96,K02000001,,cpi1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+1326.7,Month,Feb-96,K02000001,,cpi1dim1S90103,09.1.3 Data processing equipment
+128.6,Month,Feb-96,K02000001,,cpi1dim1S90104,09.1.4 Recording media
+65.3,Month,Feb-96,K02000001,,cpi1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+143.4,Month,Feb-96,K02000001,,cpi1dim1S90301,"09.3.1 Games, toys and hobbies"
+131.7,Month,Feb-96,K02000001,,cpi1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+104.8,Month,Feb-96,K02000001,,cpi1dim1S90303,"09.3.3 Gardens, plants and flowers"
+82.3,Month,Feb-96,K02000001,,cpi1dim1S90304,"09.3.4/5 Pets, related products and services"
+68.9,Month,Feb-96,K02000001,,cpi1dim1S90401,09.4.1 Recreational and sporting services
+76.8,Month,Feb-96,K02000001,,cpi1dim1S90402,09.4.2 Cultural services
+80.4,Month,Feb-96,K02000001,,cpi1dim1S90501,09.5.1 Books
+72.9,Month,Feb-96,K02000001,,cpi1dim1S90502,09.5.2 Newspapers and periodicals
+91.1,Month,Feb-96,K02000001,,cpi1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+64.8,Month,Feb-96,K02000001,,cpi1dim1S90600,09.6.0 Package Holidays
+60,Month,Feb-96,K02000001,,cpi1dim1S100000,10.0.0 Education
+74.4,Month,Feb-96,K02000001,,cpi1dim1S110101,"11.1.1 Restaurants, cafes"
+66.3,Month,Feb-96,K02000001,,cpi1dim1S110102,11.1.2 Canteens
+66.4,Month,Feb-96,K02000001,,cpi1dim1S110200,11.2.0 Accommodation Services
+62.3,Month,Feb-96,K02000001,,cpi1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+101.8,Month,Feb-96,K02000001,,cpi1dim1S120102,12.1.2/3 Appliances and products for personal care
+95.9,Month,Feb-96,K02000001,,cpi1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+115.7,Month,Feb-96,K02000001,,cpi1dim1S120302,12.3.2 Other personal effects
+78.3,Month,Feb-96,K02000001,,cpi1dim1S120502,12.5.2 House contents insurance
+55.4,Month,Feb-96,K02000001,,cpi1dim1S120504,12.5.4 Transport insurance
+132.5,Month,Feb-96,K02000001,,cpi1dim1S120602,12.6.2 Other financial services (nec)
+56.7,Month,Feb-96,K02000001,,cpi1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+91.7,Month,Feb-96,K02000001,,cpi1dim1T10000,01 Food and non-alcoholic beverages
+72.6,Month,Feb-96,K02000001,,cpi1dim1T20000,02 Alcoholic beverages and tobacco
+161.2,Month,Feb-96,K02000001,,cpi1dim1T30000,03 Clothing and footwear
+78.3,Month,Feb-96,K02000001,,cpi1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+101.4,Month,Feb-96,K02000001,,cpi1dim1T50000,"05 Furniture, household equipment and maintenance"
+75.6,Month,Feb-96,K02000001,,cpi1dim1T60000,06 Health
+78,Month,Feb-96,K02000001,,cpi1dim1T70000,07 Transport
+122.9,Month,Feb-96,K02000001,,cpi1dim1T80000,08 Communication
+97.6,Month,Feb-96,K02000001,,cpi1dim1T90000,09 Recreation and culture
+60,Month,Feb-96,K02000001,,cpi1dim1T100000,10 Education
+72.6,Month,Feb-96,K02000001,,cpi1dim1T110000,11 Restaurants and hotels
+76.2,Month,Feb-96,K02000001,,cpi1dim1T120000,12 Miscellaneous goods and services
+87.5,Month,Mar-96,K02000001,,cpi1dim1A0,CPI (overall index)
+91.9,Month,Mar-96,K02000001,,cpi1dim1G10100,01.1 Food
+96.9,Month,Mar-96,K02000001,,cpi1dim1G10200,01.2 Non-alcoholic beverages
+97.3,Month,Mar-96,K02000001,,cpi1dim1G20100,02.1 Alcoholic beverages
+57.5,Month,Mar-96,K02000001,,cpi1dim1G20200,02.2 Tobacco
+166.3,Month,Mar-96,K02000001,,cpi1dim1G30100,03.1 Clothing
+143.1,Month,Mar-96,K02000001,,cpi1dim1G30200,03.2 Footwear including repairs
+75.8,Month,Mar-96,K02000001,,cpi1dim1G40100,04.1 Actual rentals for housing
+74.3,Month,Mar-96,K02000001,,cpi1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+71.6,Month,Mar-96,K02000001,,cpi1dim1G40400,04.4 Water supply and misc. services for the dwelling
+85.1,Month,Mar-96,K02000001,,cpi1dim1G40500,"04.5 Electricity , gas and other fuels"
+97.9,Month,Mar-96,K02000001,,cpi1dim1G50100,"05.1 Furniture, furnishings and carpets"
+122.8,Month,Mar-96,K02000001,,cpi1dim1G50200,05.2 Household textiles
+123.6,Month,Mar-96,K02000001,,cpi1dim1G50300,"05.3 Household appliances, fitting and repairs"
+115.1,Month,Mar-96,K02000001,,cpi1dim1G50400,"05.4 Glassware, tableware and household utensils"
+118.7,Month,Mar-96,K02000001,,cpi1dim1G50500,05.5 Tools and equipment for house and garden
+83.2,Month,Mar-96,K02000001,,cpi1dim1G50600,05.6 Goods and services for routine maintenance
+87.4,Month,Mar-96,K02000001,,cpi1dim1G60100,"06.1 Medical products, appliances and equipment"
+112.8,Month,Mar-96,K02000001,,cpi1dim1G70100,07.1 Purchase of vehicles
+63.2,Month,Mar-96,K02000001,,cpi1dim1G70200,07.2 Operation of personal transport equipment
+68.1,Month,Mar-96,K02000001,,cpi1dim1G70300,07.3 Transport services
+82.1,Month,Mar-96,K02000001,,cpi1dim1G80100,08.1 Postal services
+127.3,Month,Mar-96,K02000001,,cpi1dim1G80200,08.2/3 Telephone and telefax equip
+256.4,Month,Mar-96,K02000001,,cpi1dim1G90100,09.1 Audio-visual equipment and related products
+114.5,Month,Mar-96,K02000001,,cpi1dim1G90300,"09.3 Other recreational items, gardens and pets"
+73.5,Month,Mar-96,K02000001,,cpi1dim1G90400,09.4 Recreational and cultural services
+80.3,Month,Mar-96,K02000001,,cpi1dim1G90500,"09.5 Books, newspapers and stationery"
+65,Month,Mar-96,K02000001,,cpi1dim1G90600,09.6 Package holidays
+60,Month,Mar-96,K02000001,,cpi1dim1G100000,10.0 Education
+73.9,Month,Mar-96,K02000001,,cpi1dim1G110100,11.1 Catering services
+66.5,Month,Mar-96,K02000001,,cpi1dim1G110200,11.2 Accommodation services
+88.8,Month,Mar-96,K02000001,,cpi1dim1G120100,12.1 Personal care
+103.2,Month,Mar-96,K02000001,,cpi1dim1G120300,12.3 Personal effects (nec)
+60.6,Month,Mar-96,K02000001,,cpi1dim1G120500,12.5 Insurance
+132.5,Month,Mar-96,K02000001,,cpi1dim1G120600,12.6 Financial services (nec)
+56.8,Month,Mar-96,K02000001,,cpi1dim1G120700,12.7 Other services (nec)
+94.6,Month,Mar-96,K02000001,,cpi1dim1S10101,01.1.1 Bread and cereals
+93.5,Month,Mar-96,K02000001,,cpi1dim1S10102,01.1.2 Meat
+78.6,Month,Mar-96,K02000001,,cpi1dim1S10103,01.1.3 Fish
+92.8,Month,Mar-96,K02000001,,cpi1dim1S10104,"01.1.4 Milk, cheese and eggs"
+102,Month,Mar-96,K02000001,,cpi1dim1S10105,01.1.5 Oils and fats
+86.2,Month,Mar-96,K02000001,,cpi1dim1S10106,01.1.6 Fruit
+104.7,Month,Mar-96,K02000001,,cpi1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+81.3,Month,Mar-96,K02000001,,cpi1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+95.1,Month,Mar-96,K02000001,,cpi1dim1S10109,01.1.9 Food products (nec)
+104.6,Month,Mar-96,K02000001,,cpi1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+94.4,Month,Mar-96,K02000001,,cpi1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+97.7,Month,Mar-96,K02000001,,cpi1dim1S20101,02.1.1 Spirits
+95.3,Month,Mar-96,K02000001,,cpi1dim1S20102,02.1.2 Wine
+100.9,Month,Mar-96,K02000001,,cpi1dim1S20103,02.1.3 Beer
+57.5,Month,Mar-96,K02000001,,cpi1dim1S20200,02.2.0 Tobacco
+172.8,Month,Mar-96,K02000001,,cpi1dim1S30102,03.1.2 Garments
+122.4,Month,Mar-96,K02000001,,cpi1dim1S30103,03.1.3 Other clothing and clothing accessories
+72.8,Month,Mar-96,K02000001,,cpi1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+143.1,Month,Mar-96,K02000001,,cpi1dim1S30200,03.2.0 Footwear including repairs
+75.8,Month,Mar-96,K02000001,,cpi1dim1S40100,04.1.0 Actual rentals for housing
+98.2,Month,Mar-96,K02000001,,cpi1dim1S40301,04.3.1 Materials for maintenance and repair
+56.6,Month,Mar-96,K02000001,,cpi1dim1S40302,04.3.2 Services for maintenance and repair
+70.9,Month,Mar-96,K02000001,,cpi1dim1S40401,04.4.1 Water supply
+72.7,Month,Mar-96,K02000001,,cpi1dim1S40403,04.4.3 Sewerage collection
+96.7,Month,Mar-96,K02000001,,cpi1dim1S40501,04.5.1 Electricity
+78.1,Month,Mar-96,K02000001,,cpi1dim1S40502,04.5.2 Gas
+52.3,Month,Mar-96,K02000001,,cpi1dim1S40503,04.5.3 Liquid fuels
+73.4,Month,Mar-96,K02000001,,cpi1dim1S40504,04.5.4 Solid fuels
+99.1,Month,Mar-96,K02000001,,cpi1dim1S50101,05.1.1 Furniture and furnishings
+93.8,Month,Mar-96,K02000001,,cpi1dim1S50102,05.1.2 Carpets and other floor coverings
+122.8,Month,Mar-96,K02000001,,cpi1dim1S50200,05.2.0 Household Textiles
+135.1,Month,Mar-96,K02000001,,cpi1dim1S50301,05.3.1/2 Major appliances and small electric goods
+66.2,Month,Mar-96,K02000001,,cpi1dim1S50303,05.3.3 Repair of household appliances
+115.1,Month,Mar-96,K02000001,,cpi1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+118.7,Month,Mar-96,K02000001,,cpi1dim1S50500,05.5.0 Tools and equipment for House and Garden
+111.2,Month,Mar-96,K02000001,,cpi1dim1S50601,05.6.1 Non-durable household goods
+61.4,Month,Mar-96,K02000001,,cpi1dim1S50602,05.6.2 Domestic services and household services
+93.5,Month,Mar-96,K02000001,,cpi1dim1S60101,06.1.1 Pharmaceutical products
+82.4,Month,Mar-96,K02000001,,cpi1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+113.6,Month,Mar-96,K02000001,,cpi1dim1S70102,07.1.2/3 Motorcycles and bicycles
+99.5,Month,Mar-96,K02000001,,cpi1dim1S70181,07.1.1 New Cars
+128.1,Month,Mar-96,K02000001,,cpi1dim1S70191,07.1.1b Second Hand Cars
+90.4,Month,Mar-96,K02000001,,cpi1dim1S70201,07.2.1 Spare parts and accessories
+62.2,Month,Mar-96,K02000001,,cpi1dim1S70202,07.2.2 Fuels and lubricants
+59.6,Month,Mar-96,K02000001,,cpi1dim1S70203,07.2.3 Maintenance and repairs
+66.4,Month,Mar-96,K02000001,,cpi1dim1S70204,07.2.4 Other services
+76.2,Month,Mar-96,K02000001,,cpi1dim1S70301,07.3.1 Passenger transport by railway
+66.3,Month,Mar-96,K02000001,,cpi1dim1S70302,07.3.2 Passenger transport by road
+86.6,Month,Mar-96,K02000001,,cpi1dim1S70303,07.3.3 Passenger transport by air
+63.3,Month,Mar-96,K02000001,,cpi1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+82.1,Month,Mar-96,K02000001,,cpi1dim1S80100,08.1.0 Postal Services
+127.3,Month,Mar-96,K02000001,,cpi1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+273.7,Month,Mar-96,K02000001,,cpi1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+218,Month,Mar-96,K02000001,,cpi1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+1261.1,Month,Mar-96,K02000001,,cpi1dim1S90103,09.1.3 Data processing equipment
+129.7,Month,Mar-96,K02000001,,cpi1dim1S90104,09.1.4 Recording media
+65.3,Month,Mar-96,K02000001,,cpi1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+144.3,Month,Mar-96,K02000001,,cpi1dim1S90301,"09.3.1 Games, toys and hobbies"
+131.1,Month,Mar-96,K02000001,,cpi1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+105.7,Month,Mar-96,K02000001,,cpi1dim1S90303,"09.3.3 Gardens, plants and flowers"
+82.7,Month,Mar-96,K02000001,,cpi1dim1S90304,"09.3.4/5 Pets, related products and services"
+69,Month,Mar-96,K02000001,,cpi1dim1S90401,09.4.1 Recreational and sporting services
+76.8,Month,Mar-96,K02000001,,cpi1dim1S90402,09.4.2 Cultural services
+80.6,Month,Mar-96,K02000001,,cpi1dim1S90501,09.5.1 Books
+73.1,Month,Mar-96,K02000001,,cpi1dim1S90502,09.5.2 Newspapers and periodicals
+91.5,Month,Mar-96,K02000001,,cpi1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+65,Month,Mar-96,K02000001,,cpi1dim1S90600,09.6.0 Package Holidays
+60,Month,Mar-96,K02000001,,cpi1dim1S100000,10.0.0 Education
+74.5,Month,Mar-96,K02000001,,cpi1dim1S110101,"11.1.1 Restaurants, cafes"
+66.3,Month,Mar-96,K02000001,,cpi1dim1S110102,11.1.2 Canteens
+66.5,Month,Mar-96,K02000001,,cpi1dim1S110200,11.2.0 Accommodation Services
+62.5,Month,Mar-96,K02000001,,cpi1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+101.8,Month,Mar-96,K02000001,,cpi1dim1S120102,12.1.2/3 Appliances and products for personal care
+96.5,Month,Mar-96,K02000001,,cpi1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+115.5,Month,Mar-96,K02000001,,cpi1dim1S120302,12.3.2 Other personal effects
+78.3,Month,Mar-96,K02000001,,cpi1dim1S120502,12.5.2 House contents insurance
+55.4,Month,Mar-96,K02000001,,cpi1dim1S120504,12.5.4 Transport insurance
+132.5,Month,Mar-96,K02000001,,cpi1dim1S120602,12.6.2 Other financial services (nec)
+56.8,Month,Mar-96,K02000001,,cpi1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+92.4,Month,Mar-96,K02000001,,cpi1dim1T10000,01 Food and non-alcoholic beverages
+72.7,Month,Mar-96,K02000001,,cpi1dim1T20000,02 Alcoholic beverages and tobacco
+163.1,Month,Mar-96,K02000001,,cpi1dim1T30000,03 Clothing and footwear
+78.4,Month,Mar-96,K02000001,,cpi1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+102.9,Month,Mar-96,K02000001,,cpi1dim1T50000,"05 Furniture, household equipment and maintenance"
+76.2,Month,Mar-96,K02000001,,cpi1dim1T60000,06 Health
+78.1,Month,Mar-96,K02000001,,cpi1dim1T70000,07 Transport
+122.8,Month,Mar-96,K02000001,,cpi1dim1T80000,08 Communication
+97.6,Month,Mar-96,K02000001,,cpi1dim1T90000,09 Recreation and culture
+60,Month,Mar-96,K02000001,,cpi1dim1T100000,10 Education
+72.8,Month,Mar-96,K02000001,,cpi1dim1T110000,11 Restaurants and hotels
+76.3,Month,Mar-96,K02000001,,cpi1dim1T120000,12 Miscellaneous goods and services
+88,Month,Apr-96,K02000001,,cpi1dim1A0,CPI (overall index)
+91.9,Month,Apr-96,K02000001,,cpi1dim1G10100,01.1 Food
+96.7,Month,Apr-96,K02000001,,cpi1dim1G10200,01.2 Non-alcoholic beverages
+97.9,Month,Apr-96,K02000001,,cpi1dim1G20100,02.1 Alcoholic beverages
+57.9,Month,Apr-96,K02000001,,cpi1dim1G20200,02.2 Tobacco
+167.1,Month,Apr-96,K02000001,,cpi1dim1G30100,03.1 Clothing
+143,Month,Apr-96,K02000001,,cpi1dim1G30200,03.2 Footwear including repairs
+77.8,Month,Apr-96,K02000001,,cpi1dim1G40100,04.1 Actual rentals for housing
+74.4,Month,Apr-96,K02000001,,cpi1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+75.4,Month,Apr-96,K02000001,,cpi1dim1G40400,04.4 Water supply and misc. services for the dwelling
+85.2,Month,Apr-96,K02000001,,cpi1dim1G40500,"04.5 Electricity , gas and other fuels"
+96.9,Month,Apr-96,K02000001,,cpi1dim1G50100,"05.1 Furniture, furnishings and carpets"
+121.1,Month,Apr-96,K02000001,,cpi1dim1G50200,05.2 Household textiles
+122.8,Month,Apr-96,K02000001,,cpi1dim1G50300,"05.3 Household appliances, fitting and repairs"
+114.9,Month,Apr-96,K02000001,,cpi1dim1G50400,"05.4 Glassware, tableware and household utensils"
+119.1,Month,Apr-96,K02000001,,cpi1dim1G50500,05.5 Tools and equipment for house and garden
+83.5,Month,Apr-96,K02000001,,cpi1dim1G50600,05.6 Goods and services for routine maintenance
+88.5,Month,Apr-96,K02000001,,cpi1dim1G60100,"06.1 Medical products, appliances and equipment"
+113.6,Month,Apr-96,K02000001,,cpi1dim1G70100,07.1 Purchase of vehicles
+63.7,Month,Apr-96,K02000001,,cpi1dim1G70200,07.2 Operation of personal transport equipment
+69.2,Month,Apr-96,K02000001,,cpi1dim1G70300,07.3 Transport services
+82.1,Month,Apr-96,K02000001,,cpi1dim1G80100,08.1 Postal services
+127.4,Month,Apr-96,K02000001,,cpi1dim1G80200,08.2/3 Telephone and telefax equip
+255.6,Month,Apr-96,K02000001,,cpi1dim1G90100,09.1 Audio-visual equipment and related products
+114.5,Month,Apr-96,K02000001,,cpi1dim1G90300,"09.3 Other recreational items, gardens and pets"
+74.3,Month,Apr-96,K02000001,,cpi1dim1G90400,09.4 Recreational and cultural services
+81.2,Month,Apr-96,K02000001,,cpi1dim1G90500,"09.5 Books, newspapers and stationery"
+65.3,Month,Apr-96,K02000001,,cpi1dim1G90600,09.6 Package holidays
+60.1,Month,Apr-96,K02000001,,cpi1dim1G100000,10.0 Education
+74.2,Month,Apr-96,K02000001,,cpi1dim1G110100,11.1 Catering services
+66.7,Month,Apr-96,K02000001,,cpi1dim1G110200,11.2 Accommodation services
+89.4,Month,Apr-96,K02000001,,cpi1dim1G120100,12.1 Personal care
+103.9,Month,Apr-96,K02000001,,cpi1dim1G120300,12.3 Personal effects (nec)
+59.9,Month,Apr-96,K02000001,,cpi1dim1G120500,12.5 Insurance
+132.5,Month,Apr-96,K02000001,,cpi1dim1G120600,12.6 Financial services (nec)
+57,Month,Apr-96,K02000001,,cpi1dim1G120700,12.7 Other services (nec)
+94.5,Month,Apr-96,K02000001,,cpi1dim1S10101,01.1.1 Bread and cereals
+95.8,Month,Apr-96,K02000001,,cpi1dim1S10102,01.1.2 Meat
+77.7,Month,Apr-96,K02000001,,cpi1dim1S10103,01.1.3 Fish
+92.5,Month,Apr-96,K02000001,,cpi1dim1S10104,"01.1.4 Milk, cheese and eggs"
+101.3,Month,Apr-96,K02000001,,cpi1dim1S10105,01.1.5 Oils and fats
+85.9,Month,Apr-96,K02000001,,cpi1dim1S10106,01.1.6 Fruit
+101.1,Month,Apr-96,K02000001,,cpi1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+81.9,Month,Apr-96,K02000001,,cpi1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+95.5,Month,Apr-96,K02000001,,cpi1dim1S10109,01.1.9 Food products (nec)
+105.3,Month,Apr-96,K02000001,,cpi1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+93.8,Month,Apr-96,K02000001,,cpi1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+98.3,Month,Apr-96,K02000001,,cpi1dim1S20101,02.1.1 Spirits
+95,Month,Apr-96,K02000001,,cpi1dim1S20102,02.1.2 Wine
+102.9,Month,Apr-96,K02000001,,cpi1dim1S20103,02.1.3 Beer
+57.9,Month,Apr-96,K02000001,,cpi1dim1S20200,02.2.0 Tobacco
+173.9,Month,Apr-96,K02000001,,cpi1dim1S30102,03.1.2 Garments
+121.2,Month,Apr-96,K02000001,,cpi1dim1S30103,03.1.3 Other clothing and clothing accessories
+72.9,Month,Apr-96,K02000001,,cpi1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+143,Month,Apr-96,K02000001,,cpi1dim1S30200,03.2.0 Footwear including repairs
+77.8,Month,Apr-96,K02000001,,cpi1dim1S40100,04.1.0 Actual rentals for housing
+97.9,Month,Apr-96,K02000001,,cpi1dim1S40301,04.3.1 Materials for maintenance and repair
+56.8,Month,Apr-96,K02000001,,cpi1dim1S40302,04.3.2 Services for maintenance and repair
+74.2,Month,Apr-96,K02000001,,cpi1dim1S40401,04.4.1 Water supply
+77.1,Month,Apr-96,K02000001,,cpi1dim1S40403,04.4.3 Sewerage collection
+96.7,Month,Apr-96,K02000001,,cpi1dim1S40501,04.5.1 Electricity
+78.1,Month,Apr-96,K02000001,,cpi1dim1S40502,04.5.2 Gas
+54,Month,Apr-96,K02000001,,cpi1dim1S40503,04.5.3 Liquid fuels
+73.4,Month,Apr-96,K02000001,,cpi1dim1S40504,04.5.4 Solid fuels
+98.1,Month,Apr-96,K02000001,,cpi1dim1S50101,05.1.1 Furniture and furnishings
+92.7,Month,Apr-96,K02000001,,cpi1dim1S50102,05.1.2 Carpets and other floor coverings
+121.1,Month,Apr-96,K02000001,,cpi1dim1S50200,05.2.0 Household Textiles
+134,Month,Apr-96,K02000001,,cpi1dim1S50301,05.3.1/2 Major appliances and small electric goods
+66.6,Month,Apr-96,K02000001,,cpi1dim1S50303,05.3.3 Repair of household appliances
+114.9,Month,Apr-96,K02000001,,cpi1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+119.1,Month,Apr-96,K02000001,,cpi1dim1S50500,05.5.0 Tools and equipment for House and Garden
+111.7,Month,Apr-96,K02000001,,cpi1dim1S50601,05.6.1 Non-durable household goods
+61.5,Month,Apr-96,K02000001,,cpi1dim1S50602,05.6.2 Domestic services and household services
+93.7,Month,Apr-96,K02000001,,cpi1dim1S60101,06.1.1 Pharmaceutical products
+84,Month,Apr-96,K02000001,,cpi1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+113.9,Month,Apr-96,K02000001,,cpi1dim1S70102,07.1.2/3 Motorcycles and bicycles
+100.1,Month,Apr-96,K02000001,,cpi1dim1S70181,07.1.1 New Cars
+129.1,Month,Apr-96,K02000001,,cpi1dim1S70191,07.1.1b Second Hand Cars
+90.4,Month,Apr-96,K02000001,,cpi1dim1S70201,07.2.1 Spare parts and accessories
+63.1,Month,Apr-96,K02000001,,cpi1dim1S70202,07.2.2 Fuels and lubricants
+59.7,Month,Apr-96,K02000001,,cpi1dim1S70203,07.2.3 Maintenance and repairs
+66.6,Month,Apr-96,K02000001,,cpi1dim1S70204,07.2.4 Other services
+76.2,Month,Apr-96,K02000001,,cpi1dim1S70301,07.3.1 Passenger transport by railway
+66.6,Month,Apr-96,K02000001,,cpi1dim1S70302,07.3.2 Passenger transport by road
+87.1,Month,Apr-96,K02000001,,cpi1dim1S70303,07.3.3 Passenger transport by air
+80.1,Month,Apr-96,K02000001,,cpi1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+82.1,Month,Apr-96,K02000001,,cpi1dim1S80100,08.1.0 Postal Services
+127.4,Month,Apr-96,K02000001,,cpi1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+270.9,Month,Apr-96,K02000001,,cpi1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+216.2,Month,Apr-96,K02000001,,cpi1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+1262.4,Month,Apr-96,K02000001,,cpi1dim1S90103,09.1.3 Data processing equipment
+131.2,Month,Apr-96,K02000001,,cpi1dim1S90104,09.1.4 Recording media
+65.7,Month,Apr-96,K02000001,,cpi1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+144.3,Month,Apr-96,K02000001,,cpi1dim1S90301,"09.3.1 Games, toys and hobbies"
+130.6,Month,Apr-96,K02000001,,cpi1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+105.8,Month,Apr-96,K02000001,,cpi1dim1S90303,"09.3.3 Gardens, plants and flowers"
+82.7,Month,Apr-96,K02000001,,cpi1dim1S90304,"09.3.4/5 Pets, related products and services"
+69.3,Month,Apr-96,K02000001,,cpi1dim1S90401,09.4.1 Recreational and sporting services
+77.9,Month,Apr-96,K02000001,,cpi1dim1S90402,09.4.2 Cultural services
+81,Month,Apr-96,K02000001,,cpi1dim1S90501,09.5.1 Books
+74.1,Month,Apr-96,K02000001,,cpi1dim1S90502,09.5.2 Newspapers and periodicals
+92.5,Month,Apr-96,K02000001,,cpi1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+65.3,Month,Apr-96,K02000001,,cpi1dim1S90600,09.6.0 Package Holidays
+60.1,Month,Apr-96,K02000001,,cpi1dim1S100000,10.0.0 Education
+74.8,Month,Apr-96,K02000001,,cpi1dim1S110101,"11.1.1 Restaurants, cafes"
+66.8,Month,Apr-96,K02000001,,cpi1dim1S110102,11.1.2 Canteens
+66.7,Month,Apr-96,K02000001,,cpi1dim1S110200,11.2.0 Accommodation Services
+62.9,Month,Apr-96,K02000001,,cpi1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+102.6,Month,Apr-96,K02000001,,cpi1dim1S120102,12.1.2/3 Appliances and products for personal care
+97,Month,Apr-96,K02000001,,cpi1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+116.6,Month,Apr-96,K02000001,,cpi1dim1S120302,12.3.2 Other personal effects
+75.2,Month,Apr-96,K02000001,,cpi1dim1S120502,12.5.2 House contents insurance
+55.6,Month,Apr-96,K02000001,,cpi1dim1S120504,12.5.4 Transport insurance
+132.5,Month,Apr-96,K02000001,,cpi1dim1S120602,12.6.2 Other financial services (nec)
+57,Month,Apr-96,K02000001,,cpi1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+92.4,Month,Apr-96,K02000001,,cpi1dim1T10000,01 Food and non-alcoholic beverages
+73.2,Month,Apr-96,K02000001,,cpi1dim1T20000,02 Alcoholic beverages and tobacco
+163.7,Month,Apr-96,K02000001,,cpi1dim1T30000,03 Clothing and footwear
+79.7,Month,Apr-96,K02000001,,cpi1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+102.3,Month,Apr-96,K02000001,,cpi1dim1T50000,"05 Furniture, household equipment and maintenance"
+77.2,Month,Apr-96,K02000001,,cpi1dim1T60000,06 Health
+78.8,Month,Apr-96,K02000001,,cpi1dim1T70000,07 Transport
+122.9,Month,Apr-96,K02000001,,cpi1dim1T80000,08 Communication
+98.1,Month,Apr-96,K02000001,,cpi1dim1T90000,09 Recreation and culture
+60.1,Month,Apr-96,K02000001,,cpi1dim1T100000,10 Education
+73,Month,Apr-96,K02000001,,cpi1dim1T110000,11 Restaurants and hotels
+76.7,Month,Apr-96,K02000001,,cpi1dim1T120000,12 Miscellaneous goods and services
+88.3,Month,May-96,K02000001,,cpi1dim1A0,CPI (overall index)
+92.7,Month,May-96,K02000001,,cpi1dim1G10100,01.1 Food
+96.2,Month,May-96,K02000001,,cpi1dim1G10200,01.2 Non-alcoholic beverages
+98,Month,May-96,K02000001,,cpi1dim1G20100,02.1 Alcoholic beverages
+58.3,Month,May-96,K02000001,,cpi1dim1G20200,02.2 Tobacco
+167.7,Month,May-96,K02000001,,cpi1dim1G30100,03.1 Clothing
+143.2,Month,May-96,K02000001,,cpi1dim1G30200,03.2 Footwear including repairs
+77.9,Month,May-96,K02000001,,cpi1dim1G40100,04.1 Actual rentals for housing
+74.5,Month,May-96,K02000001,,cpi1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+75.4,Month,May-96,K02000001,,cpi1dim1G40400,04.4 Water supply and misc. services for the dwelling
+85,Month,May-96,K02000001,,cpi1dim1G40500,"04.5 Electricity , gas and other fuels"
+97.3,Month,May-96,K02000001,,cpi1dim1G50100,"05.1 Furniture, furnishings and carpets"
+123,Month,May-96,K02000001,,cpi1dim1G50200,05.2 Household textiles
+123.8,Month,May-96,K02000001,,cpi1dim1G50300,"05.3 Household appliances, fitting and repairs"
+117.2,Month,May-96,K02000001,,cpi1dim1G50400,"05.4 Glassware, tableware and household utensils"
+119.6,Month,May-96,K02000001,,cpi1dim1G50500,05.5 Tools and equipment for house and garden
+83.6,Month,May-96,K02000001,,cpi1dim1G50600,05.6 Goods and services for routine maintenance
+88.2,Month,May-96,K02000001,,cpi1dim1G60100,"06.1 Medical products, appliances and equipment"
+114.1,Month,May-96,K02000001,,cpi1dim1G70100,07.1 Purchase of vehicles
+63.8,Month,May-96,K02000001,,cpi1dim1G70200,07.2 Operation of personal transport equipment
+69.7,Month,May-96,K02000001,,cpi1dim1G70300,07.3 Transport services
+82.2,Month,May-96,K02000001,,cpi1dim1G80100,08.1 Postal services
+127.7,Month,May-96,K02000001,,cpi1dim1G80200,08.2/3 Telephone and telefax equip
+251.1,Month,May-96,K02000001,,cpi1dim1G90100,09.1 Audio-visual equipment and related products
+114.7,Month,May-96,K02000001,,cpi1dim1G90300,"09.3 Other recreational items, gardens and pets"
+74.7,Month,May-96,K02000001,,cpi1dim1G90400,09.4 Recreational and cultural services
+80.8,Month,May-96,K02000001,,cpi1dim1G90500,"09.5 Books, newspapers and stationery"
+65.5,Month,May-96,K02000001,,cpi1dim1G90600,09.6 Package holidays
+60.2,Month,May-96,K02000001,,cpi1dim1G100000,10.0 Education
+74.4,Month,May-96,K02000001,,cpi1dim1G110100,11.1 Catering services
+66.8,Month,May-96,K02000001,,cpi1dim1G110200,11.2 Accommodation services
+89.6,Month,May-96,K02000001,,cpi1dim1G120100,12.1 Personal care
+103.4,Month,May-96,K02000001,,cpi1dim1G120300,12.3 Personal effects (nec)
+59.9,Month,May-96,K02000001,,cpi1dim1G120500,12.5 Insurance
+132.5,Month,May-96,K02000001,,cpi1dim1G120600,12.6 Financial services (nec)
+57,Month,May-96,K02000001,,cpi1dim1G120700,12.7 Other services (nec)
+95.3,Month,May-96,K02000001,,cpi1dim1S10101,01.1.1 Bread and cereals
+96.8,Month,May-96,K02000001,,cpi1dim1S10102,01.1.2 Meat
+78.8,Month,May-96,K02000001,,cpi1dim1S10103,01.1.3 Fish
+92.6,Month,May-96,K02000001,,cpi1dim1S10104,"01.1.4 Milk, cheese and eggs"
+101.6,Month,May-96,K02000001,,cpi1dim1S10105,01.1.5 Oils and fats
+92.2,Month,May-96,K02000001,,cpi1dim1S10106,01.1.6 Fruit
+99.6,Month,May-96,K02000001,,cpi1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+82.9,Month,May-96,K02000001,,cpi1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+95.5,Month,May-96,K02000001,,cpi1dim1S10109,01.1.9 Food products (nec)
+103.3,Month,May-96,K02000001,,cpi1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+94,Month,May-96,K02000001,,cpi1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+98.7,Month,May-96,K02000001,,cpi1dim1S20101,02.1.1 Spirits
+95.7,Month,May-96,K02000001,,cpi1dim1S20102,02.1.2 Wine
+101.9,Month,May-96,K02000001,,cpi1dim1S20103,02.1.3 Beer
+58.3,Month,May-96,K02000001,,cpi1dim1S20200,02.2.0 Tobacco
+174.4,Month,May-96,K02000001,,cpi1dim1S30102,03.1.2 Garments
+122.6,Month,May-96,K02000001,,cpi1dim1S30103,03.1.3 Other clothing and clothing accessories
+73.2,Month,May-96,K02000001,,cpi1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+143.2,Month,May-96,K02000001,,cpi1dim1S30200,03.2.0 Footwear including repairs
+77.9,Month,May-96,K02000001,,cpi1dim1S40100,04.1.0 Actual rentals for housing
+98,Month,May-96,K02000001,,cpi1dim1S40301,04.3.1 Materials for maintenance and repair
+56.9,Month,May-96,K02000001,,cpi1dim1S40302,04.3.2 Services for maintenance and repair
+74.2,Month,May-96,K02000001,,cpi1dim1S40401,04.4.1 Water supply
+77.1,Month,May-96,K02000001,,cpi1dim1S40403,04.4.3 Sewerage collection
+97,Month,May-96,K02000001,,cpi1dim1S40501,04.5.1 Electricity
+78.1,Month,May-96,K02000001,,cpi1dim1S40502,04.5.2 Gas
+50.7,Month,May-96,K02000001,,cpi1dim1S40503,04.5.3 Liquid fuels
+71.1,Month,May-96,K02000001,,cpi1dim1S40504,04.5.4 Solid fuels
+98.3,Month,May-96,K02000001,,cpi1dim1S50101,05.1.1 Furniture and furnishings
+93.6,Month,May-96,K02000001,,cpi1dim1S50102,05.1.2 Carpets and other floor coverings
+123,Month,May-96,K02000001,,cpi1dim1S50200,05.2.0 Household Textiles
+135.2,Month,May-96,K02000001,,cpi1dim1S50301,05.3.1/2 Major appliances and small electric goods
+66.6,Month,May-96,K02000001,,cpi1dim1S50303,05.3.3 Repair of household appliances
+117.2,Month,May-96,K02000001,,cpi1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+119.5,Month,May-96,K02000001,,cpi1dim1S50500,05.5.0 Tools and equipment for House and Garden
+111.8,Month,May-96,K02000001,,cpi1dim1S50601,05.6.1 Non-durable household goods
+61.8,Month,May-96,K02000001,,cpi1dim1S50602,05.6.2 Domestic services and household services
+93.5,Month,May-96,K02000001,,cpi1dim1S60101,06.1.1 Pharmaceutical products
+83.7,Month,May-96,K02000001,,cpi1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+115.1,Month,May-96,K02000001,,cpi1dim1S70102,07.1.2/3 Motorcycles and bicycles
+100.3,Month,May-96,K02000001,,cpi1dim1S70181,07.1.1 New Cars
+129.8,Month,May-96,K02000001,,cpi1dim1S70191,07.1.1b Second Hand Cars
+90.5,Month,May-96,K02000001,,cpi1dim1S70201,07.2.1 Spare parts and accessories
+63.1,Month,May-96,K02000001,,cpi1dim1S70202,07.2.2 Fuels and lubricants
+59.9,Month,May-96,K02000001,,cpi1dim1S70203,07.2.3 Maintenance and repairs
+67.1,Month,May-96,K02000001,,cpi1dim1S70204,07.2.4 Other services
+76.2,Month,May-96,K02000001,,cpi1dim1S70301,07.3.1 Passenger transport by railway
+67.4,Month,May-96,K02000001,,cpi1dim1S70302,07.3.2 Passenger transport by road
+87.3,Month,May-96,K02000001,,cpi1dim1S70303,07.3.3 Passenger transport by air
+80.2,Month,May-96,K02000001,,cpi1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+82.2,Month,May-96,K02000001,,cpi1dim1S80100,08.1.0 Postal Services
+127.7,Month,May-96,K02000001,,cpi1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+270.7,Month,May-96,K02000001,,cpi1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+212.3,Month,May-96,K02000001,,cpi1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+1188.8,Month,May-96,K02000001,,cpi1dim1S90103,09.1.3 Data processing equipment
+130.3,Month,May-96,K02000001,,cpi1dim1S90104,09.1.4 Recording media
+65.7,Month,May-96,K02000001,,cpi1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+144.9,Month,May-96,K02000001,,cpi1dim1S90301,"09.3.1 Games, toys and hobbies"
+130.6,Month,May-96,K02000001,,cpi1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+105.6,Month,May-96,K02000001,,cpi1dim1S90303,"09.3.3 Gardens, plants and flowers"
+82.9,Month,May-96,K02000001,,cpi1dim1S90304,"09.3.4/5 Pets, related products and services"
+70,Month,May-96,K02000001,,cpi1dim1S90401,09.4.1 Recreational and sporting services
+78.1,Month,May-96,K02000001,,cpi1dim1S90402,09.4.2 Cultural services
+80.1,Month,May-96,K02000001,,cpi1dim1S90501,09.5.1 Books
+74.1,Month,May-96,K02000001,,cpi1dim1S90502,09.5.2 Newspapers and periodicals
+92.1,Month,May-96,K02000001,,cpi1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+65.5,Month,May-96,K02000001,,cpi1dim1S90600,09.6.0 Package Holidays
+60.2,Month,May-96,K02000001,,cpi1dim1S100000,10.0.0 Education
+75,Month,May-96,K02000001,,cpi1dim1S110101,"11.1.1 Restaurants, cafes"
+67.1,Month,May-96,K02000001,,cpi1dim1S110102,11.1.2 Canteens
+66.8,Month,May-96,K02000001,,cpi1dim1S110200,11.2.0 Accommodation Services
+63.2,Month,May-96,K02000001,,cpi1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+102.8,Month,May-96,K02000001,,cpi1dim1S120102,12.1.2/3 Appliances and products for personal care
+96.9,Month,May-96,K02000001,,cpi1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+115.4,Month,May-96,K02000001,,cpi1dim1S120302,12.3.2 Other personal effects
+75.2,Month,May-96,K02000001,,cpi1dim1S120502,12.5.2 House contents insurance
+55.6,Month,May-96,K02000001,,cpi1dim1S120504,12.5.4 Transport insurance
+132.5,Month,May-96,K02000001,,cpi1dim1S120602,12.6.2 Other financial services (nec)
+57,Month,May-96,K02000001,,cpi1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+93.1,Month,May-96,K02000001,,cpi1dim1T10000,01 Food and non-alcoholic beverages
+73.5,Month,May-96,K02000001,,cpi1dim1T20000,02 Alcoholic beverages and tobacco
+164.3,Month,May-96,K02000001,,cpi1dim1T30000,03 Clothing and footwear
+79.7,Month,May-96,K02000001,,cpi1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+103,Month,May-96,K02000001,,cpi1dim1T50000,"05 Furniture, household equipment and maintenance"
+76.9,Month,May-96,K02000001,,cpi1dim1T60000,06 Health
+79.1,Month,May-96,K02000001,,cpi1dim1T70000,07 Transport
+123.1,Month,May-96,K02000001,,cpi1dim1T80000,08 Communication
+98,Month,May-96,K02000001,,cpi1dim1T90000,09 Recreation and culture
+60.2,Month,May-96,K02000001,,cpi1dim1T100000,10 Education
+73.3,Month,May-96,K02000001,,cpi1dim1T110000,11 Restaurants and hotels
+76.7,Month,May-96,K02000001,,cpi1dim1T120000,12 Miscellaneous goods and services
+88.4,Month,Jun-96,K02000001,,cpi1dim1A0,CPI (overall index)
+92.5,Month,Jun-96,K02000001,,cpi1dim1G10100,01.1 Food
+96.5,Month,Jun-96,K02000001,,cpi1dim1G10200,01.2 Non-alcoholic beverages
+98.2,Month,Jun-96,K02000001,,cpi1dim1G20100,02.1 Alcoholic beverages
+58.4,Month,Jun-96,K02000001,,cpi1dim1G20200,02.2 Tobacco
+167.7,Month,Jun-96,K02000001,,cpi1dim1G30100,03.1 Clothing
+143.2,Month,Jun-96,K02000001,,cpi1dim1G30200,03.2 Footwear including repairs
+78.1,Month,Jun-96,K02000001,,cpi1dim1G40100,04.1 Actual rentals for housing
+74.7,Month,Jun-96,K02000001,,cpi1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+75.4,Month,Jun-96,K02000001,,cpi1dim1G40400,04.4 Water supply and misc. services for the dwelling
+85.2,Month,Jun-96,K02000001,,cpi1dim1G40500,"04.5 Electricity , gas and other fuels"
+97.6,Month,Jun-96,K02000001,,cpi1dim1G50100,"05.1 Furniture, furnishings and carpets"
+122.7,Month,Jun-96,K02000001,,cpi1dim1G50200,05.2 Household textiles
+123.7,Month,Jun-96,K02000001,,cpi1dim1G50300,"05.3 Household appliances, fitting and repairs"
+117.3,Month,Jun-96,K02000001,,cpi1dim1G50400,"05.4 Glassware, tableware and household utensils"
+119.6,Month,Jun-96,K02000001,,cpi1dim1G50500,05.5 Tools and equipment for house and garden
+83.5,Month,Jun-96,K02000001,,cpi1dim1G50600,05.6 Goods and services for routine maintenance
+88.4,Month,Jun-96,K02000001,,cpi1dim1G60100,"06.1 Medical products, appliances and equipment"
+114.6,Month,Jun-96,K02000001,,cpi1dim1G70100,07.1 Purchase of vehicles
+63.7,Month,Jun-96,K02000001,,cpi1dim1G70200,07.2 Operation of personal transport equipment
+69.7,Month,Jun-96,K02000001,,cpi1dim1G70300,07.3 Transport services
+82.2,Month,Jun-96,K02000001,,cpi1dim1G80100,08.1 Postal services
+127.5,Month,Jun-96,K02000001,,cpi1dim1G80200,08.2/3 Telephone and telefax equip
+248.5,Month,Jun-96,K02000001,,cpi1dim1G90100,09.1 Audio-visual equipment and related products
+114.7,Month,Jun-96,K02000001,,cpi1dim1G90300,"09.3 Other recreational items, gardens and pets"
+74.8,Month,Jun-96,K02000001,,cpi1dim1G90400,09.4 Recreational and cultural services
+81.3,Month,Jun-96,K02000001,,cpi1dim1G90500,"09.5 Books, newspapers and stationery"
+65.6,Month,Jun-96,K02000001,,cpi1dim1G90600,09.6 Package holidays
+60.3,Month,Jun-96,K02000001,,cpi1dim1G100000,10.0 Education
+74.9,Month,Jun-96,K02000001,,cpi1dim1G110100,11.1 Catering services
+66.9,Month,Jun-96,K02000001,,cpi1dim1G110200,11.2 Accommodation services
+89.6,Month,Jun-96,K02000001,,cpi1dim1G120100,12.1 Personal care
+103.2,Month,Jun-96,K02000001,,cpi1dim1G120300,12.3 Personal effects (nec)
+59.9,Month,Jun-96,K02000001,,cpi1dim1G120500,12.5 Insurance
+132.5,Month,Jun-96,K02000001,,cpi1dim1G120600,12.6 Financial services (nec)
+57,Month,Jun-96,K02000001,,cpi1dim1G120700,12.7 Other services (nec)
+95.4,Month,Jun-96,K02000001,,cpi1dim1S10101,01.1.1 Bread and cereals
+97.6,Month,Jun-96,K02000001,,cpi1dim1S10102,01.1.2 Meat
+80.4,Month,Jun-96,K02000001,,cpi1dim1S10103,01.1.3 Fish
+92.5,Month,Jun-96,K02000001,,cpi1dim1S10104,"01.1.4 Milk, cheese and eggs"
+101.9,Month,Jun-96,K02000001,,cpi1dim1S10105,01.1.5 Oils and fats
+96.1,Month,Jun-96,K02000001,,cpi1dim1S10106,01.1.6 Fruit
+94.1,Month,Jun-96,K02000001,,cpi1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+83.5,Month,Jun-96,K02000001,,cpi1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+95.7,Month,Jun-96,K02000001,,cpi1dim1S10109,01.1.9 Food products (nec)
+103.3,Month,Jun-96,K02000001,,cpi1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+94.4,Month,Jun-96,K02000001,,cpi1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+98.2,Month,Jun-96,K02000001,,cpi1dim1S20101,02.1.1 Spirits
+96.2,Month,Jun-96,K02000001,,cpi1dim1S20102,02.1.2 Wine
+102,Month,Jun-96,K02000001,,cpi1dim1S20103,02.1.3 Beer
+58.4,Month,Jun-96,K02000001,,cpi1dim1S20200,02.2.0 Tobacco
+174.4,Month,Jun-96,K02000001,,cpi1dim1S30102,03.1.2 Garments
+122.5,Month,Jun-96,K02000001,,cpi1dim1S30103,03.1.3 Other clothing and clothing accessories
+73.1,Month,Jun-96,K02000001,,cpi1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+143.2,Month,Jun-96,K02000001,,cpi1dim1S30200,03.2.0 Footwear including repairs
+78.1,Month,Jun-96,K02000001,,cpi1dim1S40100,04.1.0 Actual rentals for housing
+98.5,Month,Jun-96,K02000001,,cpi1dim1S40301,04.3.1 Materials for maintenance and repair
+57,Month,Jun-96,K02000001,,cpi1dim1S40302,04.3.2 Services for maintenance and repair
+74.2,Month,Jun-96,K02000001,,cpi1dim1S40401,04.4.1 Water supply
+77.1,Month,Jun-96,K02000001,,cpi1dim1S40403,04.4.3 Sewerage collection
+97.4,Month,Jun-96,K02000001,,cpi1dim1S40501,04.5.1 Electricity
+78.1,Month,Jun-96,K02000001,,cpi1dim1S40502,04.5.2 Gas
+49.6,Month,Jun-96,K02000001,,cpi1dim1S40503,04.5.3 Liquid fuels
+70.7,Month,Jun-96,K02000001,,cpi1dim1S40504,04.5.4 Solid fuels
+98.8,Month,Jun-96,K02000001,,cpi1dim1S50101,05.1.1 Furniture and furnishings
+93.3,Month,Jun-96,K02000001,,cpi1dim1S50102,05.1.2 Carpets and other floor coverings
+122.7,Month,Jun-96,K02000001,,cpi1dim1S50200,05.2.0 Household Textiles
+135.1,Month,Jun-96,K02000001,,cpi1dim1S50301,05.3.1/2 Major appliances and small electric goods
+66.6,Month,Jun-96,K02000001,,cpi1dim1S50303,05.3.3 Repair of household appliances
+117.3,Month,Jun-96,K02000001,,cpi1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+119.6,Month,Jun-96,K02000001,,cpi1dim1S50500,05.5.0 Tools and equipment for House and Garden
+110.7,Month,Jun-96,K02000001,,cpi1dim1S50601,05.6.1 Non-durable household goods
+62.2,Month,Jun-96,K02000001,,cpi1dim1S50602,05.6.2 Domestic services and household services
+93.7,Month,Jun-96,K02000001,,cpi1dim1S60101,06.1.1 Pharmaceutical products
+83.9,Month,Jun-96,K02000001,,cpi1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+114.6,Month,Jun-96,K02000001,,cpi1dim1S70102,07.1.2/3 Motorcycles and bicycles
+100.6,Month,Jun-96,K02000001,,cpi1dim1S70181,07.1.1 New Cars
+130.4,Month,Jun-96,K02000001,,cpi1dim1S70191,07.1.1b Second Hand Cars
+90.5,Month,Jun-96,K02000001,,cpi1dim1S70201,07.2.1 Spare parts and accessories
+62.7,Month,Jun-96,K02000001,,cpi1dim1S70202,07.2.2 Fuels and lubricants
+60,Month,Jun-96,K02000001,,cpi1dim1S70203,07.2.3 Maintenance and repairs
+67.4,Month,Jun-96,K02000001,,cpi1dim1S70204,07.2.4 Other services
+76.2,Month,Jun-96,K02000001,,cpi1dim1S70301,07.3.1 Passenger transport by railway
+67.5,Month,Jun-96,K02000001,,cpi1dim1S70302,07.3.2 Passenger transport by road
+87.4,Month,Jun-96,K02000001,,cpi1dim1S70303,07.3.3 Passenger transport by air
+80.6,Month,Jun-96,K02000001,,cpi1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+82.2,Month,Jun-96,K02000001,,cpi1dim1S80100,08.1.0 Postal Services
+127.5,Month,Jun-96,K02000001,,cpi1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+267.7,Month,Jun-96,K02000001,,cpi1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+210.9,Month,Jun-96,K02000001,,cpi1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+1150.3,Month,Jun-96,K02000001,,cpi1dim1S90103,09.1.3 Data processing equipment
+131.3,Month,Jun-96,K02000001,,cpi1dim1S90104,09.1.4 Recording media
+65.7,Month,Jun-96,K02000001,,cpi1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+144.5,Month,Jun-96,K02000001,,cpi1dim1S90301,"09.3.1 Games, toys and hobbies"
+130.2,Month,Jun-96,K02000001,,cpi1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+104.6,Month,Jun-96,K02000001,,cpi1dim1S90303,"09.3.3 Gardens, plants and flowers"
+83.4,Month,Jun-96,K02000001,,cpi1dim1S90304,"09.3.4/5 Pets, related products and services"
+70.1,Month,Jun-96,K02000001,,cpi1dim1S90401,09.4.1 Recreational and sporting services
+78.2,Month,Jun-96,K02000001,,cpi1dim1S90402,09.4.2 Cultural services
+81.1,Month,Jun-96,K02000001,,cpi1dim1S90501,09.5.1 Books
+74.1,Month,Jun-96,K02000001,,cpi1dim1S90502,09.5.2 Newspapers and periodicals
+92.7,Month,Jun-96,K02000001,,cpi1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+65.6,Month,Jun-96,K02000001,,cpi1dim1S90600,09.6.0 Package Holidays
+60.3,Month,Jun-96,K02000001,,cpi1dim1S100000,10.0.0 Education
+75.5,Month,Jun-96,K02000001,,cpi1dim1S110101,"11.1.1 Restaurants, cafes"
+67.4,Month,Jun-96,K02000001,,cpi1dim1S110102,11.1.2 Canteens
+66.9,Month,Jun-96,K02000001,,cpi1dim1S110200,11.2.0 Accommodation Services
+63.5,Month,Jun-96,K02000001,,cpi1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+102.5,Month,Jun-96,K02000001,,cpi1dim1S120102,12.1.2/3 Appliances and products for personal care
+96,Month,Jun-96,K02000001,,cpi1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+116.4,Month,Jun-96,K02000001,,cpi1dim1S120302,12.3.2 Other personal effects
+75.2,Month,Jun-96,K02000001,,cpi1dim1S120502,12.5.2 House contents insurance
+55.6,Month,Jun-96,K02000001,,cpi1dim1S120504,12.5.4 Transport insurance
+132.5,Month,Jun-96,K02000001,,cpi1dim1S120602,12.6.2 Other financial services (nec)
+57,Month,Jun-96,K02000001,,cpi1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+93,Month,Jun-96,K02000001,,cpi1dim1T10000,01 Food and non-alcoholic beverages
+73.6,Month,Jun-96,K02000001,,cpi1dim1T20000,02 Alcoholic beverages and tobacco
+164.2,Month,Jun-96,K02000001,,cpi1dim1T30000,03 Clothing and footwear
+79.9,Month,Jun-96,K02000001,,cpi1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+103,Month,Jun-96,K02000001,,cpi1dim1T50000,"05 Furniture, household equipment and maintenance"
+77.1,Month,Jun-96,K02000001,,cpi1dim1T60000,06 Health
+79.1,Month,Jun-96,K02000001,,cpi1dim1T70000,07 Transport
+123,Month,Jun-96,K02000001,,cpi1dim1T80000,08 Communication
+98,Month,Jun-96,K02000001,,cpi1dim1T90000,09 Recreation and culture
+60.3,Month,Jun-96,K02000001,,cpi1dim1T100000,10 Education
+73.7,Month,Jun-96,K02000001,,cpi1dim1T110000,11 Restaurants and hotels
+76.7,Month,Jun-96,K02000001,,cpi1dim1T120000,12 Miscellaneous goods and services
+87.8,Month,Jul-96,K02000001,,cpi1dim1A0,CPI (overall index)
+91.2,Month,Jul-96,K02000001,,cpi1dim1G10100,01.1 Food
+96.4,Month,Jul-96,K02000001,,cpi1dim1G10200,01.2 Non-alcoholic beverages
+98.7,Month,Jul-96,K02000001,,cpi1dim1G20100,02.1 Alcoholic beverages
+58.3,Month,Jul-96,K02000001,,cpi1dim1G20200,02.2 Tobacco
+158.6,Month,Jul-96,K02000001,,cpi1dim1G30100,03.1 Clothing
+135.8,Month,Jul-96,K02000001,,cpi1dim1G30200,03.2 Footwear including repairs
+78.2,Month,Jul-96,K02000001,,cpi1dim1G40100,04.1 Actual rentals for housing
+75.6,Month,Jul-96,K02000001,,cpi1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+75.4,Month,Jul-96,K02000001,,cpi1dim1G40400,04.4 Water supply and misc. services for the dwelling
+85.2,Month,Jul-96,K02000001,,cpi1dim1G40500,"04.5 Electricity , gas and other fuels"
+95,Month,Jul-96,K02000001,,cpi1dim1G50100,"05.1 Furniture, furnishings and carpets"
+118.5,Month,Jul-96,K02000001,,cpi1dim1G50200,05.2 Household textiles
+121.6,Month,Jul-96,K02000001,,cpi1dim1G50300,"05.3 Household appliances, fitting and repairs"
+115,Month,Jul-96,K02000001,,cpi1dim1G50400,"05.4 Glassware, tableware and household utensils"
+119.1,Month,Jul-96,K02000001,,cpi1dim1G50500,05.5 Tools and equipment for house and garden
+83.9,Month,Jul-96,K02000001,,cpi1dim1G50600,05.6 Goods and services for routine maintenance
+88.5,Month,Jul-96,K02000001,,cpi1dim1G60100,"06.1 Medical products, appliances and equipment"
+114.5,Month,Jul-96,K02000001,,cpi1dim1G70100,07.1 Purchase of vehicles
+63.7,Month,Jul-96,K02000001,,cpi1dim1G70200,07.2 Operation of personal transport equipment
+69.9,Month,Jul-96,K02000001,,cpi1dim1G70300,07.3 Transport services
+84.3,Month,Jul-96,K02000001,,cpi1dim1G80100,08.1 Postal services
+126.3,Month,Jul-96,K02000001,,cpi1dim1G80200,08.2/3 Telephone and telefax equip
+245.3,Month,Jul-96,K02000001,,cpi1dim1G90100,09.1 Audio-visual equipment and related products
+114.6,Month,Jul-96,K02000001,,cpi1dim1G90300,"09.3 Other recreational items, gardens and pets"
+74.9,Month,Jul-96,K02000001,,cpi1dim1G90400,09.4 Recreational and cultural services
+81.2,Month,Jul-96,K02000001,,cpi1dim1G90500,"09.5 Books, newspapers and stationery"
+65.8,Month,Jul-96,K02000001,,cpi1dim1G90600,09.6 Package holidays
+60.4,Month,Jul-96,K02000001,,cpi1dim1G100000,10.0 Education
+75.3,Month,Jul-96,K02000001,,cpi1dim1G110100,11.1 Catering services
+67.1,Month,Jul-96,K02000001,,cpi1dim1G110200,11.2 Accommodation services
+90.1,Month,Jul-96,K02000001,,cpi1dim1G120100,12.1 Personal care
+103.1,Month,Jul-96,K02000001,,cpi1dim1G120300,12.3 Personal effects (nec)
+60.5,Month,Jul-96,K02000001,,cpi1dim1G120500,12.5 Insurance
+132.5,Month,Jul-96,K02000001,,cpi1dim1G120600,12.6 Financial services (nec)
+57,Month,Jul-96,K02000001,,cpi1dim1G120700,12.7 Other services (nec)
+95.2,Month,Jul-96,K02000001,,cpi1dim1S10101,01.1.1 Bread and cereals
+97.1,Month,Jul-96,K02000001,,cpi1dim1S10102,01.1.2 Meat
+80.5,Month,Jul-96,K02000001,,cpi1dim1S10103,01.1.3 Fish
+92.4,Month,Jul-96,K02000001,,cpi1dim1S10104,"01.1.4 Milk, cheese and eggs"
+102.2,Month,Jul-96,K02000001,,cpi1dim1S10105,01.1.5 Oils and fats
+87.6,Month,Jul-96,K02000001,,cpi1dim1S10106,01.1.6 Fruit
+88.3,Month,Jul-96,K02000001,,cpi1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+84.3,Month,Jul-96,K02000001,,cpi1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+95.4,Month,Jul-96,K02000001,,cpi1dim1S10109,01.1.9 Food products (nec)
+103.1,Month,Jul-96,K02000001,,cpi1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+94.4,Month,Jul-96,K02000001,,cpi1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+99.1,Month,Jul-96,K02000001,,cpi1dim1S20101,02.1.1 Spirits
+96.4,Month,Jul-96,K02000001,,cpi1dim1S20102,02.1.2 Wine
+102.8,Month,Jul-96,K02000001,,cpi1dim1S20103,02.1.3 Beer
+58.3,Month,Jul-96,K02000001,,cpi1dim1S20200,02.2.0 Tobacco
+164.3,Month,Jul-96,K02000001,,cpi1dim1S30102,03.1.2 Garments
+120.4,Month,Jul-96,K02000001,,cpi1dim1S30103,03.1.3 Other clothing and clothing accessories
+73.4,Month,Jul-96,K02000001,,cpi1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+135.8,Month,Jul-96,K02000001,,cpi1dim1S30200,03.2.0 Footwear including repairs
+78.2,Month,Jul-96,K02000001,,cpi1dim1S40100,04.1.0 Actual rentals for housing
+98.2,Month,Jul-96,K02000001,,cpi1dim1S40301,04.3.1 Materials for maintenance and repair
+58.3,Month,Jul-96,K02000001,,cpi1dim1S40302,04.3.2 Services for maintenance and repair
+74.2,Month,Jul-96,K02000001,,cpi1dim1S40401,04.4.1 Water supply
+77.1,Month,Jul-96,K02000001,,cpi1dim1S40403,04.4.3 Sewerage collection
+97.5,Month,Jul-96,K02000001,,cpi1dim1S40501,04.5.1 Electricity
+78.1,Month,Jul-96,K02000001,,cpi1dim1S40502,04.5.2 Gas
+50.4,Month,Jul-96,K02000001,,cpi1dim1S40503,04.5.3 Liquid fuels
+70.9,Month,Jul-96,K02000001,,cpi1dim1S40504,04.5.4 Solid fuels
+96.2,Month,Jul-96,K02000001,,cpi1dim1S50101,05.1.1 Furniture and furnishings
+91.1,Month,Jul-96,K02000001,,cpi1dim1S50102,05.1.2 Carpets and other floor coverings
+118.5,Month,Jul-96,K02000001,,cpi1dim1S50200,05.2.0 Household Textiles
+132.5,Month,Jul-96,K02000001,,cpi1dim1S50301,05.3.1/2 Major appliances and small electric goods
+66.6,Month,Jul-96,K02000001,,cpi1dim1S50303,05.3.3 Repair of household appliances
+115,Month,Jul-96,K02000001,,cpi1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+119.1,Month,Jul-96,K02000001,,cpi1dim1S50500,05.5.0 Tools and equipment for House and Garden
+111.5,Month,Jul-96,K02000001,,cpi1dim1S50601,05.6.1 Non-durable household goods
+62.3,Month,Jul-96,K02000001,,cpi1dim1S50602,05.6.2 Domestic services and household services
+93.9,Month,Jul-96,K02000001,,cpi1dim1S60101,06.1.1 Pharmaceutical products
+83.9,Month,Jul-96,K02000001,,cpi1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+114.7,Month,Jul-96,K02000001,,cpi1dim1S70102,07.1.2/3 Motorcycles and bicycles
+100.6,Month,Jul-96,K02000001,,cpi1dim1S70181,07.1.1 New Cars
+130.3,Month,Jul-96,K02000001,,cpi1dim1S70191,07.1.1b Second Hand Cars
+90.6,Month,Jul-96,K02000001,,cpi1dim1S70201,07.2.1 Spare parts and accessories
+62.5,Month,Jul-96,K02000001,,cpi1dim1S70202,07.2.2 Fuels and lubricants
+60.1,Month,Jul-96,K02000001,,cpi1dim1S70203,07.2.3 Maintenance and repairs
+68,Month,Jul-96,K02000001,,cpi1dim1S70204,07.2.4 Other services
+76.2,Month,Jul-96,K02000001,,cpi1dim1S70301,07.3.1 Passenger transport by railway
+67.6,Month,Jul-96,K02000001,,cpi1dim1S70302,07.3.2 Passenger transport by road
+87.4,Month,Jul-96,K02000001,,cpi1dim1S70303,07.3.3 Passenger transport by air
+82.6,Month,Jul-96,K02000001,,cpi1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+84.3,Month,Jul-96,K02000001,,cpi1dim1S80100,08.1.0 Postal Services
+126.3,Month,Jul-96,K02000001,,cpi1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+267.2,Month,Jul-96,K02000001,,cpi1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+210.9,Month,Jul-96,K02000001,,cpi1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+1089.1,Month,Jul-96,K02000001,,cpi1dim1S90103,09.1.3 Data processing equipment
+130,Month,Jul-96,K02000001,,cpi1dim1S90104,09.1.4 Recording media
+65.8,Month,Jul-96,K02000001,,cpi1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+143.9,Month,Jul-96,K02000001,,cpi1dim1S90301,"09.3.1 Games, toys and hobbies"
+128.9,Month,Jul-96,K02000001,,cpi1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+104.2,Month,Jul-96,K02000001,,cpi1dim1S90303,"09.3.3 Gardens, plants and flowers"
+83.8,Month,Jul-96,K02000001,,cpi1dim1S90304,"09.3.4/5 Pets, related products and services"
+70.4,Month,Jul-96,K02000001,,cpi1dim1S90401,09.4.1 Recreational and sporting services
+78.1,Month,Jul-96,K02000001,,cpi1dim1S90402,09.4.2 Cultural services
+80.9,Month,Jul-96,K02000001,,cpi1dim1S90501,09.5.1 Books
+74.2,Month,Jul-96,K02000001,,cpi1dim1S90502,09.5.2 Newspapers and periodicals
+92.6,Month,Jul-96,K02000001,,cpi1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+65.8,Month,Jul-96,K02000001,,cpi1dim1S90600,09.6.0 Package Holidays
+60.4,Month,Jul-96,K02000001,,cpi1dim1S100000,10.0.0 Education
+75.9,Month,Jul-96,K02000001,,cpi1dim1S110101,"11.1.1 Restaurants, cafes"
+67.6,Month,Jul-96,K02000001,,cpi1dim1S110102,11.1.2 Canteens
+67.1,Month,Jul-96,K02000001,,cpi1dim1S110200,11.2.0 Accommodation Services
+63.8,Month,Jul-96,K02000001,,cpi1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+103.1,Month,Jul-96,K02000001,,cpi1dim1S120102,12.1.2/3 Appliances and products for personal care
+95.5,Month,Jul-96,K02000001,,cpi1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+116.7,Month,Jul-96,K02000001,,cpi1dim1S120302,12.3.2 Other personal effects
+75.3,Month,Jul-96,K02000001,,cpi1dim1S120502,12.5.2 House contents insurance
+56.3,Month,Jul-96,K02000001,,cpi1dim1S120504,12.5.4 Transport insurance
+132.5,Month,Jul-96,K02000001,,cpi1dim1S120602,12.6.2 Other financial services (nec)
+57,Month,Jul-96,K02000001,,cpi1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+91.7,Month,Jul-96,K02000001,,cpi1dim1T10000,01 Food and non-alcoholic beverages
+73.7,Month,Jul-96,K02000001,,cpi1dim1T20000,02 Alcoholic beverages and tobacco
+155.5,Month,Jul-96,K02000001,,cpi1dim1T30000,03 Clothing and footwear
+80.1,Month,Jul-96,K02000001,,cpi1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+101.3,Month,Jul-96,K02000001,,cpi1dim1T50000,"05 Furniture, household equipment and maintenance"
+77.2,Month,Jul-96,K02000001,,cpi1dim1T60000,06 Health
+79.1,Month,Jul-96,K02000001,,cpi1dim1T70000,07 Transport
+122.3,Month,Jul-96,K02000001,,cpi1dim1T80000,08 Communication
+97.8,Month,Jul-96,K02000001,,cpi1dim1T90000,09 Recreation and culture
+60.4,Month,Jul-96,K02000001,,cpi1dim1T100000,10 Education
+74.1,Month,Jul-96,K02000001,,cpi1dim1T110000,11 Restaurants and hotels
+76.9,Month,Jul-96,K02000001,,cpi1dim1T120000,12 Miscellaneous goods and services
+88.3,Month,Aug-96,K02000001,,cpi1dim1A0,CPI (overall index)
+92.4,Month,Aug-96,K02000001,,cpi1dim1G10100,01.1 Food
+96.5,Month,Aug-96,K02000001,,cpi1dim1G10200,01.2 Non-alcoholic beverages
+98.1,Month,Aug-96,K02000001,,cpi1dim1G20100,02.1 Alcoholic beverages
+58.4,Month,Aug-96,K02000001,,cpi1dim1G20200,02.2 Tobacco
+161,Month,Aug-96,K02000001,,cpi1dim1G30100,03.1 Clothing
+135.7,Month,Aug-96,K02000001,,cpi1dim1G30200,03.2 Footwear including repairs
+78.3,Month,Aug-96,K02000001,,cpi1dim1G40100,04.1 Actual rentals for housing
+75.7,Month,Aug-96,K02000001,,cpi1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+75.4,Month,Aug-96,K02000001,,cpi1dim1G40400,04.4 Water supply and misc. services for the dwelling
+85.1,Month,Aug-96,K02000001,,cpi1dim1G40500,"04.5 Electricity , gas and other fuels"
+96.3,Month,Aug-96,K02000001,,cpi1dim1G50100,"05.1 Furniture, furnishings and carpets"
+121.5,Month,Aug-96,K02000001,,cpi1dim1G50200,05.2 Household textiles
+122.2,Month,Aug-96,K02000001,,cpi1dim1G50300,"05.3 Household appliances, fitting and repairs"
+116.4,Month,Aug-96,K02000001,,cpi1dim1G50400,"05.4 Glassware, tableware and household utensils"
+119.8,Month,Aug-96,K02000001,,cpi1dim1G50500,05.5 Tools and equipment for house and garden
+84,Month,Aug-96,K02000001,,cpi1dim1G50600,05.6 Goods and services for routine maintenance
+88.8,Month,Aug-96,K02000001,,cpi1dim1G60100,"06.1 Medical products, appliances and equipment"
+115.1,Month,Aug-96,K02000001,,cpi1dim1G70100,07.1 Purchase of vehicles
+64.5,Month,Aug-96,K02000001,,cpi1dim1G70200,07.2 Operation of personal transport equipment
+70,Month,Aug-96,K02000001,,cpi1dim1G70300,07.3 Transport services
+84.3,Month,Aug-96,K02000001,,cpi1dim1G80100,08.1 Postal services
+126.5,Month,Aug-96,K02000001,,cpi1dim1G80200,08.2/3 Telephone and telefax equip
+244.8,Month,Aug-96,K02000001,,cpi1dim1G90100,09.1 Audio-visual equipment and related products
+115.2,Month,Aug-96,K02000001,,cpi1dim1G90300,"09.3 Other recreational items, gardens and pets"
+75,Month,Aug-96,K02000001,,cpi1dim1G90400,09.4 Recreational and cultural services
+81.2,Month,Aug-96,K02000001,,cpi1dim1G90500,"09.5 Books, newspapers and stationery"
+65.9,Month,Aug-96,K02000001,,cpi1dim1G90600,09.6 Package holidays
+60.5,Month,Aug-96,K02000001,,cpi1dim1G100000,10.0 Education
+75.5,Month,Aug-96,K02000001,,cpi1dim1G110100,11.1 Catering services
+67.4,Month,Aug-96,K02000001,,cpi1dim1G110200,11.2 Accommodation services
+89.5,Month,Aug-96,K02000001,,cpi1dim1G120100,12.1 Personal care
+104,Month,Aug-96,K02000001,,cpi1dim1G120300,12.3 Personal effects (nec)
+60.5,Month,Aug-96,K02000001,,cpi1dim1G120500,12.5 Insurance
+132.5,Month,Aug-96,K02000001,,cpi1dim1G120600,12.6 Financial services (nec)
+57.2,Month,Aug-96,K02000001,,cpi1dim1G120700,12.7 Other services (nec)
+95.1,Month,Aug-96,K02000001,,cpi1dim1S10101,01.1.1 Bread and cereals
+98.4,Month,Aug-96,K02000001,,cpi1dim1S10102,01.1.2 Meat
+78.7,Month,Aug-96,K02000001,,cpi1dim1S10103,01.1.3 Fish
+93.2,Month,Aug-96,K02000001,,cpi1dim1S10104,"01.1.4 Milk, cheese and eggs"
+101.8,Month,Aug-96,K02000001,,cpi1dim1S10105,01.1.5 Oils and fats
+88.4,Month,Aug-96,K02000001,,cpi1dim1S10106,01.1.6 Fruit
+94.8,Month,Aug-96,K02000001,,cpi1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+84.4,Month,Aug-96,K02000001,,cpi1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+95.8,Month,Aug-96,K02000001,,cpi1dim1S10109,01.1.9 Food products (nec)
+103.1,Month,Aug-96,K02000001,,cpi1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+94.5,Month,Aug-96,K02000001,,cpi1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+98.4,Month,Aug-96,K02000001,,cpi1dim1S20101,02.1.1 Spirits
+96.4,Month,Aug-96,K02000001,,cpi1dim1S20102,02.1.2 Wine
+101.2,Month,Aug-96,K02000001,,cpi1dim1S20103,02.1.3 Beer
+58.4,Month,Aug-96,K02000001,,cpi1dim1S20200,02.2.0 Tobacco
+166.9,Month,Aug-96,K02000001,,cpi1dim1S30102,03.1.2 Garments
+120.5,Month,Aug-96,K02000001,,cpi1dim1S30103,03.1.3 Other clothing and clothing accessories
+73.5,Month,Aug-96,K02000001,,cpi1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+135.7,Month,Aug-96,K02000001,,cpi1dim1S30200,03.2.0 Footwear including repairs
+78.3,Month,Aug-96,K02000001,,cpi1dim1S40100,04.1.0 Actual rentals for housing
+98.2,Month,Aug-96,K02000001,,cpi1dim1S40301,04.3.1 Materials for maintenance and repair
+58.4,Month,Aug-96,K02000001,,cpi1dim1S40302,04.3.2 Services for maintenance and repair
+74.2,Month,Aug-96,K02000001,,cpi1dim1S40401,04.4.1 Water supply
+77.1,Month,Aug-96,K02000001,,cpi1dim1S40403,04.4.3 Sewerage collection
+97.1,Month,Aug-96,K02000001,,cpi1dim1S40501,04.5.1 Electricity
+78.1,Month,Aug-96,K02000001,,cpi1dim1S40502,04.5.2 Gas
+50.9,Month,Aug-96,K02000001,,cpi1dim1S40503,04.5.3 Liquid fuels
+70.9,Month,Aug-96,K02000001,,cpi1dim1S40504,04.5.4 Solid fuels
+97.5,Month,Aug-96,K02000001,,cpi1dim1S50101,05.1.1 Furniture and furnishings
+92.4,Month,Aug-96,K02000001,,cpi1dim1S50102,05.1.2 Carpets and other floor coverings
+121.5,Month,Aug-96,K02000001,,cpi1dim1S50200,05.2.0 Household Textiles
+133.2,Month,Aug-96,K02000001,,cpi1dim1S50301,05.3.1/2 Major appliances and small electric goods
+66.6,Month,Aug-96,K02000001,,cpi1dim1S50303,05.3.3 Repair of household appliances
+116.4,Month,Aug-96,K02000001,,cpi1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+119.8,Month,Aug-96,K02000001,,cpi1dim1S50500,05.5.0 Tools and equipment for House and Garden
+111.6,Month,Aug-96,K02000001,,cpi1dim1S50601,05.6.1 Non-durable household goods
+62.5,Month,Aug-96,K02000001,,cpi1dim1S50602,05.6.2 Domestic services and household services
+94.3,Month,Aug-96,K02000001,,cpi1dim1S60101,06.1.1 Pharmaceutical products
+84.1,Month,Aug-96,K02000001,,cpi1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+115,Month,Aug-96,K02000001,,cpi1dim1S70102,07.1.2/3 Motorcycles and bicycles
+100.6,Month,Aug-96,K02000001,,cpi1dim1S70181,07.1.1 New Cars
+131.2,Month,Aug-96,K02000001,,cpi1dim1S70191,07.1.1b Second Hand Cars
+90.9,Month,Aug-96,K02000001,,cpi1dim1S70201,07.2.1 Spare parts and accessories
+63.7,Month,Aug-96,K02000001,,cpi1dim1S70202,07.2.2 Fuels and lubricants
+60.5,Month,Aug-96,K02000001,,cpi1dim1S70203,07.2.3 Maintenance and repairs
+68.2,Month,Aug-96,K02000001,,cpi1dim1S70204,07.2.4 Other services
+76.2,Month,Aug-96,K02000001,,cpi1dim1S70301,07.3.1 Passenger transport by railway
+67.7,Month,Aug-96,K02000001,,cpi1dim1S70302,07.3.2 Passenger transport by road
+87.4,Month,Aug-96,K02000001,,cpi1dim1S70303,07.3.3 Passenger transport by air
+82.6,Month,Aug-96,K02000001,,cpi1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+84.3,Month,Aug-96,K02000001,,cpi1dim1S80100,08.1.0 Postal Services
+126.5,Month,Aug-96,K02000001,,cpi1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+265.1,Month,Aug-96,K02000001,,cpi1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+208.9,Month,Aug-96,K02000001,,cpi1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+1092.5,Month,Aug-96,K02000001,,cpi1dim1S90103,09.1.3 Data processing equipment
+131.7,Month,Aug-96,K02000001,,cpi1dim1S90104,09.1.4 Recording media
+65.8,Month,Aug-96,K02000001,,cpi1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+144.7,Month,Aug-96,K02000001,,cpi1dim1S90301,"09.3.1 Games, toys and hobbies"
+131.2,Month,Aug-96,K02000001,,cpi1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+104.1,Month,Aug-96,K02000001,,cpi1dim1S90303,"09.3.3 Gardens, plants and flowers"
+84.3,Month,Aug-96,K02000001,,cpi1dim1S90304,"09.3.4/5 Pets, related products and services"
+70.7,Month,Aug-96,K02000001,,cpi1dim1S90401,09.4.1 Recreational and sporting services
+78,Month,Aug-96,K02000001,,cpi1dim1S90402,09.4.2 Cultural services
+80.7,Month,Aug-96,K02000001,,cpi1dim1S90501,09.5.1 Books
+74.3,Month,Aug-96,K02000001,,cpi1dim1S90502,09.5.2 Newspapers and periodicals
+92.6,Month,Aug-96,K02000001,,cpi1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+65.9,Month,Aug-96,K02000001,,cpi1dim1S90600,09.6.0 Package Holidays
+60.5,Month,Aug-96,K02000001,,cpi1dim1S100000,10.0.0 Education
+76.1,Month,Aug-96,K02000001,,cpi1dim1S110101,"11.1.1 Restaurants, cafes"
+67.8,Month,Aug-96,K02000001,,cpi1dim1S110102,11.1.2 Canteens
+67.4,Month,Aug-96,K02000001,,cpi1dim1S110200,11.2.0 Accommodation Services
+63.9,Month,Aug-96,K02000001,,cpi1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+102.2,Month,Aug-96,K02000001,,cpi1dim1S120102,12.1.2/3 Appliances and products for personal care
+96.7,Month,Aug-96,K02000001,,cpi1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+117.3,Month,Aug-96,K02000001,,cpi1dim1S120302,12.3.2 Other personal effects
+75.3,Month,Aug-96,K02000001,,cpi1dim1S120502,12.5.2 House contents insurance
+56.3,Month,Aug-96,K02000001,,cpi1dim1S120504,12.5.4 Transport insurance
+132.5,Month,Aug-96,K02000001,,cpi1dim1S120602,12.6.2 Other financial services (nec)
+57.2,Month,Aug-96,K02000001,,cpi1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+92.9,Month,Aug-96,K02000001,,cpi1dim1T10000,01 Food and non-alcoholic beverages
+73.6,Month,Aug-96,K02000001,,cpi1dim1T20000,02 Alcoholic beverages and tobacco
+157.3,Month,Aug-96,K02000001,,cpi1dim1T30000,03 Clothing and footwear
+80.1,Month,Aug-96,K02000001,,cpi1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+102.3,Month,Aug-96,K02000001,,cpi1dim1T50000,"05 Furniture, household equipment and maintenance"
+77.4,Month,Aug-96,K02000001,,cpi1dim1T60000,06 Health
+79.8,Month,Aug-96,K02000001,,cpi1dim1T70000,07 Transport
+122.4,Month,Aug-96,K02000001,,cpi1dim1T80000,08 Communication
+98,Month,Aug-96,K02000001,,cpi1dim1T90000,09 Recreation and culture
+60.5,Month,Aug-96,K02000001,,cpi1dim1T100000,10 Education
+74.3,Month,Aug-96,K02000001,,cpi1dim1T110000,11 Restaurants and hotels
+76.8,Month,Aug-96,K02000001,,cpi1dim1T120000,12 Miscellaneous goods and services
+88.7,Month,Sep-96,K02000001,,cpi1dim1A0,CPI (overall index)
+91.3,Month,Sep-96,K02000001,,cpi1dim1G10100,01.1 Food
+96.5,Month,Sep-96,K02000001,,cpi1dim1G10200,01.2 Non-alcoholic beverages
+98.1,Month,Sep-96,K02000001,,cpi1dim1G20100,02.1 Alcoholic beverages
+58.6,Month,Sep-96,K02000001,,cpi1dim1G20200,02.2 Tobacco
+169.1,Month,Sep-96,K02000001,,cpi1dim1G30100,03.1 Clothing
+140.5,Month,Sep-96,K02000001,,cpi1dim1G30200,03.2 Footwear including repairs
+78.4,Month,Sep-96,K02000001,,cpi1dim1G40100,04.1 Actual rentals for housing
+75.6,Month,Sep-96,K02000001,,cpi1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+75.4,Month,Sep-96,K02000001,,cpi1dim1G40400,04.4 Water supply and misc. services for the dwelling
+85.2,Month,Sep-96,K02000001,,cpi1dim1G40500,"04.5 Electricity , gas and other fuels"
+97.3,Month,Sep-96,K02000001,,cpi1dim1G50100,"05.1 Furniture, furnishings and carpets"
+123.5,Month,Sep-96,K02000001,,cpi1dim1G50200,05.2 Household textiles
+122.5,Month,Sep-96,K02000001,,cpi1dim1G50300,"05.3 Household appliances, fitting and repairs"
+117.7,Month,Sep-96,K02000001,,cpi1dim1G50400,"05.4 Glassware, tableware and household utensils"
+120.1,Month,Sep-96,K02000001,,cpi1dim1G50500,05.5 Tools and equipment for house and garden
+83.9,Month,Sep-96,K02000001,,cpi1dim1G50600,05.6 Goods and services for routine maintenance
+89.1,Month,Sep-96,K02000001,,cpi1dim1G60100,"06.1 Medical products, appliances and equipment"
+115.8,Month,Sep-96,K02000001,,cpi1dim1G70100,07.1 Purchase of vehicles
+65.8,Month,Sep-96,K02000001,,cpi1dim1G70200,07.2 Operation of personal transport equipment
+70.1,Month,Sep-96,K02000001,,cpi1dim1G70300,07.3 Transport services
+84.3,Month,Sep-96,K02000001,,cpi1dim1G80100,08.1 Postal services
+126.5,Month,Sep-96,K02000001,,cpi1dim1G80200,08.2/3 Telephone and telefax equip
+242.7,Month,Sep-96,K02000001,,cpi1dim1G90100,09.1 Audio-visual equipment and related products
+114.9,Month,Sep-96,K02000001,,cpi1dim1G90300,"09.3 Other recreational items, gardens and pets"
+75.2,Month,Sep-96,K02000001,,cpi1dim1G90400,09.4 Recreational and cultural services
+81.4,Month,Sep-96,K02000001,,cpi1dim1G90500,"09.5 Books, newspapers and stationery"
+66.1,Month,Sep-96,K02000001,,cpi1dim1G90600,09.6 Package holidays
+62,Month,Sep-96,K02000001,,cpi1dim1G100000,10.0 Education
+75.7,Month,Sep-96,K02000001,,cpi1dim1G110100,11.1 Catering services
+67.5,Month,Sep-96,K02000001,,cpi1dim1G110200,11.2 Accommodation services
+90.1,Month,Sep-96,K02000001,,cpi1dim1G120100,12.1 Personal care
+104.3,Month,Sep-96,K02000001,,cpi1dim1G120300,12.3 Personal effects (nec)
+60.5,Month,Sep-96,K02000001,,cpi1dim1G120500,12.5 Insurance
+132.5,Month,Sep-96,K02000001,,cpi1dim1G120600,12.6 Financial services (nec)
+57.3,Month,Sep-96,K02000001,,cpi1dim1G120700,12.7 Other services (nec)
+94.9,Month,Sep-96,K02000001,,cpi1dim1S10101,01.1.1 Bread and cereals
+97.8,Month,Sep-96,K02000001,,cpi1dim1S10102,01.1.2 Meat
+78.8,Month,Sep-96,K02000001,,cpi1dim1S10103,01.1.3 Fish
+93.1,Month,Sep-96,K02000001,,cpi1dim1S10104,"01.1.4 Milk, cheese and eggs"
+102.2,Month,Sep-96,K02000001,,cpi1dim1S10105,01.1.5 Oils and fats
+86.3,Month,Sep-96,K02000001,,cpi1dim1S10106,01.1.6 Fruit
+89.1,Month,Sep-96,K02000001,,cpi1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+84.3,Month,Sep-96,K02000001,,cpi1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+96,Month,Sep-96,K02000001,,cpi1dim1S10109,01.1.9 Food products (nec)
+103,Month,Sep-96,K02000001,,cpi1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+94.6,Month,Sep-96,K02000001,,cpi1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+98,Month,Sep-96,K02000001,,cpi1dim1S20101,02.1.1 Spirits
+96,Month,Sep-96,K02000001,,cpi1dim1S20102,02.1.2 Wine
+102.6,Month,Sep-96,K02000001,,cpi1dim1S20103,02.1.3 Beer
+58.6,Month,Sep-96,K02000001,,cpi1dim1S20200,02.2.0 Tobacco
+176,Month,Sep-96,K02000001,,cpi1dim1S30102,03.1.2 Garments
+123.3,Month,Sep-96,K02000001,,cpi1dim1S30103,03.1.3 Other clothing and clothing accessories
+73.5,Month,Sep-96,K02000001,,cpi1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+140.5,Month,Sep-96,K02000001,,cpi1dim1S30200,03.2.0 Footwear including repairs
+78.4,Month,Sep-96,K02000001,,cpi1dim1S40100,04.1.0 Actual rentals for housing
+97.9,Month,Sep-96,K02000001,,cpi1dim1S40301,04.3.1 Materials for maintenance and repair
+58.5,Month,Sep-96,K02000001,,cpi1dim1S40302,04.3.2 Services for maintenance and repair
+74.2,Month,Sep-96,K02000001,,cpi1dim1S40401,04.4.1 Water supply
+77.1,Month,Sep-96,K02000001,,cpi1dim1S40403,04.4.3 Sewerage collection
+96.6,Month,Sep-96,K02000001,,cpi1dim1S40501,04.5.1 Electricity
+78.1,Month,Sep-96,K02000001,,cpi1dim1S40502,04.5.2 Gas
+57.9,Month,Sep-96,K02000001,,cpi1dim1S40503,04.5.3 Liquid fuels
+72.5,Month,Sep-96,K02000001,,cpi1dim1S40504,04.5.4 Solid fuels
+98.5,Month,Sep-96,K02000001,,cpi1dim1S50101,05.1.1 Furniture and furnishings
+93.3,Month,Sep-96,K02000001,,cpi1dim1S50102,05.1.2 Carpets and other floor coverings
+123.5,Month,Sep-96,K02000001,,cpi1dim1S50200,05.2.0 Household Textiles
+133.6,Month,Sep-96,K02000001,,cpi1dim1S50301,05.3.1/2 Major appliances and small electric goods
+66.6,Month,Sep-96,K02000001,,cpi1dim1S50303,05.3.3 Repair of household appliances
+117.7,Month,Sep-96,K02000001,,cpi1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+120.1,Month,Sep-96,K02000001,,cpi1dim1S50500,05.5.0 Tools and equipment for House and Garden
+111,Month,Sep-96,K02000001,,cpi1dim1S50601,05.6.1 Non-durable household goods
+62.7,Month,Sep-96,K02000001,,cpi1dim1S50602,05.6.2 Domestic services and household services
+94.4,Month,Sep-96,K02000001,,cpi1dim1S60101,06.1.1 Pharmaceutical products
+84.7,Month,Sep-96,K02000001,,cpi1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+115.1,Month,Sep-96,K02000001,,cpi1dim1S70102,07.1.2/3 Motorcycles and bicycles
+100.7,Month,Sep-96,K02000001,,cpi1dim1S70181,07.1.1 New Cars
+132.2,Month,Sep-96,K02000001,,cpi1dim1S70191,07.1.1b Second Hand Cars
+91,Month,Sep-96,K02000001,,cpi1dim1S70201,07.2.1 Spare parts and accessories
+66,Month,Sep-96,K02000001,,cpi1dim1S70202,07.2.2 Fuels and lubricants
+60.9,Month,Sep-96,K02000001,,cpi1dim1S70203,07.2.3 Maintenance and repairs
+68.3,Month,Sep-96,K02000001,,cpi1dim1S70204,07.2.4 Other services
+76.2,Month,Sep-96,K02000001,,cpi1dim1S70301,07.3.1 Passenger transport by railway
+67.9,Month,Sep-96,K02000001,,cpi1dim1S70302,07.3.2 Passenger transport by road
+87.4,Month,Sep-96,K02000001,,cpi1dim1S70303,07.3.3 Passenger transport by air
+82.6,Month,Sep-96,K02000001,,cpi1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+84.3,Month,Sep-96,K02000001,,cpi1dim1S80100,08.1.0 Postal Services
+126.5,Month,Sep-96,K02000001,,cpi1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+264.2,Month,Sep-96,K02000001,,cpi1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+209.2,Month,Sep-96,K02000001,,cpi1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+1053.3,Month,Sep-96,K02000001,,cpi1dim1S90103,09.1.3 Data processing equipment
+130.9,Month,Sep-96,K02000001,,cpi1dim1S90104,09.1.4 Recording media
+65.8,Month,Sep-96,K02000001,,cpi1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+143.8,Month,Sep-96,K02000001,,cpi1dim1S90301,"09.3.1 Games, toys and hobbies"
+131.5,Month,Sep-96,K02000001,,cpi1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+104.7,Month,Sep-96,K02000001,,cpi1dim1S90303,"09.3.3 Gardens, plants and flowers"
+83.7,Month,Sep-96,K02000001,,cpi1dim1S90304,"09.3.4/5 Pets, related products and services"
+71.1,Month,Sep-96,K02000001,,cpi1dim1S90401,09.4.1 Recreational and sporting services
+78,Month,Sep-96,K02000001,,cpi1dim1S90402,09.4.2 Cultural services
+81.1,Month,Sep-96,K02000001,,cpi1dim1S90501,09.5.1 Books
+74.4,Month,Sep-96,K02000001,,cpi1dim1S90502,09.5.2 Newspapers and periodicals
+92.9,Month,Sep-96,K02000001,,cpi1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+66.1,Month,Sep-96,K02000001,,cpi1dim1S90600,09.6.0 Package Holidays
+62,Month,Sep-96,K02000001,,cpi1dim1S100000,10.0.0 Education
+76.3,Month,Sep-96,K02000001,,cpi1dim1S110101,"11.1.1 Restaurants, cafes"
+68.5,Month,Sep-96,K02000001,,cpi1dim1S110102,11.1.2 Canteens
+67.5,Month,Sep-96,K02000001,,cpi1dim1S110200,11.2.0 Accommodation Services
+64.1,Month,Sep-96,K02000001,,cpi1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+103,Month,Sep-96,K02000001,,cpi1dim1S120102,12.1.2/3 Appliances and products for personal care
+96.9,Month,Sep-96,K02000001,,cpi1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+117.8,Month,Sep-96,K02000001,,cpi1dim1S120302,12.3.2 Other personal effects
+75.3,Month,Sep-96,K02000001,,cpi1dim1S120502,12.5.2 House contents insurance
+56.3,Month,Sep-96,K02000001,,cpi1dim1S120504,12.5.4 Transport insurance
+132.5,Month,Sep-96,K02000001,,cpi1dim1S120602,12.6.2 Other financial services (nec)
+57.3,Month,Sep-96,K02000001,,cpi1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+91.9,Month,Sep-96,K02000001,,cpi1dim1T10000,01 Food and non-alcoholic beverages
+73.7,Month,Sep-96,K02000001,,cpi1dim1T20000,02 Alcoholic beverages and tobacco
+164.9,Month,Sep-96,K02000001,,cpi1dim1T30000,03 Clothing and footwear
+80.2,Month,Sep-96,K02000001,,cpi1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+103,Month,Sep-96,K02000001,,cpi1dim1T50000,"05 Furniture, household equipment and maintenance"
+77.7,Month,Sep-96,K02000001,,cpi1dim1T60000,06 Health
+80.8,Month,Sep-96,K02000001,,cpi1dim1T70000,07 Transport
+122.4,Month,Sep-96,K02000001,,cpi1dim1T80000,08 Communication
+97.9,Month,Sep-96,K02000001,,cpi1dim1T90000,09 Recreation and culture
+62,Month,Sep-96,K02000001,,cpi1dim1T100000,10 Education
+74.5,Month,Sep-96,K02000001,,cpi1dim1T110000,11 Restaurants and hotels
+77.2,Month,Sep-96,K02000001,,cpi1dim1T120000,12 Miscellaneous goods and services
+88.7,Month,Oct-96,K02000001,,cpi1dim1A0,CPI (overall index)
+90.4,Month,Oct-96,K02000001,,cpi1dim1G10100,01.1 Food
+96.4,Month,Oct-96,K02000001,,cpi1dim1G10200,01.2 Non-alcoholic beverages
+98.4,Month,Oct-96,K02000001,,cpi1dim1G20100,02.1 Alcoholic beverages
+58.6,Month,Oct-96,K02000001,,cpi1dim1G20200,02.2 Tobacco
+169.2,Month,Oct-96,K02000001,,cpi1dim1G30100,03.1 Clothing
+141.2,Month,Oct-96,K02000001,,cpi1dim1G30200,03.2 Footwear including repairs
+78.5,Month,Oct-96,K02000001,,cpi1dim1G40100,04.1 Actual rentals for housing
+76.1,Month,Oct-96,K02000001,,cpi1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+75.4,Month,Oct-96,K02000001,,cpi1dim1G40400,04.4 Water supply and misc. services for the dwelling
+85.1,Month,Oct-96,K02000001,,cpi1dim1G40500,"04.5 Electricity , gas and other fuels"
+96.7,Month,Oct-96,K02000001,,cpi1dim1G50100,"05.1 Furniture, furnishings and carpets"
+121.6,Month,Oct-96,K02000001,,cpi1dim1G50200,05.2 Household textiles
+123,Month,Oct-96,K02000001,,cpi1dim1G50300,"05.3 Household appliances, fitting and repairs"
+116.1,Month,Oct-96,K02000001,,cpi1dim1G50400,"05.4 Glassware, tableware and household utensils"
+119.6,Month,Oct-96,K02000001,,cpi1dim1G50500,05.5 Tools and equipment for house and garden
+84.3,Month,Oct-96,K02000001,,cpi1dim1G50600,05.6 Goods and services for routine maintenance
+88.3,Month,Oct-96,K02000001,,cpi1dim1G60100,"06.1 Medical products, appliances and equipment"
+115.6,Month,Oct-96,K02000001,,cpi1dim1G70100,07.1 Purchase of vehicles
+66.4,Month,Oct-96,K02000001,,cpi1dim1G70200,07.2 Operation of personal transport equipment
+70.1,Month,Oct-96,K02000001,,cpi1dim1G70300,07.3 Transport services
+84.4,Month,Oct-96,K02000001,,cpi1dim1G80100,08.1 Postal services
+123.7,Month,Oct-96,K02000001,,cpi1dim1G80200,08.2/3 Telephone and telefax equip
+244.4,Month,Oct-96,K02000001,,cpi1dim1G90100,09.1 Audio-visual equipment and related products
+115.1,Month,Oct-96,K02000001,,cpi1dim1G90300,"09.3 Other recreational items, gardens and pets"
+75.5,Month,Oct-96,K02000001,,cpi1dim1G90400,09.4 Recreational and cultural services
+81,Month,Oct-96,K02000001,,cpi1dim1G90500,"09.5 Books, newspapers and stationery"
+66.3,Month,Oct-96,K02000001,,cpi1dim1G90600,09.6 Package holidays
+62.1,Month,Oct-96,K02000001,,cpi1dim1G100000,10.0 Education
+75.9,Month,Oct-96,K02000001,,cpi1dim1G110100,11.1 Catering services
+67.7,Month,Oct-96,K02000001,,cpi1dim1G110200,11.2 Accommodation services
+90.9,Month,Oct-96,K02000001,,cpi1dim1G120100,12.1 Personal care
+104.8,Month,Oct-96,K02000001,,cpi1dim1G120300,12.3 Personal effects (nec)
+61.5,Month,Oct-96,K02000001,,cpi1dim1G120500,12.5 Insurance
+132.5,Month,Oct-96,K02000001,,cpi1dim1G120600,12.6 Financial services (nec)
+57.7,Month,Oct-96,K02000001,,cpi1dim1G120700,12.7 Other services (nec)
+94.8,Month,Oct-96,K02000001,,cpi1dim1S10101,01.1.1 Bread and cereals
+97.4,Month,Oct-96,K02000001,,cpi1dim1S10102,01.1.2 Meat
+77.1,Month,Oct-96,K02000001,,cpi1dim1S10103,01.1.3 Fish
+92.7,Month,Oct-96,K02000001,,cpi1dim1S10104,"01.1.4 Milk, cheese and eggs"
+102.7,Month,Oct-96,K02000001,,cpi1dim1S10105,01.1.5 Oils and fats
+88,Month,Oct-96,K02000001,,cpi1dim1S10106,01.1.6 Fruit
+83.3,Month,Oct-96,K02000001,,cpi1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+84.4,Month,Oct-96,K02000001,,cpi1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+95.3,Month,Oct-96,K02000001,,cpi1dim1S10109,01.1.9 Food products (nec)
+102.6,Month,Oct-96,K02000001,,cpi1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+94.6,Month,Oct-96,K02000001,,cpi1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+98.8,Month,Oct-96,K02000001,,cpi1dim1S20101,02.1.1 Spirits
+95.8,Month,Oct-96,K02000001,,cpi1dim1S20102,02.1.2 Wine
+103.2,Month,Oct-96,K02000001,,cpi1dim1S20103,02.1.3 Beer
+58.6,Month,Oct-96,K02000001,,cpi1dim1S20200,02.2.0 Tobacco
+175.9,Month,Oct-96,K02000001,,cpi1dim1S30102,03.1.2 Garments
+124.5,Month,Oct-96,K02000001,,cpi1dim1S30103,03.1.3 Other clothing and clothing accessories
+73.7,Month,Oct-96,K02000001,,cpi1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+141.2,Month,Oct-96,K02000001,,cpi1dim1S30200,03.2.0 Footwear including repairs
+78.5,Month,Oct-96,K02000001,,cpi1dim1S40100,04.1.0 Actual rentals for housing
+97.9,Month,Oct-96,K02000001,,cpi1dim1S40301,04.3.1 Materials for maintenance and repair
+59.1,Month,Oct-96,K02000001,,cpi1dim1S40302,04.3.2 Services for maintenance and repair
+74.2,Month,Oct-96,K02000001,,cpi1dim1S40401,04.4.1 Water supply
+77.1,Month,Oct-96,K02000001,,cpi1dim1S40403,04.4.3 Sewerage collection
+95.7,Month,Oct-96,K02000001,,cpi1dim1S40501,04.5.1 Electricity
+78.2,Month,Oct-96,K02000001,,cpi1dim1S40502,04.5.2 Gas
+63,Month,Oct-96,K02000001,,cpi1dim1S40503,04.5.3 Liquid fuels
+73.9,Month,Oct-96,K02000001,,cpi1dim1S40504,04.5.4 Solid fuels
+98.1,Month,Oct-96,K02000001,,cpi1dim1S50101,05.1.1 Furniture and furnishings
+92.2,Month,Oct-96,K02000001,,cpi1dim1S50102,05.1.2 Carpets and other floor coverings
+121.6,Month,Oct-96,K02000001,,cpi1dim1S50200,05.2.0 Household Textiles
+134,Month,Oct-96,K02000001,,cpi1dim1S50301,05.3.1/2 Major appliances and small electric goods
+67.4,Month,Oct-96,K02000001,,cpi1dim1S50303,05.3.3 Repair of household appliances
+116.1,Month,Oct-96,K02000001,,cpi1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+119.6,Month,Oct-96,K02000001,,cpi1dim1S50500,05.5.0 Tools and equipment for House and Garden
+111.7,Month,Oct-96,K02000001,,cpi1dim1S50601,05.6.1 Non-durable household goods
+62.8,Month,Oct-96,K02000001,,cpi1dim1S50602,05.6.2 Domestic services and household services
+94.5,Month,Oct-96,K02000001,,cpi1dim1S60101,06.1.1 Pharmaceutical products
+83.1,Month,Oct-96,K02000001,,cpi1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+115.4,Month,Oct-96,K02000001,,cpi1dim1S70102,07.1.2/3 Motorcycles and bicycles
+101,Month,Oct-96,K02000001,,cpi1dim1S70181,07.1.1 New Cars
+131.7,Month,Oct-96,K02000001,,cpi1dim1S70191,07.1.1b Second Hand Cars
+91.1,Month,Oct-96,K02000001,,cpi1dim1S70201,07.2.1 Spare parts and accessories
+67.1,Month,Oct-96,K02000001,,cpi1dim1S70202,07.2.2 Fuels and lubricants
+61.1,Month,Oct-96,K02000001,,cpi1dim1S70203,07.2.3 Maintenance and repairs
+68.5,Month,Oct-96,K02000001,,cpi1dim1S70204,07.2.4 Other services
+76.4,Month,Oct-96,K02000001,,cpi1dim1S70301,07.3.1 Passenger transport by railway
+68.1,Month,Oct-96,K02000001,,cpi1dim1S70302,07.3.2 Passenger transport by road
+87.4,Month,Oct-96,K02000001,,cpi1dim1S70303,07.3.3 Passenger transport by air
+78.9,Month,Oct-96,K02000001,,cpi1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+84.4,Month,Oct-96,K02000001,,cpi1dim1S80100,08.1.0 Postal Services
+123.7,Month,Oct-96,K02000001,,cpi1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+263.6,Month,Oct-96,K02000001,,cpi1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+209.1,Month,Oct-96,K02000001,,cpi1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+1087.7,Month,Oct-96,K02000001,,cpi1dim1S90103,09.1.3 Data processing equipment
+132,Month,Oct-96,K02000001,,cpi1dim1S90104,09.1.4 Recording media
+66.5,Month,Oct-96,K02000001,,cpi1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+143.1,Month,Oct-96,K02000001,,cpi1dim1S90301,"09.3.1 Games, toys and hobbies"
+131.5,Month,Oct-96,K02000001,,cpi1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+105,Month,Oct-96,K02000001,,cpi1dim1S90303,"09.3.3 Gardens, plants and flowers"
+84,Month,Oct-96,K02000001,,cpi1dim1S90304,"09.3.4/5 Pets, related products and services"
+71.3,Month,Oct-96,K02000001,,cpi1dim1S90401,09.4.1 Recreational and sporting services
+78.6,Month,Oct-96,K02000001,,cpi1dim1S90402,09.4.2 Cultural services
+81.5,Month,Oct-96,K02000001,,cpi1dim1S90501,09.5.1 Books
+73.4,Month,Oct-96,K02000001,,cpi1dim1S90502,09.5.2 Newspapers and periodicals
+92.9,Month,Oct-96,K02000001,,cpi1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+66.3,Month,Oct-96,K02000001,,cpi1dim1S90600,09.6.0 Package Holidays
+62.1,Month,Oct-96,K02000001,,cpi1dim1S100000,10.0.0 Education
+76.4,Month,Oct-96,K02000001,,cpi1dim1S110101,"11.1.1 Restaurants, cafes"
+68.5,Month,Oct-96,K02000001,,cpi1dim1S110102,11.1.2 Canteens
+67.7,Month,Oct-96,K02000001,,cpi1dim1S110200,11.2.0 Accommodation Services
+64.3,Month,Oct-96,K02000001,,cpi1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+104.1,Month,Oct-96,K02000001,,cpi1dim1S120102,12.1.2/3 Appliances and products for personal care
+97.2,Month,Oct-96,K02000001,,cpi1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+118.5,Month,Oct-96,K02000001,,cpi1dim1S120302,12.3.2 Other personal effects
+75.3,Month,Oct-96,K02000001,,cpi1dim1S120502,12.5.2 House contents insurance
+57.8,Month,Oct-96,K02000001,,cpi1dim1S120504,12.5.4 Transport insurance
+132.5,Month,Oct-96,K02000001,,cpi1dim1S120602,12.6.2 Other financial services (nec)
+57.7,Month,Oct-96,K02000001,,cpi1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+91.1,Month,Oct-96,K02000001,,cpi1dim1T10000,01 Food and non-alcoholic beverages
+73.8,Month,Oct-96,K02000001,,cpi1dim1T20000,02 Alcoholic beverages and tobacco
+165,Month,Oct-96,K02000001,,cpi1dim1T30000,03 Clothing and footwear
+80.2,Month,Oct-96,K02000001,,cpi1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+102.6,Month,Oct-96,K02000001,,cpi1dim1T50000,"05 Furniture, household equipment and maintenance"
+77,Month,Oct-96,K02000001,,cpi1dim1T60000,06 Health
+81.1,Month,Oct-96,K02000001,,cpi1dim1T70000,07 Transport
+120,Month,Oct-96,K02000001,,cpi1dim1T80000,08 Communication
+98.2,Month,Oct-96,K02000001,,cpi1dim1T90000,09 Recreation and culture
+62.1,Month,Oct-96,K02000001,,cpi1dim1T100000,10 Education
+74.7,Month,Oct-96,K02000001,,cpi1dim1T110000,11 Restaurants and hotels
+77.8,Month,Oct-96,K02000001,,cpi1dim1T120000,12 Miscellaneous goods and services
+88.7,Month,Nov-96,K02000001,,cpi1dim1A0,CPI (overall index)
+90,Month,Nov-96,K02000001,,cpi1dim1G10100,01.1 Food
+96.4,Month,Nov-96,K02000001,,cpi1dim1G10200,01.2 Non-alcoholic beverages
+97.6,Month,Nov-96,K02000001,,cpi1dim1G20100,02.1 Alcoholic beverages
+58.5,Month,Nov-96,K02000001,,cpi1dim1G20200,02.2 Tobacco
+171.1,Month,Nov-96,K02000001,,cpi1dim1G30100,03.1 Clothing
+142.5,Month,Nov-96,K02000001,,cpi1dim1G30200,03.2 Footwear including repairs
+78.5,Month,Nov-96,K02000001,,cpi1dim1G40100,04.1 Actual rentals for housing
+76.3,Month,Nov-96,K02000001,,cpi1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+75.4,Month,Nov-96,K02000001,,cpi1dim1G40400,04.4 Water supply and misc. services for the dwelling
+84.6,Month,Nov-96,K02000001,,cpi1dim1G40500,"04.5 Electricity , gas and other fuels"
+98.2,Month,Nov-96,K02000001,,cpi1dim1G50100,"05.1 Furniture, furnishings and carpets"
+123.6,Month,Nov-96,K02000001,,cpi1dim1G50200,05.2 Household textiles
+123.5,Month,Nov-96,K02000001,,cpi1dim1G50300,"05.3 Household appliances, fitting and repairs"
+117.8,Month,Nov-96,K02000001,,cpi1dim1G50400,"05.4 Glassware, tableware and household utensils"
+120,Month,Nov-96,K02000001,,cpi1dim1G50500,05.5 Tools and equipment for house and garden
+84.3,Month,Nov-96,K02000001,,cpi1dim1G50600,05.6 Goods and services for routine maintenance
+88.2,Month,Nov-96,K02000001,,cpi1dim1G60100,"06.1 Medical products, appliances and equipment"
+113.8,Month,Nov-96,K02000001,,cpi1dim1G70100,07.1 Purchase of vehicles
+66.8,Month,Nov-96,K02000001,,cpi1dim1G70200,07.2 Operation of personal transport equipment
+70,Month,Nov-96,K02000001,,cpi1dim1G70300,07.3 Transport services
+84.5,Month,Nov-96,K02000001,,cpi1dim1G80100,08.1 Postal services
+123.7,Month,Nov-96,K02000001,,cpi1dim1G80200,08.2/3 Telephone and telefax equip
+242.3,Month,Nov-96,K02000001,,cpi1dim1G90100,09.1 Audio-visual equipment and related products
+115.2,Month,Nov-96,K02000001,,cpi1dim1G90300,"09.3 Other recreational items, gardens and pets"
+75.7,Month,Nov-96,K02000001,,cpi1dim1G90400,09.4 Recreational and cultural services
+82.4,Month,Nov-96,K02000001,,cpi1dim1G90500,"09.5 Books, newspapers and stationery"
+66.5,Month,Nov-96,K02000001,,cpi1dim1G90600,09.6 Package holidays
+62.2,Month,Nov-96,K02000001,,cpi1dim1G100000,10.0 Education
+76,Month,Nov-96,K02000001,,cpi1dim1G110100,11.1 Catering services
+67.8,Month,Nov-96,K02000001,,cpi1dim1G110200,11.2 Accommodation services
+91.3,Month,Nov-96,K02000001,,cpi1dim1G120100,12.1 Personal care
+105.1,Month,Nov-96,K02000001,,cpi1dim1G120300,12.3 Personal effects (nec)
+61.5,Month,Nov-96,K02000001,,cpi1dim1G120500,12.5 Insurance
+132.5,Month,Nov-96,K02000001,,cpi1dim1G120600,12.6 Financial services (nec)
+57.7,Month,Nov-96,K02000001,,cpi1dim1G120700,12.7 Other services (nec)
+94,Month,Nov-96,K02000001,,cpi1dim1S10101,01.1.1 Bread and cereals
+96.1,Month,Nov-96,K02000001,,cpi1dim1S10102,01.1.2 Meat
+78.8,Month,Nov-96,K02000001,,cpi1dim1S10103,01.1.3 Fish
+93.4,Month,Nov-96,K02000001,,cpi1dim1S10104,"01.1.4 Milk, cheese and eggs"
+103.1,Month,Nov-96,K02000001,,cpi1dim1S10105,01.1.5 Oils and fats
+88.4,Month,Nov-96,K02000001,,cpi1dim1S10106,01.1.6 Fruit
+81.5,Month,Nov-96,K02000001,,cpi1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+84,Month,Nov-96,K02000001,,cpi1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+95.7,Month,Nov-96,K02000001,,cpi1dim1S10109,01.1.9 Food products (nec)
+102.8,Month,Nov-96,K02000001,,cpi1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+94.5,Month,Nov-96,K02000001,,cpi1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+98.7,Month,Nov-96,K02000001,,cpi1dim1S20101,02.1.1 Spirits
+95.5,Month,Nov-96,K02000001,,cpi1dim1S20102,02.1.2 Wine
+100.9,Month,Nov-96,K02000001,,cpi1dim1S20103,02.1.3 Beer
+58.5,Month,Nov-96,K02000001,,cpi1dim1S20200,02.2.0 Tobacco
+178,Month,Nov-96,K02000001,,cpi1dim1S30102,03.1.2 Garments
+125.6,Month,Nov-96,K02000001,,cpi1dim1S30103,03.1.3 Other clothing and clothing accessories
+74,Month,Nov-96,K02000001,,cpi1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+142.5,Month,Nov-96,K02000001,,cpi1dim1S30200,03.2.0 Footwear including repairs
+78.5,Month,Nov-96,K02000001,,cpi1dim1S40100,04.1.0 Actual rentals for housing
+98.4,Month,Nov-96,K02000001,,cpi1dim1S40301,04.3.1 Materials for maintenance and repair
+59.2,Month,Nov-96,K02000001,,cpi1dim1S40302,04.3.2 Services for maintenance and repair
+74.2,Month,Nov-96,K02000001,,cpi1dim1S40401,04.4.1 Water supply
+77.1,Month,Nov-96,K02000001,,cpi1dim1S40403,04.4.3 Sewerage collection
+95,Month,Nov-96,K02000001,,cpi1dim1S40501,04.5.1 Electricity
+78.2,Month,Nov-96,K02000001,,cpi1dim1S40502,04.5.2 Gas
+56.6,Month,Nov-96,K02000001,,cpi1dim1S40503,04.5.3 Liquid fuels
+74.4,Month,Nov-96,K02000001,,cpi1dim1S40504,04.5.4 Solid fuels
+99.5,Month,Nov-96,K02000001,,cpi1dim1S50101,05.1.1 Furniture and furnishings
+93.8,Month,Nov-96,K02000001,,cpi1dim1S50102,05.1.2 Carpets and other floor coverings
+123.6,Month,Nov-96,K02000001,,cpi1dim1S50200,05.2.0 Household Textiles
+134.7,Month,Nov-96,K02000001,,cpi1dim1S50301,05.3.1/2 Major appliances and small electric goods
+67.4,Month,Nov-96,K02000001,,cpi1dim1S50303,05.3.3 Repair of household appliances
+117.8,Month,Nov-96,K02000001,,cpi1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+120,Month,Nov-96,K02000001,,cpi1dim1S50500,05.5.0 Tools and equipment for House and Garden
+111.7,Month,Nov-96,K02000001,,cpi1dim1S50601,05.6.1 Non-durable household goods
+62.9,Month,Nov-96,K02000001,,cpi1dim1S50602,05.6.2 Domestic services and household services
+94,Month,Nov-96,K02000001,,cpi1dim1S60101,06.1.1 Pharmaceutical products
+83.4,Month,Nov-96,K02000001,,cpi1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+115.5,Month,Nov-96,K02000001,,cpi1dim1S70102,07.1.2/3 Motorcycles and bicycles
+101.4,Month,Nov-96,K02000001,,cpi1dim1S70181,07.1.1 New Cars
+128.8,Month,Nov-96,K02000001,,cpi1dim1S70191,07.1.1b Second Hand Cars
+91.3,Month,Nov-96,K02000001,,cpi1dim1S70201,07.2.1 Spare parts and accessories
+67.7,Month,Nov-96,K02000001,,cpi1dim1S70202,07.2.2 Fuels and lubricants
+61.3,Month,Nov-96,K02000001,,cpi1dim1S70203,07.2.3 Maintenance and repairs
+68.5,Month,Nov-96,K02000001,,cpi1dim1S70204,07.2.4 Other services
+76.4,Month,Nov-96,K02000001,,cpi1dim1S70301,07.3.1 Passenger transport by railway
+68.1,Month,Nov-96,K02000001,,cpi1dim1S70302,07.3.2 Passenger transport by road
+88.2,Month,Nov-96,K02000001,,cpi1dim1S70303,07.3.3 Passenger transport by air
+77.2,Month,Nov-96,K02000001,,cpi1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+84.5,Month,Nov-96,K02000001,,cpi1dim1S80100,08.1.0 Postal Services
+123.7,Month,Nov-96,K02000001,,cpi1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+263,Month,Nov-96,K02000001,,cpi1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+207.6,Month,Nov-96,K02000001,,cpi1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+1057.4,Month,Nov-96,K02000001,,cpi1dim1S90103,09.1.3 Data processing equipment
+131.4,Month,Nov-96,K02000001,,cpi1dim1S90104,09.1.4 Recording media
+66.5,Month,Nov-96,K02000001,,cpi1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+143.4,Month,Nov-96,K02000001,,cpi1dim1S90301,"09.3.1 Games, toys and hobbies"
+131.2,Month,Nov-96,K02000001,,cpi1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+104.8,Month,Nov-96,K02000001,,cpi1dim1S90303,"09.3.3 Gardens, plants and flowers"
+84.3,Month,Nov-96,K02000001,,cpi1dim1S90304,"09.3.4/5 Pets, related products and services"
+71.5,Month,Nov-96,K02000001,,cpi1dim1S90401,09.4.1 Recreational and sporting services
+78.8,Month,Nov-96,K02000001,,cpi1dim1S90402,09.4.2 Cultural services
+81.8,Month,Nov-96,K02000001,,cpi1dim1S90501,09.5.1 Books
+75.6,Month,Nov-96,K02000001,,cpi1dim1S90502,09.5.2 Newspapers and periodicals
+93.2,Month,Nov-96,K02000001,,cpi1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+66.5,Month,Nov-96,K02000001,,cpi1dim1S90600,09.6.0 Package Holidays
+62.2,Month,Nov-96,K02000001,,cpi1dim1S100000,10.0.0 Education
+76.6,Month,Nov-96,K02000001,,cpi1dim1S110101,"11.1.1 Restaurants, cafes"
+68.8,Month,Nov-96,K02000001,,cpi1dim1S110102,11.1.2 Canteens
+67.8,Month,Nov-96,K02000001,,cpi1dim1S110200,11.2.0 Accommodation Services
+64.5,Month,Nov-96,K02000001,,cpi1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+104.6,Month,Nov-96,K02000001,,cpi1dim1S120102,12.1.2/3 Appliances and products for personal care
+97.3,Month,Nov-96,K02000001,,cpi1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+119.3,Month,Nov-96,K02000001,,cpi1dim1S120302,12.3.2 Other personal effects
+75.3,Month,Nov-96,K02000001,,cpi1dim1S120502,12.5.2 House contents insurance
+57.8,Month,Nov-96,K02000001,,cpi1dim1S120504,12.5.4 Transport insurance
+132.5,Month,Nov-96,K02000001,,cpi1dim1S120602,12.6.2 Other financial services (nec)
+57.7,Month,Nov-96,K02000001,,cpi1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+90.6,Month,Nov-96,K02000001,,cpi1dim1T10000,01 Food and non-alcoholic beverages
+73.5,Month,Nov-96,K02000001,,cpi1dim1T20000,02 Alcoholic beverages and tobacco
+166.9,Month,Nov-96,K02000001,,cpi1dim1T30000,03 Clothing and footwear
+80.1,Month,Nov-96,K02000001,,cpi1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+103.6,Month,Nov-96,K02000001,,cpi1dim1T50000,"05 Furniture, household equipment and maintenance"
+76.9,Month,Nov-96,K02000001,,cpi1dim1T60000,06 Health
+80.8,Month,Nov-96,K02000001,,cpi1dim1T70000,07 Transport
+120,Month,Nov-96,K02000001,,cpi1dim1T80000,08 Communication
+98.4,Month,Nov-96,K02000001,,cpi1dim1T90000,09 Recreation and culture
+62.2,Month,Nov-96,K02000001,,cpi1dim1T100000,10 Education
+74.8,Month,Nov-96,K02000001,,cpi1dim1T110000,11 Restaurants and hotels
+78.1,Month,Nov-96,K02000001,,cpi1dim1T120000,12 Miscellaneous goods and services
+89,Month,Dec-96,K02000001,,cpi1dim1A0,CPI (overall index)
+90.2,Month,Dec-96,K02000001,,cpi1dim1G10100,01.1 Food
+96.1,Month,Dec-96,K02000001,,cpi1dim1G10200,01.2 Non-alcoholic beverages
+96.3,Month,Dec-96,K02000001,,cpi1dim1G20100,02.1 Alcoholic beverages
+59.6,Month,Dec-96,K02000001,,cpi1dim1G20200,02.2 Tobacco
+171.1,Month,Dec-96,K02000001,,cpi1dim1G30100,03.1 Clothing
+142.4,Month,Dec-96,K02000001,,cpi1dim1G30200,03.2 Footwear including repairs
+78.5,Month,Dec-96,K02000001,,cpi1dim1G40100,04.1 Actual rentals for housing
+76.6,Month,Dec-96,K02000001,,cpi1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+75.4,Month,Dec-96,K02000001,,cpi1dim1G40400,04.4 Water supply and misc. services for the dwelling
+84.5,Month,Dec-96,K02000001,,cpi1dim1G40500,"04.5 Electricity , gas and other fuels"
+100.5,Month,Dec-96,K02000001,,cpi1dim1G50100,"05.1 Furniture, furnishings and carpets"
+124.2,Month,Dec-96,K02000001,,cpi1dim1G50200,05.2 Household textiles
+123.1,Month,Dec-96,K02000001,,cpi1dim1G50300,"05.3 Household appliances, fitting and repairs"
+117.5,Month,Dec-96,K02000001,,cpi1dim1G50400,"05.4 Glassware, tableware and household utensils"
+119.9,Month,Dec-96,K02000001,,cpi1dim1G50500,05.5 Tools and equipment for house and garden
+84.3,Month,Dec-96,K02000001,,cpi1dim1G50600,05.6 Goods and services for routine maintenance
+89.2,Month,Dec-96,K02000001,,cpi1dim1G60100,"06.1 Medical products, appliances and equipment"
+113,Month,Dec-96,K02000001,,cpi1dim1G70100,07.1 Purchase of vehicles
+68.2,Month,Dec-96,K02000001,,cpi1dim1G70200,07.2 Operation of personal transport equipment
+70.1,Month,Dec-96,K02000001,,cpi1dim1G70300,07.3 Transport services
+84.6,Month,Dec-96,K02000001,,cpi1dim1G80100,08.1 Postal services
+123.7,Month,Dec-96,K02000001,,cpi1dim1G80200,08.2/3 Telephone and telefax equip
+241.2,Month,Dec-96,K02000001,,cpi1dim1G90100,09.1 Audio-visual equipment and related products
+115,Month,Dec-96,K02000001,,cpi1dim1G90300,"09.3 Other recreational items, gardens and pets"
+75.8,Month,Dec-96,K02000001,,cpi1dim1G90400,09.4 Recreational and cultural services
+82.3,Month,Dec-96,K02000001,,cpi1dim1G90500,"09.5 Books, newspapers and stationery"
+67,Month,Dec-96,K02000001,,cpi1dim1G90600,09.6 Package holidays
+62.3,Month,Dec-96,K02000001,,cpi1dim1G100000,10.0 Education
+76.2,Month,Dec-96,K02000001,,cpi1dim1G110100,11.1 Catering services
+68.1,Month,Dec-96,K02000001,,cpi1dim1G110200,11.2 Accommodation services
+91.6,Month,Dec-96,K02000001,,cpi1dim1G120100,12.1 Personal care
+104.9,Month,Dec-96,K02000001,,cpi1dim1G120300,12.3 Personal effects (nec)
+61.5,Month,Dec-96,K02000001,,cpi1dim1G120500,12.5 Insurance
+132.5,Month,Dec-96,K02000001,,cpi1dim1G120600,12.6 Financial services (nec)
+57.7,Month,Dec-96,K02000001,,cpi1dim1G120700,12.7 Other services (nec)
+93.8,Month,Dec-96,K02000001,,cpi1dim1S10101,01.1.1 Bread and cereals
+96.5,Month,Dec-96,K02000001,,cpi1dim1S10102,01.1.2 Meat
+78,Month,Dec-96,K02000001,,cpi1dim1S10103,01.1.3 Fish
+93.2,Month,Dec-96,K02000001,,cpi1dim1S10104,"01.1.4 Milk, cheese and eggs"
+102.4,Month,Dec-96,K02000001,,cpi1dim1S10105,01.1.5 Oils and fats
+88,Month,Dec-96,K02000001,,cpi1dim1S10106,01.1.6 Fruit
+83.5,Month,Dec-96,K02000001,,cpi1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+83.9,Month,Dec-96,K02000001,,cpi1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+95.7,Month,Dec-96,K02000001,,cpi1dim1S10109,01.1.9 Food products (nec)
+101.5,Month,Dec-96,K02000001,,cpi1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+94.6,Month,Dec-96,K02000001,,cpi1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+96.1,Month,Dec-96,K02000001,,cpi1dim1S20101,02.1.1 Spirits
+94.8,Month,Dec-96,K02000001,,cpi1dim1S20102,02.1.2 Wine
+99.9,Month,Dec-96,K02000001,,cpi1dim1S20103,02.1.3 Beer
+59.6,Month,Dec-96,K02000001,,cpi1dim1S20200,02.2.0 Tobacco
+178,Month,Dec-96,K02000001,,cpi1dim1S30102,03.1.2 Garments
+125.8,Month,Dec-96,K02000001,,cpi1dim1S30103,03.1.3 Other clothing and clothing accessories
+74.1,Month,Dec-96,K02000001,,cpi1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+142.4,Month,Dec-96,K02000001,,cpi1dim1S30200,03.2.0 Footwear including repairs
+78.5,Month,Dec-96,K02000001,,cpi1dim1S40100,04.1.0 Actual rentals for housing
+98.8,Month,Dec-96,K02000001,,cpi1dim1S40301,04.3.1 Materials for maintenance and repair
+59.3,Month,Dec-96,K02000001,,cpi1dim1S40302,04.3.2 Services for maintenance and repair
+74.2,Month,Dec-96,K02000001,,cpi1dim1S40401,04.4.1 Water supply
+77.1,Month,Dec-96,K02000001,,cpi1dim1S40403,04.4.3 Sewerage collection
+94.6,Month,Dec-96,K02000001,,cpi1dim1S40501,04.5.1 Electricity
+78.2,Month,Dec-96,K02000001,,cpi1dim1S40502,04.5.2 Gas
+59.3,Month,Dec-96,K02000001,,cpi1dim1S40503,04.5.3 Liquid fuels
+74.5,Month,Dec-96,K02000001,,cpi1dim1S40504,04.5.4 Solid fuels
+102,Month,Dec-96,K02000001,,cpi1dim1S50101,05.1.1 Furniture and furnishings
+95.8,Month,Dec-96,K02000001,,cpi1dim1S50102,05.1.2 Carpets and other floor coverings
+124.2,Month,Dec-96,K02000001,,cpi1dim1S50200,05.2.0 Household Textiles
+134.1,Month,Dec-96,K02000001,,cpi1dim1S50301,05.3.1/2 Major appliances and small electric goods
+67.4,Month,Dec-96,K02000001,,cpi1dim1S50303,05.3.3 Repair of household appliances
+117.5,Month,Dec-96,K02000001,,cpi1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+119.9,Month,Dec-96,K02000001,,cpi1dim1S50500,05.5.0 Tools and equipment for House and Garden
+111.4,Month,Dec-96,K02000001,,cpi1dim1S50601,05.6.1 Non-durable household goods
+63.1,Month,Dec-96,K02000001,,cpi1dim1S50602,05.6.2 Domestic services and household services
+94.1,Month,Dec-96,K02000001,,cpi1dim1S60101,06.1.1 Pharmaceutical products
+85,Month,Dec-96,K02000001,,cpi1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+115.8,Month,Dec-96,K02000001,,cpi1dim1S70102,07.1.2/3 Motorcycles and bicycles
+101.4,Month,Dec-96,K02000001,,cpi1dim1S70181,07.1.1 New Cars
+127.6,Month,Dec-96,K02000001,,cpi1dim1S70191,07.1.1b Second Hand Cars
+91.5,Month,Dec-96,K02000001,,cpi1dim1S70201,07.2.1 Spare parts and accessories
+70,Month,Dec-96,K02000001,,cpi1dim1S70202,07.2.2 Fuels and lubricants
+61.7,Month,Dec-96,K02000001,,cpi1dim1S70203,07.2.3 Maintenance and repairs
+68.7,Month,Dec-96,K02000001,,cpi1dim1S70204,07.2.4 Other services
+76.4,Month,Dec-96,K02000001,,cpi1dim1S70301,07.3.1 Passenger transport by railway
+68.2,Month,Dec-96,K02000001,,cpi1dim1S70302,07.3.2 Passenger transport by road
+88.2,Month,Dec-96,K02000001,,cpi1dim1S70303,07.3.3 Passenger transport by air
+77.2,Month,Dec-96,K02000001,,cpi1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+84.6,Month,Dec-96,K02000001,,cpi1dim1S80100,08.1.0 Postal Services
+123.7,Month,Dec-96,K02000001,,cpi1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+261.6,Month,Dec-96,K02000001,,cpi1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+205,Month,Dec-96,K02000001,,cpi1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+1054.6,Month,Dec-96,K02000001,,cpi1dim1S90103,09.1.3 Data processing equipment
+131.8,Month,Dec-96,K02000001,,cpi1dim1S90104,09.1.4 Recording media
+66.5,Month,Dec-96,K02000001,,cpi1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+142.7,Month,Dec-96,K02000001,,cpi1dim1S90301,"09.3.1 Games, toys and hobbies"
+130.8,Month,Dec-96,K02000001,,cpi1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+104.5,Month,Dec-96,K02000001,,cpi1dim1S90303,"09.3.3 Gardens, plants and flowers"
+84.2,Month,Dec-96,K02000001,,cpi1dim1S90304,"09.3.4/5 Pets, related products and services"
+71.6,Month,Dec-96,K02000001,,cpi1dim1S90401,09.4.1 Recreational and sporting services
+78.7,Month,Dec-96,K02000001,,cpi1dim1S90402,09.4.2 Cultural services
+81.6,Month,Dec-96,K02000001,,cpi1dim1S90501,09.5.1 Books
+75.6,Month,Dec-96,K02000001,,cpi1dim1S90502,09.5.2 Newspapers and periodicals
+93.2,Month,Dec-96,K02000001,,cpi1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+67,Month,Dec-96,K02000001,,cpi1dim1S90600,09.6.0 Package Holidays
+62.3,Month,Dec-96,K02000001,,cpi1dim1S100000,10.0.0 Education
+76.7,Month,Dec-96,K02000001,,cpi1dim1S110101,"11.1.1 Restaurants, cafes"
+69.2,Month,Dec-96,K02000001,,cpi1dim1S110102,11.1.2 Canteens
+68.1,Month,Dec-96,K02000001,,cpi1dim1S110200,11.2.0 Accommodation Services
+65,Month,Dec-96,K02000001,,cpi1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+104.8,Month,Dec-96,K02000001,,cpi1dim1S120102,12.1.2/3 Appliances and products for personal care
+96.9,Month,Dec-96,K02000001,,cpi1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+119.3,Month,Dec-96,K02000001,,cpi1dim1S120302,12.3.2 Other personal effects
+75.3,Month,Dec-96,K02000001,,cpi1dim1S120502,12.5.2 House contents insurance
+57.8,Month,Dec-96,K02000001,,cpi1dim1S120504,12.5.4 Transport insurance
+132.5,Month,Dec-96,K02000001,,cpi1dim1S120602,12.6.2 Other financial services (nec)
+57.7,Month,Dec-96,K02000001,,cpi1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+90.8,Month,Dec-96,K02000001,,cpi1dim1T10000,01 Food and non-alcoholic beverages
