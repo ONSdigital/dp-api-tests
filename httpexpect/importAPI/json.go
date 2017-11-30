@@ -13,17 +13,6 @@ var validPOSTCreateJobJSON string = `{
   ]
 }`
 
-var validJSON string = `{
-  "recipe": "b944be78-f56d-409b-9ebd-ab2b77ffe187",
-  "state": "created",
-  "files": [
-	{
-	  "alias_name": "v4",
-	  "url": "https://s3-eu-west-1.amazonaws.com/dp-publish-content-test/OCIGrowth.csv"
-	}
-  ]
-}`
-
 // Invalid Json body without recipe
 var invalidJSON string = `
 {
@@ -62,7 +51,7 @@ var invalidSyntaxJSON string = `
 var validPUTAddFilesJSON string = `{
 
 	  "alias_name": "v5",
-	  "url": "https://s3-eu-west-1.amazonaws.com/dp-publish-content-test/OCIGrowth.csv"
+	  "url": "https://s3-eu-west-1.amazonaws.com/dp-publish-content-test/CPIGrowth.csv"
 	
 }`
 
@@ -98,6 +87,7 @@ var validCreatedImportJobData = bson.M{
 		"links.self.id":   jobID,
 		"links.self.href": "http://localhost:22000/jobs/" + jobID,
 		"last_updated":    "2017-12-11", // TODO this should be an isodate
+		"test_data":       "true",
 	},
 }
 
@@ -112,5 +102,6 @@ var validSubmittedImportJobData = bson.M{
 		"links.self.id":   "01C24F0D-24BE-479F-962B-C76BCCD0AD00",
 		"links.self.href": "http://localhost:22000/jobs/01C24F0D-24BE-479F-962B-C76BCCD0AD00",
 		"last_updated":    "2017-12-11", // TODO this should be an isodate
+		"test_data":       "true",
 	},
 }

@@ -94,5 +94,4 @@ func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 	}
 }
 
-// 400 - Missing parameters within request
-// Need to write test for the above response
+// TODO Need to write failure tests
