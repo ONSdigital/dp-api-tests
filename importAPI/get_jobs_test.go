@@ -40,19 +40,20 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 
 	if err := mongo.TeardownMany(d); err != nil {
 		if err != mgo.ErrNotFound {
-			log.ErrorC("Was unable to run test", err, nil)
+			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
 		}
 	}
 
 	if err := mongo.SetupMany(d); err != nil {
-		log.ErrorC("Was unable to run test", err, nil)
+		log.ErrorC("Failed to set up test data", err, nil)
 		os.Exit(1)
 	}
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
+	// TODO Dont skip test once endpoint has been refactored
 	// These tests needs to refine when authentication was handled in the code.
-	Convey("Given an import job exists", t, func() {
+	SkipConvey("Given an import job exists", t, func() {
 		Convey("When a request to get a list of all jobs and the user is authenticated", func() {
 			Convey("Then the response returns status OK (200)", func() {
 
@@ -72,7 +73,7 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 
 	if err := mongo.TeardownMany(d); err != nil {
 		if err != mgo.ErrNotFound {
-			log.ErrorC("Was unable to run test", err, nil)
+			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
 		}
 	}
