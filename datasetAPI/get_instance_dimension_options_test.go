@@ -86,7 +86,7 @@ func TestGetInstanceDimensionOptions_ReturnsAllDimensionOptionsFromAnInstance(t 
 			response := datasetAPI.GET("/instances/{instance_id}/dimensions/time/options", instanceID).WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
-			response.Value("dimension_id").Equal("time")
+			response.Value("dimension").Equal("time")
 			response.Value("values").Array().Element(0).Equal("202.45")
 
 		})
@@ -95,7 +95,7 @@ func TestGetInstanceDimensionOptions_ReturnsAllDimensionOptionsFromAnInstance(t 
 			response := datasetAPI.GET("/instances/{instance_id}/dimensions/time/options", instanceID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
-			response.Value("dimension_id").Equal("time")
+			response.Value("dimension").Equal("time")
 			response.Value("values").Array().Element(0).Equal("202.45")
 
 		})
@@ -107,7 +107,7 @@ func TestGetInstanceDimensionOptions_ReturnsAllDimensionOptionsFromAnInstance(t 
 			response := datasetAPI.GET("/instances/{instance_id}/dimensions/aggregate/options", instanceID).WithHeader(internalToken, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
-			response.Value("dimension_id").Equal("aggregate")
+			response.Value("dimension").Equal("aggregate")
 			response.Value("values").Array().Element(0).Equal("cpi1dimA19")
 
 		})
@@ -116,7 +116,7 @@ func TestGetInstanceDimensionOptions_ReturnsAllDimensionOptionsFromAnInstance(t 
 			response := datasetAPI.GET("/instances/{instance_id}/dimensions/aggregate/options", instanceID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
-			response.Value("dimension_id").Equal("aggregate")
+			response.Value("dimension").Equal("aggregate")
 			response.Value("values").Array().Element(0).Equal("cpi1dimA19")
 
 		})

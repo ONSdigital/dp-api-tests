@@ -261,7 +261,7 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 
 func checkTimeDimensionResponse(instanceID string, response *httpexpect.Object) {
 
-	response.Value("items").Array().Element(0).Object().Value("dimension_id").Equal("time")
+	response.Value("items").Array().Element(0).Object().Value("dimension").Equal("time")
 
 	response.Value("items").Array().Element(0).Object().Value("label").Equal("")
 
@@ -279,7 +279,7 @@ func checkTimeDimensionResponse(instanceID string, response *httpexpect.Object) 
 
 func checkAggregateDimensionResponse(instanceID string, response *httpexpect.Object) {
 
-	response.Value("items").Array().Element(0).Object().Value("dimension_id").Equal("aggregate")
+	response.Value("items").Array().Element(0).Object().Value("dimension").Equal("aggregate")
 
 	response.Value("items").Array().Element(0).Object().Value("label").Equal("CPI (Overall Index)")
 
