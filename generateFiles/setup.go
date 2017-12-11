@@ -2,12 +2,15 @@ package generateFiles
 
 import (
 	"bytes"
+	"context"
 	"io"
 	"net/http"
 	"os"
 
+	"github.com/ONSdigital/go-ns/log"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
 
@@ -27,7 +30,7 @@ type Store struct {
 	bucket string
 }
 
-func sendV4FileToAWS(region, bucket, filename string) error {
+func sendV4FileToAWS(region, bucket, filename string) (string, error) {
 
 	config := aws.NewConfig().WithRegion(region)
 
@@ -38,25 +41,93 @@ func sendV4FileToAWS(region, bucket, filename string) error {
 
 	session, err := session.NewSession(store.config)
 	if err != nil {
-		return err
+		log.ErrorC("failed to create session", err, nil)
+		return "", err
 	}
 
 	v4File, err := os.Open(filename)
 	if err != nil {
-		return err
+		log.ErrorC("failed to open file", err, nil)
+		return "", err
 	}
+
+	log.Info("successfully retrieved file", nil)
 
 	uploader := s3manager.NewUploader(session)
 
-	uploader.Upload(&s3manager.UploadInput{})
-
-	// the AWS uploader automatically handles large files breaking them into parts and using the multi part API.
-	_, err = uploader.Upload(&s3manager.UploadInput{
+	// the AWS uploader automatically handles large files breaking them into
+	//  parts and using the multi part API.
+	result, err := uploader.Upload(&s3manager.UploadInput{
 		Body:   v4File,
 		Bucket: &store.bucket,
 		Key:    &filename,
 	})
 	if err != nil {
+		log.ErrorC("failed to upload file", err, nil)
+		return "", err
+	}
+
+	return result.Location, nil
+}
+
+func getS3File(region, bucket, filename string) error {
+	config := aws.NewConfig().WithRegion(region)
+
+	store := &Store{
+		config: config,
+		bucket: bucket,
+	}
+
+	session, err := session.NewSession(store.config)
+	if err != nil {
+		log.ErrorC("failed to create session", err, nil)
+		return err
+	}
+
+	svc := s3.New(session)
+
+	input := &s3.GetObjectInput{
+		Key:    aws.String(filename),
+		Bucket: aws.String(bucket),
+	}
+
+	ctx := context.Background()
+	result, err := svc.GetObjectWithContext(ctx, input)
+	if err != nil {
+		log.ErrorC("failed to find file", err, nil)
+		return err
+	}
+	defer result.Body.Close()
+
+	log.Debug("body is?", log.Data{"s3_file": result.Body})
+
+	return nil
+}
+
+func deleteS3File(region, bucket, filename string) error {
+
+	config := aws.NewConfig().WithRegion(region)
+
+	store := &Store{
+		config: config,
+		bucket: bucket,
+	}
+
+	session, err := session.NewSession(store.config)
+	if err != nil {
+		log.ErrorC("failed to create session", err, nil)
+		return err
+	}
+
+	svc := s3.New(session)
+
+	input := &s3.DeleteObjectInput{
+		Key:    aws.String(filename),
+		Bucket: aws.String(bucket),
+	}
+
+	if _, err = svc.DeleteObject(input); err != nil {
+		log.ErrorC("failed to remove file", err, nil)
 		return err
 	}
 
