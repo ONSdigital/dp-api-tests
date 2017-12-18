@@ -38,6 +38,16 @@ func TestSuccessfulPutFilterBlueprint(t *testing.T) {
 			os.Exit(1)
 		}
 
+		if err := setupInstance(instanceID, GetValidPublishedInstanceDataBSON(instanceID)); err != nil {
+			log.ErrorC("Unable to setup instance test resource", err, nil)
+			os.Exit(1)
+		}
+
+		if err := setupMultipleDimensionsAndOptions(instanceID); err != nil {
+			log.ErrorC("Unable to setup dimension option test resources", err, nil)
+			os.Exit(1)
+		}
+
 		Convey("When a request to update the filter blueprint with an info event and new instance id", func() {
 
 			newInstanceID := uuid.NewV4().String()
@@ -49,7 +59,7 @@ func TestSuccessfulPutFilterBlueprint(t *testing.T) {
 
 			Convey("Then the response contains the updated filter blueprint", func() {
 
-				// TODO check response contains the correct data
+				// check response contains the correct data
 				response.Value("instance_id").Equal(newInstanceID)
 				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/filters/" + filterBlueprintID + "/dimensions$")
 				response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/filters/" + filterBlueprintID + "$")
@@ -100,6 +110,11 @@ func TestSuccessfulPutFilterBlueprint(t *testing.T) {
 			os.Exit(1)
 		}
 
+		if err := teardownDimensionOptions(instanceID); err != nil {
+			log.ErrorC("Unable to remove dimension option test resources from mongo db", err, nil)
+			os.Exit(1)
+		}
+
 		if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
 			log.ErrorC("Unable to remove test data from mongo db", err, nil)
 			os.Exit(1)
@@ -139,6 +154,14 @@ func TestFailureToPutFilterBlueprint(t *testing.T) {
 
 				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetInvalidSyntaxJSON(instanceID))).
 					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - Invalid request body\n")
+			})
+		})
+
+		Convey("When a put request to change the instance id to a non existing one against a filter blueprint", func() {
+			Convey("Then fail to update filter blueprint and return status bad request (400)", func() {
+
+				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetValidPUTFilterBlueprintJSON(instanceID, time.Now()))).
+					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - instance not found\n")
 			})
 		})
 

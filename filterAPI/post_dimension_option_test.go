@@ -14,7 +14,6 @@ import (
 )
 
 func TestSuccessfulPostDimensionOptions(t *testing.T) {
-
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
@@ -26,7 +25,17 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
 
 		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
-			log.ErrorC("Unable to setup test data", err, nil)
+			log.ErrorC("Unable to setup filter blueprint test resource", err, nil)
+			os.Exit(1)
+		}
+
+		if err := setupInstance(instanceID, GetValidPublishedInstanceDataBSON(instanceID)); err != nil {
+			log.ErrorC("Unable to setup instance test resource", err, nil)
+			os.Exit(1)
+		}
+
+		if err := setupMultipleDimensionsAndOptions(instanceID); err != nil {
+			log.ErrorC("Unable to setup dimension option test resources", err, nil)
 			os.Exit(1)
 		}
 
@@ -55,10 +64,20 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 		expectedFilterJob.FilterID = filterBlueprintID
 
 		So(filterJob, ShouldResemble, expectedFilterJob)
+
+		if err := teardownInstance(instanceID); err != nil {
+			log.ErrorC("Unable to remove instance test resource from mongo db", err, nil)
+			os.Exit(1)
+		}
+
+		if err := teardownDimensionOptions(instanceID); err != nil {
+			log.ErrorC("Unable to remove dimension option test resources from mongo db", err, nil)
+			os.Exit(1)
+		}
 	})
 
 	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
-		log.ErrorC("Unable to remove test data from mongo db", err, nil)
+		log.ErrorC("Unable to remove filter test resource from mongo db", err, nil)
 		os.Exit(1)
 	}
 }
@@ -72,7 +91,7 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given filter blueprint does not exist", t, func() {
-		invalidfilterBlueprintID := "12345678"
+		invalidfilterBlueprintID := uuid.NewV4().String()
 
 		Convey("When a post request to add an option to a dimension for that filter blueprint", func() {
 			Convey("Then return status bad request (400)", func() {
@@ -92,12 +111,45 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 			os.Exit(1)
 		}
 
-		Convey("When a post request to add an option for a dimension that does not exist against that filter blueprint", func() {
-			Convey("Then return status not found (404)", func() {
+		Convey("When a post request to add an option for a dimension for an instance that does not exist", func() {
+			Convey("Then return status unprocessable entity (422)", func() {
 
 				filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dimension not found")
+					Expect().Status(http.StatusUnprocessableEntity).Body().Contains("Unprocessable entity - instance for filter blueprint no longer exists\n")
 			})
+		})
+
+		Convey("And the instance that is associated with this filter blueprint does exist", func() {
+			if err := setupInstance(instanceID, GetValidPublishedInstanceDataBSON(instanceID)); err != nil {
+				log.ErrorC("Unable to setup instance test resource", err, nil)
+				os.Exit(1)
+			}
+
+			Convey("When a post request to add an option for a dimension that does not exist", func() {
+				Convey("Then return status not found (400)", func() {
+
+					filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
+						Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - dimension not found\n")
+				})
+			})
+
+			Convey("When a post request to add an option that does not exist for a dimension", func() {
+				if err := setupDimensionOptions(uuid.NewV4().String(), GetValidAgeDimensionData(instanceID, "27")); err != nil {
+					log.ErrorC("Unable to setup dimension", err, log.Data{"instance_id": instanceID, "dimension": "age", "option": "27"})
+					os.Exit(1)
+				}
+
+				Convey("Then return status not found (400)", func() {
+
+					filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/age/options/75", filterBlueprintID).
+						Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - incorrect dimension options chosen: [75]\n")
+				})
+			})
+
+			if err := teardownInstance(instanceID); err != nil {
+				log.ErrorC("Unable to remove instance test resource from mongo db", err, nil)
+				os.Exit(1)
+			}
 		})
 
 		if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {

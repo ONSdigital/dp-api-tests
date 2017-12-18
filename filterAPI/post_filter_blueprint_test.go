@@ -16,11 +16,23 @@ import (
 func TestSuccessfullyPostfilterBlueprint(t *testing.T) {
 
 	instanceID := uuid.NewV4().String()
+	dimensionOptionOneID := uuid.NewV4().String()
+	dimensionOptionTwoID := uuid.NewV4().String()
 
 	update := GetValidPublishedInstanceDataBSON(instanceID)
 
 	if err := setupInstance(instanceID, update); err != nil {
 		log.ErrorC("Unable to setup instance", err, nil)
+		os.Exit(1)
+	}
+
+	if err := setupDimensionOptions(dimensionOptionOneID, GetValidAgeDimensionData(instanceID, "27")); err != nil {
+		log.ErrorC("Unable to setup dimension option", err, nil)
+		os.Exit(1)
+	}
+
+	if err := setupDimensionOptions(dimensionOptionTwoID, GetValidAgeDimensionData(instanceID, "42")); err != nil {
+		log.ErrorC("Unable to setup dimension option", err, nil)
 		os.Exit(1)
 	}
 
@@ -31,7 +43,6 @@ func TestSuccessfullyPostfilterBlueprint(t *testing.T) {
 
 			response := filterAPI.POST("/filters").WithBytes([]byte(GetValidPOSTCreateFilterJSON(instanceID))).
 				Expect().Status(http.StatusCreated).JSON().Object()
-
 			response.Value("filter_id").NotNull()
 			response.Value("instance_id").Equal(instanceID)
 			response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("/filters/(.+)/dimensions$")
@@ -74,20 +85,20 @@ func TestSuccessfullyPostfilterBlueprint(t *testing.T) {
 				So(filterOutput, ShouldResemble, expectedTestData.ExpectedFilterOutputOnPost(cfg.FilterAPIURL, instanceID, filterOutputID, filterBlueprintID))
 
 				if err := mongo.Teardown(database, "filterOutputs", "filter_id", filterOutputID); err != nil {
-					log.ErrorC("Unable to remove test data from mongo db", err, nil)
+					log.ErrorC("Unable to remove filter output test resource from mongo db", err, nil)
 					os.Exit(1)
 				}
 			})
 
 			if err := mongo.Teardown(database, collection, "filter_id", filterBlueprintID); err != nil {
-				log.ErrorC("Unable to remove test data from mongo db", err, nil)
+				log.ErrorC("Unable to remove filters test resource from mongo db", err, nil)
 				os.Exit(1)
 			}
 		})
 	})
 
 	if err := mongo.Teardown(database, collection, "instance_id", instanceID); err != nil {
-		log.ErrorC("Unable to remove test data from mongo db", err, nil)
+		log.ErrorC("Unable to remove filter test resource from mongo db", err, nil)
 		os.Exit(1)
 	}
 
@@ -95,19 +106,26 @@ func TestSuccessfullyPostfilterBlueprint(t *testing.T) {
 		log.ErrorC("Unable to teardown instance", err, nil)
 		os.Exit(1)
 	}
+
+	if err := teardownDimensionOptions(instanceID); err != nil {
+		log.ErrorC("Unable to teardown dimension options", err, nil)
+		os.Exit(1)
+	}
 }
 
 func TestFailureToPostfilterBlueprint(t *testing.T) {
 
 	instanceID := uuid.NewV4().String()
-
+	dimensionOptionID := uuid.NewV4().String()
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	Convey("Given invalid json input to create a filter", t, func() {
-		Convey("Then the response returns status bad request (400)", func() {
+		Convey("When the request body does not contain an instance id", func() {
+			Convey("Then the response returns status bad request (400)", func() {
 
-			filterAPI.POST("/filters").WithBytes([]byte(GetInvalidJSON(instanceID))).
-				Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - Invalid request body\n")
+				filterAPI.POST("/filters").WithBytes([]byte(GetInvalidJSON(instanceID))).
+					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - Invalid request body\n")
+			})
 		})
 	})
 
@@ -119,5 +137,45 @@ func TestFailureToPostfilterBlueprint(t *testing.T) {
 					Expect().Status(http.StatusNotFound).Body().Contains("Instance not found\n")
 			})
 		})
+	})
+
+	Convey("Given that a dataset version is published", t, func() {
+		update := GetValidPublishedInstanceDataBSON(instanceID)
+
+		if err := setupInstance(instanceID, update); err != nil {
+			log.ErrorC("Unable to setup instance", err, nil)
+			os.Exit(1)
+		}
+
+		if err := setupDimensionOptions(dimensionOptionID, GetValidAge27DimensionData(instanceID)); err != nil {
+			log.ErrorC("Unable to setup dimension option", err, nil)
+			os.Exit(1)
+		}
+
+		Convey("When the request contains a valid instance id but a dimension that does not exist", func() {
+			Convey("Then the response returns status bad request (400)", func() {
+
+				filterAPI.POST("/filters").WithBytes([]byte(GetInvalidDimensionJSON(instanceID))).
+					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - incorrect dimensions chosen: [weight]\n")
+			})
+		})
+
+		Convey("When the request contains a valid instance id and dimension but dimension options is invalid", func() {
+			Convey("Then the response returns status bad request (400)", func() {
+
+				filterAPI.POST("/filters").WithBytes([]byte(GetInvalidDimensionOptionJSON(instanceID))).
+					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - incorrect dimension options chosen: [33]\n")
+			})
+		})
+
+		if err := teardownInstance(instanceID); err != nil {
+			log.ErrorC("Unable to teardown instance", err, nil)
+			os.Exit(1)
+		}
+
+		if err := teardownDimensionOptions(instanceID); err != nil {
+			log.ErrorC("Unable to teardown dimension options", err, nil)
+			os.Exit(1)
+		}
 	})
 }

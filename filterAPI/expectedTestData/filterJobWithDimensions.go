@@ -187,7 +187,7 @@ func updatedAge(host, filterBlueprintID string) mongo.Dimension {
 	if filterBlueprintID == "" {
 		return mongo.Dimension{
 			Name:    "age",
-			Options: []string{"27", "28"},
+			Options: []string{"27", "42"},
 		}
 	}
 
