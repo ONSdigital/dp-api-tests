@@ -14,19 +14,11 @@ func setupInstance(instanceID string, update bson.M) error {
 		return err
 	}
 
-	if err := mongo.Setup("datasets", "instances", "instance_id", instanceID, update); err != nil {
-		return err
-	}
-
-	return nil
+	return mongo.Setup("datasets", "instances", "instance_id", instanceID, update)
 }
 
 func setupDimensionOptions(ID string, update bson.M) error {
-	if err := mongo.Setup("datasets", "dimension.options", "_id", ID, update); err != nil {
-		return err
-	}
-
-	return nil
+	return mongo.Setup("datasets", "dimension.options", "_id", ID, update)
 }
 
 func teardownInstance(instanceID string) error {
