@@ -214,10 +214,10 @@ func TestFailureToPutInstance(t *testing.T) {
 	})
 }
 
-func setupInstance(datasetID, edition, instanceID string) (*mongo.ManyDocs, error) {
-	var docs []mongo.Doc
+func setupInstance(datasetID, edition, instanceID string) ([]*mongo.Doc, error) {
+	var docs []*mongo.Doc
 
-	datasetDoc := mongo.Doc{
+	datasetDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "datasets",
 		Key:        "_id",
@@ -225,7 +225,7 @@ func setupInstance(datasetID, edition, instanceID string) (*mongo.ManyDocs, erro
 		Update:     validPublishedDatasetData(datasetID),
 	}
 
-	instanceOneDoc := mongo.Doc{
+	instanceOneDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "instances",
 		Key:        "_id",
@@ -235,15 +235,11 @@ func setupInstance(datasetID, edition, instanceID string) (*mongo.ManyDocs, erro
 
 	docs = append(docs, datasetDoc, instanceOneDoc)
 
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
-
-	if err := mongo.SetupMany(d); err != nil {
+	if err := mongo.SetupMany(docs); err != nil {
 		return nil, err
 	}
 
-	return d, nil
+	return docs, nil
 }
 
 func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instance) {

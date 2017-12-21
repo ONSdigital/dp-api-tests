@@ -20,9 +20,9 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 
 	edition := "2017"
 
-	var docs []mongo.Doc
+	var docs []*mongo.Doc
 
-	datasetDoc := mongo.Doc{
+	datasetDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "datasets",
 		Key:        "_id",
@@ -30,7 +30,7 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 		Update:     validPublishedDatasetData(datasetID),
 	}
 
-	editionDoc := mongo.Doc{
+	editionDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "editions",
 		Key:        "_id",
@@ -38,7 +38,7 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 		Update:     validPublishedEditionData(datasetID, editionID, edition),
 	}
 
-	instanceOneDoc := mongo.Doc{
+	instanceOneDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "instances",
 		Key:        "_id",
@@ -46,14 +46,14 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
 	}
 
-	dimensionOneDoc := mongo.Doc{
+	dimensionOneDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9811",
 		Update:     validTimeDimensionsData(instanceID),
 	}
-	dimensionTwoDoc := mongo.Doc{
+	dimensionTwoDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "dimension.options",
 		Key:        "_id",
@@ -63,18 +63,14 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 
 	docs = append(docs, datasetDoc, editionDoc, dimensionOneDoc, dimensionTwoDoc, instanceOneDoc)
 
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
-
-	if err := mongo.TeardownMany(d); err != nil {
+	if err := mongo.TeardownMany(docs); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
 	}
 
-	if err := mongo.SetupMany(d); err != nil {
+	if err := mongo.SetupMany(docs); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
@@ -103,7 +99,7 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 		})
 	})
 
-	if err := mongo.TeardownMany(d); err != nil {
+	if err := mongo.TeardownMany(docs); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)

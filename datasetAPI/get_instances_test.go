@@ -45,16 +45,16 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 	})
 
 	Convey("Given a `completed` and `edition-confirmed` instances exist", t, func() {
-		var docs []mongo.Doc
+		var docs []*mongo.Doc
 
-		completedDoc := mongo.Doc{
+		completedDoc := &mongo.Doc{
 			Database:   database,
 			Collection: "instances",
 			Key:        "_id",
 			Value:      instanceID,
 			Update:     validCompletedInstanceData(datasetID, "2018", instanceID),
 		}
-		editionConfirmedDoc := mongo.Doc{
+		editionConfirmedDoc := &mongo.Doc{
 			Database:   database,
 			Collection: "instances",
 			Key:        "_id",
@@ -64,11 +64,7 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 
 		docs = append(docs, completedDoc, editionConfirmedDoc)
 
-		d := &mongo.ManyDocs{
-			Docs: docs,
-		}
-
-		if err := mongo.SetupMany(d); err != nil {
+		if err := mongo.SetupMany(docs); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
@@ -119,7 +115,7 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.TeardownMany(docs); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to run test", err, nil)
 				os.Exit(1)

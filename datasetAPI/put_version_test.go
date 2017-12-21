@@ -256,7 +256,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		}
 	})
 
-	Convey("Given an published dataset and edition, and a version that has been associated", t, func() {
+	Convey("Given a published dataset and edition, and a version that has been associated", t, func() {
 		edition := "2017"
 		version := "2"
 
@@ -518,10 +518,10 @@ func TestFailureToUpdateVersion(t *testing.T) {
 	})
 }
 
-func setupResources(datasetID, editionID, edition, instanceID string, setup int) (*mongo.ManyDocs, error) {
-	var docs []mongo.Doc
+func setupResources(datasetID, editionID, edition, instanceID string, setup int) ([]*mongo.Doc, error) {
+	var docs []*mongo.Doc
 
-	publishedDatasetDoc := mongo.Doc{
+	publishedDatasetDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "datasets",
 		Key:        "_id",
@@ -529,7 +529,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Update:     validPublishedDatasetData(datasetID),
 	}
 
-	associatedDatasetDoc := mongo.Doc{
+	associatedDatasetDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "datasets",
 		Key:        "_id",
@@ -537,7 +537,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Update:     validAssociatedDatasetData(datasetID),
 	}
 
-	createdDatasetDoc := mongo.Doc{
+	createdDatasetDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "datasets",
 		Key:        "_id",
@@ -545,7 +545,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Update:     validCreatedDatasetData(datasetID),
 	}
 
-	publishedEditionDoc := mongo.Doc{
+	publishedEditionDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "editions",
 		Key:        "_id",
@@ -553,7 +553,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Update:     validPublishedEditionData(datasetID, editionID, edition),
 	}
 
-	unpublishedEditionDoc := mongo.Doc{
+	unpublishedEditionDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "editions",
 		Key:        "_id",
@@ -561,7 +561,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Update:     validUnpublishedEditionData(datasetID, editionID, edition),
 	}
 
-	publishedInstanceDoc := mongo.Doc{
+	publishedInstanceDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "instances",
 		Key:        "_id",
@@ -569,7 +569,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
 	}
 
-	associatedInstanceDoc := mongo.Doc{
+	associatedInstanceDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "instances",
 		Key:        "_id",
@@ -577,7 +577,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Update:     validAssociatedInstanceData(datasetID, edition, instanceID),
 	}
 
-	editionConfirmedInstanceDoc := mongo.Doc{
+	editionConfirmedInstanceDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "instances",
 		Key:        "_id",
@@ -608,16 +608,12 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		return nil, errMsg
 	}
 
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
-
-	if err := mongo.SetupMany(d); err != nil {
+	if err := mongo.SetupMany(docs); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		return nil, err
 	}
 
-	return d, nil
+	return docs, nil
 }
 
 func expectedDatasetResource(datasetID string, resource int) mongo.DatasetUpdate {

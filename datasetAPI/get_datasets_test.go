@@ -115,10 +115,10 @@ func checkDatasetResponse(datasetID string, response *httpexpect.Object) {
 	response.Value("uri").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation")
 }
 
-func setupTestDataForGetAListOfDatasets(datasetID string) (*mongo.ManyDocs, error) {
-	var docs []mongo.Doc
+func setupTestDataForGetAListOfDatasets(datasetID string) ([]*mongo.Doc, error) {
+	var docs []*mongo.Doc
 
-	publishedDatasetDoc := mongo.Doc{
+	publishedDatasetDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "datasets",
 		Key:        "_id",
@@ -126,7 +126,7 @@ func setupTestDataForGetAListOfDatasets(datasetID string) (*mongo.ManyDocs, erro
 		Update:     validPublishedDatasetData(datasetID),
 	}
 
-	unpublishedDatasetDoc := mongo.Doc{
+	unpublishedDatasetDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "datasets",
 		Key:        "_id",
@@ -136,21 +136,17 @@ func setupTestDataForGetAListOfDatasets(datasetID string) (*mongo.ManyDocs, erro
 
 	docs = append(docs, publishedDatasetDoc, unpublishedDatasetDoc)
 
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
-
-	if err := mongo.TeardownMany(d); err != nil {
+	if err := mongo.TeardownMany(docs); err != nil {
 		if err != mgo.ErrNotFound {
 			return nil, err
 		}
 	}
 
-	if err := mongo.SetupMany(d); err != nil {
+	if err := mongo.SetupMany(docs); err != nil {
 		if err != mgo.ErrNotFound {
 			return nil, err
 		}
 	}
 
-	return d, nil
+	return docs, nil
 }

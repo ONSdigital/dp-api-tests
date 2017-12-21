@@ -22,9 +22,9 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 	unpublishedEditionID := uuid.NewV4().String()
 	unpublishedEdition := "2018"
 
-	var docs []mongo.Doc
+	var docs []*mongo.Doc
 
-	datasetDoc := mongo.Doc{
+	datasetDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "datasets",
 		Key:        "_id",
@@ -32,7 +32,7 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 		Update:     validPublishedDatasetData(datasetID),
 	}
 
-	publishedEditionDoc := mongo.Doc{
+	publishedEditionDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "editions",
 		Key:        "_id",
@@ -40,7 +40,7 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 		Update:     validPublishedEditionData(datasetID, editionID, edition),
 	}
 
-	unpublishedEditionDoc := mongo.Doc{
+	unpublishedEditionDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "editions",
 		Key:        "_id",
@@ -50,18 +50,14 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 
 	docs = append(docs, datasetDoc, unpublishedEditionDoc, publishedEditionDoc)
 
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
-
-	if err := mongo.TeardownMany(d); err != nil {
+	if err := mongo.TeardownMany(docs); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
 	}
 
-	if err := mongo.SetupMany(d); err != nil {
+	if err := mongo.SetupMany(docs); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
@@ -98,7 +94,7 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 		})
 	})
 
-	if err := mongo.TeardownMany(d); err != nil {
+	if err := mongo.TeardownMany(docs); err != nil {
 		if err != mgo.ErrNotFound {
 			os.Exit(1)
 		}
@@ -108,44 +104,10 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 func TestFailureToGetDatasetEdition(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
-	editionID := uuid.NewV4().String()
-	edition := "2017"
 	unpublishedEditionID := uuid.NewV4().String()
 	unpublishedEdition := "2018"
 
-	var docs []mongo.Doc
-
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
-
-	datasetDoc := mongo.Doc{
-		Database:   "datasets",
-		Collection: "datasets",
-		Key:        "_id",
-		Value:      datasetID,
-		Update:     validPublishedDatasetData(datasetID),
-	}
-
-	publishedEditionDoc := mongo.Doc{
-		Database:   "datasets",
-		Collection: "editions",
-		Key:        "_id",
-		Value:      editionID,
-		Update:     validPublishedEditionData(datasetID, editionID, edition),
-	}
-
-	unpublishedEditionDoc := mongo.Doc{
-		Database:   "datasets",
-		Collection: "editions",
-		Key:        "_id",
-		Value:      unpublishedEditionID,
-		Update:     validUnpublishedEditionData(datasetID, unpublishedEditionID, unpublishedEdition),
-	}
-
-	docs = append(docs, datasetDoc, unpublishedEditionDoc, publishedEditionDoc)
-
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
 
 	Convey("When the dataset does not exist", t, func() {
 		Convey("Given a request to get an edition of the dataset", func() {
@@ -187,7 +149,7 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(database, "editions", "_id", unpublishedEditionID); err != nil {
 			if err != mgo.ErrNotFound {
 				os.Exit(1)
 			}

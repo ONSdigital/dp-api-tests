@@ -24,7 +24,7 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 
 	Convey("Given a dataset edition has a published and unpublished version", t, func() {
 
-		d, err := setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpublishedInstanceID)
+		docs, err := setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpublishedInstanceID)
 		if err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
@@ -64,7 +64,7 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.TeardownMany(docs); err != nil {
 			if err != mgo.ErrNotFound {
 				os.Exit(1)
 			}
@@ -255,10 +255,10 @@ func checkVersionResponse(datasetID, editionID, instanceID, edition string, resp
 	response.Value("version").Equal(1)
 }
 
-func setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpublishedInstanceID string) (*mongo.ManyDocs, error) {
-	var docs []mongo.Doc
+func setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpublishedInstanceID string) ([]*mongo.Doc, error) {
+	var docs []*mongo.Doc
 
-	datasetDoc := mongo.Doc{
+	datasetDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "datasets",
 		Key:        "_id",
@@ -266,7 +266,7 @@ func setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpu
 		Update:     validPublishedDatasetData(datasetID),
 	}
 
-	editionDoc := mongo.Doc{
+	editionDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "editions",
 		Key:        "_id",
@@ -274,7 +274,7 @@ func setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpu
 		Update:     validPublishedEditionData(datasetID, editionID, edition),
 	}
 
-	instanceDoc := mongo.Doc{
+	instanceDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "instances",
 		Key:        "_id",
@@ -282,7 +282,7 @@ func setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpu
 		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
 	}
 
-	unpublishedInstanceDoc := mongo.Doc{
+	unpublishedInstanceDoc := &mongo.Doc{
 		Database:   "datasets",
 		Collection: "instances",
 		Key:        "_id",
@@ -292,13 +292,9 @@ func setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpu
 
 	docs = append(docs, datasetDoc, editionDoc, instanceDoc, unpublishedInstanceDoc)
 
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
-
-	if err := mongo.SetupMany(d); err != nil {
+	if err := mongo.SetupMany(docs); err != nil {
 		return nil, err
 	}
 
-	return d, nil
+	return docs, nil
 }

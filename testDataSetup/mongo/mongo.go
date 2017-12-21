@@ -11,11 +11,6 @@ import (
 
 var session *mgo.Session
 
-// ManyDocs represents a list of objects that are able to query mongo db
-type ManyDocs struct {
-	Docs []Doc
-}
-
 // Doc contains information to be able to query mongo db
 type Doc struct {
 	Database   string
@@ -68,11 +63,11 @@ func RemoveAll(database, collection string) error {
 }
 
 // TeardownMany is a way of cleaning up many documents from mongo instance
-func TeardownMany(d *ManyDocs) error {
+func TeardownMany(d []*Doc) error {
 	s := session.Copy()
 	defer s.Close()
 
-	for _, doc := range d.Docs {
+	for _, doc := range d {
 		if err := s.DB(doc.Database).C(doc.Collection).Remove(bson.M{doc.Key: doc.Value}); err != nil {
 			if err == mgo.ErrNotFound {
 				log.Info("data does not exist, continue", nil)
@@ -100,11 +95,11 @@ func Setup(database, collection, key, value string, update bson.M) error {
 }
 
 // SetupMany is a way of loading in many documents into a mongo instance
-func SetupMany(d *ManyDocs) error {
+func SetupMany(d []*Doc) error {
 	s := session.Copy()
 	defer s.Close()
 
-	for _, doc := range d.Docs {
+	for _, doc := range d {
 		//log.Debug("got in for loop", log.Data{"key": key, "value": doc})
 		if _, err := s.DB(doc.Database).C(doc.Collection).Upsert(bson.M{doc.Key: doc.Value}, doc.Update); err != nil {
 			log.ErrorC("Unable to create document", err, nil)
