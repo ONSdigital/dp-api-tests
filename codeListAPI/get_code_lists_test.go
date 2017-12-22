@@ -65,16 +65,16 @@ func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				//checking array length is alwaysgreather than 3
-				response.Value("items").Array().Length().Gt(3)
-				response.Value("items").Array().Element(3).Object().ValueEqual("id", firstCodeListID)
-				response.Value("items").Array().Element(3).Object().ValueEqual("name", "First Code List")
-				response.Value("items").Array().Element(3).Object().Value("links").Object().Value("self").Object().Value("id").Equal(firstCodeListID)
-				response.Value("items").Array().Element(3).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
-				response.Value("items").Array().Element(3).Object().Value("links").Object().Value("codes").Object().Value("id").Equal("code")
-				response.Value("items").Array().Element(3).Object().Value("links").Object().Value("codes").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/codes$")
+				response.Value("items").Array().Length().Equal(3)
+				response.Value("items").Array().Element(0).Object().ValueEqual("id", firstCodeListID)
+				response.Value("items").Array().Element(0).Object().ValueEqual("name", "First Code List")
+				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("self").Object().Value("id").Equal(firstCodeListID)
+				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
+				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("codes").Object().Value("id").Equal("code")
+				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("codes").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/codes$")
 
-				response.Value("items").Array().Element(4).Object().ValueEqual("id", secondCodeListID)
-				response.Value("items").Array().Element(5).Object().ValueEqual("id", thirdCodelistID)
+				response.Value("items").Array().Element(1).Object().ValueEqual("id", secondCodeListID)
+				response.Value("items").Array().Element(2).Object().ValueEqual("id", thirdCodelistID)
 
 				// This functionality is not implemented yet.
 				//response.Value("number_of_results").Equal(6)
