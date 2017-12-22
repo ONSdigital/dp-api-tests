@@ -63,7 +63,7 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 
 	docs = append(docs, datasetDoc, editionDoc, dimensionOneDoc, dimensionTwoDoc, instanceOneDoc)
 
-	if err := mongo.SetupMany(docs); err != nil {
+	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
@@ -88,7 +88,7 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 		})
 	})
 
-	if err := mongo.TeardownMany(docs); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
@@ -133,7 +133,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 
 	docs = append(docs, datasetDoc, editionDoc, instanceOneDoc)
 
-	if err := mongo.SetupMany(docs); err != nil {
+	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
@@ -177,11 +177,19 @@ func TestGetDimensions_Failed(t *testing.T) {
 
 			Convey("When there are no published versions", func() {
 				// Create an unpublished instance document
-				mongo.Setup(database, "instances", "_id", unpublishedInstanceID, validEditionConfirmedInstanceData(datasetID, edition, unpublishedInstanceID))
+				unpublishedInstance := &mongo.Doc{
+					Database:   database,
+					Collection: "instances",
+					Key:        "_id",
+					Value:      unpublishedInstanceID,
+					Update:     validEditionConfirmedInstanceData(datasetID, edition, unpublishedInstanceID),
+				}
+
+				mongo.Setup(unpublishedInstance)
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/3/dimensions", datasetID, edition).
 					Expect().Status(http.StatusBadRequest).Body().Contains("Version not found\n")
 
-				mongo.Teardown(database, "instances", "_id", unpublishedInstanceID)
+				mongo.Teardown(unpublishedInstance)
 			})
 		})
 	})
@@ -202,7 +210,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 		})
 	})
 
-	if err := mongo.TeardownMany(docs); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)

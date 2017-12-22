@@ -31,7 +31,14 @@ func TestSuccessfullyPostInstance(t *testing.T) {
 				response.Value("state").Equal("created")
 				response.Value("last_updated").NotNull()
 
-				if err := mongo.Teardown(database, "instances", "id", instanceUniqueID); err != nil {
+				instance := &mongo.Doc{
+					Database:   database,
+					Collection: "instances",
+					Key:        "_id",
+					Value:      instanceUniqueID,
+				}
+
+				if err := mongo.Teardown(instance); err != nil {
 					if err != mgo.ErrNotFound {
 						os.Exit(1)
 					}
@@ -60,7 +67,14 @@ func TestSuccessfullyPostInstance(t *testing.T) {
 				response.Value("state").Equal("created")
 				response.Value("last_updated").NotNull()
 
-				if err := mongo.Teardown(database, "instances", "id", instanceUniqueID); err != nil {
+				instance := &mongo.Doc{
+					Database:   database,
+					Collection: "instances",
+					Key:        "id",
+					Value:      instanceUniqueID,
+				}
+
+				if err := mongo.Teardown(instance); err != nil {
 					if err != mgo.ErrNotFound {
 						os.Exit(1)
 					}

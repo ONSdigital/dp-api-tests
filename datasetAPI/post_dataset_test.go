@@ -17,6 +17,13 @@ func TestSuccessfullyPostDataset(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
+	dataset := &mongo.Doc{
+		Database:   database,
+		Collection: collection,
+		Key:        "_id",
+		Value:      datasetID,
+	}
+
 	Convey("Given a dataset with the an id of ["+datasetID+"] does not exist", t, func() {
 
 		Convey("When an authorised POST request is made to create a dataset resource", func() {
@@ -59,7 +66,7 @@ func TestSuccessfullyPostDataset(t *testing.T) {
 				response.Value("next").Object().Value("unit_of_measure").Equal("Pounds Sterling")
 				response.Value("next").Object().Value("uri").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation")
 
-				if err := mongo.Teardown(database, collection, "_id", datasetID); err != nil {
+				if err := mongo.Teardown(dataset); err != nil {
 					log.ErrorC("Was unable to run test", err, nil)
 					os.Exit(1)
 				}
@@ -102,7 +109,15 @@ func TestFailureToPostDataset(t *testing.T) {
 	})
 
 	Convey("Given a dataset does exist", t, func() {
-		if err := mongo.Setup(database, collection, "_id", datasetID, validPublishedDatasetData(datasetID)); err != nil {
+		publishedDataset := &mongo.Doc{
+			Database:   database,
+			Collection: collection,
+			Key:        "_id",
+			Value:      datasetID,
+			Update:     validPublishedDatasetData(datasetID),
+		}
+
+		if err := mongo.Setup(publishedDataset); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
@@ -115,7 +130,7 @@ func TestFailureToPostDataset(t *testing.T) {
 			})
 		})
 
-		if err := mongo.Teardown(database, collection, "_id", datasetID); err != nil {
+		if err := mongo.Teardown(publishedDataset); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}

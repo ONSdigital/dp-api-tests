@@ -14,9 +14,9 @@ import (
 
 func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 
-	var docs []mongo.Doc
+	var docs []*mongo.Doc
 
-	importCreateJobDoc := mongo.Doc{
+	importCreateJobDoc := &mongo.Doc{
 		Database:   "imports",
 		Collection: "imports",
 		Key:        "_id",
@@ -24,7 +24,7 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 		Update:     validCreatedImportJobData,
 	}
 
-	importSubmittedJobDoc := mongo.Doc{
+	importSubmittedJobDoc := &mongo.Doc{
 		Database:   "imports",
 		Collection: "imports",
 		Key:        "_id",
@@ -38,14 +38,14 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 		Docs: docs,
 	}
 
-	if err := mongo.TeardownMany(d); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
 	}
 
-	if err := mongo.SetupMany(d); err != nil {
+	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
@@ -70,7 +70,7 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 		})
 	})
 
-	if err := mongo.TeardownMany(d); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)

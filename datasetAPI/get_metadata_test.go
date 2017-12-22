@@ -149,7 +149,7 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(docs); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				os.Exit(1)
 			}
@@ -169,6 +169,22 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
+	unpublishedDataset := &mongo.Doc{
+		Database:   database,
+		Collection: collection,
+		Key:        "_id",
+		Value:      unpublishedDatasetID,
+		Update:     validAssociatedDatasetData(unpublishedDatasetID),
+	}
+
+	unpublishedEdition := &mongo.Doc{
+		Database:   database,
+		Collection: "editions",
+		Key:        "_id",
+		Value:      unpublishedEditionID,
+		Update:     validUnpublishedEditionData(unpublishedDatasetID, unpublishedEditionID, edition),
+	}
+
 	Convey("Given the dataset, edition and version do not exist", t, func() {
 		Convey("When an authorised request to get the metadata relevant to a version", func() {
 			Convey("Then return status bad request (400) with message `Dataset not found`", func() {
@@ -179,7 +195,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 	})
 
 	Convey("Given an unpublished dataset exist", t, func() {
-		if err := mongo.Setup(database, collection, "_id", unpublishedDatasetID, validAssociatedDatasetData(unpublishedDatasetID)); err != nil {
+		if err := mongo.Setup(unpublishedDataset); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
@@ -194,7 +210,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 		})
 
 		Convey("and an unpublished edition exist", func() {
-			if err := mongo.Setup(database, "editions", "_id", unpublishedEditionID, validUnpublishedEditionData(unpublishedDatasetID, unpublishedEditionID, edition)); err != nil {
+			if err := mongo.Setup(unpublishedEdition); err != nil {
 				log.ErrorC("Was unable to run test", err, nil)
 				os.Exit(1)
 			}
@@ -207,14 +223,9 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 					})
 				})
 			})
-
-			if err := mongo.Teardown(database, "editions", "_id", unpublishedEditionID); err != nil {
-				log.ErrorC("Was unable to run test", err, nil)
-				os.Exit(1)
-			}
 		})
 
-		if err := mongo.Teardown(database, collection, "_id", unpublishedDatasetID); err != nil {
+		if err := mongo.Teardown(unpublishedDataset, unpublishedEdition); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
@@ -222,7 +233,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 
 	// Similar tests for unauthorised requests
 	Convey("Given an unpublished dataset", t, func() {
-		if err := mongo.Setup(database, collection, "_id", unpublishedDatasetID, validAssociatedDatasetData(unpublishedDatasetID)); err != nil {
+		if err := mongo.Setup(unpublishedDataset); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
@@ -234,20 +245,29 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.Teardown(database, collection, "_id", unpublishedDatasetID); err != nil {
+		if err := mongo.Teardown(unpublishedDataset); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
 	})
 
 	Convey("Given a published dataset", t, func() {
-		if err := mongo.Setup(database, collection, "_id", datasetID, validPublishedDatasetData(datasetID)); err != nil {
+		publishedDataset := &mongo.Doc{
+			Database:   database,
+			Collection: collection,
+			Key:        "_id",
+			Value:      datasetID,
+			Update:     validPublishedDatasetData(datasetID),
+		}
+
+		if err := mongo.Setup(publishedDataset); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
 
 		Convey("and an unpublished edition", func() {
-			if err := mongo.Setup(database, "editions", "_id", unpublishedEditionID, validUnpublishedEditionData(datasetID, unpublishedEditionID, edition)); err != nil {
+			unpublishedEdition.Update = validUnpublishedEditionData(datasetID, unpublishedEditionID, edition)
+			if err := mongo.Setup(unpublishedEdition); err != nil {
 				log.ErrorC("Was unable to run test", err, nil)
 				os.Exit(1)
 			}
@@ -259,19 +279,30 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 				})
 			})
 
-			if err := mongo.Teardown(database, "editions", "_id", unpublishedEditionID); err != nil {
+			if err := mongo.Teardown(unpublishedEdition); err != nil {
 				log.ErrorC("Was unable to run test", err, nil)
 				os.Exit(1)
 			}
 		})
 
 		Convey("and a published edition but an unpublished version", func() {
-			if err := mongo.Setup(database, "editions", "_id", editionID, validPublishedEditionData(datasetID, editionID, edition)); err != nil {
-				log.ErrorC("Was unable to run test", err, nil)
-				os.Exit(1)
+			publishedEdition := &mongo.Doc{
+				Database:   database,
+				Collection: "editions",
+				Key:        "_id",
+				Value:      editionID,
+				Update:     validPublishedEditionData(datasetID, editionID, edition),
 			}
 
-			if err := mongo.Setup(database, "instances", "_id", unpublishedInstanceID, validAssociatedInstanceData(datasetID, editionID, unpublishedInstanceID)); err != nil {
+			associatedInstance := &mongo.Doc{
+				Database:   database,
+				Collection: "instances",
+				Key:        "_id",
+				Value:      unpublishedInstanceID,
+				Update:     validAssociatedInstanceData(datasetID, editionID, unpublishedInstanceID),
+			}
+
+			if err := mongo.Setup(publishedEdition, associatedInstance); err != nil {
 				log.ErrorC("Was unable to run test", err, nil)
 				os.Exit(1)
 			}
@@ -283,18 +314,13 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 				})
 			})
 
-			if err := mongo.Teardown(database, "editions", "_id", editionID); err != nil {
-				log.ErrorC("Was unable to run test", err, nil)
-				os.Exit(1)
-			}
-
-			if err := mongo.Teardown(database, "instances", "_id", unpublishedInstanceID); err != nil {
+			if err := mongo.Teardown(publishedEdition, associatedInstance); err != nil {
 				log.ErrorC("Was unable to run test", err, nil)
 				os.Exit(1)
 			}
 		})
 
-		if err := mongo.Teardown(database, collection, "_id", datasetID); err != nil {
+		if err := mongo.Teardown(publishedDataset); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
@@ -338,7 +364,7 @@ func setupMetadataDocs(datasetID, editionID, edition, instanceID, unpublishedIns
 
 	docs = append(docs, datasetDoc, publishedEditionDoc, publishedVersionDoc, unpublishedVersionDoc)
 
-	if err := mongo.SetupMany(docs); err != nil {
+	if err := mongo.Setup(docs...); err != nil {
 		return nil, err
 	}
 

@@ -27,7 +27,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		edition := "2018"
 		version := "2"
 
-		d, err := setupResources(datasetID, editionID, edition, instanceID, 1)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, 1)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -156,7 +156,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to remove test data", err, nil)
 				os.Exit(1)
@@ -168,7 +168,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		edition := "2018"
 		version := "2"
 
-		d, err := setupResources(datasetID, editionID, edition, instanceID, 2)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, 2)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -248,7 +248,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to remove test data", err, nil)
 				os.Exit(1)
@@ -260,7 +260,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		edition := "2017"
 		version := "2"
 
-		d, err := setupResources(datasetID, editionID, edition, instanceID, 3)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, 3)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -308,7 +308,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to remove test data", err, nil)
 				os.Exit(1)
@@ -331,7 +331,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 	// test for updating a version that has no dataset (bad request)
 	Convey("Given an edition and a version of state associated exist for a dataset that does not exist in datastore", t, func() {
 
-		d, err := setupResources(datasetID, editionID, edition, instanceID, 4)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, 4)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -346,7 +346,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to remove test data", err, nil)
 				os.Exit(1)
@@ -357,7 +357,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 	// test for updating a version that has no edition (bad request)
 	Convey("Given a dataset and a version both of state associated exist but the edition does not", t, func() {
 
-		d, err := setupResources(datasetID, editionID, edition, instanceID, 5)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, 5)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -372,7 +372,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to remove test data", err, nil)
 				os.Exit(1)
@@ -383,7 +383,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 	// test for updating a version that does not exist (not found)
 	Convey("Given a dataset and edition exist but the version for the dataset edition does not", t, func() {
 
-		d, err := setupResources(datasetID, editionID, edition, instanceID, 6)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, 6)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -398,7 +398,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to remove test data", err, nil)
 				os.Exit(1)
@@ -421,7 +421,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 		edition := "2018"
 		version := "2"
 
-		d, err := setupResources(datasetID, editionID, edition, instanceID, 7)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, 7)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -471,7 +471,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to remove test data", err, nil)
 				os.Exit(1)
@@ -483,7 +483,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 		edition := "2017"
 		version := "1"
 
-		d, err := setupResources(datasetID, editionID, edition, instanceID, 8)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, 8)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -509,7 +509,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to remove test data", err, nil)
 				os.Exit(1)
@@ -608,7 +608,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		return nil, errMsg
 	}
 
-	if err := mongo.SetupMany(docs); err != nil {
+	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		return nil, err
 	}

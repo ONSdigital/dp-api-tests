@@ -15,9 +15,9 @@ import (
 
 func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 
-	var docs []mongo.Doc
+	var docs []*mongo.Doc
 
-	firstCodeListDoc := mongo.Doc{
+	firstCodeListDoc := &mongo.Doc{
 		Database:   "codelists",
 		Collection: "codelists",
 		Key:        "_id",
@@ -25,7 +25,7 @@ func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 		Update:     validFirstCodeListData,
 	}
 
-	secondCodeListDoc := mongo.Doc{
+	secondCodeListDoc := &mongo.Doc{
 		Database:   "codelists",
 		Collection: "codelists",
 		Key:        "_id",
@@ -33,7 +33,7 @@ func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 		Update:     validSecondCodeListData,
 	}
 
-	thirdCodeListDoc := mongo.Doc{
+	thirdCodeListDoc := &mongo.Doc{
 		Database:   "codelists",
 		Collection: "codelists",
 		Key:        "_id",
@@ -43,18 +43,14 @@ func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 
 	docs = append(docs, firstCodeListDoc, secondCodeListDoc, thirdCodeListDoc)
 
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
-
-	if err := mongo.TeardownMany(d); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
 		}
 	}
 
-	if err := mongo.SetupMany(d); err != nil {
+	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Failed to set up test data", err, nil)
 		os.Exit(1)
 	}
@@ -86,7 +82,7 @@ func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 		})
 	})
 
-	if err := mongo.TeardownMany(d); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)

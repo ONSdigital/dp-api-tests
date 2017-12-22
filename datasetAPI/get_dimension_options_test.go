@@ -63,14 +63,14 @@ func TestGetDimensionOptions_ReturnsAllDimensionOptionsFromADataset(t *testing.T
 
 	docs = append(docs, datasetDoc, editionDoc, dimensionOneDoc, dimensionTwoDoc, instanceOneDoc)
 
-	if err := mongo.TeardownMany(docs); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
 	}
 
-	if err := mongo.SetupMany(docs); err != nil {
+	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
@@ -119,7 +119,7 @@ func TestGetDimensionOptions_ReturnsAllDimensionOptionsFromADataset(t *testing.T
 		})
 	})
 
-	if err := mongo.TeardownMany(docs); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
@@ -172,14 +172,14 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 
 	docs = append(docs, datasetDoc, editionDoc, instanceOneDoc, dimensionOneDoc)
 
-	if err := mongo.TeardownMany(docs); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
 	}
 
-	if err := mongo.SetupMany(docs); err != nil {
+	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
@@ -216,12 +216,20 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 
 			Convey("When there are no published versions", func() {
 				// Create an unpublished instance document
-				mongo.Teardown(database, "instances", "_id", "799")
-				mongo.Setup(database, "instances", "_id", "799", validEditionConfirmedInstanceData(datasetID, edition, instanceID))
+				unpublishedInstance := &mongo.Doc{
+					Database:   database,
+					Collection: "instances",
+					Key:        "_id",
+					Value:      "799",
+					Update:     validEditionConfirmedInstanceData(datasetID, edition, instanceID),
+				}
+
+				mongo.Teardown(unpublishedInstance)
+				mongo.Setup(unpublishedInstance)
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/5/dimensions/time/options", datasetID, edition).
 					Expect().Status(http.StatusBadRequest)
 
-				mongo.Teardown(database, "instances", "_id", "799")
+				mongo.Teardown(unpublishedInstance)
 			})
 		})
 	})
@@ -243,7 +251,7 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 		})
 	})
 
-	if err := mongo.TeardownMany(docs); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)

@@ -23,7 +23,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Given an instance has been created by an import job", t, func() {
-		d, err := setupInstance(datasetID, edition, instanceID)
+		docs, err := setupInstance(datasetID, edition, instanceID)
 		if err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
@@ -96,7 +96,14 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 
 					checkEditionDoc(datasetID, instanceID, edition)
 
-					if err := mongo.Teardown(database, "editions", "links.self.href", instance.Links.Edition.HRef); err != nil {
+					editionDoc := &mongo.Doc{
+						Database:   database,
+						Collection: "editions",
+						Key:        "links.self.href",
+						Value:      instance.Links.Edition.HRef,
+					}
+
+					if err := mongo.Teardown(editionDoc); err != nil {
 						if err != mgo.ErrNotFound {
 							log.ErrorC("Was unable to remove test data", err, nil)
 							os.Exit(1)
@@ -106,7 +113,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				os.Exit(1)
 			}
@@ -137,7 +144,7 @@ func TestFailureToPutInstance(t *testing.T) {
 	})
 
 	Convey("Given a created instance exists", t, func() {
-		d, err := setupInstance(datasetID, edition, instanceID)
+		docs, err := setupInstance(datasetID, edition, instanceID)
 		if err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
@@ -206,7 +213,7 @@ func TestFailureToPutInstance(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				os.Exit(1)
 			}
@@ -235,7 +242,7 @@ func setupInstance(datasetID, edition, instanceID string) ([]*mongo.Doc, error) 
 
 	docs = append(docs, datasetDoc, instanceOneDoc)
 
-	if err := mongo.SetupMany(docs); err != nil {
+	if err := mongo.Setup(docs...); err != nil {
 		return nil, err
 	}
 

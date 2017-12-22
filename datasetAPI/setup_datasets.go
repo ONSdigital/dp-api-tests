@@ -1,27 +1,38 @@
 package datasetAPI
 
 import (
-	"gopkg.in/mgo.v2/bson"
 	"os"
-	"gopkg.in/mgo.v2"
+
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
+var dataset = &mongo.Doc{
+	Database:   database,
+	Collection: "datasets",
+	Key:        "_id",
+}
+
 // setupDataset cleans existing stale test data and creates a new test dataset.
-func setupDataset(datasetID string, datasetData bson.M) {
+func setupDataset(id string, data bson.M) {
 
-	removeExistingDataset(datasetID)
+	removeExistingDataset(id)
 
-	if err := mongo.Setup(database, "datasets", "_id", datasetID, datasetData); err != nil {
+	dataset.Value = id
+	dataset.Update = data
+
+	if err := mongo.Setup(dataset); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
 }
 
 // removeExistingDataset clears out any existing dataset.
-func removeExistingDataset(datasetID string) {
-	if err := mongo.Teardown(database, collection, "_id", datasetID); err != nil {
+func removeExistingDataset(id string) {
+	dataset.Value = id
+	if err := mongo.Teardown(dataset); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
@@ -30,12 +41,11 @@ func removeExistingDataset(datasetID string) {
 }
 
 // removeDataset removes the dataset that was created in a test.
-func removeDataset(datasetID string) {
-	if err := mongo.Teardown(database, "datasets", "_id", datasetID); err != nil {
+func removeDataset(id string) {
+	dataset.Value = id
+	if err := mongo.Teardown(dataset); err != nil {
 		if err != mgo.ErrNotFound {
 			os.Exit(1)
 		}
 	}
 }
-
-

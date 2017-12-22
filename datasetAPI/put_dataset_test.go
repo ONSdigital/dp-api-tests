@@ -20,9 +20,17 @@ func TestSuccessfulyUpdateDataset(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
+	publishedDataset := &mongo.Doc{
+		Database:   database,
+		Collection: "datasets",
+		Key:        "_id",
+		Value:      datasetID,
+		Update:     validPublishedDatasetData(datasetID),
+	}
+
 	Convey("Given a published dataset already exists", t, func() {
 
-		if err := mongo.Setup(database, "datasets", "_id", datasetID, validPublishedDatasetData(datasetID)); err != nil {
+		if err := mongo.Setup(publishedDataset); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
@@ -59,6 +67,12 @@ func TestSuccessfulyUpdateDataset(t *testing.T) {
 				So(dataset.Next, ShouldResemble, expectedNextSubDoc)
 			})
 		})
+
+		if err := mongo.Teardown(publishedDataset); err != nil {
+			if err != mgo.ErrNotFound {
+				os.Exit(1)
+			}
+		}
 	})
 }
 
@@ -66,6 +80,14 @@ func TestFailureToUpdateDataset(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
+
+	publishedDataset := &mongo.Doc{
+		Database:   database,
+		Collection: "datasets",
+		Key:        "_id",
+		Value:      datasetID,
+		Update:     validPublishedDatasetData(datasetID),
+	}
 
 	Convey("Given a published dataset does not exist", t, func() {
 		Convey("When an authorised PUT request is made to update dataset resource", func() {
@@ -79,7 +101,7 @@ func TestFailureToUpdateDataset(t *testing.T) {
 
 	Convey("Given a published dataset exists", t, func() {
 
-		if err := mongo.Setup(database, "datasets", "_id", datasetID, validPublishedDatasetData(datasetID)); err != nil {
+		if err := mongo.Setup(publishedDataset); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
@@ -108,7 +130,7 @@ func TestFailureToUpdateDataset(t *testing.T) {
 			})
 		})
 
-		if err := mongo.Teardown(database, "datasets", "_id", datasetID); err != nil {
+		if err := mongo.Teardown(publishedDataset); err != nil {
 			if err != mgo.ErrNotFound {
 				os.Exit(1)
 			}

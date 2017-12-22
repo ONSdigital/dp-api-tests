@@ -34,22 +34,6 @@ func NewDatastore(uri string) error {
 	return nil
 }
 
-// Teardown is a way of cleaning up an individual document from mongo instance
-func Teardown(database, collection, key, value string) error {
-	s := session.Copy()
-	defer s.Close()
-
-	if err := s.DB(database).C(collection).Remove(bson.M{key: value}); err != nil {
-		if err == mgo.ErrNotFound {
-			log.Info("data does not exist, continue", nil)
-			return nil
-		}
-		return err
-	}
-
-	return nil
-}
-
 func RemoveAll(database, collection string) error {
 	s := session.Copy()
 	defer s.Close()
@@ -62,8 +46,8 @@ func RemoveAll(database, collection string) error {
 	return nil
 }
 
-// TeardownMany is a way of cleaning up many documents from mongo instance
-func TeardownMany(d []*Doc) error {
+// Teardown is a way of cleaning up any number of documents from mongo instance
+func Teardown(d ...*Doc) error {
 	s := session.Copy()
 	defer s.Close()
 
@@ -80,22 +64,8 @@ func TeardownMany(d []*Doc) error {
 	return nil
 }
 
-// Setup is a way of loading in an individual document into a mongo instance
-func Setup(database, collection, key, value string, update bson.M) error {
-	s := session.Copy()
-	defer s.Close()
-
-	if _, err := s.DB(database).C(collection).Upsert(bson.M{key: value}, update); err != nil {
-		log.ErrorC("mongodb datastore error", err, nil)
-		return err
-	}
-
-	log.Info("SetUp completed", nil)
-	return nil
-}
-
-// SetupMany is a way of loading in many documents into a mongo instance
-func SetupMany(d []*Doc) error {
+// Setup is a way of loading any number of documents into a mongo instance
+func Setup(d ...*Doc) error {
 	s := session.Copy()
 	defer s.Close()
 

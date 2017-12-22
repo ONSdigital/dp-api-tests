@@ -20,7 +20,7 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
 
-	d, err := setupTestDataForGetAListOfDatasets(datasetID)
+	docs, err := setupTestDataForGetAListOfDatasets(datasetID)
 	if err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
@@ -70,7 +70,7 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 		})
 	})
 
-	if err := mongo.TeardownMany(d); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			os.Exit(1)
 		}
@@ -136,13 +136,13 @@ func setupTestDataForGetAListOfDatasets(datasetID string) ([]*mongo.Doc, error) 
 
 	docs = append(docs, publishedDatasetDoc, unpublishedDatasetDoc)
 
-	if err := mongo.TeardownMany(docs); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			return nil, err
 		}
 	}
 
-	if err := mongo.SetupMany(docs); err != nil {
+	if err := mongo.Setup(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			return nil, err
 		}

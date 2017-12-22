@@ -39,7 +39,14 @@ func init() {
 		os.Exit(1)
 	}
 
-	if err = mongo.Teardown(database, collection, "test_data", "true"); err != nil {
+	test := &mongo.Doc{
+		Database:   database,
+		Collection: collection,
+		Key:        "test_data",
+		Value:      "true",
+	}
+
+	if err = mongo.Teardown(test); err != nil {
 		log.ErrorC("Unable to remove all test data from mongo db", err, nil)
 		os.Exit(1)
 	}

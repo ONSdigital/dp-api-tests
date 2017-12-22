@@ -15,9 +15,9 @@ import (
 
 func TestSuccessfullyGetCodeInformationAboutACode(t *testing.T) {
 
-	var docs []mongo.Doc
+	var docs []*mongo.Doc
 
-	firstCodeListDoc := mongo.Doc{
+	firstCodeListDoc := &mongo.Doc{
 		Database:   "codelists",
 		Collection: "codelists",
 		Key:        "_id",
@@ -25,7 +25,7 @@ func TestSuccessfullyGetCodeInformationAboutACode(t *testing.T) {
 		Update:     validFirstCodeListData,
 	}
 
-	firstCodeListCodesDoc := mongo.Doc{
+	firstCodeListCodesDoc := &mongo.Doc{
 		Database:   "codelists",
 		Collection: "codes",
 		Key:        "_id",
@@ -33,7 +33,7 @@ func TestSuccessfullyGetCodeInformationAboutACode(t *testing.T) {
 		Update:     validFirstCodeListFirstCodeData,
 	}
 
-	secondCodeListCodesDoc := mongo.Doc{
+	secondCodeListCodesDoc := &mongo.Doc{
 		Database:   "codelists",
 		Collection: "codes",
 		Key:        "_id",
@@ -41,7 +41,7 @@ func TestSuccessfullyGetCodeInformationAboutACode(t *testing.T) {
 		Update:     validFirstCodeListSecondCodeData,
 	}
 
-	thirdCodeListCodesDoc := mongo.Doc{
+	thirdCodeListCodesDoc := &mongo.Doc{
 		Database:   "codelists",
 		Collection: "codes",
 		Key:        "_id",
@@ -50,18 +50,14 @@ func TestSuccessfullyGetCodeInformationAboutACode(t *testing.T) {
 	}
 	docs = append(docs, firstCodeListDoc, firstCodeListCodesDoc, secondCodeListCodesDoc, thirdCodeListCodesDoc)
 
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
-
-	if err := mongo.TeardownMany(d); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
 		}
 	}
 
-	if err := mongo.SetupMany(d); err != nil {
+	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Failed to set up test data", err, nil)
 		os.Exit(1)
 	}
@@ -105,7 +101,7 @@ func TestSuccessfullyGetCodeInformationAboutACode(t *testing.T) {
 		})
 	})
 
-	if err := mongo.TeardownMany(d); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
