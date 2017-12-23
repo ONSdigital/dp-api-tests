@@ -18,7 +18,7 @@ func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 	var docs []*mongo.Doc
 
 	firstCodeListDoc := &mongo.Doc{
-		Database:   "codelists",
+		Database:   cfg.MongoDB,
 		Collection: "codelists",
 		Key:        "_id",
 		Value:      firstCodeListID,
@@ -26,7 +26,7 @@ func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 	}
 
 	secondCodeListDoc := &mongo.Doc{
-		Database:   "codelists",
+		Database:   cfg.MongoDB,
 		Collection: "codelists",
 		Key:        "_id",
 		Value:      secondCodeListID,
@@ -34,7 +34,7 @@ func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 	}
 
 	thirdCodeListDoc := &mongo.Doc{
-		Database:   "codelists",
+		Database:   cfg.MongoDB,
 		Collection: "codelists",
 		Key:        "_id",
 		Value:      thirdCodelistID,

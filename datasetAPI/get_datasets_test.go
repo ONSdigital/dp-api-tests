@@ -119,7 +119,7 @@ func setupTestDataForGetAListOfDatasets(datasetID string) ([]*mongo.Doc, error) 
 	var docs []*mongo.Doc
 
 	publishedDatasetDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
@@ -127,7 +127,7 @@ func setupTestDataForGetAListOfDatasets(datasetID string) ([]*mongo.Doc, error) 
 	}
 
 	unpublishedDatasetDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      "133",

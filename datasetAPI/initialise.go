@@ -11,7 +11,6 @@ import (
 var cfg *config.Config
 
 const (
-	database   = "datasets"
 	collection = "datasets"
 
 	internalToken          = "Internal-Token"
@@ -33,7 +32,7 @@ func init() {
 	}
 
 	test := &mongo.Doc{
-		Database:   database,
+		Database:   cfg.MongoDB,
 		Collection: collection,
 		Key:        "test_data",
 		Value:      "true",

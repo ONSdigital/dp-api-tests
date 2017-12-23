@@ -19,7 +19,7 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 	datasetID := uuid.NewV4().String()
 
 	dataset := &mongo.Doc{
-		Database:   database,
+		Database:   cfg.MongoDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      datasetID,
@@ -86,7 +86,7 @@ func TestFailureToGetADataset(t *testing.T) {
 
 	Convey("Given an unpublished dataset exists and the dataset document is not published", t, func() {
 		associatedDataset := &mongo.Doc{
-			Database:   database,
+			Database:   cfg.MongoDB,
 			Collection: collection,
 			Key:        "_id",
 			Value:      secondDatasetID,

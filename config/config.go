@@ -10,6 +10,8 @@ type Config struct {
 	HierarchyAPIURL string `envconfig:"HIERARCHY_API_URL"`
 	CodeListAPIURL  string `envconfig:"CODELIST_API_URL"`
 	MongoAddr       string `envconfig:"MONGODB_BIND_ADDR"`
+	MongoDB         string `envconfig:"MONGODB_DATABASE"`
+	MongoImportsDB  string `envconfig:"MONGODB_IMPORTS_DATABASE"`
 	Neo4jAddr       string `envconfig:"NEO4J_BIND_ADDR"`
 }
 
@@ -24,6 +26,8 @@ func Get() (*Config, error) {
 		FilterAPIURL:    "http://localhost:22100",
 		CodeListAPIURL:  "http://localhost:22400",
 		MongoAddr:       "localhost:27017",
+		MongoDB:         "test",
+		MongoImportsDB:  "test",
 		HierarchyAPIURL: "http://localhost:22600",
 		Neo4jAddr:       "bolt://localhost:7687",
 	}

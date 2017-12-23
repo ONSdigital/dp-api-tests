@@ -18,7 +18,7 @@ func TestSuccessfullyGetCodeInformationAboutACode(t *testing.T) {
 	var docs []*mongo.Doc
 
 	firstCodeListDoc := &mongo.Doc{
-		Database:   "codelists",
+		Database:   cfg.MongoDB,
 		Collection: "codelists",
 		Key:        "_id",
 		Value:      firstCodeListID,
@@ -26,7 +26,7 @@ func TestSuccessfullyGetCodeInformationAboutACode(t *testing.T) {
 	}
 
 	firstCodeListCodesDoc := &mongo.Doc{
-		Database:   "codelists",
+		Database:   cfg.MongoDB,
 		Collection: "codes",
 		Key:        "_id",
 		Value:      firstCodeListFirstCodeID,
@@ -34,7 +34,7 @@ func TestSuccessfullyGetCodeInformationAboutACode(t *testing.T) {
 	}
 
 	secondCodeListCodesDoc := &mongo.Doc{
-		Database:   "codelists",
+		Database:   cfg.MongoDB,
 		Collection: "codes",
 		Key:        "_id",
 		Value:      firstCodeListSecondCodeID,
@@ -42,7 +42,7 @@ func TestSuccessfullyGetCodeInformationAboutACode(t *testing.T) {
 	}
 
 	thirdCodeListCodesDoc := &mongo.Doc{
-		Database:   "codelists",
+		Database:   cfg.MongoDB,
 		Collection: "codes",
 		Key:        "_id",
 		Value:      firstCodeListThirdCodeID,

@@ -23,7 +23,7 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 	var docs []*mongo.Doc
 
 	datasetDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
@@ -31,7 +31,7 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 	}
 
 	editionDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
@@ -39,7 +39,7 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 	}
 
 	instanceOneDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
@@ -47,14 +47,14 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 	}
 
 	dimensionOneDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9811",
 		Update:     validTimeDimensionsData(instanceID),
 	}
 	dimensionTwoDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9812",
@@ -108,7 +108,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 	var docs []*mongo.Doc
 
 	datasetDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
@@ -116,7 +116,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 	}
 
 	editionDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
@@ -124,7 +124,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 	}
 
 	instanceOneDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
@@ -178,7 +178,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 			Convey("When there are no published versions", func() {
 				// Create an unpublished instance document
 				unpublishedInstance := &mongo.Doc{
-					Database:   database,
+					Database:   cfg.MongoDB,
 					Collection: "instances",
 					Key:        "_id",
 					Value:      unpublishedInstanceID,

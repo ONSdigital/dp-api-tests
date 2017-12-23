@@ -23,7 +23,7 @@ func TestSuccessfullyGetListOfDatasetEditions(t *testing.T) {
 	var docs []*mongo.Doc
 
 	datasetDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
@@ -31,7 +31,7 @@ func TestSuccessfullyGetListOfDatasetEditions(t *testing.T) {
 	}
 
 	publishedEditionDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
@@ -39,7 +39,7 @@ func TestSuccessfullyGetListOfDatasetEditions(t *testing.T) {
 	}
 
 	unpublishedEditionDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
 		Value:      unpublishedEditionID,
@@ -99,7 +99,7 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	dataset := &mongo.Doc{
-		Database:   database,
+		Database:   cfg.MongoDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      datasetID,
@@ -107,7 +107,7 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 	}
 
 	unpublishedEdition := &mongo.Doc{
-		Database:   database,
+		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
 		Value:      "466",

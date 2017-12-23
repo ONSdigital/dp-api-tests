@@ -85,7 +85,7 @@ func TestGetVersions_Failed(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	publishedDataset := &mongo.Doc{
-		Database:   database,
+		Database:   cfg.MongoDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      datasetID,
@@ -93,7 +93,7 @@ func TestGetVersions_Failed(t *testing.T) {
 	}
 
 	publishedEdition := &mongo.Doc{
-		Database:   database,
+		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
@@ -101,7 +101,7 @@ func TestGetVersions_Failed(t *testing.T) {
 	}
 
 	unpublishedEdition := &mongo.Doc{
-		Database:   database,
+		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
@@ -155,7 +155,7 @@ func TestGetVersions_Failed(t *testing.T) {
 	// Make sure an unauthorised user cannot find the dataset
 	Convey("Given an unpublished dataset exists", t, func() {
 		unpublishedDataset := &mongo.Doc{
-			Database:   database,
+			Database:   cfg.MongoDB,
 			Collection: collection,
 			Key:        "_id",
 			Value:      unpublishedDatasetID,
@@ -214,7 +214,7 @@ func TestGetVersions_Failed(t *testing.T) {
 			Convey("but only unpublished versions exist for the dataset edition", func() {
 
 				unpublishedInstance := &mongo.Doc{
-					Database:   database,
+					Database:   cfg.MongoDB,
 					Collection: "instances",
 					Key:        "_id",
 					Value:      unpublishedInstanceID,
@@ -279,7 +279,7 @@ func setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpu
 	var docs []*mongo.Doc
 
 	datasetDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
@@ -287,7 +287,7 @@ func setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpu
 	}
 
 	editionDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
@@ -295,7 +295,7 @@ func setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpu
 	}
 
 	instanceDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
@@ -303,7 +303,7 @@ func setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpu
 	}
 
 	unpublishedInstanceDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
 		Value:      unpublishedInstanceID,

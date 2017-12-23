@@ -10,6 +10,8 @@ export MONGODB_DATABASE=test
 export MONGODB_IMPORTS_DATABASE=test
 ```
 
+If you're running applications using websysd ensure `InheritEnvironment` is set to true in the `websysd.json` file.
+
 `go test ./...` - run all the tests
 
 ### Testing standards

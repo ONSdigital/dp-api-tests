@@ -16,7 +16,7 @@ import (
 func TestSuccessfullyGetACodeList(t *testing.T) {
 
 	secondCodeList := &mongo.Doc{
-		Database:   database,
+		Database:   cfg.MongoDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      secondCodeListID,

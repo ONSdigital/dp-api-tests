@@ -26,7 +26,7 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 
 	Convey("Given a published instance resource", t, func() {
 		instance := &mongo.Doc{
-			Database:   database,
+			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
 			Value:      publishedInstanceID,
@@ -62,7 +62,7 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 
 	Convey("Given an unpublished instance resource", t, func() {
 		instance := &mongo.Doc{
-			Database:   database,
+			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
 			Value:      unpublishedInstanceID,
@@ -113,7 +113,7 @@ func TestFailureToGetInstance(t *testing.T) {
 
 	Convey("Given a published instance resource exists", t, func() {
 		instance := &mongo.Doc{
-			Database:   database,
+			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
 			Value:      instanceID,

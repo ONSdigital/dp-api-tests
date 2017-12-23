@@ -23,7 +23,7 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 	var docs []*mongo.Doc
 
 	datasetDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
@@ -31,7 +31,7 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 	}
 
 	editionDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
@@ -39,7 +39,7 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 	}
 
 	instanceOneDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
@@ -47,7 +47,7 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 	}
 
 	dimensionOneDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9811",
@@ -55,7 +55,7 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 	}
 
 	dimensionTwoDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9812",
@@ -119,7 +119,7 @@ func TestFailureToGetInstanceDimensions(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	instance := &mongo.Doc{
-		Database:   database,
+		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
 		Value:      "799",

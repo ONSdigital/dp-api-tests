@@ -32,7 +32,7 @@ func TestSuccessfullyPostInstance(t *testing.T) {
 				response.Value("last_updated").NotNull()
 
 				instance := &mongo.Doc{
-					Database:   database,
+					Database:   cfg.MongoDB,
 					Collection: "instances",
 					Key:        "_id",
 					Value:      instanceUniqueID,
@@ -68,7 +68,7 @@ func TestSuccessfullyPostInstance(t *testing.T) {
 				response.Value("last_updated").NotNull()
 
 				instance := &mongo.Doc{
-					Database:   database,
+					Database:   cfg.MongoDB,
 					Collection: "instances",
 					Key:        "id",
 					Value:      instanceUniqueID,

@@ -170,7 +170,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	unpublishedDataset := &mongo.Doc{
-		Database:   database,
+		Database:   cfg.MongoDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      unpublishedDatasetID,
@@ -178,7 +178,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 	}
 
 	unpublishedEdition := &mongo.Doc{
-		Database:   database,
+		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
 		Value:      unpublishedEditionID,
@@ -253,7 +253,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 
 	Convey("Given a published dataset", t, func() {
 		publishedDataset := &mongo.Doc{
-			Database:   database,
+			Database:   cfg.MongoDB,
 			Collection: collection,
 			Key:        "_id",
 			Value:      datasetID,
@@ -287,7 +287,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 
 		Convey("and a published edition but an unpublished version", func() {
 			publishedEdition := &mongo.Doc{
-				Database:   database,
+				Database:   cfg.MongoDB,
 				Collection: "editions",
 				Key:        "_id",
 				Value:      editionID,
@@ -295,7 +295,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 			}
 
 			associatedInstance := &mongo.Doc{
-				Database:   database,
+				Database:   cfg.MongoDB,
 				Collection: "instances",
 				Key:        "_id",
 				Value:      unpublishedInstanceID,
@@ -331,7 +331,7 @@ func setupMetadataDocs(datasetID, editionID, edition, instanceID, unpublishedIns
 	var docs []*mongo.Doc
 
 	datasetDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
@@ -339,7 +339,7 @@ func setupMetadataDocs(datasetID, editionID, edition, instanceID, unpublishedIns
 	}
 
 	publishedEditionDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
@@ -347,7 +347,7 @@ func setupMetadataDocs(datasetID, editionID, edition, instanceID, unpublishedIns
 	}
 
 	publishedVersionDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
@@ -355,7 +355,7 @@ func setupMetadataDocs(datasetID, editionID, edition, instanceID, unpublishedIns
 	}
 
 	unpublishedVersionDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
 		Value:      unpublishedInstanceID,

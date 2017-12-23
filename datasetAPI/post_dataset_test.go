@@ -18,7 +18,7 @@ func TestSuccessfullyPostDataset(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	dataset := &mongo.Doc{
-		Database:   database,
+		Database:   cfg.MongoDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      datasetID,
@@ -110,7 +110,7 @@ func TestFailureToPostDataset(t *testing.T) {
 
 	Convey("Given a dataset does exist", t, func() {
 		publishedDataset := &mongo.Doc{
-			Database:   database,
+			Database:   cfg.MongoDB,
 			Collection: collection,
 			Key:        "_id",
 			Value:      datasetID,

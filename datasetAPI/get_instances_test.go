@@ -25,7 +25,7 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 
 	Convey("Given a published instance exists", t, func() {
 		instance := &mongo.Doc{
-			Database:   database,
+			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
 			Value:      instanceID,
@@ -56,14 +56,14 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 		var docs []*mongo.Doc
 
 		completedDoc := &mongo.Doc{
-			Database:   database,
+			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
 			Value:      instanceID,
 			Update:     validCompletedInstanceData(datasetID, "2018", instanceID),
 		}
 		editionConfirmedDoc := &mongo.Doc{
-			Database:   database,
+			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
 			Value:      secondInstanceID,
@@ -141,7 +141,7 @@ func TestFailureToGetAListOfInstances(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	instance := &mongo.Doc{
-		Database:   database,
+		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,

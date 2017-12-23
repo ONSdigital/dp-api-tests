@@ -35,7 +35,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 					WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPUTFullInstanceJSON)).
 					Expect().Status(http.StatusOK)
 
-				instance, err := mongo.GetInstance(database, "instances", "_id", instanceID)
+				instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
 				if err != nil {
 					if err != mgo.ErrNotFound {
 						log.ErrorC("Was unable to remove test data", err, nil)
@@ -56,7 +56,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 				WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPUTCompletedInstanceJSON)).
 				Expect().Status(http.StatusOK)
 
-			instance, err := mongo.GetInstance(database, "instances", "_id", instanceID)
+			instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
 			if err != nil {
 				if err != mgo.ErrNotFound {
 					log.ErrorC("Was unable to remove test data", err, nil)
@@ -73,7 +73,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 						WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPUTEditionConfirmedInstanceJSON)).
 						Expect().Status(http.StatusOK)
 
-					instance, err := mongo.GetInstance(database, "instances", "_id", instanceID)
+					instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
 					if err != nil {
 						if err != mgo.ErrNotFound {
 							log.ErrorC("Was unable to remove test data", err, nil)
@@ -86,7 +86,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 					So(instance.Version, ShouldEqual, 1)
 
 					// Check edition document has been created
-					edition, err := mongo.GetEdition(database, "editions", "links.self.href", instance.Links.Edition.HRef)
+					edition, err := mongo.GetEdition(cfg.MongoDB, "editions", "links.self.href", instance.Links.Edition.HRef)
 					if err != nil {
 						if err != mgo.ErrNotFound {
 							log.ErrorC("Was unable to remove test data", err, nil)
@@ -97,7 +97,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 					checkEditionDoc(datasetID, instanceID, edition)
 
 					editionDoc := &mongo.Doc{
-						Database:   database,
+						Database:   cfg.MongoDB,
 						Collection: "editions",
 						Key:        "links.self.href",
 						Value:      instance.Links.Edition.HRef,
@@ -225,7 +225,7 @@ func setupInstance(datasetID, edition, instanceID string) ([]*mongo.Doc, error) 
 	var docs []*mongo.Doc
 
 	datasetDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
@@ -233,7 +233,7 @@ func setupInstance(datasetID, edition, instanceID string) ([]*mongo.Doc, error) 
 	}
 
 	instanceOneDoc := &mongo.Doc{
-		Database:   "datasets",
+		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,

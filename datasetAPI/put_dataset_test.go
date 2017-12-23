@@ -21,7 +21,7 @@ func TestSuccessfulyUpdateDataset(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	publishedDataset := &mongo.Doc{
-		Database:   database,
+		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
@@ -35,7 +35,7 @@ func TestSuccessfulyUpdateDataset(t *testing.T) {
 			os.Exit(1)
 		}
 
-		originalDataset, err := mongo.GetDataset(database, collection, "_id", datasetID)
+		originalDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
 		if err != nil {
 			log.ErrorC("Unable to retrieve original dataset document", err, nil)
 			os.Exit(1)
@@ -52,7 +52,7 @@ func TestSuccessfulyUpdateDataset(t *testing.T) {
 
 				expectedNextSubDoc := expectedNextSubDoc(datasetID, "2018")
 
-				dataset, err := mongo.GetDataset(database, collection, "_id", datasetID)
+				dataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated dataset document", err, nil)
 					os.Exit(1)
@@ -82,7 +82,7 @@ func TestFailureToUpdateDataset(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	publishedDataset := &mongo.Doc{
-		Database:   database,
+		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
