@@ -23,13 +23,6 @@ func TestSuccessfullyGetACodeList(t *testing.T) {
 		Update:     validSecondCodeListData,
 	}
 
-	if err := mongo.Teardown(secondCodeList); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Failed to tear down test data", err, nil)
-			os.Exit(1)
-		}
-	}
-
 	if err := mongo.Setup(secondCodeList); err != nil {
 		log.ErrorC("Failed to set up test data", err, nil)
 		os.Exit(1)

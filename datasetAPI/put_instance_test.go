@@ -96,19 +96,12 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 
 					checkEditionDoc(datasetID, instanceID, edition)
 
-					editionDoc := &mongo.Doc{
+					docs = append(docs, &mongo.Doc{
 						Database:   cfg.MongoDB,
 						Collection: "editions",
 						Key:        "links.self.href",
 						Value:      instance.Links.Edition.HRef,
-					}
-
-					if err := mongo.Teardown(editionDoc); err != nil {
-						if err != mgo.ErrNotFound {
-							log.ErrorC("Was unable to remove test data", err, nil)
-							os.Exit(1)
-						}
-					}
+					})
 				})
 			})
 		})

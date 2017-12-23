@@ -31,26 +31,19 @@ func init() {
 		os.Exit(1)
 	}
 
-	test := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: collection,
-		Key:        "test_data",
-		Value:      "true",
+	var docs []*mongo.Doc
+	for _, c := range []string{collection, "editions", "instances"} {
+		t := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: c,
+			Key:        "test_data",
+			Value:      "true",
+		}
+
+		docs = append(docs, t)
 	}
 
-	if err = mongo.Teardown(test); err != nil {
-		log.ErrorC("Unable to remove all test data from mongo db", err, nil)
-		os.Exit(1)
-	}
-
-	test.Collection = "editions"
-	if err = mongo.Teardown(test); err != nil {
-		log.ErrorC("Unable to remove all test data from mongo db", err, nil)
-		os.Exit(1)
-	}
-
-	test.Collection = "instances"
-	if err = mongo.Teardown(test); err != nil {
+	if err = mongo.Teardown(docs...); err != nil {
 		log.ErrorC("Unable to remove all test data from mongo db", err, nil)
 		os.Exit(1)
 	}

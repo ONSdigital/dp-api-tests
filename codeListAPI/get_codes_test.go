@@ -48,14 +48,8 @@ func TestSuccessfullyGetAListOfAllCodesWithinCodeList(t *testing.T) {
 		Value:      firstCodeListThirdCodeID,
 		Update:     validFirstCodeListThirdCodeData,
 	}
-	docs = append(docs, firstCodeListDoc, firstCodeListCodesDoc, secondCodeListCodesDoc, thirdCodeListCodesDoc)
 
-	if err := mongo.Teardown(docs...); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Failed to tear down test data", err, nil)
-			os.Exit(1)
-		}
-	}
+	docs = append(docs, firstCodeListDoc, firstCodeListCodesDoc, secondCodeListCodesDoc, thirdCodeListCodesDoc)
 
 	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Failed to set up test data", err, nil)

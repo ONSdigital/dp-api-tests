@@ -62,6 +62,7 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 			Value:      instanceID,
 			Update:     validCompletedInstanceData(datasetID, "2018", instanceID),
 		}
+
 		editionConfirmedDoc := &mongo.Doc{
 			Database:   cfg.MongoDB,
 			Collection: "instances",

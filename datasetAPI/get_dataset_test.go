@@ -93,7 +93,10 @@ func TestFailureToGetADataset(t *testing.T) {
 			Update:     validAssociatedDatasetData(secondDatasetID),
 		}
 
-		mongo.Setup(associatedDataset)
+		if err := mongo.Setup(associatedDataset); err != nil {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
 
 		Convey("When requesting for document for an unauthorised user", func() {
 			Convey("Then return a status not found (404)", func() {
