@@ -20,10 +20,17 @@ func TestSuccessfullyDeleteDimension(t *testing.T) {
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
-	Convey("Given an existing filter blueprint", t, func() {
-		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
+	filter := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: collection,
+		Key:        "_id",
+		Value:      filterID,
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
+	}
 
-		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
+	Convey("Given an existing filter blueprint", t, func() {
+
+		if err := mongo.Setup(filter); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -56,7 +63,7 @@ func TestSuccessfullyDeleteDimension(t *testing.T) {
 				expectedDimensions = append(expectedDimensions, dimensionAge, dimensionSex, dimensionTime)
 
 				// Check dimension has been removed from filter blueprint
-				filterBlueprint, err := mongo.GetFilter(database, collection, "filter_id", filterBlueprintID)
+				filterBlueprint, err := mongo.GetFilter(cfg.MongoDB, collection, "filter_id", filterBlueprintID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated document", err, nil)
 					os.Exit(1)
@@ -67,7 +74,7 @@ func TestSuccessfullyDeleteDimension(t *testing.T) {
 		})
 	})
 
-	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+	if err := mongo.Teardown(filter); err != nil {
 		log.ErrorC("Unable to remove test data from mongo db", err, nil)
 		os.Exit(1)
 	}
@@ -81,6 +88,14 @@ func TestFailureToDeleteDimension(t *testing.T) {
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
+	filter := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: collection,
+		Key:        "_id",
+		Value:      filterID,
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
+	}
+
 	Convey("Given filter blueprint does not exist", t, func() {
 		Convey("When requesting to delete a dimension from filter blueprint", func() {
 			Convey("Then response returns status bad request (400)", func() {
@@ -93,9 +108,7 @@ func TestFailureToDeleteDimension(t *testing.T) {
 
 	Convey("Given an existing filter", t, func() {
 
-		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
-
-		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
+		if err := mongo.Setup(filter); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -108,7 +121,7 @@ func TestFailureToDeleteDimension(t *testing.T) {
 			})
 		})
 
-		if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+		if err := mongo.Teardown(filter); err != nil {
 			log.ErrorC("Unable to remove test data from mongo db", err, nil)
 			os.Exit(1)
 		}

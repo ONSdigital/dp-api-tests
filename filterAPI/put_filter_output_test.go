@@ -20,11 +20,17 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
+	output := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "filterOutputs",
+		Key:        "_id",
+		Value:      filterID,
+		Update:     GetValidFilterOutputWithoutDownloadsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID),
+	}
+
 	Convey("Given an existing filter output", t, func() {
 
-		update := GetValidFilterOutputWithoutDownloadsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID)
-
-		if err := mongo.Setup(database, "filterOutputs", "_id", filterID, update); err != nil {
+		if err := mongo.Setup(output); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -39,7 +45,7 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 			Convey("Then the filter output resource contains a non empty csv download object", func() {
 
 				// Check data has been updated as expected
-				filterOutput, err := mongo.GetFilter(database, "filterOutputs", "filter_id", filterOutputID)
+				filterOutput, err := mongo.GetFilter(cfg.MongoDB, "filterOutputs", "filter_id", filterOutputID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated document", err, nil)
 				}
@@ -67,7 +73,7 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 			Convey("Then the filter output resource contains a non empty csv and xls download objects and the state is set to `completed`", func() {
 
 				// Check data has been updated as expected
-				filterOutput, err := mongo.GetFilter(database, "filterOutputs", "filter_id", filterOutputID)
+				filterOutput, err := mongo.GetFilter(cfg.MongoDB, "filterOutputs", "filter_id", filterOutputID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated document", err, nil)
 				}
@@ -80,12 +86,7 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 			})
 		})
 
-		if err := teardownInstance(instanceID); err != nil {
-			log.ErrorC("Unable to remove test data from mongo db", err, nil)
-			os.Exit(1)
-		}
-
-		if err := mongo.Teardown(database, "filterOutputs", "_id", filterID); err != nil {
+		if err := mongo.Teardown(output); err != nil {
 			log.ErrorC("Unable to remove test data from mongo db", err, nil)
 			os.Exit(1)
 		}
@@ -99,6 +100,14 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 	instanceID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
+
+	output := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "filterOutputs",
+		Key:        "_id",
+		Value:      filterID,
+		Update:     GetValidFilterOutputWithoutDownloadsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID),
+	}
 
 	Convey("Given a filter output does not exist", t, func() {
 		Convey("When an authorised request is made to update filter output", func() {
@@ -114,9 +123,7 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 
 	Convey("Given an existing filter output", t, func() {
 
-		update := GetValidFilterOutputWithoutDownloadsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID)
-
-		if err := mongo.Setup(database, "filterOutputs", "_id", filterID, update); err != nil {
+		if err := mongo.Setup(output); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -156,7 +163,7 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 		})
 	})
 
-	if err := mongo.Teardown(database, "filterOutputs", "_id", filterID); err != nil {
+	if err := mongo.Teardown(output); err != nil {
 		log.ErrorC("Unable to remove test data from mongo db", err, nil)
 		os.Exit(1)
 	}

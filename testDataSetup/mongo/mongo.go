@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	"os"
 	"time"
 
 	mgo "gopkg.in/mgo.v2"
@@ -66,6 +67,11 @@ func Teardown(d ...*Doc) error {
 
 // Setup is a way of loading any number of documents into a mongo instance
 func Setup(d ...*Doc) error {
+	if err := Teardown(d...); err != nil {
+		log.ErrorC("Unable to remove test data from mongo db", err, nil)
+		os.Exit(1)
+	}
+
 	s := session.Copy()
 	defer s.Close()
 

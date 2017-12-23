@@ -20,11 +20,17 @@ func TestSuccessfullyGetListOfDimensions(t *testing.T) {
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
+	filter := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: collection,
+		Key:        "_id",
+		Value:      filterID,
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
+	}
+
 	Convey("Given an existing filter", t, func() {
 
-		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
-
-		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
+		if err := mongo.Setup(filter); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -47,7 +53,7 @@ func TestSuccessfullyGetListOfDimensions(t *testing.T) {
 		})
 	})
 
-	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+	if err := mongo.Teardown(filter); err != nil {
 		log.ErrorC("Unable to remove test data from mongo db", err, nil)
 		os.Exit(1)
 	}
@@ -55,7 +61,6 @@ func TestSuccessfullyGetListOfDimensions(t *testing.T) {
 
 func TestFailureToGetListOfDimensions(t *testing.T) {
 
-	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
@@ -69,9 +74,4 @@ func TestFailureToGetListOfDimensions(t *testing.T) {
 			})
 		})
 	})
-
-	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
-		log.ErrorC("Unable to remove test data from mongo db", err, nil)
-		os.Exit(1)
-	}
 }
