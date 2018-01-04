@@ -1,8 +1,11 @@
 package generateFiles
 
 import (
+	"encoding/csv"
+	"io"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -202,6 +205,40 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(datasetResource.Next.Links.LatestVersion.ID, ShouldEqual, "1")
 			So(datasetResource.Next.State, ShouldEqual, "associated")
 
+			// Waiting for version to have downloads before updating state to published
+			hasDownloads := false
+			var XLSSize int
+			for !hasDownloads {
+				instanceResource, err = mongo.GetInstance("datasets", "instances", "id", instanceID)
+				if err != nil {
+					log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
+					os.Exit(1)
+				}
+				if instanceResource.Downloads != nil {
+					if instanceResource.Downloads.XLS != nil {
+						if instanceResource.Downloads.XLS.URL != "" {
+							XLSSize, err = strconv.Atoi(instanceResource.Downloads.XLS.Size)
+							if err != nil {
+								log.ErrorC("cannot convert xls size of type string to integer", err, log.Data{"xls_size": instanceResource.Downloads.XLS.Size})
+								os.Exit(1)
+							}
+							So(XLSSize, ShouldBeBetweenOrEqual, 15962, 15968)
+							So(instanceResource.Downloads.XLS.URL, ShouldNotBeEmpty)
+							CSVSize, err := strconv.Atoi(instanceResource.Downloads.CSV.Size)
+							if err != nil {
+								log.ErrorC("cannot convert csv size of type string to integer", err, log.Data{"csv_size": instanceResource.Downloads.CSV.Size})
+								os.Exit(1)
+							}
+							So(CSVSize, ShouldBeBetweenOrEqual, 116739, 116743)
+							So(instanceResource.Downloads.CSV.URL, ShouldNotBeEmpty)
+							hasDownloads = true
+						}
+					}
+				} else {
+					So(instanceResource.State, ShouldEqual, "associated")
+				}
+			}
+
 			// STEP 6 -  Update version to a state of published
 			datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetName, "2017", "1").WithHeader(internalTokenHeader, internalTokenID).
 				WithBytes([]byte(`{"state":"published"}`)).Expect().Status(http.StatusOK)
@@ -234,106 +271,174 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(datasetResource.Current.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetName+"/editions/2017/versions/1")
 			So(datasetResource.Current.State, ShouldEqual, "published")
 
-			Convey("Then an api customer should be able to get a csv and xlsx download link", func() {
-				// TODO Get downloads link from version document
+			log.Debug("links", log.Data{"xls_link": versionResource.Downloads.XLS.URL, "csv_link": versionResource.Downloads.CSV.URL})
 
-				// read file from s3
-				// check the number of rows and anything else (e.g. meta data)
+			Convey("Then an api customer should be able to get a csv and xls download link", func() {
+				// Get downloads link from version document
+				bucket := "csv-exported"
+				csvURL := versionResource.Downloads.CSV.URL
+				csvFilename := strings.TrimPrefix(csvURL, "https://"+bucket+".s3."+region+".amazonaws.com/")
 
-			})
+				csvS3URL := "s3://" + bucket + "/" + csvFilename
 
-			Convey("Then an api customer should be able to filter a dataset and be able to download a csv and xlsx download of the data", func() {
-				filterBlueprintResponse := filterAPI.POST("/filters").WithQuery("submitted", "true").
-					WithBytes([]byte(GetValidPOSTCreateFilterJSON(instanceID))).Expect().Status(http.StatusCreated).JSON().Object()
-
-				filterBlueprintID := filterBlueprintResponse.Value("filter_id").String().Raw()
-
-				filterBlueprintResponse.Value("filter_id").NotNull()
-				filterBlueprintResponse.Value("instance_id").Equal(instanceID)
-				filterBlueprintResponse.Value("dimensions").Array().Element(0).Object().Value("name").Equal("geography")
-				filterBlueprintResponse.Value("dimensions").Array().Element(0).Object().Value("options").Array().Length().Equal(1)
-				filterBlueprintResponse.Value("dimensions").Array().Element(1).Object().Value("name").Equal("aggregate")
-				filterBlueprintResponse.Value("dimensions").Array().Element(1).Object().Value("options").Array().Length().Equal(38)
-				filterBlueprintResponse.Value("dimensions").Array().Element(2).Object().Value("name").Equal("time")
-				filterBlueprintResponse.Value("dimensions").Array().Element(2).Object().Value("options").Array().Length().Equal(1)
-				filterBlueprintResponse.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("/filters/" + filterBlueprintID + "/dimensions$")
-				filterBlueprintResponse.Value("links").Object().Value("self").Object().Value("href").String().Match("/filters/(.+)$")
-				filterBlueprintResponse.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetName + "/editions/2017/versions/1$")
-				filterBlueprintResponse.Value("links").Object().Value("version").Object().Value("id").Equal("1")
-				filterBlueprintResponse.Value("links").Object().Value("filter_output").Object().Value("href").String().Match("/filter-outputs/(.+)$")
-				filterBlueprintResponse.Value("links").Object().Value("filter_output").Object().Value("id").NotNull()
-
-				filterOutputID := filterBlueprintResponse.Value("links").Object().Value("filter_output").Object().Value("id").String().Raw()
-
-				filterOutputResource, err := mongo.GetFilter("filters", "filterOutputs", "filter_id", filterOutputID)
+				// read csv download from s3
+				csvFile, err := getS3File(region, csvS3URL)
 				if err != nil {
-					log.ErrorC("Unable to retrieve filter output document", err, log.Data{"filter_output_id": filterOutputID})
+					log.ErrorC("unable to find csv full download in s3", err, log.Data{"s3_url": csvS3URL, "csv_url": csvURL, "csv_filename": csvFilename})
 					os.Exit(1)
 				}
 
-				So(filterOutputResource.FilterID, ShouldEqual, filterOutputID)
-				So(filterOutputResource.InstanceID, ShouldEqual, instanceID)
-				So(filterOutputResource.State, ShouldEqual, "created")
+				csvReader := csv.NewReader(csvFile)
+				headerRow, err := csvReader.Read()
+				if err != nil {
+					log.ErrorC("unable to read header row", err, log.Data{"csv_url": csvURL, "csv_filename": csvFilename})
+				}
 
-				tryAgain := true
-				for tryAgain {
-					filterOutputResource, err = mongo.GetFilter("filters", "filterOutputs", "filter_id", filterOutputID)
+				So(len(headerRow), ShouldEqual, 7)
+
+				// check the number of rows and anything else (e.g. meta data)
+				numberOfCSVRows := 0
+				for {
+					_, err = csvReader.Read()
+					if err != nil {
+						if err == io.EOF {
+							break
+						}
+						log.ErrorC("unable to read row", err, log.Data{"csv_url": csvURL, "csv_filename": csvFilename})
+						os.Exit(1)
+					}
+					numberOfCSVRows++
+				}
+				So(numberOfCSVRows, ShouldEqual, 1513)
+
+				xlsURL := versionResource.Downloads.XLS.URL
+				xlsFilename := strings.TrimPrefix(xlsURL, "https://"+bucket+".s3-"+region+".amazonaws.com/")
+
+				xlsS3URL := "s3://" + bucket + "/" + xlsFilename
+
+				// read xls download from s3
+				xlsFile, err := getS3File(region, xlsS3URL)
+				if err != nil {
+					log.ErrorC("unable to find xls full download in s3", err, log.Data{"s3_url": xlsS3URL, "xls_url": xlsURL, "csv_filename": xlsFilename})
+					os.Exit(1)
+				}
+
+				So(xlsFile, ShouldNotBeEmpty)
+
+				xlsFileSize, err := getS3FileSize(region, bucket, xlsFilename)
+				if err != nil {
+					log.ErrorC("unable to extract size of xls full download in s3", err, log.Data{"s3_url": xlsS3URL, "xls_url": xlsURL, "csv_filename": xlsFilename})
+					os.Exit(1)
+				}
+
+				expectedXLSFileSize := int64(XLSSize)
+				So(xlsFileSize, ShouldResemble, &expectedXLSFileSize)
+
+				Convey("Then an api customer should be able to filter a dataset and be able to download a csv and xlsx download of the data", func() {
+					filterBlueprintResponse := filterAPI.POST("/filters").WithQuery("submitted", "true").
+						WithBytes([]byte(GetValidPOSTCreateFilterJSON(instanceID))).Expect().Status(http.StatusCreated).JSON().Object()
+
+					filterBlueprintID := filterBlueprintResponse.Value("filter_id").String().Raw()
+
+					filterBlueprintResponse.Value("filter_id").NotNull()
+					filterBlueprintResponse.Value("instance_id").Equal(instanceID)
+					filterBlueprintResponse.Value("dimensions").Array().Element(0).Object().Value("name").Equal("geography")
+					filterBlueprintResponse.Value("dimensions").Array().Element(0).Object().Value("options").Array().Length().Equal(1)
+					filterBlueprintResponse.Value("dimensions").Array().Element(1).Object().Value("name").Equal("aggregate")
+					filterBlueprintResponse.Value("dimensions").Array().Element(1).Object().Value("options").Array().Length().Equal(38)
+					filterBlueprintResponse.Value("dimensions").Array().Element(2).Object().Value("name").Equal("time")
+					filterBlueprintResponse.Value("dimensions").Array().Element(2).Object().Value("options").Array().Length().Equal(1)
+					filterBlueprintResponse.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("/filters/" + filterBlueprintID + "/dimensions$")
+					filterBlueprintResponse.Value("links").Object().Value("self").Object().Value("href").String().Match("/filters/(.+)$")
+					filterBlueprintResponse.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetName + "/editions/2017/versions/1$")
+					filterBlueprintResponse.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+					filterBlueprintResponse.Value("links").Object().Value("filter_output").Object().Value("href").String().Match("/filter-outputs/(.+)$")
+					filterBlueprintResponse.Value("links").Object().Value("filter_output").Object().Value("id").NotNull()
+
+					filterOutputID := filterBlueprintResponse.Value("links").Object().Value("filter_output").Object().Value("id").String().Raw()
+
+					filterOutputResource, err := mongo.GetFilter("filters", "filterOutputs", "filter_id", filterOutputID)
 					if err != nil {
 						log.ErrorC("Unable to retrieve filter output document", err, log.Data{"filter_output_id": filterOutputID})
 						os.Exit(1)
 					}
-					if filterOutputResource.State == "completed" {
-						tryAgain = false
+
+					So(filterOutputResource.FilterID, ShouldEqual, filterOutputID)
+					So(filterOutputResource.InstanceID, ShouldEqual, instanceID)
+					So(filterOutputResource.State, ShouldEqual, "created")
+
+					filterOutputResourceCompleted := true
+					for filterOutputResourceCompleted {
+						filterOutputResource, err = mongo.GetFilter("filters", "filterOutputs", "filter_id", filterOutputID)
+						if err != nil {
+							log.ErrorC("Unable to retrieve filter output document", err, log.Data{"filter_output_id": filterOutputID})
+							os.Exit(1)
+						}
+						if filterOutputResource.State == "completed" {
+							filterOutputResourceCompleted = false
+						}
 					}
-				}
 
-				So(filterOutputResource.FilterID, ShouldEqual, filterOutputID)
-				So(filterOutputResource.InstanceID, ShouldEqual, instanceID)
-				So(filterOutputResource.State, ShouldEqual, "completed")
-				So(filterOutputResource.Downloads.CSV, ShouldNotBeNil)
-				So(filterOutputResource.Downloads.XLS, ShouldNotBeNil)
+					So(filterOutputResource.FilterID, ShouldEqual, filterOutputID)
+					So(filterOutputResource.InstanceID, ShouldEqual, instanceID)
+					So(filterOutputResource.State, ShouldEqual, "completed")
+					So(filterOutputResource.Downloads.CSV, ShouldNotBeNil)
+					So(filterOutputResource.Downloads.XLS, ShouldNotBeNil)
 
-				var locationCSV, locationXLS string
-				var filename []string
-				if filterOutputResource.Downloads.CSV != nil {
-					locationCSV = filterOutputResource.Downloads.CSV.URL
-					filename = strings.Split(locationCSV, "https://csv-exported.s3.eu-west-1.amazonaws.com/")
-				}
-
-				if filterOutputResource.Downloads.XLS != nil {
-					locationXLS = filterOutputResource.Downloads.XLS.URL
-				}
-
-				log.Info("My filtered files on aws", log.Data{"csv_location": locationCSV, "xls_location": locationXLS, "filename": filename[0]})
-
-				// TODO get csv file and xlsx file
-				if err = getS3File("eu-west-1", "csv-exported", filename[0]); err != nil {
-					//log.ErrorC("failed to find filtered csv file", err, log.Data{"filename": filename + ".csv"})
-				}
-
-				// remove filter blueprint
-				if err = mongo.Teardown("filters", "filters", "filter_id", filterBlueprintID); err != nil {
-					if err != mgo.ErrNotFound {
-						log.ErrorC("failed to remove filter blueprint resource", err, log.Data{"filter_blueprint_id": filterBlueprintID})
-						hasRemovedAllResources = false
+					var locationCSV, locationXLS string
+					var filename []string
+					if filterOutputResource.Downloads.CSV != nil {
+						locationCSV = filterOutputResource.Downloads.CSV.URL
+						filename = strings.TrimPrefix(locationCSV, "https://"+bucket+".s3."+region+".amazonaws.com/")
 					}
-				}
 
-				// remove filter output
-				if err = mongo.Teardown("filters", "filterOutputs", "filter_id", filterOutputID); err != nil {
-					if err != mgo.ErrNotFound {
-						log.ErrorC("failed to remove filter output resource", err, log.Data{"filter_output_id": filterOutputID})
-						hasRemovedAllResources = false
+					if filterOutputResource.Downloads.XLS != nil {
+						locationXLS = filterOutputResource.Downloads.XLS.URL
 					}
-				}
 
-				if err = deleteS3File("eu-west-1", "csv-exported", locationCSV); err != nil {
-					log.ErrorC("Failed to remove filtered csv file from s3", err, log.Data{"location": locationCSV})
+					log.Info("My filtered files on aws", log.Data{"csv_location": locationCSV, "xls_location": locationXLS, "filename": filename[0]})
+
+					// TODO get csv file and xlsx file
+					if err = getS3File("eu-west-1", "csv-exported", filename[0]); err != nil {
+						//log.ErrorC("failed to find filtered csv file", err, log.Data{"filename": filename + ".csv"})
+					}
+
+					// remove filter blueprint
+					if err = mongo.Teardown("filters", "filters", "filter_id", filterBlueprintID); err != nil {
+						if err != mgo.ErrNotFound {
+							log.ErrorC("failed to remove filter blueprint resource", err, log.Data{"filter_blueprint_id": filterBlueprintID})
+							hasRemovedAllResources = false
+						}
+					}
+
+					// remove filter output
+					// if err = mongo.Teardown("filters", "filterOutputs", "filter_id", filterOutputID); err != nil {
+					// 	if err != mgo.ErrNotFound {
+					// 		log.ErrorC("failed to remove filter output resource", err, log.Data{"filter_output_id": filterOutputID})
+					// 		hasRemovedAllResources = false
+					// 	}
+					// }
+
+					// if err = deleteS3File("eu-west-1", "csv-exported", locationCSV); err != nil {
+					// 	log.ErrorC("Failed to remove filtered csv file from s3", err, log.Data{"location": locationCSV})
+					// 	hasRemovedAllResources = false
+					// }
+					//
+					// if err = deleteS3File("eu-west-1", "csv-exported", locationXLS); err != nil {
+					// 	log.ErrorC("Failed to remove filtered xls file from s3", err, log.Data{"location": locationXLS})
+					// 	hasRemovedAllResources = false
+					// }
+				})
+
+				// remove test file from s3
+				if err := deleteS3File(region, bucket, csvFilename); err != nil {
+					log.ErrorC("Failed to remove full downloadable test csv file from s3", err, nil)
 					hasRemovedAllResources = false
 				}
 
-				if err = deleteS3File("eu-west-1", "csv-exported", locationXLS); err != nil {
-					log.ErrorC("Failed to remove filtered xls file from s3", err, log.Data{"location": locationXLS})
+				// remove test file from s3
+				if err := deleteS3File(region, bucket, xlsFilename); err != nil {
+					log.ErrorC("Failed to remove full downloadable test xls file from s3", err, nil)
 					hasRemovedAllResources = false
 				}
 			})

@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/ONSdigital/go-ns/log"
+	ons3 "github.com/ONSdigital/go-ns/s3"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -70,7 +71,22 @@ func sendV4FileToAWS(region, bucket, filename string) (string, error) {
 	return result.Location, nil
 }
 
-func getS3File(region, bucket, filename string) error {
+func getS3File(region, s3URL string) (io.ReadCloser, error) {
+	s3, err := ons3.New(region)
+	if err != nil {
+		log.Error(err, nil)
+		return nil, err
+	}
+
+	file, err := s3.Get(s3URL)
+	if err != nil {
+		return nil, err
+	}
+
+	return file, nil
+}
+
+func getS3FileSize(region, bucket, filename string) (*int64, error) {
 	config := aws.NewConfig().WithRegion(region)
 
 	store := &Store{
@@ -81,7 +97,7 @@ func getS3File(region, bucket, filename string) error {
 	session, err := session.NewSession(store.config)
 	if err != nil {
 		log.ErrorC("failed to create session", err, nil)
-		return err
+		return nil, err
 	}
 
 	svc := s3.New(session)
@@ -95,13 +111,13 @@ func getS3File(region, bucket, filename string) error {
 	result, err := svc.GetObjectWithContext(ctx, input)
 	if err != nil {
 		log.ErrorC("failed to find file", err, nil)
-		return err
+		return nil, err
 	}
 	defer result.Body.Close()
 
-	log.Debug("body is?", log.Data{"s3_file": result.Body})
+	size := result.ContentLength
 
-	return nil
+	return size, nil
 }
 
 func deleteS3File(region, bucket, filename string) error {

@@ -86,8 +86,6 @@ func deleteMongoTestData(datasetID string) bool {
 		log.Trace("delete job not found", nil)
 	}
 
-	log.Trace("got here", nil)
-
 	// remove instance/versions
 	if err = mongo.Teardown("datasets", "instances", "id", instanceID); err != nil {
 		if err != mgo.ErrNotFound {
@@ -97,8 +95,6 @@ func deleteMongoTestData(datasetID string) bool {
 		log.Trace("delete instance not found", nil)
 	}
 
-	log.Trace("got here 2", nil)
-
 	// remove dimension options
 	if err = mongo.Teardown("datasets", "dimension.options", "instance_id", instanceID); err != nil {
 		if err != mgo.ErrNotFound {
@@ -107,8 +103,6 @@ func deleteMongoTestData(datasetID string) bool {
 		}
 		log.Trace("delete dimension options not found", nil)
 	}
-
-	log.Trace("got here 3", log.Data{"links.self.href": oldInstanceResource.Links})
 
 	// remove edition if exists
 	if oldInstanceResource.Links.Edition != nil {
@@ -137,7 +131,7 @@ func deleteMongoTestData(datasetID string) bool {
 		}
 	}
 
-	log.Info("got this far", log.Data{"success": successfullyRemovedMongoTestData})
+	log.Info("removed mongo test data", log.Data{"success": successfullyRemovedMongoTestData})
 
 	return successfullyRemovedMongoTestData
 }
