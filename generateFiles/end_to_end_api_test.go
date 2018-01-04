@@ -385,23 +385,46 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					So(filterOutputResource.Downloads.CSV, ShouldNotBeNil)
 					So(filterOutputResource.Downloads.XLS, ShouldNotBeNil)
 
-					var locationCSV, locationXLS string
-					var filename []string
-					if filterOutputResource.Downloads.CSV != nil {
-						locationCSV = filterOutputResource.Downloads.CSV.URL
-						filename = strings.TrimPrefix(locationCSV, "https://"+bucket+".s3."+region+".amazonaws.com/")
+					filteredCSVURL := filterOutputResource.Downloads.CSV.URL
+					filteredCSVFilename := strings.TrimPrefix(filteredCSVURL, "https://"+bucket+".s3."+region+".amazonaws.com/")
+
+					filteredCSVS3URL := "s3://" + bucket + "/" + filteredCSVFilename
+
+					// read csv download from s3
+					filteredCSVFile, err := getS3File(region, filteredCSVS3URL)
+					if err != nil {
+						log.ErrorC("unable to find filtered csv download in s3", err, log.Data{"filtered_csv_s3_url": filteredCSVS3URL, "filtered_csv_url": filteredCSVURL, "filtered_csv_filename": filteredCSVFilename})
+						os.Exit(1)
 					}
 
-					if filterOutputResource.Downloads.XLS != nil {
-						locationXLS = filterOutputResource.Downloads.XLS.URL
+					filteredCSVReader := csv.NewReader(filteredCSVFile)
+
+					if err = checkFileRowCount(filteredCSVReader, filteredCSVS3URL, 39); err != nil {
+						os.Exit(1)
 					}
 
-					log.Info("My filtered files on aws", log.Data{"csv_location": locationCSV, "xls_location": locationXLS, "filename": filename[0]})
+					filteredXLSURL := filterOutputResource.Downloads.XLS.URL
+					filteredXLSFilename := strings.TrimPrefix(filteredXLSURL, "https://"+bucket+".s3-"+region+".amazonaws.com/")
 
-					// TODO get csv file and xlsx file
-					if err = getS3File("eu-west-1", "csv-exported", filename[0]); err != nil {
-						//log.ErrorC("failed to find filtered csv file", err, log.Data{"filename": filename + ".csv"})
+					filteredXLSS3URL := "s3://" + bucket + "/" + filteredXLSFilename
+
+					// read xls download from s3
+					filteredXLSFile, err := getS3File(region, filteredXLSS3URL)
+					if err != nil {
+						log.ErrorC("unable to find filtered xls download in s3", err, log.Data{"filtered_s3_url": filteredXLSS3URL, "filtered_xls_url": filteredXLSURL, "filtered_xls_filename": filteredXLSFilename})
+						os.Exit(1)
 					}
+
+					So(filteredXLSFile, ShouldNotBeEmpty)
+
+					filteredXLSFileSize, err := getS3FileSize(region, bucket, filteredXLSFilename)
+					if err != nil {
+						log.ErrorC("unable to extract size of filtered xls download in s3", err, log.Data{"filtered_s3_url": filteredXLSS3URL, "filtered_xls_url": filteredXLSURL, "filtered_xls_filename": filteredXLSFilename})
+						os.Exit(1)
+					}
+
+					expectedXLSFileSize := int64(6295) // this value may vary slightly
+					So(filteredXLSFileSize, ShouldResemble, &expectedXLSFileSize)
 
 					// remove filter blueprint
 					if err = mongo.Teardown("filters", "filters", "filter_id", filterBlueprintID); err != nil {
@@ -412,22 +435,22 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					}
 
 					// remove filter output
-					// if err = mongo.Teardown("filters", "filterOutputs", "filter_id", filterOutputID); err != nil {
-					// 	if err != mgo.ErrNotFound {
-					// 		log.ErrorC("failed to remove filter output resource", err, log.Data{"filter_output_id": filterOutputID})
-					// 		hasRemovedAllResources = false
-					// 	}
-					// }
+					if err = mongo.Teardown("filters", "filterOutputs", "filter_id", filterOutputID); err != nil {
+						if err != mgo.ErrNotFound {
+							log.ErrorC("failed to remove filter output resource", err, log.Data{"filter_output_id": filterOutputID})
+							hasRemovedAllResources = false
+						}
+					}
 
-					// if err = deleteS3File("eu-west-1", "csv-exported", locationCSV); err != nil {
-					// 	log.ErrorC("Failed to remove filtered csv file from s3", err, log.Data{"location": locationCSV})
-					// 	hasRemovedAllResources = false
-					// }
-					//
-					// if err = deleteS3File("eu-west-1", "csv-exported", locationXLS); err != nil {
-					// 	log.ErrorC("Failed to remove filtered xls file from s3", err, log.Data{"location": locationXLS})
-					// 	hasRemovedAllResources = false
-					// }
+					if err = deleteS3File("eu-west-1", "csv-exported", filteredCSVFilename); err != nil {
+						log.ErrorC("Failed to remove filtered csv file from s3", err, log.Data{"filename": filteredCSVFilename})
+						hasRemovedAllResources = false
+					}
+
+					if err = deleteS3File("eu-west-1", "csv-exported", filteredXLSFilename); err != nil {
+						log.ErrorC("Failed to remove filtered xls file from s3", err, log.Data{"filename": filteredXLSFilename})
+						hasRemovedAllResources = false
+					}
 				})
 
 				// remove test file from s3
@@ -509,4 +532,24 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			os.Exit(1)
 		}
 	})
+}
+
+func checkFileRowCount(csvReader *csv.Reader, s3URL string, expectedCount int64) error {
+	numberOfRows := int64(0)
+	// Iterate over file counting the number of rows that exist
+	for {
+		line, err := csvReader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.ErrorC("encountered error reading csv", err, log.Data{"s3_url": s3URL, "csv_line": line})
+			return err
+		}
+		numberOfRows++
+	}
+
+	So(numberOfRows, ShouldEqual, expectedCount)
+
+	return nil
 }
