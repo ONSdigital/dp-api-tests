@@ -93,11 +93,14 @@ func deleteMongoTestData(datasetID string) bool {
 		Value:      instanceID,
 	}
 
-	edition := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "editions",
-		Key:        "links.self.href",
-		Value:      oldInstanceResource.Links.Edition.HRef,
+	if oldInstanceResource.Links.Edition != nil {
+		edition := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: "editions",
+			Key:        "links.self.href",
+			Value:      oldInstanceResource.Links.Edition.HRef,
+		}
+		docs = append(docs, edition)
 	}
 
 	filterBlueprint := &mongo.Doc{
@@ -113,7 +116,7 @@ func deleteMongoTestData(datasetID string) bool {
 		Key:        "instance_id",
 		Value:      instanceID,
 	}
-	docs = append(docs, dataset, importJob, instance, dimension, edition, filterBlueprint, filterOutput)
+	docs = append(docs, dataset, importJob, instance, dimension, filterBlueprint, filterOutput)
 
 	// remove filter output
 	if err = mongo.Teardown(docs...); err != nil {
