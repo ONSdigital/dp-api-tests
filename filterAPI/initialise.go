@@ -42,5 +42,15 @@ func init() {
 		os.Exit(1)
 	}
 
+	if err = mongo.Teardown("datasets", "instances", "test_data", "true"); err != nil {
+		log.ErrorC("Unable to remove all test data from mongo db", err, nil)
+		os.Exit(1)
+	}
+
+	if err = mongo.Teardown("datasets", "dimension.options", "test_data", "true"); err != nil {
+		log.ErrorC("Unable to remove all test data from mongo db", err, nil)
+		os.Exit(1)
+	}
+
 	log.Debug("config is:", log.Data{"config": cfg})
 }

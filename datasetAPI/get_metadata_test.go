@@ -5,15 +5,16 @@ import (
 	"os"
 	"testing"
 
+	mgo "gopkg.in/mgo.v2"
+
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	uuid "github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
-	mgo "gopkg.in/mgo.v2"
 )
 
-func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
+func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 
 	instanceID := uuid.NewV4().String()
 	unpublishedInstanceID := uuid.NewV4().String()
@@ -23,83 +24,128 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-	Convey("Given a published and unpublished version for a dataset edition exists", t, func() {
-		d, err := setupPublishedAndUnpublishedVersions(datasetID, editionID, edition, instanceID, unpublishedInstanceID)
+	Convey("Given a published and unpublished version", t, func() {
+		d, err := setupMetadataDocs(datasetID, editionID, edition, instanceID, unpublishedInstanceID)
 		if err != nil {
 			log.ErrorC("Failed to setup test data", err, nil)
 			os.Exit(1)
 		}
 
 		Convey("When an authenticated request is made to get the unpublished version", func() {
-			Convey("Then the response body contains the expected version", func() {
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2", datasetID, edition).WithHeader(internalToken, internalTokenID).
+			Convey("Then the response body contains the expected metadata", func() {
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/metadata", datasetID, edition).WithHeader(internalToken, internalTokenID).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				response.Value("id").Equal(unpublishedInstanceID)
-				response.Value("collection_id").Equal("208064B3-A808-449B-9041-EA3A2F72CFAB")
+				response.Value("contacts").Array().Element(0).Object().Value("email").Equal("cpi@onstest.gov.uk")
+				response.Value("contacts").Array().Element(0).Object().Value("name").Equal("Automation Tester")
+				response.Value("contacts").Array().Element(0).Object().Value("telephone").Equal("+44 (0)1633 123456")
+				response.Value("description").Equal("Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.")
 				response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
 				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("(.+)/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
 				response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
 				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
+				response.Value("distribution").Array().Element(0).Equal("json")
+				response.Value("distribution").Array().Element(1).Equal("csv")
+				response.Value("distribution").Array().Element(2).Equal("xls")
 				response.Value("downloads").Object().Value("csv").Object().Value("url").String().Match("(.+)/aws/census-2017-2-csv$")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
 				response.Value("downloads").Object().Value("xls").Object().Value("url").String().Match("(.+)/aws/census-2017-2-xls$")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24")
-				response.Value("edition").Equal(edition)
+				response.Value("keywords").Array().Element(0).Equal("cpi")
+				response.Value("keywords").Array().Element(1).Equal("boy")
 				response.Value("latest_changes").Array().Element(0).Object().Value("description").String().Equal("The border of Southampton changed after the south east cliff face fell into the sea.")
 				response.Value("latest_changes").Array().Element(0).Object().Value("name").String().Equal("Changes in Classification")
 				response.Value("latest_changes").Array().Element(0).Object().Value("type").String().Equal("Summary of Changes")
-				response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
-				response.Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
-				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/2/dimensions$")
-				response.Value("links").Object().Value("edition").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
-				response.Value("links").Object().Value("edition").Object().Value("id").Equal(edition)
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/2$")
+				response.Value("license").Equal("ONS license")
+				response.Value("links").Object().Value("access_rights").Object().Value("href").Equal("http://ons.gov.uk/accessrights")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/2$")
+				response.Value("links").Object().Value("version").Object().Value("id").Equal("2")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/2/metadata$")
 				response.Value("links").Object().Value("spatial").Object().Value("href").Equal("http://ons.gov.uk/geographylist")
+				response.Value("methodologies").Array().Element(0).Object().Value("description").Equal("Consumer price inflation is the rate at which the prices of the goods and services bought by households rise or fall, and is estimated by using consumer price indices.")
+				response.Value("methodologies").Array().Element(0).Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi")
+				response.Value("methodologies").Array().Element(0).Object().Value("title").Equal("Consumer Price Inflation (includes all 3 indices – CPIH, CPI and RPI)")
+				response.Value("national_statistic").Equal(true)
+				response.Value("next_release").Equal("2018-10-10")
+				response.Value("publications").Array().Element(0).Object().Value("description").Equal("Price indices, percentage changes and weights for the different measures of consumer price inflation.")
+				response.Value("publications").Array().Element(0).Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/consumerpriceinflation/aug2017")
+				response.Value("publications").Array().Element(0).Object().Value("title").Equal("UK consumer price inflation: August 2017")
+				response.Value("publisher").Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/consumerpriceinflation/aug2017")
+				response.Value("publisher").Object().Value("name").Equal("Automation Tester")
+				response.Value("publisher").Object().Value("type").Equal("publisher")
+				response.Value("qmi").Object().Value("description").Equal("Consumer price inflation is the rate at which the prices of goods and services bought by households rise and fall")
+				response.Value("qmi").Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi")
+				response.Value("qmi").Object().Value("title").Equal("Consumer Price Inflation (includes all 3 indices – CPIH, CPI and RPI)")
+				response.Value("related_datasets").Array().Element(0).Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceindices")
+				response.Value("related_datasets").Array().Element(0).Object().Value("title").Equal("Consumer Price Inflation time series dataset")
 				response.Value("release_date").Equal("2017-12-12")
-				response.Value("state").Equal("associated")
+				response.Value("release_frequency").Equal("Monthly")
 				response.Value("temporal").Array().Element(0).Object().Value("start_date").Equal("2014-09-09")
 				response.Value("temporal").Array().Element(0).Object().Value("end_date").Equal("2017-09-09")
 				response.Value("temporal").Array().Element(0).Object().Value("frequency").Equal("monthly")
-				response.Value("version").Equal(2)
+				response.Value("theme").Equal("Goods and services")
+				response.Value("title").Equal("CPI")
+				response.Value("unit_of_measure").Equal("Pounds Sterling")
+				response.Value("uri").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation")
 			})
 		})
 
-		Convey("When an unauthenticated request is made to get the published version", func() {
-			Convey("Then the response body contains the expected version", func() {
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).
+		Convey("When an unauthenticated request is made to get the metadata relevant to a published version ", func() {
+			Convey("Then the response body contains the expected metadata", func() {
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				response.Value("alerts").Array().Element(0).Object().Value("date").String().Equal("2017-12-10")
-				response.Value("alerts").Array().Element(0).Object().Value("description").String().Equal("A correction to an observation for males of age 25, previously 11 now changed to 12")
-				response.Value("alerts").Array().Element(0).Object().Value("type").String().Equal("Correction")
-				response.Value("id").Equal(instanceID)
-				response.Value("collection_id").Equal("108064B3-A808-449B-9041-EA3A2F72CFAA")
+				response.Value("contacts").Array().Element(0).Object().Value("email").Equal("cpi@onstest.gov.uk")
+				response.Value("contacts").Array().Element(0).Object().Value("name").Equal("Automation Tester")
+				response.Value("contacts").Array().Element(0).Object().Value("telephone").Equal("+44 (0)1633 123456")
+				response.Value("description").Equal("Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.")
 				response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
 				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("(.+)/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
 				response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
 				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
+				response.Value("distribution").Array().Element(0).Equal("json")
+				response.Value("distribution").Array().Element(1).Equal("csv")
+				response.Value("distribution").Array().Element(2).Equal("xls")
 				response.Value("downloads").Object().Value("csv").Object().Value("url").String().Match("(.+)/aws/census-2017-1-csv$")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
 				response.Value("downloads").Object().Value("xls").Object().Value("url").String().Match("(.+)/aws/census-2017-1-xls$")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24")
-				response.Value("edition").Equal(edition)
+				response.Value("keywords").Array().Element(0).Equal("cpi")
+				response.Value("keywords").Array().Element(1).Equal("boy")
 				response.Value("latest_changes").Array().Element(0).Object().Value("description").String().Equal("The border of Southampton changed after the south east cliff face fell into the sea.")
 				response.Value("latest_changes").Array().Element(0).Object().Value("name").String().Equal("Changes in Classification")
 				response.Value("latest_changes").Array().Element(0).Object().Value("type").String().Equal("Summary of Changes")
-				response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
-				response.Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
-				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions$")
-				response.Value("links").Object().Value("edition").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
-				response.Value("links").Object().Value("edition").Object().Value("id").Equal(edition)
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
+				response.Value("license").Equal("ONS license")
+				response.Value("links").Object().Value("access_rights").Object().Value("href").Equal("http://ons.gov.uk/accessrights")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
+				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1/metadata$")
 				response.Value("links").Object().Value("spatial").Object().Value("href").Equal("http://ons.gov.uk/geographylist")
+				response.Value("methodologies").Array().Element(0).Object().Value("description").Equal("Consumer price inflation is the rate at which the prices of the goods and services bought by households rise or fall, and is estimated by using consumer price indices.")
+				response.Value("methodologies").Array().Element(0).Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi")
+				response.Value("methodologies").Array().Element(0).Object().Value("title").Equal("Consumer Price Inflation (includes all 3 indices – CPIH, CPI and RPI)")
+				response.Value("national_statistic").Equal(true)
+				response.Value("next_release").Equal("2017-10-10")
+				response.Value("publications").Array().Element(0).Object().Value("description").Equal("Price indices, percentage changes and weights for the different measures of consumer price inflation.")
+				response.Value("publications").Array().Element(0).Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/consumerpriceinflation/aug2017")
+				response.Value("publications").Array().Element(0).Object().Value("title").Equal("UK consumer price inflation: August 2017")
+				response.Value("publisher").Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/consumerpriceinflation/aug2017")
+				response.Value("publisher").Object().Value("name").Equal("Automation Tester")
+				response.Value("publisher").Object().Value("type").Equal("publisher")
+				response.Value("qmi").Object().Value("description").Equal("Consumer price inflation is the rate at which the prices of goods and services bought by households rise and fall")
+				response.Value("qmi").Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi")
+				response.Value("qmi").Object().Value("title").Equal("Consumer Price Inflation (includes all 3 indices – CPIH, CPI and RPI)")
+				response.Value("related_datasets").Array().Element(0).Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceindices")
+				response.Value("related_datasets").Array().Element(0).Object().Value("title").Equal("Consumer Price Inflation time series dataset")
 				response.Value("release_date").Equal("2017-12-12")
-				response.Value("state").Equal("published")
+				response.Value("release_frequency").Equal("Monthly")
 				response.Value("temporal").Array().Element(0).Object().Value("start_date").Equal("2014-09-09")
 				response.Value("temporal").Array().Element(0).Object().Value("end_date").Equal("2017-09-09")
 				response.Value("temporal").Array().Element(0).Object().Value("frequency").Equal("monthly")
-				response.Value("version").Equal(1)
+				response.Value("theme").Equal("Goods and services")
+				response.Value("title").Equal("CPI")
+				response.Value("unit_of_measure").Equal("Pounds Sterling")
+				response.Value("uri").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation")
 			})
 		})
 
@@ -111,7 +157,7 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 	})
 }
 
-func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
+func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
 	editionID := uuid.NewV4().String()
@@ -124,9 +170,9 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Given the dataset, edition and version do not exist", t, func() {
-		Convey("When an authorised request to get the version of the dataset edition", func() {
+		Convey("When an authorised request to get the metadata relevant to a version", func() {
 			Convey("Then return status bad request (400) with message `Dataset not found`", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeader(internalToken, internalTokenID).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).WithHeader(internalToken, internalTokenID).
 					Expect().Status(http.StatusBadRequest).Body().Contains("Dataset not found\n")
 			})
 		})
@@ -139,9 +185,9 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 		}
 
 		Convey("but an edition and version do not exist", func() {
-			Convey("When a request to get the version of the dataset edition", func() {
+			Convey("When a request to get the metadata relevant to a version", func() {
 				Convey("Then return status bad request (400) with message `Edition not found`", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", unpublishedDatasetID, edition).WithHeader(internalToken, internalTokenID).
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(internalToken, internalTokenID).
 						Expect().Status(http.StatusBadRequest).Body().Contains("Edition not found\n")
 				})
 			})
@@ -154,9 +200,9 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 			}
 
 			Convey("but a version does not exist", func() {
-				Convey("When a request to get the version of the dataset edition", func() {
+				Convey("When a request to get the metadata relevant to a version", func() {
 					Convey("Then return status bad request (404) with message `Version not found`", func() {
-						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", unpublishedDatasetID, edition).WithHeader(internalToken, internalTokenID).
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(internalToken, internalTokenID).
 							Expect().Status(http.StatusNotFound).Body().Contains("Version not found\n")
 					})
 				})
@@ -181,9 +227,9 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 			os.Exit(1)
 		}
 
-		Convey("When an unauthorised request to get the version of the dataset edition", func() {
+		Convey("When an unauthorised request to get the metadate relevant to a version", func() {
 			Convey("Then return status bad request (400) with message `Dataset not found`", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
 					Expect().Status(http.StatusBadRequest).Body().Contains("Dataset not found\n")
 			})
 		})
@@ -206,9 +252,9 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 				os.Exit(1)
 			}
 
-			Convey("When an unauthorised request to get the version of the dataset edition", func() {
+			Convey("When an unauthorised request to get the metadata relevant to a version", func() {
 				Convey("Then return status bad request (400) with message `Edition not found`", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
 						Expect().Status(http.StatusBadRequest).Body().Contains("Edition not found\n")
 				})
 			})
@@ -230,9 +276,9 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 				os.Exit(1)
 			}
 
-			Convey("When an unauthorised request to get the version of the dataset edition", func() {
+			Convey("When an unauthorised request to get the metadata relevant to a version", func() {
 				Convey("Then return status not found (404) with message `Version not found`", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
 						Expect().Status(http.StatusNotFound).Body().Contains("Version not found\n")
 				})
 			})
@@ -255,7 +301,7 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 	})
 }
 
-func setupPublishedAndUnpublishedVersions(datasetID, editionID, edition, instanceID, unpublishedInstanceID string) (*mongo.ManyDocs, error) {
+func setupMetadataDocs(datasetID, editionID, edition, instanceID, unpublishedInstanceID string) (*mongo.ManyDocs, error) {
 	var docs []mongo.Doc
 
 	datasetDoc := mongo.Doc{

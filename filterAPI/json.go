@@ -25,7 +25,7 @@ func GetValidPublishedInstanceDataBSON(instanceID string) bson.M {
 			"links.dataset.id":      "123",
 			"links.dataset.href":    "http://localhost:8080/datasets/123",
 			"links.dimensions.href": "http://localhost:8080/datasets/123/editions/2017/versions/1/dimensions",
-			"links.edition.id":      "1",
+			"links.edition.id":      "2017",
 			"links.edition.href":    "http://localhost:8080/datasets/123/editions/2017",
 			"links.self.href":       "http://localhost:8080/instances/" + instanceID,
 			"links.version.href":    "http://localhost:8080/datasets/123/editions/2017/versions/1",
@@ -103,14 +103,14 @@ func sexDimension(host, filterID string) Dimension {
 func goodsAndServicesDimension(host, filterID string) Dimension {
 	if filterID == "" {
 		return Dimension{
-			Name:    "Goods and services",
-			Options: []string{"Education", "health", "communication"},
+			Name:    "aggregate",
+			Options: []string{"cpi1dim1T60000", "cpi1dim1S10201", "cpi1dim1S10105"},
 		}
 	}
 	return Dimension{
-		URL:     host + "/filters/" + filterID + "/dimensions/Goods and services",
-		Name:    "Goods and services",
-		Options: []string{"Education", "health", "communication"},
+		URL:     host + "/filters/" + filterID + "/dimensions/aggregate",
+		Name:    "aggregate",
+		Options: []string{"cpi1dim1T60000", "cpi1dim1S10201", "cpi1dim1S10105"},
 	}
 }
 
@@ -168,6 +168,53 @@ func GetValidFilterOutputWithMultipleDimensionsBSON(host, filterID, instanceID, 
 	}
 }
 
+func GetValidFilterOutputBSON(host, filterID, instanceID, filterOutputID, filterBlueprintID string, dimension Dimension) bson.M {
+	return bson.M{
+		"$set": bson.M{
+			"_id":                         filterID,
+			"dimensions":                  []Dimension{dimension},
+			"downloads.csv.url":           "s3-csv-location",
+			"downloads.csv.size":          "12mb",
+			"downloads.json.url":          "s3-json-location",
+			"downloads.json.size":         "6mb",
+			"downloads.xls.url":           "s3-xls-location",
+			"downloads.xls.size":          "24mb",
+			"instance_id":                 instanceID,
+			"filter_id":                   filterOutputID,
+			"links.filter_blueprint.href": host + "/filters/" + filterBlueprintID,
+			"links.filter_blueprint.id":   filterBlueprintID,
+			"links.self.href":             host + "/filter-outputs/" + filterOutputID,
+			"links.version.id":            "1",
+			"links.version.href":          "http://localhost:8080/datasets/123/editions/2017/versions/1",
+			"state":                       "completed",
+			"test_data":                   "true",
+		},
+	}
+}
+
+func GetValidFilterOutputNoDimensionsBSON(host, filterID, instanceID, filterOutputID, filterBlueprintID string) bson.M {
+	return bson.M{
+		"$set": bson.M{
+			"_id":                         filterID,
+			"downloads.csv.url":           "s3-csv-location",
+			"downloads.csv.size":          "12mb",
+			"downloads.json.url":          "s3-json-location",
+			"downloads.json.size":         "6mb",
+			"downloads.xls.url":           "s3-xls-location",
+			"downloads.xls.size":          "24mb",
+			"instance_id":                 instanceID,
+			"filter_id":                   filterOutputID,
+			"links.filter_blueprint.href": host + "/filters/" + filterBlueprintID,
+			"links.filter_blueprint.id":   filterBlueprintID,
+			"links.self.href":             host + "/filter-outputs/" + filterOutputID,
+			"links.version.id":            "1",
+			"links.version.href":          "http://localhost:8080/datasets/123/editions/2017/versions/1",
+			"state":                       "completed",
+			"test_data":                   "true",
+		},
+	}
+}
+
 func GetValidFilterOutputWithoutDownloadsBSON(host, filterID, instanceID, filterOutputID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
@@ -184,6 +231,108 @@ func GetValidFilterOutputWithoutDownloadsBSON(host, filterID, instanceID, filter
 	}
 }
 
+func GetValidAge27DimensionData(instanceID string) bson.M {
+	return bson.M{
+		"$set": bson.M{
+			"instance_id":          instanceID,
+			"name":                 "age",
+			"option":               "27",
+			"label":                "age 27",
+			"links.code_list.id":   "64d384f1-ea3b-445c-8fb8-aa453f96e58a",
+			"links.code_list.href": cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a",
+			"links.code.id":        "27",
+			"links.code.href":      cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/27",
+			"last_updated":         "2017-09-09", // TODO Should be isodate
+			"test_data":            "true",
+		},
+	}
+}
+
+func GetValidAgeDimensionData(instanceID, option string) bson.M {
+	return bson.M{
+		"$set": bson.M{
+			"instance_id":          instanceID,
+			"name":                 "age",
+			"option":               option,
+			"label":                "age " + option,
+			"links.code_list.id":   "64d384f1-ea3b-445c-8fb8-aa453f96e58a",
+			"links.code_list.href": cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a",
+			"links.code.id":        option,
+			"links.code.href":      cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/" + option,
+			"last_updated":         "2017-09-09", // TODO Should be isodate
+			"test_data":            "true",
+		},
+	}
+}
+
+func GetValidSexDimensionData(instanceID, option string) bson.M {
+	return bson.M{
+		"$set": bson.M{
+			"instance_id":          instanceID,
+			"name":                 "sex",
+			"option":               option,
+			"label":                "sex " + option,
+			"links.code_list.id":   "64d384f1-ea3b-445c-8fb8-aa453f96e58b",
+			"links.code_list.href": cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58b",
+			"links.code.id":        option,
+			"links.code.href":      cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58b/codes/" + option,
+			"last_updated":         "2017-09-09", // TODO Should be isodate
+			"test_data":            "true",
+		},
+	}
+}
+
+func GetValidGoodsAndServicesDimensionData(instanceID, option string) bson.M {
+	return bson.M{
+		"$set": bson.M{
+			"instance_id":          instanceID,
+			"name":                 "Goods and services",
+			"option":               option,
+			"label":                "Goods and services " + option,
+			"links.code_list.id":   "64d384f1-ea3b-445c-8fb8-aa453f96e58c",
+			"links.code_list.href": cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58c",
+			"links.code.id":        option,
+			"links.code.href":      cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58c/codes/" + option,
+			"last_updated":         "2017-09-09", // TODO Should be isodate
+			"test_data":            "true",
+		},
+	}
+}
+
+func GetValidTimeDimensionData(instanceID, option string) bson.M {
+	return bson.M{
+		"$set": bson.M{
+			"instance_id":          instanceID,
+			"name":                 "time",
+			"option":               option,
+			"label":                "time" + option,
+			"links.code_list.id":   "64d384f1-ea3b-445c-8fb8-aa453f96e58d",
+			"links.code_list.href": cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58d",
+			"links.code.id":        option,
+			"links.code.href":      cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58d/codes/" + option,
+			"last_updated":         "2017-09-09", // TODO Should be isodate
+			"test_data":            "true",
+		},
+	}
+}
+
+func GetValidResidenceTypeDimensionData(instanceID, option string) bson.M {
+	return bson.M{
+		"$set": bson.M{
+			"instance_id":          instanceID,
+			"name":                 "Residence Type",
+			"option":               option,
+			"label":                "Residence Type " + option,
+			"links.code_list.id":   "64d384f1-ea3b-445c-8fb8-aa453f96e58e",
+			"links.code_list.href": cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58e",
+			"links.code.id":        option,
+			"links.code.href":      cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58e/codes/" + option,
+			"last_updated":         "2017-09-09", // TODO Should be isodate
+			"test_data":            "true",
+		},
+	}
+}
+
 func GetValidPOSTCreateFilterJSON(instanceID string) string {
 	return `{
 	"instance_id": "` + instanceID + `" ,
@@ -191,7 +340,7 @@ func GetValidPOSTCreateFilterJSON(instanceID string) string {
 	  {
 		"name": "age",
 		"options": [
-		  "27", "28"
+		  "27", "42"
 		]
 	  }
 	]
@@ -206,7 +355,39 @@ func GetInvalidJSON(instanceID string) string {
 	  {
 		"name": "age",
 		"options": [
-		  "27", "28"
+		  "27", "42"
+		]
+	  }
+	]
+	}`
+}
+
+// GetInvalidDimensionJSON contains an invalid dimension for instance
+func GetInvalidDimensionJSON(instanceID string) string {
+	return `
+{
+	"instance_id": "` + instanceID + `",
+	"dimensions": [
+	  {
+		"name": "weight",
+		"options": [
+		  "27", "42"
+		]
+	  }
+	]
+	}`
+}
+
+// GetInvalidDimensionOptionJSON contains an invalid dimension for instance
+func GetInvalidDimensionOptionJSON(instanceID string) string {
+	return `
+{
+	"instance_id": "` + instanceID + `",
+	"dimensions": [
+	  {
+		"name": "age",
+		"options": [
+		  "27", "33"
 		]
 	  }
 	]

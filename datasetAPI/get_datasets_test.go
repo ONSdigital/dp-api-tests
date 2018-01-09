@@ -10,6 +10,7 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
+	uuid "github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -17,7 +18,9 @@ import (
 // (which could be many)
 func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 
-	d, err := setupTestDataForGetAListOfDatasets()
+	datasetID := uuid.NewV4().String()
+
+	d, err := setupTestDataForGetAListOfDatasets(datasetID)
 	if err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
@@ -39,7 +42,7 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 				if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == datasetID {
 					// check the published test dataset document has the expected returned fields and values
 					response.Value("items").Array().Element(i).Object().Value("id").Equal(datasetID)
-					checkDatasetResponse(response.Value("items").Array().Element(i).Object())
+					checkDatasetResponse(datasetID, response.Value("items").Array().Element(i).Object())
 				}
 			}
 		})
@@ -54,7 +57,7 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 
 				if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == datasetID {
 					// check the published test dataset document has the expected returned fields and values
-					checkDatasetResponse(response.Value("items").Array().Element(i).Object().Value("current").Object())
+					checkDatasetResponse(datasetID, response.Value("items").Array().Element(i).Object().Value("current").Object())
 					response.Value("items").Array().Element(i).Object().Value("next").Object().NotEmpty()
 				}
 
@@ -74,8 +77,7 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 	}
 }
 
-func checkDatasetResponse(response *httpexpect.Object) {
-	response.Value("access_right").Equal("http://ons.gov.uk/accessrights")
+func checkDatasetResponse(datasetID string, response *httpexpect.Object) {
 	response.Value("collection_id").Equal("108064B3-A808-449B-9041-EA3A2F72CFAA")
 	response.Value("contacts").Array().Element(0).Object().Value("email").Equal("cpi@onstest.gov.uk")
 	response.Value("contacts").Array().Element(0).Object().Value("name").Equal("Automation Tester")
@@ -84,6 +86,7 @@ func checkDatasetResponse(response *httpexpect.Object) {
 	response.Value("keywords").Array().Element(0).String().Equal("cpi")
 	response.Value("keywords").Array().Element(1).String().Equal("boy")
 	response.Value("license").Equal("ONS license")
+	response.Value("links").Object().Value("access_rights").Object().Value("href").Equal("http://ons.gov.uk/accessrights")
 	response.Value("links").Object().Value("editions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions$")
 	response.Value("links").Object().Value("latest_version").Object().Value("id").Equal("1")
 	response.Value("links").Object().Value("latest_version").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/2017/versions/1$")
@@ -108,10 +111,11 @@ func checkDatasetResponse(response *httpexpect.Object) {
 	response.Value("state").Equal("published")
 	response.Value("theme").Equal("Goods and services")
 	response.Value("title").Equal("CPI")
+	response.Value("unit_of_measure").Equal("Pounds Sterling")
 	response.Value("uri").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation")
 }
 
-func setupTestDataForGetAListOfDatasets() (*mongo.ManyDocs, error) {
+func setupTestDataForGetAListOfDatasets(datasetID string) (*mongo.ManyDocs, error) {
 	var docs []mongo.Doc
 
 	publishedDatasetDoc := mongo.Doc{
@@ -119,7 +123,7 @@ func setupTestDataForGetAListOfDatasets() (*mongo.ManyDocs, error) {
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedDatasetData,
+		Update:     validPublishedDatasetData(datasetID),
 	}
 
 	unpublishedDatasetDoc := mongo.Doc{
@@ -127,7 +131,7 @@ func setupTestDataForGetAListOfDatasets() (*mongo.ManyDocs, error) {
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      "133",
-		Update:     validUnpublishedDatasetData,
+		Update:     validAssociatedDatasetData(datasetID),
 	}
 
 	docs = append(docs, publishedDatasetDoc, unpublishedDatasetDoc)
