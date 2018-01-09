@@ -1,7 +1,6 @@
 package mongo
 
 import (
-	"os"
 	"time"
 
 	mgo "gopkg.in/mgo.v2"
@@ -35,6 +34,7 @@ func NewDatastore(uri string) error {
 	return nil
 }
 
+//RemoveAll documents from a given collection and database
 func RemoveAll(database, collection string) error {
 	s := session.Copy()
 	defer s.Close()
@@ -68,8 +68,8 @@ func Teardown(d ...*Doc) error {
 // Setup is a way of loading any number of documents into a mongo instance
 func Setup(d ...*Doc) error {
 	if err := Teardown(d...); err != nil {
-		log.ErrorC("Unable to remove test data from mongo db", err, nil)
-		os.Exit(1)
+		log.ErrorC("Unable to teardown previous document", err, nil)
+		return err
 	}
 
 	s := session.Copy()
@@ -96,6 +96,7 @@ type DatasetUpdate struct {
 	Next    *Dataset `bson:"next,omitempty"        json:"next,omitempty"`
 }
 
+//Dataset contains all the metadata which does not change across editions and versions of a dataset
 type Dataset struct {
 	CollectionID      string           `bson:"collection_id,omitempty"          json:"collection_id,omitempty"`
 	Contacts          []ContactDetails `bson:"contacts,omitempty"               json:"contacts,omitempty"`
