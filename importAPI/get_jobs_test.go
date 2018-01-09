@@ -17,16 +17,16 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 	var docs []*mongo.Doc
 
 	importCreateJobDoc := &mongo.Doc{
-		Database:   "imports",
-		Collection: "imports",
+		Database:   cfg.MongoDB,
+		Collection: collection,
 		Key:        "_id",
 		Value:      jobID,
 		Update:     validCreatedImportJobData,
 	}
 
 	importSubmittedJobDoc := &mongo.Doc{
-		Database:   "imports",
-		Collection: "imports",
+		Database:   cfg.MongoDB,
+		Collection: collection,
 		Key:        "_id",
 		Value:      "01C24F0D-24BE-479F-962B-C76BCCD0AD00",
 		Update:     validSubmittedImportJobData,
@@ -34,25 +34,15 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 
 	docs = append(docs, importCreateJobDoc, importSubmittedJobDoc)
 
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
-
-	if err := mongo.Teardown(docs...); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Was unable to run test", err, nil)
-			os.Exit(1)
-		}
-	}
-
 	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
+	// TODO Dont skip test once endpoint has been refactored
 	// These tests needs to refine when authentication was handled in the code.
-	Convey("Given an import job exists", t, func() {
+	SkipConvey("Given an import job exists", t, func() {
 		Convey("When a request to get a list of all jobs and the user is authenticated", func() {
 			Convey("Then the response returns status OK (200)", func() {
 
@@ -72,7 +62,7 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 
 	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
-			log.ErrorC("Was unable to run test", err, nil)
+			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
 		}
 	}

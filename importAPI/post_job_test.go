@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 	mgo "gopkg.in/mgo.v2"
@@ -39,8 +40,16 @@ func TestSuccessfullyPostImportJob(t *testing.T) {
 
 				response.Value("last_updated").NotNull()
 
-				if err := mongo.Teardown(database, collection, "id", importJobID); err != nil {
+				importJob := &mongo.Doc{
+					Database:   cfg.MongoDB,
+					Collection: collection,
+					Key:        "id",
+					Value:      importJobID,
+				}
+
+				if err := mongo.Teardown(importJob); err != nil {
 					if err != mgo.ErrNotFound {
+						log.ErrorC("Failed to tear down test data", err, nil)
 						os.Exit(1)
 					}
 				}
