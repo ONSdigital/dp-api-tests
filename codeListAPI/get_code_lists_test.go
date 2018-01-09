@@ -15,26 +15,26 @@ import (
 
 func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 
-	var docs []mongo.Doc
+	var docs []*mongo.Doc
 
-	firstCodeListDoc := mongo.Doc{
-		Database:   "codelists",
+	firstCodeListDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "codelists",
 		Key:        "_id",
 		Value:      firstCodeListID,
 		Update:     validFirstCodeListData,
 	}
 
-	secondCodeListDoc := mongo.Doc{
-		Database:   "codelists",
+	secondCodeListDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "codelists",
 		Key:        "_id",
 		Value:      secondCodeListID,
 		Update:     validSecondCodeListData,
 	}
 
-	thirdCodeListDoc := mongo.Doc{
-		Database:   "codelists",
+	thirdCodeListDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "codelists",
 		Key:        "_id",
 		Value:      thirdCodelistID,
@@ -43,18 +43,7 @@ func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 
 	docs = append(docs, firstCodeListDoc, secondCodeListDoc, thirdCodeListDoc)
 
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
-
-	if err := mongo.TeardownMany(d); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Failed to tear down test data", err, nil)
-			os.Exit(1)
-		}
-	}
-
-	if err := mongo.SetupMany(d); err != nil {
+	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Failed to set up test data", err, nil)
 		os.Exit(1)
 	}
@@ -69,16 +58,16 @@ func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				//checking array length is alwaysgreather than 3
-				response.Value("items").Array().Length().Gt(3)
-				response.Value("items").Array().Element(3).Object().ValueEqual("id", firstCodeListID)
-				response.Value("items").Array().Element(3).Object().ValueEqual("name", "First Code List")
-				response.Value("items").Array().Element(3).Object().Value("links").Object().Value("self").Object().Value("id").Equal(firstCodeListID)
-				response.Value("items").Array().Element(3).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
-				response.Value("items").Array().Element(3).Object().Value("links").Object().Value("codes").Object().Value("id").Equal("code")
-				response.Value("items").Array().Element(3).Object().Value("links").Object().Value("codes").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/codes$")
+				response.Value("items").Array().Length().Equal(3)
+				response.Value("items").Array().Element(0).Object().ValueEqual("id", firstCodeListID)
+				response.Value("items").Array().Element(0).Object().ValueEqual("name", "First Code List")
+				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("self").Object().Value("id").Equal(firstCodeListID)
+				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
+				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("codes").Object().Value("id").Equal("code")
+				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("codes").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/codes$")
 
-				response.Value("items").Array().Element(4).Object().ValueEqual("id", secondCodeListID)
-				response.Value("items").Array().Element(5).Object().ValueEqual("id", thirdCodelistID)
+				response.Value("items").Array().Element(1).Object().ValueEqual("id", secondCodeListID)
+				response.Value("items").Array().Element(2).Object().ValueEqual("id", thirdCodelistID)
 
 				// This functionality is not implemented yet.
 				//response.Value("number_of_results").Equal(6)
@@ -86,7 +75,7 @@ func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 		})
 	})
 
-	if err := mongo.TeardownMany(d); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)

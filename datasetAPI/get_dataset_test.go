@@ -18,7 +18,15 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
 
-	if err := mongo.Setup(database, collection, "_id", datasetID, validPublishedDatasetData(datasetID)); err != nil {
+	dataset := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: collection,
+		Key:        "_id",
+		Value:      datasetID,
+		Update:     validPublishedDatasetData(datasetID),
+	}
+
+	if err := mongo.Setup(dataset); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
@@ -51,6 +59,13 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 			})
 		})
 	})
+
+	if err := mongo.Teardown(dataset); err != nil {
+		if err != mgo.ErrNotFound {
+			log.ErrorC("Failed to tear down test data", err, nil)
+			os.Exit(1)
+		}
+	}
 }
 
 func TestFailureToGetADataset(t *testing.T) {
@@ -70,7 +85,18 @@ func TestFailureToGetADataset(t *testing.T) {
 	})
 
 	Convey("Given an unpublished dataset exists and the dataset document is not published", t, func() {
-		mongo.Setup(database, collection, "_id", secondDatasetID, validAssociatedDatasetData(secondDatasetID))
+		associatedDataset := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: collection,
+			Key:        "_id",
+			Value:      secondDatasetID,
+			Update:     validAssociatedDatasetData(secondDatasetID),
+		}
+
+		if err := mongo.Setup(associatedDataset); err != nil {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
 
 		Convey("When requesting for document for an unauthorised user", func() {
 			Convey("Then return a status not found (404)", func() {
@@ -79,13 +105,13 @@ func TestFailureToGetADataset(t *testing.T) {
 					Expect().Status(http.StatusNotFound)
 			})
 		})
-	})
 
-	if err := mongo.Teardown(database, collection, "_id", secondDatasetID); err != nil {
-		if err != mgo.ErrNotFound {
-			os.Exit(1)
+		if err := mongo.Teardown(associatedDataset); err != nil {
+			if err != mgo.ErrNotFound {
+				os.Exit(1)
+			}
 		}
-	}
+	})
 }
 
 func checkDatasetDoc(datasetID string, response *httpexpect.Object) {

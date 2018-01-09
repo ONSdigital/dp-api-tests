@@ -426,16 +426,22 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					expectedXLSFileSize := int64(6295) // this value may vary slightly
 					So(filteredXLSFileSize, ShouldResemble, &expectedXLSFileSize)
 
-					// remove filter blueprint
-					if err = mongo.Teardown("filters", "filters", "filter_id", filterBlueprintID); err != nil {
-						if err != mgo.ErrNotFound {
-							log.ErrorC("failed to remove filter blueprint resource", err, log.Data{"filter_blueprint_id": filterBlueprintID})
-							hasRemovedAllResources = false
-						}
+					filterBlueprint := &mongo.Doc{
+						Database:   cfg.MongoDB,
+						Collection: "filters",
+						Key:        "filter_id",
+						Value:      filterBlueprintID,
+					}
+
+					filterOutput := &mongo.Doc{
+						Database:   cfg.MongoDB,
+						Collection: "filterOutputs",
+						Key:        "filter_id",
+						Value:      filterOutputID,
 					}
 
 					// remove filter output
-					if err = mongo.Teardown("filters", "filterOutputs", "filter_id", filterOutputID); err != nil {
+					if err = mongo.Teardown(filterBlueprint, filterOutput); err != nil {
 						if err != mgo.ErrNotFound {
 							log.ErrorC("failed to remove filter output resource", err, log.Data{"filter_output_id": filterOutputID})
 							hasRemovedAllResources = false
@@ -466,40 +472,47 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				}
 			})
 
-			// delete dataset
-			if err = mongo.Teardown("datasets", "datasets", "_id", datasetName); err != nil {
-				if err != mgo.ErrNotFound {
-					log.ErrorC("failed to remove dataset resource", err, log.Data{"dataset_id": datasetName})
-					hasRemovedAllResources = false
-				}
+			var docs []*mongo.Doc
+
+			dataset := &mongo.Doc{
+				Database:   cfg.MongoDB,
+				Collection: "datasets",
+				Key:        "_id",
+				Value:      datasetName,
 			}
 
-			// remove job
-			if err = mongo.Teardown("imports", "imports", "id", jobID); err != nil {
-				if err != mgo.ErrNotFound {
-					log.ErrorC("failed to remove job resource", err, log.Data{"job_id": jobID})
-					hasRemovedAllResources = false
-				}
+			importJob := &mongo.Doc{
+				Database:   cfg.MongoDB,
+				Collection: "imports",
+				Key:        "id",
+				Value:      jobID,
 			}
 
-			// remove instance/versions
-			if err = mongo.Teardown("datasets", "instances", "id", instanceID); err != nil {
-				if err != mgo.ErrNotFound {
-					log.ErrorC("failed to remove instance resource", err, log.Data{"instance_id": instanceID})
-					hasRemovedAllResources = false
-				}
+			instance := &mongo.Doc{
+				Database:   cfg.MongoDB,
+				Collection: "instances",
+				Key:        "id",
+				Value:      instanceID,
 			}
 
-			// remove dimension options
-			if err = mongo.Teardown("datasets", "dimension.options", "instance_id", instanceID); err != nil {
-				if err != mgo.ErrNotFound {
-					log.ErrorC("failed to remove dimension option resources", err, log.Data{"instance_id": instanceID})
-					hasRemovedAllResources = false
-				}
+			dimension := &mongo.Doc{
+				Database:   cfg.MongoDB,
+				Collection: "dimension.options",
+				Key:        "instance_id",
+				Value:      instanceID,
 			}
 
-			// remove edition
-			if err = mongo.Teardown("datasets", "editions", "links.self.href", instanceResource.Links.Edition.HRef); err != nil {
+			edition := &mongo.Doc{
+				Database:   cfg.MongoDB,
+				Collection: "editions",
+				Key:        "links.self.href",
+				Value:      instanceResource.Links.Edition.HRef,
+			}
+
+			docs = append(docs, dataset, importJob, instance, dimension, edition)
+
+			// remove all mongo documents created in the test
+			if err = mongo.Teardown(docs...); err != nil {
 				if err != mgo.ErrNotFound {
 					log.ErrorC("failed to remove edition resource", err, log.Data{"links.self.href": instanceResource.Links.Edition.HRef})
 					hasRemovedAllResources = false

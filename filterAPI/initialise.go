@@ -11,7 +11,6 @@ import (
 var cfg *config.Config
 
 const (
-	database   = "filters"
 	collection = "filters"
 
 	internalTokenHeader    = "Internal-Token"
@@ -32,22 +31,19 @@ func init() {
 		os.Exit(1)
 	}
 
-	if err = mongo.Teardown(database, collection, "test_data", "true"); err != nil {
-		log.ErrorC("Unable to remove all test data from mongo db", err, nil)
-		os.Exit(1)
+	var docs []*mongo.Doc
+	for _, c := range []string{collection, "filterOutputs", "instances", "dimension.options"} {
+		t := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: c,
+			Key:        "test_data",
+			Value:      "true",
+		}
+
+		docs = append(docs, t)
 	}
 
-	if err = mongo.Teardown(database, "filterOutputs", "test_data", "true"); err != nil {
-		log.ErrorC("Unable to remove all test data from mongo db", err, nil)
-		os.Exit(1)
-	}
-
-	if err = mongo.Teardown("datasets", "instances", "test_data", "true"); err != nil {
-		log.ErrorC("Unable to remove all test data from mongo db", err, nil)
-		os.Exit(1)
-	}
-
-	if err = mongo.Teardown("datasets", "dimension.options", "test_data", "true"); err != nil {
+	if err = mongo.Teardown(docs...); err != nil {
 		log.ErrorC("Unable to remove all test data from mongo db", err, nil)
 		os.Exit(1)
 	}

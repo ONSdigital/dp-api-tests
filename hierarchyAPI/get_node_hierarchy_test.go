@@ -2,14 +2,15 @@ package hierarchyAPI
 
 import (
 	"fmt"
+	"net/http"
+	"os"
+	"testing"
+
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
-	"net/http"
-	"os"
-	"testing"
 )
 
 func TestSuccessfullyGetNodeHierarchy(t *testing.T) {

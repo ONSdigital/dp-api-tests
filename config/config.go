@@ -11,6 +11,8 @@ type Config struct {
 	CodeListAPIURL            string   `envconfig:"CODELIST_API_URL"`
 	RecipeAPIURL              string   `envconfig:"RECIPE_API_URL"`
 	MongoAddr                 string   `envconfig:"MONGODB_BIND_ADDR"`
+	MongoDB                   string   `envconfig:"MONGODB_DATABASE"`
+	MongoImportsDB            string   `envconfig:"MONGODB_IMPORTS_DATABASE"`
 	Neo4jAddr                 string   `envconfig:"NEO4J_BIND_ADDR"`
 	Brokers                   []string `envconfig:"KAFKA_ADDR"`
 	ObservationsInsertedTopic string   `envconfig:"IMPORT_OBSERVATIONS_INSERTED_TOPIC"`
@@ -29,8 +31,10 @@ func Get() (*Config, error) {
 		FilterAPIURL:              "http://localhost:22100",
 		CodeListAPIURL:            "http://localhost:22400",
 		RecipeAPIURL:              "http://localhost:22300",
-		MongoAddr:                 "localhost:27017",
 		HierarchyAPIURL:           "http://localhost:22600",
+		MongoAddr:                 "localhost:27017",
+		MongoDB:                   "test",
+		MongoImportsDB:            "test",
 		Neo4jAddr:                 "bolt://localhost:7687",
 		Brokers:                   []string{"localhost:9092"},
 		ObservationsInsertedTopic: "import-observations-inserted",

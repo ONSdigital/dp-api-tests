@@ -13,11 +13,7 @@ import (
 var cfg *config.Config
 
 const (
-	codeListDatabase = "codelists"
-	datasetDatabase  = "datasets"
-	filterDatabase   = "filters"
-	importDatabase   = "imports"
-	importTracker    = "dp-import-tracker"
+	importTracker = "dp-import-tracker"
 
 	region     = "eu-west-1"
 	bucketName = "ons-dp-cmd-test"
@@ -65,68 +61,64 @@ func deleteMongoTestData(datasetID string) bool {
 		return successfullyRemovedMongoTestData
 	}
 
-	// delete dataset
-	if err = mongo.Teardown("datasets", "datasets", "_id", datasetID); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("failed to remove dataset resource", err, log.Data{"dataset_id": datasetName})
-			successfullyRemovedMongoTestData = false
-		}
-		log.Trace("delete dataset not found", nil)
-	}
-
 	instanceID := oldInstanceResource.InstanceID
-	log.Info("Removing test data associated to instance", log.Data{"instance_id": instanceID})
 
-	// remove job
-	if err = mongo.Teardown("imports", "imports", "links.instances.id", instanceID); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("failed to remove job resource", err, log.Data{"links.instances[0].id": instanceID})
-			successfullyRemovedMongoTestData = false
-		}
-		log.Trace("delete job not found", nil)
+	var docs []*mongo.Doc
+
+	dataset := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "datasets",
+		Key:        "_id",
+		Value:      datasetID,
 	}
 
-	// remove instance/versions
-	if err = mongo.Teardown("datasets", "instances", "id", instanceID); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("failed to remove instance resource", err, log.Data{"instance_id": instanceID})
-			successfullyRemovedMongoTestData = false
-		}
-		log.Trace("delete instance not found", nil)
+	importJob := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "imports",
+		Key:        "links.instances.id",
+		Value:      instanceID,
 	}
 
-	// remove dimension options
-	if err = mongo.Teardown("datasets", "dimension.options", "instance_id", instanceID); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("failed to remove dimension option resources", err, log.Data{"instance_id": instanceID})
-			successfullyRemovedMongoTestData = false
-		}
-		log.Trace("delete dimension options not found", nil)
+	instance := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "instances",
+		Key:        "id",
+		Value:      instanceID,
 	}
 
-	// remove edition if exists
-	if oldInstanceResource.Links.Edition != nil {
-		if err = mongo.Teardown("datasets", "editions", "links.self.href", oldInstanceResource.Links.Edition.HRef); err != nil {
-			if err != mgo.ErrNotFound {
-				log.ErrorC("failed to remove edition resource", err, log.Data{"links.self.href": oldInstanceResource.Links.Edition.HRef})
-				successfullyRemovedMongoTestData = false
-			}
-			log.Trace("delete edition not found", nil)
-		}
+	dimension := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "dimension.options",
+		Key:        "instance_id",
+		Value:      instanceID,
 	}
 
-	// remove filter blueprint
-	if err = mongo.Teardown("filters", "filters", "instance_id", instanceID); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("failed to remove filter blueprint resource", err, log.Data{"instance_id": instanceID})
-			successfullyRemovedMongoTestData = false
-		}
+	edition := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "editions",
+		Key:        "links.self.href",
+		Value:      oldInstanceResource.Links.Edition.HRef,
 	}
+
+	filterBlueprint := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "filters",
+		Key:        "instance_id",
+		Value:      instanceID,
+	}
+
+	filterOutput := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "filterOutputs",
+		Key:        "instance_id",
+		Value:      instanceID,
+	}
+	docs = append(docs, dataset, importJob, instance, dimension, edition, filterBlueprint, filterOutput)
 
 	// remove filter output
-	if err = mongo.Teardown("filters", "filterOutputs", "instance_id", instanceID); err != nil {
+	if err = mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
-			log.ErrorC("failed to remove filter output resource", err, log.Data{"instance_id": instanceID})
+			log.ErrorC("failed to remove previous test resource", err, log.Data{"instance_id": instanceID})
 			successfullyRemovedMongoTestData = false
 		}
 	}

@@ -20,41 +20,42 @@ func TestGetInstanceDimensionOptions_ReturnsAllDimensionOptionsFromAnInstance(t 
 
 	edition := "2017"
 
-	var docs []mongo.Doc
+	var docs []*mongo.Doc
 
-	datasetDoc := mongo.Doc{
-		Database:   "datasets",
+	datasetDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
 		Update:     validPublishedDatasetData(datasetID),
 	}
 
-	editionDoc := mongo.Doc{
-		Database:   "datasets",
+	editionDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
 		Update:     validPublishedEditionData(datasetID, editionID, edition),
 	}
 
-	instanceOneDoc := mongo.Doc{
-		Database:   "datasets",
+	instanceOneDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
 		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
 	}
 
-	dimensionOneDoc := mongo.Doc{
-		Database:   "datasets",
+	dimensionOneDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9811",
 		Update:     validTimeDimensionsData(instanceID),
 	}
-	dimensionTwoDoc := mongo.Doc{
-		Database:   "datasets",
+
+	dimensionTwoDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9812",
@@ -63,18 +64,7 @@ func TestGetInstanceDimensionOptions_ReturnsAllDimensionOptionsFromAnInstance(t 
 
 	docs = append(docs, datasetDoc, editionDoc, dimensionOneDoc, dimensionTwoDoc, instanceOneDoc)
 
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
-
-	if err := mongo.TeardownMany(d); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Was unable to run test", err, nil)
-			os.Exit(1)
-		}
-	}
-
-	if err := mongo.SetupMany(d); err != nil {
+	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
@@ -122,7 +112,7 @@ func TestGetInstanceDimensionOptions_ReturnsAllDimensionOptionsFromAnInstance(t 
 		})
 	})
 
-	if err := mongo.TeardownMany(d); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			os.Exit(1)
 		}
