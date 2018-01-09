@@ -66,7 +66,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			instanceID := postJobResponse.Value("links").Object().Value("instances").Array().Element(0).Object().Value("id").String().Raw()
 
 			// Check for instance creation
-			instanceResource, err := mongo.GetInstance("datasets", "instances", "id", instanceID)
+			instanceResource, err := mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve instance resource", err, log.Data{"instance_id": instanceID})
 				os.Exit(1)
@@ -92,7 +92,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				Expect().Status(http.StatusOK)
 
 			// Check import job state is completed or submitted
-			jobResource, err := mongo.GetJob("imports", "imports", "id", jobID)
+			jobResource, err := mongo.GetJob(cfg.MongoDB, "imports", "id", jobID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve job resource", err, log.Data{"job_id": jobID})
 				os.Exit(1)
@@ -112,7 +112,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 			tryAgain := true
 			for tryAgain {
-				instanceResource, err = mongo.GetInstance("datasets", "instances", "id", instanceID)
+				instanceResource, err = mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
 					os.Exit(1)
@@ -130,7 +130,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(instanceResource.TotalObservations, ShouldResemble, &totalObservations)
 
 			// Check dimension options
-			count, err := mongo.CountDimensionOptions("datasets", "dimension.options", "instance_id", instanceID)
+			count, err := mongo.CountDimensionOptions(cfg.MongoDB, "dimension.options", "instance_id", instanceID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve dimension option resources", err, log.Data{"instance_id": instanceID})
 				os.Exit(1)
@@ -143,7 +143,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				WithBytes([]byte(validPUTInstanceMetadataJSON)).Expect().Status(http.StatusOK)
 
 			// Check instance has updated
-			instanceResource, err = mongo.GetInstance("datasets", "instances", "id", instanceID)
+			instanceResource, err = mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve instance resource", err, log.Data{"instance_id": instanceID})
 				os.Exit(1)
@@ -164,7 +164,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(instanceResource.Version, ShouldEqual, 1)
 
 			// Check Edition has been created
-			editionResource, err := mongo.GetEdition("datasets", "editions", "links.self.href", instanceResource.Links.Edition.HRef)
+			editionResource, err := mongo.GetEdition(cfg.MongoDB, "editions", "links.self.href", instanceResource.Links.Edition.HRef)
 			if err != nil {
 				log.ErrorC("Unable to retrieve edition resource", err, log.Data{"links.self.href": instanceResource.Links.Edition.HRef})
 				os.Exit(1)
@@ -183,7 +183,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetName, "2017", "1").WithHeader(internalTokenHeader, internalTokenID).
 				WithBytes([]byte(validPUTUpdateVersionToAssociatedJSON)).Expect().Status(http.StatusOK)
 
-			versionResource, err := mongo.GetVersion("datasets", "instances", "id", instanceID)
+			versionResource, err := mongo.GetVersion(cfg.MongoDB, "instances", "id", instanceID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve version resource", err, log.Data{"instance_id": instanceID})
 				os.Exit(1)
@@ -193,7 +193,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(versionResource.State, ShouldEqual, "associated")
 
 			// Check dataset has updated
-			datasetResource, err := mongo.GetDataset("datasets", "datasets", "_id", datasetName)
+			datasetResource, err := mongo.GetDataset(cfg.MongoDB, "datasets", "_id", datasetName)
 			if err != nil {
 				log.ErrorC("Unable to retrieve dataset resource", err, log.Data{"dataset_id": datasetName})
 				os.Exit(1)
@@ -209,7 +209,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			hasDownloads := false
 			var XLSSize int
 			for !hasDownloads {
-				instanceResource, err = mongo.GetInstance("datasets", "instances", "id", instanceID)
+				instanceResource, err = mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
 					os.Exit(1)
@@ -243,7 +243,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetName, "2017", "1").WithHeader(internalTokenHeader, internalTokenID).
 				WithBytes([]byte(`{"state":"published"}`)).Expect().Status(http.StatusOK)
 
-			versionResource, err = mongo.GetVersion("datasets", "instances", "id", instanceID)
+			versionResource, err = mongo.GetVersion(cfg.MongoDB, "instances", "id", instanceID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve version resource", err, log.Data{"instance_id": instanceID})
 				os.Exit(1)
@@ -252,7 +252,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(versionResource.State, ShouldEqual, "published")
 
 			// Check edition has updated
-			editionResource, err = mongo.GetEdition("datasets", "editions", "links.self.href", instanceResource.Links.Edition.HRef)
+			editionResource, err = mongo.GetEdition(cfg.MongoDB, "editions", "links.self.href", instanceResource.Links.Edition.HRef)
 			if err != nil {
 				log.ErrorC("Unable to retrieve dataset resource", err, log.Data{"dataset_id": datasetName})
 				os.Exit(1)
@@ -261,7 +261,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(editionResource.State, ShouldEqual, "published")
 
 			// Check dataset has updated
-			datasetResource, err = mongo.GetDataset("datasets", "datasets", "_id", datasetName)
+			datasetResource, err = mongo.GetDataset(cfg.MongoDB, "datasets", "_id", datasetName)
 			if err != nil {
 				log.ErrorC("Unable to retrieve dataset resource", err, log.Data{"dataset_id": datasetName})
 				os.Exit(1)
@@ -357,7 +357,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 					filterOutputID := filterBlueprintResponse.Value("links").Object().Value("filter_output").Object().Value("id").String().Raw()
 
-					filterOutputResource, err := mongo.GetFilter("filters", "filterOutputs", "filter_id", filterOutputID)
+					filterOutputResource, err := mongo.GetFilter(cfg.MongoDB, "filterOutputs", "filter_id", filterOutputID)
 					if err != nil {
 						log.ErrorC("Unable to retrieve filter output document", err, log.Data{"filter_output_id": filterOutputID})
 						os.Exit(1)
@@ -369,7 +369,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 					filterOutputResourceCompleted := true
 					for filterOutputResourceCompleted {
-						filterOutputResource, err = mongo.GetFilter("filters", "filterOutputs", "filter_id", filterOutputID)
+						filterOutputResource, err = mongo.GetFilter(cfg.MongoDB, "filterOutputs", "filter_id", filterOutputID)
 						if err != nil {
 							log.ErrorC("Unable to retrieve filter output document", err, log.Data{"filter_output_id": filterOutputID})
 							os.Exit(1)
@@ -496,13 +496,6 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				Value:      instanceID,
 			}
 
-			dimension := &mongo.Doc{
-				Database:   cfg.MongoDB,
-				Collection: "dimension.options",
-				Key:        "instance_id",
-				Value:      instanceID,
-			}
-
 			edition := &mongo.Doc{
 				Database:   cfg.MongoDB,
 				Collection: "editions",
@@ -510,10 +503,17 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				Value:      instanceResource.Links.Edition.HRef,
 			}
 
-			docs = append(docs, dataset, importJob, instance, dimension, edition)
+			docs = append(docs, dataset, importJob, instance, edition)
 
 			// remove all mongo documents created in the test
 			if err = mongo.Teardown(docs...); err != nil {
+				if err != mgo.ErrNotFound {
+					log.ErrorC("failed to remove edition resource", err, log.Data{"links.self.href": instanceResource.Links.Edition.HRef})
+					hasRemovedAllResources = false
+				}
+			}
+
+			if err = mongo.TeardownAll(cfg.MongoDB, "dimension.options"); err != nil {
 				if err != mgo.ErrNotFound {
 					log.ErrorC("failed to remove edition resource", err, log.Data{"links.self.href": instanceResource.Links.Edition.HRef})
 					hasRemovedAllResources = false
