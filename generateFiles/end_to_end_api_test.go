@@ -423,8 +423,9 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 						os.Exit(1)
 					}
 
-					expectedXLSFileSize := int64(6295) // this value may vary slightly
-					So(filteredXLSFileSize, ShouldResemble, &expectedXLSFileSize)
+					minExpectedXLSFileSize := int64(6293)
+					maxExpectedXLSFileSize := int64(6297)
+					So(*filteredXLSFileSize, ShouldBeBetween, minExpectedXLSFileSize, maxExpectedXLSFileSize)
 
 					filterBlueprint := &mongo.Doc{
 						Database:   cfg.MongoDB,
