@@ -20,8 +20,27 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
 
-	d, err := setupTestDataForGetAListOfDatasets(datasetID)
-	if err != nil {
+	var docs []*mongo.Doc
+
+	publishedDatasetDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "datasets",
+		Key:        "_id",
+		Value:      datasetID,
+		Update:     validPublishedDatasetData(datasetID),
+	}
+
+	unpublishedDatasetDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "datasets",
+		Key:        "_id",
+		Value:      "133",
+		Update:     validAssociatedDatasetData(datasetID),
+	}
+
+	docs = append(docs, publishedDatasetDoc, unpublishedDatasetDoc)
+
+	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
@@ -70,7 +89,7 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 		})
 	})
 
-	if err := mongo.TeardownMany(d); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		if err != mgo.ErrNotFound {
 			os.Exit(1)
 		}
@@ -113,44 +132,4 @@ func checkDatasetResponse(datasetID string, response *httpexpect.Object) {
 	response.Value("title").Equal("CPI")
 	response.Value("unit_of_measure").Equal("Pounds Sterling")
 	response.Value("uri").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation")
-}
-
-func setupTestDataForGetAListOfDatasets(datasetID string) (*mongo.ManyDocs, error) {
-	var docs []mongo.Doc
-
-	publishedDatasetDoc := mongo.Doc{
-		Database:   "datasets",
-		Collection: "datasets",
-		Key:        "_id",
-		Value:      datasetID,
-		Update:     validPublishedDatasetData(datasetID),
-	}
-
-	unpublishedDatasetDoc := mongo.Doc{
-		Database:   "datasets",
-		Collection: "datasets",
-		Key:        "_id",
-		Value:      "133",
-		Update:     validAssociatedDatasetData(datasetID),
-	}
-
-	docs = append(docs, publishedDatasetDoc, unpublishedDatasetDoc)
-
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
-
-	if err := mongo.TeardownMany(d); err != nil {
-		if err != mgo.ErrNotFound {
-			return nil, err
-		}
-	}
-
-	if err := mongo.SetupMany(d); err != nil {
-		if err != mgo.ErrNotFound {
-			return nil, err
-		}
-	}
-
-	return d, nil
 }

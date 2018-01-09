@@ -11,11 +11,6 @@ import (
 
 var session *mgo.Session
 
-// ManyDocs represents a list of objects that are able to query mongo db
-type ManyDocs struct {
-	Docs []Doc
-}
-
 // Doc contains information to be able to query mongo db
 type Doc struct {
 	Database   string
@@ -39,22 +34,7 @@ func NewDatastore(uri string) error {
 	return nil
 }
 
-// Teardown is a way of cleaning up an individual document from mongo instance
-func Teardown(database, collection, key, value string) error {
-	s := session.Copy()
-	defer s.Close()
-
-	if err := s.DB(database).C(collection).Remove(bson.M{key: value}); err != nil {
-		if err == mgo.ErrNotFound {
-			log.Info("data does not exist, continue", nil)
-			return nil
-		}
-		return err
-	}
-
-	return nil
-}
-
+//RemoveAll documents from a given collection and database
 func RemoveAll(database, collection string) error {
 	s := session.Copy()
 	defer s.Close()
@@ -67,12 +47,12 @@ func RemoveAll(database, collection string) error {
 	return nil
 }
 
-// TeardownMany is a way of cleaning up many documents from mongo instance
-func TeardownMany(d *ManyDocs) error {
+// Teardown is a way of cleaning up any number of documents from mongo instance
+func Teardown(d ...*Doc) error {
 	s := session.Copy()
 	defer s.Close()
 
-	for _, doc := range d.Docs {
+	for _, doc := range d {
 		if err := s.DB(doc.Database).C(doc.Collection).Remove(bson.M{doc.Key: doc.Value}); err != nil {
 			if err == mgo.ErrNotFound {
 				log.Info("data does not exist, continue", nil)
@@ -85,26 +65,17 @@ func TeardownMany(d *ManyDocs) error {
 	return nil
 }
 
-// Setup is a way of loading in an individual document into a mongo instance
-func Setup(database, collection, key, value string, update bson.M) error {
-	s := session.Copy()
-	defer s.Close()
-
-	if _, err := s.DB(database).C(collection).Upsert(bson.M{key: value}, update); err != nil {
-		log.ErrorC("mongodb datastore error", err, nil)
+// Setup is a way of loading any number of documents into a mongo instance
+func Setup(d ...*Doc) error {
+	if err := Teardown(d...); err != nil {
+		log.ErrorC("Unable to teardown previous document", err, nil)
 		return err
 	}
 
-	log.Info("SetUp completed", nil)
-	return nil
-}
-
-// SetupMany is a way of loading in many documents into a mongo instance
-func SetupMany(d *ManyDocs) error {
 	s := session.Copy()
 	defer s.Close()
 
-	for _, doc := range d.Docs {
+	for _, doc := range d {
 		//log.Debug("got in for loop", log.Data{"key": key, "value": doc})
 		if _, err := s.DB(doc.Database).C(doc.Collection).Upsert(bson.M{doc.Key: doc.Value}, doc.Update); err != nil {
 			log.ErrorC("Unable to create document", err, nil)
@@ -125,6 +96,7 @@ type DatasetUpdate struct {
 	Next    *Dataset `bson:"next,omitempty"        json:"next,omitempty"`
 }
 
+//Dataset contains all the metadata which does not change across editions and versions of a dataset
 type Dataset struct {
 	CollectionID      string           `bson:"collection_id,omitempty"          json:"collection_id,omitempty"`
 	Contacts          []ContactDetails `bson:"contacts,omitempty"               json:"contacts,omitempty"`

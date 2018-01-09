@@ -14,14 +14,15 @@ import (
 
 func TestUpdateImportJobState(t *testing.T) {
 
-	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Failed to tear down test data", err, nil)
-			os.Exit(1)
-		}
+	importJob := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: collection,
+		Key:        "id",
+		Value:      jobID,
+		Update:     validCreatedImportJobData,
 	}
 
-	if err := mongo.Setup("imports", "imports", "id", jobID, validCreatedImportJobData); err != nil {
+	if err := mongo.Setup(importJob); err != nil {
 		log.ErrorC("Failed to set up test data", err, nil)
 		os.Exit(1)
 	}
@@ -48,7 +49,7 @@ func TestUpdateImportJobState(t *testing.T) {
 		})
 	})
 
-	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {
+	if err := mongo.Teardown(importJob); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
@@ -58,14 +59,15 @@ func TestUpdateImportJobState(t *testing.T) {
 
 func TestFailureToUpdateAnImportJob(t *testing.T) {
 
-	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Failed to tear down test data", err, nil)
-			os.Exit(1)
-		}
+	importJob := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: collection,
+		Key:        "id",
+		Value:      jobID,
+		Update:     validCreatedImportJobData,
 	}
 
-	if err := mongo.Setup("imports", "imports", "id", jobID, validCreatedImportJobData); err != nil {
+	if err := mongo.Setup(importJob); err != nil {
 		log.ErrorC("Failed to set up test data", err, nil)
 		os.Exit(1)
 	}
@@ -93,7 +95,7 @@ func TestFailureToUpdateAnImportJob(t *testing.T) {
 		})
 	})
 
-	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {
+	if err := mongo.Teardown(importJob); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)

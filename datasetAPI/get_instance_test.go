@@ -25,7 +25,15 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Given a published instance resource", t, func() {
-		if err := mongo.Setup(database, "instances", "_id", publishedInstanceID, validPublishedInstanceData(datasetID, edition, publishedInstanceID)); err != nil {
+		instance := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: "instances",
+			Key:        "_id",
+			Value:      publishedInstanceID,
+			Update:     validPublishedInstanceData(datasetID, edition, publishedInstanceID),
+		}
+
+		if err := mongo.Setup(instance); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
@@ -45,7 +53,7 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 			})
 		})
 
-		if err := mongo.Teardown(database, "instances", "_id", publishedInstanceID); err != nil {
+		if err := mongo.Teardown(instance); err != nil {
 			if err != mgo.ErrNotFound {
 				os.Exit(1)
 			}
@@ -53,7 +61,15 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 	})
 
 	Convey("Given an unpublished instance resource", t, func() {
-		if err := mongo.Setup(database, "instances", "_id", unpublishedInstanceID, validAssociatedInstanceData(datasetID, edition, unpublishedInstanceID)); err != nil {
+		instance := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: "instances",
+			Key:        "_id",
+			Value:      unpublishedInstanceID,
+			Update:     validAssociatedInstanceData(datasetID, edition, unpublishedInstanceID),
+		}
+
+		if err := mongo.Setup(instance); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
@@ -70,7 +86,7 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 			})
 		})
 
-		if err := mongo.Teardown(database, "instances", "_id", unpublishedInstanceID); err != nil {
+		if err := mongo.Teardown(instance); err != nil {
 			if err != mgo.ErrNotFound {
 				os.Exit(1)
 			}
@@ -96,7 +112,15 @@ func TestFailureToGetInstance(t *testing.T) {
 	})
 
 	Convey("Given a published instance resource exists", t, func() {
-		if err := mongo.Setup(database, "instances", "_id", instanceID, validPublishedInstanceData(datasetID, edition, instanceID)); err != nil {
+		instance := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: "instances",
+			Key:        "_id",
+			Value:      instanceID,
+			Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+		}
+
+		if err := mongo.Setup(instance); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
@@ -116,7 +140,7 @@ func TestFailureToGetInstance(t *testing.T) {
 			})
 		})
 
-		if err := mongo.Teardown(database, "instances", "_id", instanceID); err != nil {
+		if err := mongo.Teardown(instance); err != nil {
 			if err != mgo.ErrNotFound {
 				os.Exit(1)
 			}
@@ -138,9 +162,9 @@ func checkResponse(datasetID, edition, instanceID, version string, response *htt
 	response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
 	response.Value("downloads").Object().Value("csv").Object().Value("url").String().Match("(.+)/aws/census-2017-" + version + "-csv$")
 	response.Value("downloads").Object().Value("csv").Object().Value("url").String().Match("(.+)/aws/census-2017-" + version + "-csv$")
-	response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10mb")
+	response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
 	response.Value("downloads").Object().Value("xls").Object().Value("url").String().Match("(.+)/aws/census-2017-" + version + "-xls$")
-	response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
+	response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24")
 	response.Value("edition").Equal(edition)
 	response.Value("headers").Array().Element(0).String().Equal("time")
 	response.Value("headers").Array().Element(1).String().Equal("geography")

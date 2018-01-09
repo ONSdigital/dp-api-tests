@@ -40,7 +40,14 @@ func TestSuccessfullyPostImportJob(t *testing.T) {
 
 				response.Value("last_updated").NotNull()
 
-				if err := mongo.Teardown(database, collection, "id", importJobID); err != nil {
+				importJob := &mongo.Doc{
+					Database:   cfg.MongoDB,
+					Collection: collection,
+					Key:        "id",
+					Value:      importJobID,
+				}
+
+				if err := mongo.Teardown(importJob); err != nil {
 					if err != mgo.ErrNotFound {
 						log.ErrorC("Failed to tear down test data", err, nil)
 						os.Exit(1)

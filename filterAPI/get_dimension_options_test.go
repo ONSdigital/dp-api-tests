@@ -20,11 +20,17 @@ func TestSuccessfullyGetListOfDimensionOptions(t *testing.T) {
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
+	filter := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: collection,
+		Key:        "_id",
+		Value:      filterID,
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
+	}
+
 	Convey("Given an existing filter blueprint with dimensions and options", t, func() {
 
-		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
-
-		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
+		if err := mongo.Setup(filter); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -89,7 +95,7 @@ func TestSuccessfullyGetListOfDimensionOptions(t *testing.T) {
 		})
 	})
 
-	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+	if err := mongo.Teardown(filter); err != nil {
 		log.ErrorC("Unable to remove test data from mongo db", err, nil)
 		os.Exit(1)
 	}
@@ -103,6 +109,14 @@ func TestFailureToGetListOfDimensionOptions(t *testing.T) {
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
+	filter := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: collection,
+		Key:        "_id",
+		Value:      filterID,
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
+	}
+
 	Convey("Given a filter blueprint does not exist", t, func() {
 		Convey("When a request to get a dimension option against filter blueprint", func() {
 			Convey("Then return status bad request (400)", func() {
@@ -115,9 +129,7 @@ func TestFailureToGetListOfDimensionOptions(t *testing.T) {
 
 	Convey("Given a filter blueprint", t, func() {
 
-		update := GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID)
-
-		if err := mongo.Setup(database, collection, "_id", filterID, update); err != nil {
+		if err := mongo.Setup(filter); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -131,7 +143,7 @@ func TestFailureToGetListOfDimensionOptions(t *testing.T) {
 		})
 	})
 
-	if err := mongo.Teardown(database, collection, "_id", filterID); err != nil {
+	if err := mongo.Teardown(filter); err != nil {
 		log.ErrorC("Unable to remove test data from mongo db", err, nil)
 		os.Exit(1)
 	}

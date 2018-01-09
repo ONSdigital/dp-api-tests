@@ -14,14 +14,15 @@ import (
 
 func TestSuccessfullyGetAnImportJob(t *testing.T) {
 
-	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Failed to tear down test data", err, nil)
-			os.Exit(1)
-		}
+	importCreateJobDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: collection,
+		Key:        "id",
+		Value:      jobID,
+		Update:     validCreatedImportJobData,
 	}
 
-	if err := mongo.Setup("imports", "imports", "id", jobID, validCreatedImportJobData); err != nil {
+	if err := mongo.Setup(importCreateJobDoc); err != nil {
 		log.ErrorC("Failed to set up test data", err, nil)
 		os.Exit(1)
 	}
@@ -49,7 +50,7 @@ func TestSuccessfullyGetAnImportJob(t *testing.T) {
 		})
 	})
 
-	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {
+	if err := mongo.Teardown(importCreateJobDoc); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
@@ -59,14 +60,15 @@ func TestSuccessfullyGetAnImportJob(t *testing.T) {
 
 func TestFailureToGetAnImportJob(t *testing.T) {
 
-	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Failed to tear down test data", err, nil)
-			os.Exit(1)
-		}
+	importCreateJobDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: collection,
+		Key:        "id",
+		Value:      jobID,
+		Update:     validCreatedImportJobData,
 	}
 
-	if err := mongo.Setup("imports", "imports", "id", jobID, validCreatedImportJobData); err != nil {
+	if err := mongo.Setup(importCreateJobDoc); err != nil {
 		log.ErrorC("Failed to set up test data", err, nil)
 		os.Exit(1)
 	}
@@ -83,7 +85,7 @@ func TestFailureToGetAnImportJob(t *testing.T) {
 		})
 	})
 
-	if err := mongo.Teardown("imports", "imports", "id", jobID); err != nil {
+	if err := mongo.Teardown(importCreateJobDoc); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)

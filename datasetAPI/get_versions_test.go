@@ -24,7 +24,7 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 
 	Convey("Given a dataset edition has a published and unpublished version", t, func() {
 
-		d, err := setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpublishedInstanceID)
+		docs, err := setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpublishedInstanceID)
 		if err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
@@ -64,7 +64,7 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				os.Exit(1)
 			}
@@ -84,6 +84,30 @@ func TestGetVersions_Failed(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
+	publishedDataset := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: collection,
+		Key:        "_id",
+		Value:      datasetID,
+		Update:     validPublishedDatasetData(datasetID),
+	}
+
+	publishedEdition := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "editions",
+		Key:        "_id",
+		Value:      editionID,
+		Update:     validPublishedEditionData(datasetID, editionID, edition),
+	}
+
+	unpublishedEdition := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "editions",
+		Key:        "_id",
+		Value:      editionID,
+		Update:     validUnpublishedEditionData(datasetID, unpublishedEditionID, edition),
+	}
+
 	Convey("Given the dataset and subsequently the edition does not exist", t, func() {
 		Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
 			Convey("Then return status bad request (400)", func() {
@@ -94,8 +118,7 @@ func TestGetVersions_Failed(t *testing.T) {
 	})
 
 	Convey("Given the dataset exists", t, func() {
-		update := validPublishedDatasetData(datasetID)
-		if err := mongo.Setup(database, collection, "_id", datasetID, update); err != nil {
+		if err := mongo.Setup(publishedDataset); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -110,8 +133,7 @@ func TestGetVersions_Failed(t *testing.T) {
 		})
 
 		Convey("and the edition does exist but there are no versions", func() {
-			update := validPublishedEditionData(datasetID, editionID, edition)
-			if err := mongo.Setup(database, "editions", "_id", editionID, update); err != nil {
+			if err := mongo.Setup(publishedEdition); err != nil {
 				log.ErrorC("Unable to setup test data", err, nil)
 				os.Exit(1)
 			}
@@ -122,13 +144,9 @@ func TestGetVersions_Failed(t *testing.T) {
 						Expect().Status(http.StatusNotFound).Body().Contains("Version not found\n")
 				})
 			})
-			if err := mongo.Teardown(database, "editions", "_id", editionID); err != nil {
-				log.ErrorC("Unable to remove test data from mongo db", err, nil)
-				os.Exit(1)
-			}
 		})
 
-		if err := mongo.Teardown(database, collection, "_id", datasetID); err != nil {
+		if err := mongo.Teardown(publishedDataset, publishedEdition); err != nil {
 			log.ErrorC("Unable to remove test data from mongo db", err, nil)
 			os.Exit(1)
 		}
@@ -136,8 +154,15 @@ func TestGetVersions_Failed(t *testing.T) {
 
 	// Make sure an unauthorised user cannot find the dataset
 	Convey("Given an unpublished dataset exists", t, func() {
-		update := validAssociatedDatasetData(unpublishedDatasetID)
-		if err := mongo.Setup(database, collection, "_id", unpublishedDatasetID, update); err != nil {
+		unpublishedDataset := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: collection,
+			Key:        "_id",
+			Value:      unpublishedDatasetID,
+			Update:     validAssociatedDatasetData(unpublishedDatasetID),
+		}
+
+		if err := mongo.Setup(unpublishedDataset); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -149,22 +174,20 @@ func TestGetVersions_Failed(t *testing.T) {
 			})
 		})
 
-		if err := mongo.Teardown(database, collection, "_id", unpublishedDatasetID); err != nil {
+		if err := mongo.Teardown(unpublishedDataset); err != nil {
 			log.ErrorC("Unable to remove test data from mongo db", err, nil)
 			os.Exit(1)
 		}
 	})
 
 	Convey("Given a published dataset exists", t, func() {
-		update := validPublishedDatasetData(datasetID)
-		if err := mongo.Setup(database, collection, "_id", datasetID, update); err != nil {
+		if err := mongo.Setup(publishedDataset); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
 
 		Convey("but only an unpublished edition exists", func() {
-			update := validUnpublishedEditionData(datasetID, unpublishedEditionID, edition)
-			if err := mongo.Setup(database, "editions", "_id", unpublishedEditionID, update); err != nil {
+			if err := mongo.Setup(unpublishedEdition); err != nil {
 				log.ErrorC("Unable to setup test data", err, nil)
 				os.Exit(1)
 			}
@@ -176,22 +199,29 @@ func TestGetVersions_Failed(t *testing.T) {
 				})
 			})
 
-			if err := mongo.Teardown(database, "editions", "_id", unpublishedEditionID); err != nil {
+			if err := mongo.Teardown(unpublishedEdition); err != nil {
 				log.ErrorC("Unable to remove test data from mongo db", err, nil)
 				os.Exit(1)
 			}
 		})
 
 		Convey("and a published edition exists", func() {
-			update := validPublishedEditionData(datasetID, editionID, edition)
-			if err := mongo.Setup(database, "editions", "_id", editionID, update); err != nil {
+			if err := mongo.Setup(publishedEdition); err != nil {
 				log.ErrorC("Unable to setup test data", err, nil)
 				os.Exit(1)
 			}
 
 			Convey("but only unpublished versions exist for the dataset edition", func() {
-				update := validAssociatedInstanceData(datasetID, edition, unpublishedInstanceID)
-				if err := mongo.Setup(database, "instances", "_id", unpublishedInstanceID, update); err != nil {
+
+				unpublishedInstance := &mongo.Doc{
+					Database:   cfg.MongoDB,
+					Collection: "instances",
+					Key:        "_id",
+					Value:      unpublishedInstanceID,
+					Update:     validAssociatedInstanceData(datasetID, edition, unpublishedInstanceID),
+				}
+
+				if err := mongo.Setup(unpublishedInstance); err != nil {
 					log.ErrorC("Unable to setup test data", err, nil)
 					os.Exit(1)
 				}
@@ -203,22 +233,12 @@ func TestGetVersions_Failed(t *testing.T) {
 					})
 				})
 
-				if err := mongo.Teardown(database, "instances", "_id", unpublishedInstanceID); err != nil {
+				if err := mongo.Teardown(unpublishedInstance, publishedEdition, publishedDataset); err != nil {
 					log.ErrorC("Unable to remove test data from mongo db", err, nil)
 					os.Exit(1)
 				}
 			})
-
-			if err := mongo.Teardown(database, "editions", "_id", editionID); err != nil {
-				log.ErrorC("Unable to remove test data from mongo db", err, nil)
-				os.Exit(1)
-			}
 		})
-
-		if err := mongo.Teardown(database, collection, "_id", datasetID); err != nil {
-			log.ErrorC("Unable to remove test data from mongo db", err, nil)
-			os.Exit(1)
-		}
 	})
 }
 
@@ -233,9 +253,9 @@ func checkVersionResponse(datasetID, editionID, instanceID, edition string, resp
 	response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
 	response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
 	response.Value("downloads").Object().Value("csv").Object().Value("url").String().Match("(.+)/aws/census-2017-1-csv$")
-	response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10mb")
+	response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
 	response.Value("downloads").Object().Value("xls").Object().Value("url").String().Match("(.+)/aws/census-2017-1-xls$")
-	response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
+	response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24")
 	response.Value("edition").Equal("2017")
 	response.Value("latest_changes").Array().Element(0).Object().Value("description").String().Equal("The border of Southampton changed after the south east cliff face fell into the sea.")
 	response.Value("latest_changes").Array().Element(0).Object().Value("name").String().Equal("Changes in Classification")
@@ -255,35 +275,35 @@ func checkVersionResponse(datasetID, editionID, instanceID, edition string, resp
 	response.Value("version").Equal(1)
 }
 
-func setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpublishedInstanceID string) (*mongo.ManyDocs, error) {
-	var docs []mongo.Doc
+func setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpublishedInstanceID string) ([]*mongo.Doc, error) {
+	var docs []*mongo.Doc
 
-	datasetDoc := mongo.Doc{
-		Database:   "datasets",
+	datasetDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
 		Update:     validPublishedDatasetData(datasetID),
 	}
 
-	editionDoc := mongo.Doc{
-		Database:   "datasets",
+	editionDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
 		Update:     validPublishedEditionData(datasetID, editionID, edition),
 	}
 
-	instanceDoc := mongo.Doc{
-		Database:   "datasets",
+	instanceDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
 		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
 	}
 
-	unpublishedInstanceDoc := mongo.Doc{
-		Database:   "datasets",
+	unpublishedInstanceDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
 		Value:      unpublishedInstanceID,
@@ -292,13 +312,9 @@ func setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpu
 
 	docs = append(docs, datasetDoc, editionDoc, instanceDoc, unpublishedInstanceDoc)
 
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
-
-	if err := mongo.SetupMany(d); err != nil {
+	if err := mongo.Setup(docs...); err != nil {
 		return nil, err
 	}
 
-	return d, nil
+	return docs, nil
 }
