@@ -11,7 +11,6 @@ import (
 var cfg *config.Config
 
 const (
-	database                  = "codelists"
 	collection                = "codelists"
 	firstCodeListID           = "1C322128-3FD5-44F0-BBAD-619779D8960E"
 	firstCodeListFirstCodeID  = "45251AEA-B4DD-409C-8C0E-CD5867399843"
@@ -39,7 +38,14 @@ func init() {
 		os.Exit(1)
 	}
 
-	if err = mongo.Teardown(database, collection, "test_data", "true"); err != nil {
+	test := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: collection,
+		Key:        "test_data",
+		Value:      "true",
+	}
+
+	if err = mongo.Teardown(test); err != nil {
 		log.ErrorC("Unable to remove all test data from mongo db", err, nil)
 		os.Exit(1)
 	}

@@ -2,124 +2,46 @@ package filterAPI
 
 import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
-	"github.com/ONSdigital/go-ns/log"
 	uuid "github.com/satori/go.uuid"
-	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
-func setupInstance(instanceID string, update bson.M) error {
-
-	if err := teardownInstance(instanceID); err != nil {
-		return err
+func setupDimensionOptions(id string, update bson.M) *mongo.Doc {
+	return &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "dimension.options",
+		Key:        "_id",
+		Value:      id,
+		Update:     update,
 	}
-
-	return mongo.Setup("datasets", "instances", "instance_id", instanceID, update)
 }
 
-func setupDimensionOptions(ID string, update bson.M) error {
-	return mongo.Setup("datasets", "dimension.options", "_id", ID, update)
-}
+func setupMultipleDimensionsAndOptions(instanceID string) []*mongo.Doc {
+	var docs []*mongo.Doc
 
-func teardownInstance(instanceID string) error {
-	if err := mongo.Teardown("datasets", "instances", "instance_id", instanceID); err != nil {
-		if err == mgo.ErrNotFound {
-			return nil
-		}
-		return err
-	}
-	return nil
-}
-
-func teardownDimensionOptions(instanceID string) error {
-	if err := mongo.Teardown("datasets", "dimension.options", "instance_id", instanceID); err != nil {
-		if err == mgo.ErrNotFound {
-			return nil
-		}
-		return err
-	}
-	return nil
-}
-
-func setupMultipleDimensionsAndOptions(instanceID string) error {
-	var err error
-
-	// setup age dimension options
-	if err = setupDimensionOptions(uuid.NewV4().String(), GetValidAgeDimensionData(instanceID, "27")); err != nil {
-		log.ErrorC("Unable to setup dimension option", err, log.Data{"instance_id": instanceID, "dimension": "age", "option": "27"})
+	options := []bson.M{
+		GetValidAgeDimensionData(instanceID, "27"),
+		GetValidAgeDimensionData(instanceID, "28"),
+		GetValidSexDimensionData(instanceID, "male"),
+		GetValidSexDimensionData(instanceID, "female"),
+		GetValidSexDimensionData(instanceID, "unknown"),
+		GetValidGoodsAndServicesDimensionData(instanceID, "Education"),
+		GetValidGoodsAndServicesDimensionData(instanceID, "health"),
+		GetValidGoodsAndServicesDimensionData(instanceID, "communication"),
+		GetValidGoodsAndServicesDimensionData(instanceID, "welfare"),
+		GetValidTimeDimensionData(instanceID, "March 1997"),
+		GetValidTimeDimensionData(instanceID, "April 1997"),
+		GetValidTimeDimensionData(instanceID, "June 1997"),
+		GetValidTimeDimensionData(instanceID, "September 1997"),
+		GetValidTimeDimensionData(instanceID, "December 1997"),
+		GetValidTimeDimensionData(instanceID, "February 2007"),
+		GetValidResidenceTypeDimensionData(instanceID, "Lives in a communal establishment"),
+		GetValidResidenceTypeDimensionData(instanceID, "Lives in a household"),
 	}
 
-	if err = setupDimensionOptions(uuid.NewV4().String(), GetValidAgeDimensionData(instanceID, "28")); err != nil {
-		log.ErrorC("Unable to setup dimension option", err, log.Data{"instance_id": instanceID, "dimension": "age", "option": "28"})
+	for _, o := range options {
+		docs = append(docs, setupDimensionOptions(uuid.NewV4().String(), o))
 	}
 
-	// setup sex dimension options
-	if err = setupDimensionOptions(uuid.NewV4().String(), GetValidSexDimensionData(instanceID, "male")); err != nil {
-		log.ErrorC("Unable to setup dimension option", err, log.Data{"instance_id": instanceID, "dimension": "sex", "option": "male"})
-	}
-
-	if err = setupDimensionOptions(uuid.NewV4().String(), GetValidSexDimensionData(instanceID, "female")); err != nil {
-		log.ErrorC("Unable to setup dimension option", err, log.Data{"instance_id": instanceID, "dimension": "sex", "option": "female"})
-	}
-
-	if err = setupDimensionOptions(uuid.NewV4().String(), GetValidSexDimensionData(instanceID, "unknown")); err != nil {
-		log.ErrorC("Unable to setup dimension option", err, log.Data{"instance_id": instanceID, "dimension": "sex", "option": "unknown"})
-	}
-
-	// setup Goods and services dimension options
-	if err = setupDimensionOptions(uuid.NewV4().String(), GetValidGoodsAndServicesDimensionData(instanceID, "Education")); err != nil {
-		log.ErrorC("Unable to setup dimension option", err, log.Data{"instance_id": instanceID, "dimension": "Goods and services", "option": "welfare"})
-	}
-
-	if err = setupDimensionOptions(uuid.NewV4().String(), GetValidGoodsAndServicesDimensionData(instanceID, "health")); err != nil {
-		log.ErrorC("Unable to setup dimension option", err, log.Data{"instance_id": instanceID, "dimension": "Goods and services", "option": "welfare"})
-	}
-
-	if err = setupDimensionOptions(uuid.NewV4().String(), GetValidGoodsAndServicesDimensionData(instanceID, "communication")); err != nil {
-		log.ErrorC("Unable to setup dimension option", err, log.Data{"instance_id": instanceID, "dimension": "Goods and services", "option": "welfare"})
-	}
-
-	if err = setupDimensionOptions(uuid.NewV4().String(), GetValidGoodsAndServicesDimensionData(instanceID, "welfare")); err != nil {
-		log.ErrorC("Unable to setup dimension option", err, log.Data{"instance_id": instanceID, "dimension": "Goods and services", "option": "welfare"})
-	}
-
-	// setup time dimension options
-	if err = setupDimensionOptions(uuid.NewV4().String(), GetValidTimeDimensionData(instanceID, "March 1997")); err != nil {
-		log.ErrorC("Unable to setup dimension option", err, log.Data{"instance_id": instanceID, "dimension": "time", "option": "February 2007"})
-	}
-
-	if err = setupDimensionOptions(uuid.NewV4().String(), GetValidTimeDimensionData(instanceID, "April 1997")); err != nil {
-		log.ErrorC("Unable to setup dimension option", err, log.Data{"instance_id": instanceID, "dimension": "time", "option": "February 2007"})
-	}
-
-	if err = setupDimensionOptions(uuid.NewV4().String(), GetValidTimeDimensionData(instanceID, "June 1997")); err != nil {
-		log.ErrorC("Unable to setup dimension option", err, log.Data{"instance_id": instanceID, "dimension": "time", "option": "February 2007"})
-	}
-
-	if err = setupDimensionOptions(uuid.NewV4().String(), GetValidTimeDimensionData(instanceID, "September 1997")); err != nil {
-		log.ErrorC("Unable to setup dimension option", err, log.Data{"instance_id": instanceID, "dimension": "time", "option": "February 2007"})
-	}
-
-	if err = setupDimensionOptions(uuid.NewV4().String(), GetValidTimeDimensionData(instanceID, "December 1997")); err != nil {
-		log.ErrorC("Unable to setup dimension option", err, log.Data{"instance_id": instanceID, "dimension": "time", "option": "February 2007"})
-	}
-
-	if err = setupDimensionOptions(uuid.NewV4().String(), GetValidTimeDimensionData(instanceID, "February 2007")); err != nil {
-		log.ErrorC("Unable to setup dimension option", err, log.Data{"instance_id": instanceID, "dimension": "time", "option": "February 2007"})
-	}
-
-	// setup residence type dimension options
-	if err = setupDimensionOptions(uuid.NewV4().String(), GetValidResidenceTypeDimensionData(instanceID, "Lives in a communal establishment")); err != nil {
-		log.ErrorC("Unable to setup dimension option", err, log.Data{"instance_id": instanceID, "dimension": "Residence Type", "option": "Lives in a communal establishment"})
-	}
-
-	if err = setupDimensionOptions(uuid.NewV4().String(), GetValidResidenceTypeDimensionData(instanceID, "Lives in a household")); err != nil {
-		log.ErrorC("Unable to setup dimension option", err, log.Data{"instance_id": instanceID, "dimension": "Residence Type", "option": "Lives in a communal establishment"})
-	}
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return docs
 }

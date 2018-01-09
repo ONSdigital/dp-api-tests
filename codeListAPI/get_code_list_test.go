@@ -15,14 +15,15 @@ import (
 
 func TestSuccessfullyGetACodeList(t *testing.T) {
 
-	if err := mongo.Teardown(database, collection, "_id", secondCodeListID); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Failed to tear down test data", err, nil)
-			os.Exit(1)
-		}
+	secondCodeList := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: collection,
+		Key:        "_id",
+		Value:      secondCodeListID,
+		Update:     validSecondCodeListData,
 	}
 
-	if err := mongo.Setup(database, collection, "_id", secondCodeListID, validSecondCodeListData); err != nil {
+	if err := mongo.Setup(secondCodeList); err != nil {
 		log.ErrorC("Failed to set up test data", err, nil)
 		os.Exit(1)
 	}
@@ -48,7 +49,7 @@ func TestSuccessfullyGetACodeList(t *testing.T) {
 		})
 	})
 
-	if err := mongo.Teardown(database, collection, "_id", secondCodeListID); err != nil {
+	if err := mongo.Teardown(secondCodeList); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)

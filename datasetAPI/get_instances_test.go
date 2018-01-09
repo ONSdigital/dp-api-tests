@@ -24,7 +24,15 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Given a published instance exists", t, func() {
-		if err := mongo.Setup(database, "instances", "_id", instanceID, validPublishedInstanceData(datasetID, edition, instanceID)); err != nil {
+		instance := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: "instances",
+			Key:        "_id",
+			Value:      instanceID,
+			Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+		}
+
+		if err := mongo.Setup(instance); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
@@ -38,24 +46,25 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 			})
 		})
 
-		if err := mongo.Teardown(database, "instances", "_id", instanceID); err != nil {
+		if err := mongo.Teardown(instance); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
 	})
 
 	Convey("Given a `completed` and `edition-confirmed` instances exist", t, func() {
-		var docs []mongo.Doc
+		var docs []*mongo.Doc
 
-		completedDoc := mongo.Doc{
-			Database:   database,
+		completedDoc := &mongo.Doc{
+			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
 			Value:      instanceID,
 			Update:     validCompletedInstanceData(datasetID, "2018", instanceID),
 		}
-		editionConfirmedDoc := mongo.Doc{
-			Database:   database,
+
+		editionConfirmedDoc := &mongo.Doc{
+			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
 			Value:      secondInstanceID,
@@ -64,11 +73,7 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 
 		docs = append(docs, completedDoc, editionConfirmedDoc)
 
-		d := &mongo.ManyDocs{
-			Docs: docs,
-		}
-
-		if err := mongo.SetupMany(d); err != nil {
+		if err := mongo.Setup(docs...); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
@@ -119,7 +124,7 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to run test", err, nil)
 				os.Exit(1)
@@ -136,8 +141,16 @@ func TestFailureToGetAListOfInstances(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
+	instance := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "instances",
+		Key:        "_id",
+		Value:      instanceID,
+		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+	}
+
 	Convey("Given an instance with state `published` exists", t, func() {
-		if err := mongo.Setup(database, "instances", "_id", instanceID, validPublishedInstanceData(datasetID, edition, instanceID)); err != nil {
+		if err := mongo.Setup(instance); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
@@ -163,7 +176,7 @@ func TestFailureToGetAListOfInstances(t *testing.T) {
 			})
 		})
 
-		if err := mongo.Teardown(database, "instances", "_id", instanceID); err != nil {
+		if err := mongo.Teardown(instance); err != nil {
 			if err != mgo.ErrNotFound {
 				os.Exit(1)
 			}

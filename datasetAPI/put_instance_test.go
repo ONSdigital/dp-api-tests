@@ -23,7 +23,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Given an instance has been created by an import job", t, func() {
-		d, err := setupInstance(datasetID, edition, instanceID)
+		docs, err := setupInstance(datasetID, edition, instanceID)
 		if err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
@@ -35,7 +35,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 					WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPUTFullInstanceJSON)).
 					Expect().Status(http.StatusOK)
 
-				instance, err := mongo.GetInstance(database, "instances", "_id", instanceID)
+				instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
 				if err != nil {
 					if err != mgo.ErrNotFound {
 						log.ErrorC("Was unable to remove test data", err, nil)
@@ -56,7 +56,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 				WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPUTCompletedInstanceJSON)).
 				Expect().Status(http.StatusOK)
 
-			instance, err := mongo.GetInstance(database, "instances", "_id", instanceID)
+			instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
 			if err != nil {
 				if err != mgo.ErrNotFound {
 					log.ErrorC("Was unable to remove test data", err, nil)
@@ -73,7 +73,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 						WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPUTEditionConfirmedInstanceJSON)).
 						Expect().Status(http.StatusOK)
 
-					instance, err := mongo.GetInstance(database, "instances", "_id", instanceID)
+					instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
 					if err != nil {
 						if err != mgo.ErrNotFound {
 							log.ErrorC("Was unable to remove test data", err, nil)
@@ -86,7 +86,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 					So(instance.Version, ShouldEqual, 1)
 
 					// Check edition document has been created
-					edition, err := mongo.GetEdition(database, "editions", "links.self.href", instance.Links.Edition.HRef)
+					edition, err := mongo.GetEdition(cfg.MongoDB, "editions", "links.self.href", instance.Links.Edition.HRef)
 					if err != nil {
 						if err != mgo.ErrNotFound {
 							log.ErrorC("Was unable to remove test data", err, nil)
@@ -96,17 +96,17 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 
 					checkEditionDoc(datasetID, instanceID, edition)
 
-					if err := mongo.Teardown(database, "editions", "links.self.href", instance.Links.Edition.HRef); err != nil {
-						if err != mgo.ErrNotFound {
-							log.ErrorC("Was unable to remove test data", err, nil)
-							os.Exit(1)
-						}
-					}
+					docs = append(docs, &mongo.Doc{
+						Database:   cfg.MongoDB,
+						Collection: "editions",
+						Key:        "links.self.href",
+						Value:      instance.Links.Edition.HRef,
+					})
 				})
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				os.Exit(1)
 			}
@@ -137,7 +137,7 @@ func TestFailureToPutInstance(t *testing.T) {
 	})
 
 	Convey("Given a created instance exists", t, func() {
-		d, err := setupInstance(datasetID, edition, instanceID)
+		docs, err := setupInstance(datasetID, edition, instanceID)
 		if err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
@@ -206,7 +206,7 @@ func TestFailureToPutInstance(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				os.Exit(1)
 			}
@@ -214,19 +214,19 @@ func TestFailureToPutInstance(t *testing.T) {
 	})
 }
 
-func setupInstance(datasetID, edition, instanceID string) (*mongo.ManyDocs, error) {
-	var docs []mongo.Doc
+func setupInstance(datasetID, edition, instanceID string) ([]*mongo.Doc, error) {
+	var docs []*mongo.Doc
 
-	datasetDoc := mongo.Doc{
-		Database:   "datasets",
+	datasetDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
 		Update:     validPublishedDatasetData(datasetID),
 	}
 
-	instanceOneDoc := mongo.Doc{
-		Database:   "datasets",
+	instanceOneDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
@@ -235,15 +235,11 @@ func setupInstance(datasetID, edition, instanceID string) (*mongo.ManyDocs, erro
 
 	docs = append(docs, datasetDoc, instanceOneDoc)
 
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
-
-	if err := mongo.SetupMany(d); err != nil {
+	if err := mongo.Setup(docs...); err != nil {
 		return nil, err
 	}
 
-	return d, nil
+	return docs, nil
 }
 
 func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instance) {

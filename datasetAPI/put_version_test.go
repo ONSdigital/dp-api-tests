@@ -27,7 +27,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		edition := "2018"
 		version := "2"
 
-		d, err := setupResources(datasetID, editionID, edition, instanceID, 1)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, 1)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -38,7 +38,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).WithHeader(internalToken, internalTokenID).
 					WithBytes([]byte(validPUTUpdateVersionMetaDataJSON)).Expect().Status(http.StatusOK)
 
-				updatedVersion, err := mongo.GetVersion(database, "instances", "_id", instanceID)
+				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
@@ -90,7 +90,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).WithHeader(internalToken, internalTokenID).
 					WithBytes([]byte(validPUTUpdateVersionToAssociatedJSON)).Expect().Status(http.StatusOK)
 
-				updatedVersion, err := mongo.GetVersion(database, "instances", "_id", instanceID)
+				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
@@ -101,7 +101,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				So(updatedVersion.CollectionID, ShouldEqual, "45454545")
 				So(updatedVersion.State, ShouldEqual, "associated")
 
-				updatedDataset, err := mongo.GetDataset(database, collection, "_id", datasetID)
+				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
@@ -120,7 +120,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).WithHeader(internalToken, internalTokenID).
 					WithBytes([]byte(validPUTUpdateVersionToPublishedWithCollectionIDJSON)).Expect().Status(http.StatusOK)
 
-				updatedVersion, err := mongo.GetVersion(database, "instances", "_id", instanceID)
+				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
@@ -133,7 +133,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 
 				log.Debug("edition id", log.Data{"edition_id": editionID})
 
-				updatedEdition, err := mongo.GetEdition(database, "editions", "_id", editionID)
+				updatedEdition, err := mongo.GetEdition(cfg.MongoDB, "editions", "_id", editionID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
@@ -143,7 +143,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				So(updatedEdition.ID, ShouldEqual, editionID)
 				So(updatedEdition.State, ShouldEqual, "published")
 
-				updatedDataset, err := mongo.GetDataset(database, collection, "_id", datasetID)
+				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
@@ -156,7 +156,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to remove test data", err, nil)
 				os.Exit(1)
@@ -168,7 +168,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		edition := "2018"
 		version := "2"
 
-		d, err := setupResources(datasetID, editionID, edition, instanceID, 2)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, 2)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -181,7 +181,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).WithHeader(internalToken, internalTokenID).
 					WithBytes([]byte(validPUTUpdateVersionFromAssociatedToEditionConfirmedJSON)).Expect().Status(http.StatusOK)
 
-				updatedVersion, err := mongo.GetVersion(database, "instances", "_id", instanceID)
+				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
@@ -192,7 +192,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				So(updatedVersion.CollectionID, ShouldEqual, "")
 				So(updatedVersion.State, ShouldEqual, "edition-confirmed")
 
-				updatedDataset, err := mongo.GetDataset(database, collection, "_id", datasetID)
+				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
@@ -211,7 +211,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).WithHeader(internalToken, internalTokenID).
 					WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).Expect().Status(http.StatusOK)
 
-				updatedVersion, err := mongo.GetVersion(database, "instances", "_id", instanceID)
+				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
@@ -221,7 +221,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				So(updatedVersion.ID, ShouldEqual, instanceID)
 				So(updatedVersion.State, ShouldEqual, "published")
 
-				updatedEdition, err := mongo.GetEdition(database, "editions", "_id", editionID)
+				updatedEdition, err := mongo.GetEdition(cfg.MongoDB, "editions", "_id", editionID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
@@ -234,7 +234,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				So(updatedEdition.Links.LatestVersion.ID, ShouldEqual, "2")
 				So(updatedEdition.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2018/versions/2")
 
-				updatedDataset, err := mongo.GetDataset(database, collection, "_id", datasetID)
+				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
@@ -248,7 +248,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to remove test data", err, nil)
 				os.Exit(1)
@@ -256,11 +256,11 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		}
 	})
 
-	Convey("Given an published dataset and edition, and a version that has been associated", t, func() {
+	Convey("Given a published dataset and edition, and a version that has been associated", t, func() {
 		edition := "2017"
 		version := "2"
 
-		d, err := setupResources(datasetID, editionID, edition, instanceID, 3)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, 3)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -272,7 +272,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).WithHeader(internalToken, internalTokenID).
 					WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).Expect().Status(http.StatusOK)
 
-				updatedVersion, err := mongo.GetVersion(database, "instances", "_id", instanceID)
+				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
@@ -282,7 +282,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				So(updatedVersion.ID, ShouldEqual, instanceID)
 				So(updatedVersion.State, ShouldEqual, "published")
 
-				updatedEdition, err := mongo.GetEdition(database, "editions", "_id", editionID)
+				updatedEdition, err := mongo.GetEdition(cfg.MongoDB, "editions", "_id", editionID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
@@ -294,7 +294,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				So(updatedEdition.Links.LatestVersion.ID, ShouldEqual, "2")
 				So(updatedEdition.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/2")
 
-				updatedDataset, err := mongo.GetDataset(database, collection, "_id", datasetID)
+				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
@@ -308,7 +308,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to remove test data", err, nil)
 				os.Exit(1)
@@ -331,7 +331,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 	// test for updating a version that has no dataset (bad request)
 	Convey("Given an edition and a version of state associated exist for a dataset that does not exist in datastore", t, func() {
 
-		d, err := setupResources(datasetID, editionID, edition, instanceID, 4)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, 4)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -346,7 +346,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to remove test data", err, nil)
 				os.Exit(1)
@@ -357,7 +357,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 	// test for updating a version that has no edition (bad request)
 	Convey("Given a dataset and a version both of state associated exist but the edition does not", t, func() {
 
-		d, err := setupResources(datasetID, editionID, edition, instanceID, 5)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, 5)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -372,7 +372,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to remove test data", err, nil)
 				os.Exit(1)
@@ -383,7 +383,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 	// test for updating a version that does not exist (not found)
 	Convey("Given a dataset and edition exist but the version for the dataset edition does not", t, func() {
 
-		d, err := setupResources(datasetID, editionID, edition, instanceID, 6)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, 6)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -398,7 +398,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to remove test data", err, nil)
 				os.Exit(1)
@@ -421,7 +421,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 		edition := "2018"
 		version := "2"
 
-		d, err := setupResources(datasetID, editionID, edition, instanceID, 7)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, 7)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -471,7 +471,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to remove test data", err, nil)
 				os.Exit(1)
@@ -483,7 +483,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 		edition := "2017"
 		version := "1"
 
-		d, err := setupResources(datasetID, editionID, edition, instanceID, 8)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, 8)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -509,7 +509,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			})
 		})
 
-		if err := mongo.TeardownMany(d); err != nil {
+		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to remove test data", err, nil)
 				os.Exit(1)
@@ -518,67 +518,67 @@ func TestFailureToUpdateVersion(t *testing.T) {
 	})
 }
 
-func setupResources(datasetID, editionID, edition, instanceID string, setup int) (*mongo.ManyDocs, error) {
-	var docs []mongo.Doc
+func setupResources(datasetID, editionID, edition, instanceID string, setup int) ([]*mongo.Doc, error) {
+	var docs []*mongo.Doc
 
-	publishedDatasetDoc := mongo.Doc{
-		Database:   "datasets",
+	publishedDatasetDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
 		Update:     validPublishedDatasetData(datasetID),
 	}
 
-	associatedDatasetDoc := mongo.Doc{
-		Database:   "datasets",
+	associatedDatasetDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
 		Update:     validAssociatedDatasetData(datasetID),
 	}
 
-	createdDatasetDoc := mongo.Doc{
-		Database:   "datasets",
+	createdDatasetDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
 		Update:     validCreatedDatasetData(datasetID),
 	}
 
-	publishedEditionDoc := mongo.Doc{
-		Database:   "datasets",
+	publishedEditionDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
 		Update:     validPublishedEditionData(datasetID, editionID, edition),
 	}
 
-	unpublishedEditionDoc := mongo.Doc{
-		Database:   "datasets",
+	unpublishedEditionDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
 		Update:     validUnpublishedEditionData(datasetID, editionID, edition),
 	}
 
-	publishedInstanceDoc := mongo.Doc{
-		Database:   "datasets",
+	publishedInstanceDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
 		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
 	}
 
-	associatedInstanceDoc := mongo.Doc{
-		Database:   "datasets",
+	associatedInstanceDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
 		Update:     validAssociatedInstanceData(datasetID, edition, instanceID),
 	}
 
-	editionConfirmedInstanceDoc := mongo.Doc{
-		Database:   "datasets",
+	editionConfirmedInstanceDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
@@ -608,16 +608,12 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		return nil, errMsg
 	}
 
-	d := &mongo.ManyDocs{
-		Docs: docs,
-	}
-
-	if err := mongo.SetupMany(d); err != nil {
+	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		return nil, err
 	}
 
-	return d, nil
+	return docs, nil
 }
 
 func expectedDatasetResource(datasetID string, resource int) mongo.DatasetUpdate {

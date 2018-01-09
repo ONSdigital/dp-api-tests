@@ -21,11 +21,17 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
+	output := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "filterOutputs",
+		Key:        "_id",
+		Value:      filterID,
+		Update:     GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID),
+	}
+
 	Convey("Given an existing filter output with downloads", t, func() {
 
-		update := GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID)
-
-		if err := mongo.Setup(database, "filterOutputs", "_id", filterID, update); err != nil {
+		if err := mongo.Setup(output); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -56,7 +62,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 			})
 		})
 
-		if err := mongo.Teardown(database, "filterOutputs", "_id", filterID); err != nil {
+		if err := mongo.Teardown(output); err != nil {
 			log.ErrorC("Unable to remove test data from mongo db", err, nil)
 			os.Exit(1)
 		}
