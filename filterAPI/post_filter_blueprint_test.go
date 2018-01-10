@@ -79,7 +79,7 @@ func TestSuccessfullyPostfilterBlueprint(t *testing.T) {
 				filterOutputID := filterOutputLinkObject.Value("filter_output").Object().Value("id").String().Raw()
 				filterOutputLinkObject.Value("filter_output").Object().Value("href").String().Match("/filter-outputs/" + filterOutputID + "$")
 
-				filterOutput, err := mongo.GetFilter(cfg.MongoDB, "filterOutputs", "filter_id", filterOutputID)
+				filterOutput, err := mongo.GetFilter(cfg.MongoFiltersDB, "filterOutputs", "filter_id", filterOutputID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated document", err, nil)
 				}
@@ -88,14 +88,14 @@ func TestSuccessfullyPostfilterBlueprint(t *testing.T) {
 
 				//enable teardown of resources created during test
 				docs = append(docs, &mongo.Doc{
-					Database:   cfg.MongoDB,
+					Database:   cfg.MongoFiltersDB,
 					Collection: "filterOutputs",
 					Key:        "filter_id",
 					Value:      filterOutputID,
 				})
 
 				docs = append(docs, &mongo.Doc{
-					Database:   cfg.MongoDB,
+					Database:   cfg.MongoFiltersDB,
 					Collection: collection,
 					Key:        "filter_id",
 					Value:      filterBlueprintID,

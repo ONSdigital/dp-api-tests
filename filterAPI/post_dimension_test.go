@@ -22,7 +22,7 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	filter := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoFiltersDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
@@ -54,7 +54,7 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 				Expect().Status(http.StatusCreated)
 
 			// Check data has been updated as expected
-			filterBlueprint, err := mongo.GetFilter(cfg.MongoDB, collection, "filter_id", filterBlueprintID)
+			filterBlueprint, err := mongo.GetFilter(cfg.MongoFiltersDB, collection, "filter_id", filterBlueprintID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve updated document", err, nil)
 			}
@@ -82,7 +82,7 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 				WithBytes([]byte(ageOptions)).
 				Expect().Status(http.StatusCreated)
 
-			filterBlueprint, err := mongo.GetFilter(cfg.MongoDB, collection, "filter_id", filterBlueprintID)
+			filterBlueprint, err := mongo.GetFilter(cfg.MongoFiltersDB, collection, "filter_id", filterBlueprintID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve updated document", err, nil)
 			}
@@ -116,7 +116,7 @@ func TestFailureToPostDimension(t *testing.T) {
 	var docs []*mongo.Doc
 
 	filter := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoFiltersDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,

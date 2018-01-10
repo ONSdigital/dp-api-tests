@@ -299,6 +299,23 @@ func GetValidGoodsAndServicesDimensionData(instanceID, option string) bson.M {
 	}
 }
 
+func GetValidAggregateDimensionData(instanceID, option string) bson.M {
+	return bson.M{
+		"$set": bson.M{
+			"instance_id":          instanceID,
+			"name":                 "aggregate",
+			"option":               option,
+			"label":                "aggregate " + option,
+			"links.code_list.id":   "64d384f1-ea3b-445c-8fb8-aa453f96e58f",
+			"links.code_list.href": cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58f",
+			"links.code.id":        option,
+			"links.code.href":      cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58f/codes/" + option,
+			"last_updated":         "2017-09-09", // TODO Should be isodate
+			"test_data":            "true",
+		},
+	}
+}
+
 func GetValidTimeDimensionData(instanceID, option string) bson.M {
 	return bson.M{
 		"$set": bson.M{

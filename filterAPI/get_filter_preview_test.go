@@ -26,7 +26,7 @@ func TestSuccessfullyGetFilterOutputPreview(t *testing.T) {
 		dimensions := goodsAndServicesDimension("localhost", "")
 
 		output := &mongo.Doc{
-			Database:   cfg.MongoDB,
+			Database:   cfg.MongoFiltersDB,
 			Collection: "filterOutputs",
 			Key:        "_id",
 			Value:      filterID,
@@ -75,7 +75,7 @@ func TestErrorCasesGetFilterOutputPreview(t *testing.T) {
 	Convey("Given an existing filter output exists", t, func() {
 
 		output := &mongo.Doc{
-			Database:   cfg.MongoDB,
+			Database:   cfg.MongoFiltersDB,
 			Collection: "filterOutputs",
 			Key:        "_id",
 			Value:      filterID,

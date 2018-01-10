@@ -21,7 +21,7 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	filter := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoFiltersDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
@@ -58,7 +58,7 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 		filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/time/options/February 2007", filterBlueprintID).
 			Expect().Status(http.StatusCreated)
 
-		filterJob, err := mongo.GetFilter(cfg.MongoDB, collection, "filter_id", filterBlueprintID)
+		filterJob, err := mongo.GetFilter(cfg.MongoFiltersDB, collection, "filter_id", filterBlueprintID)
 		if err != nil {
 			log.ErrorC("Unable to retrieve updated document", err, nil)
 		}
@@ -90,7 +90,7 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 	var docs []*mongo.Doc
 
 	filter := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoFiltersDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,

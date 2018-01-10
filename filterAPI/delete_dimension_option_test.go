@@ -21,7 +21,7 @@ func TestSuccessfullyDeleteRemoveDimensionOptions(t *testing.T) {
 	instanceID := uuid.NewV4().String()
 
 	filter := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoFiltersDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
@@ -74,7 +74,7 @@ func TestFailureToDeleteRemoveDimensionOptions(t *testing.T) {
 	instanceID := uuid.NewV4().String()
 
 	filter := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoFiltersDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,

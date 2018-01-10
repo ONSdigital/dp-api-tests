@@ -21,7 +21,7 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	output := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoFiltersDB,
 		Collection: "filterOutputs",
 		Key:        "_id",
 		Value:      filterID,
@@ -45,7 +45,7 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 			Convey("Then the filter output resource contains a non empty csv download object", func() {
 
 				// Check data has been updated as expected
-				filterOutput, err := mongo.GetFilter(cfg.MongoDB, "filterOutputs", "filter_id", filterOutputID)
+				filterOutput, err := mongo.GetFilter(cfg.MongoFiltersDB, "filterOutputs", "filter_id", filterOutputID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated document", err, nil)
 				}
@@ -73,7 +73,7 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 			Convey("Then the filter output resource contains a non empty csv and xls download objects and the state is set to `completed`", func() {
 
 				// Check data has been updated as expected
-				filterOutput, err := mongo.GetFilter(cfg.MongoDB, "filterOutputs", "filter_id", filterOutputID)
+				filterOutput, err := mongo.GetFilter(cfg.MongoFiltersDB, "filterOutputs", "filter_id", filterOutputID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated document", err, nil)
 				}
@@ -102,7 +102,7 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	output := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoFiltersDB,
 		Collection: "filterOutputs",
 		Key:        "_id",
 		Value:      filterID,

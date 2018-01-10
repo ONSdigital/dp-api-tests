@@ -21,7 +21,7 @@ func TestSuccessfullyDeleteDimension(t *testing.T) {
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	filter := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoFiltersDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
@@ -63,7 +63,7 @@ func TestSuccessfullyDeleteDimension(t *testing.T) {
 				expectedDimensions = append(expectedDimensions, dimensionAge, dimensionSex, dimensionTime)
 
 				// Check dimension has been removed from filter blueprint
-				filterBlueprint, err := mongo.GetFilter(cfg.MongoDB, collection, "filter_id", filterBlueprintID)
+				filterBlueprint, err := mongo.GetFilter(cfg.MongoFiltersDB, collection, "filter_id", filterBlueprintID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated document", err, nil)
 					os.Exit(1)
@@ -89,7 +89,7 @@ func TestFailureToDeleteDimension(t *testing.T) {
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	filter := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoFiltersDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
