@@ -12,6 +12,7 @@ type Config struct {
 	RecipeAPIURL              string   `envconfig:"RECIPE_API_URL"`
 	MongoAddr                 string   `envconfig:"MONGODB_BIND_ADDR"`
 	MongoDB                   string   `envconfig:"MONGODB_DATABASE"`
+	MongoFiltersDB            string   `envconfig:"MONGODB_FILTERS_DATABASE"`
 	MongoImportsDB            string   `envconfig:"MONGODB_IMPORTS_DATABASE"`
 	Neo4jAddr                 string   `envconfig:"NEO4J_BIND_ADDR"`
 	Brokers                   []string `envconfig:"KAFKA_ADDR"`
@@ -35,6 +36,7 @@ func Get() (*Config, error) {
 		MongoAddr:                 "localhost:27017",
 		MongoDB:                   "test",
 		MongoImportsDB:            "test",
+		MongoFiltersDB:            "test",
 		Neo4jAddr:                 "bolt://localhost:7687",
 		Brokers:                   []string{"localhost:9092"},
 		ObservationsInsertedTopic: "import-observations-inserted",

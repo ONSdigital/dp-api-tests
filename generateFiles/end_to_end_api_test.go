@@ -92,7 +92,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				Expect().Status(http.StatusOK)
 
 			// Check import job state is completed or submitted
-			jobResource, err := mongo.GetJob(cfg.MongoDB, "imports", "id", jobID)
+			jobResource, err := mongo.GetJob(cfg.MongoImportsDB, "imports", "id", jobID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve job resource", err, log.Data{"job_id": jobID})
 				os.Exit(1)
@@ -357,7 +357,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 					filterOutputID := filterBlueprintResponse.Value("links").Object().Value("filter_output").Object().Value("id").String().Raw()
 
-					filterOutputResource, err := mongo.GetFilter(cfg.MongoDB, "filterOutputs", "filter_id", filterOutputID)
+					filterOutputResource, err := mongo.GetFilter(cfg.MongoFiltersDB, "filterOutputs", "filter_id", filterOutputID)
 					if err != nil {
 						log.ErrorC("Unable to retrieve filter output document", err, log.Data{"filter_output_id": filterOutputID})
 						os.Exit(1)
@@ -369,7 +369,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 					filterOutputResourceCompleted := true
 					for filterOutputResourceCompleted {
-						filterOutputResource, err = mongo.GetFilter(cfg.MongoDB, "filterOutputs", "filter_id", filterOutputID)
+						filterOutputResource, err = mongo.GetFilter(cfg.MongoFiltersDB, "filterOutputs", "filter_id", filterOutputID)
 						if err != nil {
 							log.ErrorC("Unable to retrieve filter output document", err, log.Data{"filter_output_id": filterOutputID})
 							os.Exit(1)
@@ -428,14 +428,14 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					So(*filteredXLSFileSize, ShouldBeBetween, minExpectedXLSFileSize, maxExpectedXLSFileSize)
 
 					filterBlueprint := &mongo.Doc{
-						Database:   cfg.MongoDB,
+						Database:   cfg.MongoFiltersDB,
 						Collection: "filters",
 						Key:        "filter_id",
 						Value:      filterBlueprintID,
 					}
 
 					filterOutput := &mongo.Doc{
-						Database:   cfg.MongoDB,
+						Database:   cfg.MongoFiltersDB,
 						Collection: "filterOutputs",
 						Key:        "filter_id",
 						Value:      filterOutputID,
@@ -483,7 +483,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			}
 
 			importJob := &mongo.Doc{
-				Database:   cfg.MongoDB,
+				Database:   cfg.MongoImportsDB,
 				Collection: "imports",
 				Key:        "id",
 				Value:      jobID,

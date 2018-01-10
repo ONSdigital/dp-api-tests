@@ -7,6 +7,7 @@ These tests should be run against empty databases. To ensure this, your applicat
 Do this by running the following and then restarting your applications:
 ```
 export MONGODB_DATABASE=test
+export MONGODB_FILTERS_DATABASE=test
 export MONGODB_IMPORTS_DATABASE=test
 ```
 
