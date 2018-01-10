@@ -24,9 +24,16 @@ func TestSuccessfullyGetFilterOutputPreview(t *testing.T) {
 	Convey("Given an existing filter output exists", t, func() {
 
 		dimensions := goodsAndServicesDimension("localhost", "")
-		update := GetValidFilterOutputBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, dimensions)
 
-		if err := mongo.Setup(database, "filterOutputs", "_id", filterID, update); err != nil {
+		output := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: "filterOutputs",
+			Key:        "_id",
+			Value:      filterID,
+			Update:     GetValidFilterOutputBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, dimensions),
+		}
+
+		if err := mongo.Setup(output); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -52,7 +59,7 @@ func TestSuccessfullyGetFilterOutputPreview(t *testing.T) {
 			})
 		})
 
-		mongo.Teardown(database, "filterOutputs", "_id", filterID)
+		mongo.Teardown(output)
 		graphData.TeardownInstance()
 	})
 }
@@ -67,9 +74,15 @@ func TestErrorCasesGetFilterOutputPreview(t *testing.T) {
 
 	Convey("Given an existing filter output exists", t, func() {
 
-		update := GetValidFilterOutputNoDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID)
+		output := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: "filterOutputs",
+			Key:        "_id",
+			Value:      filterID,
+			Update:     GetValidFilterOutputNoDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID),
+		}
 
-		if err := mongo.Setup(database, "filterOutputs", "_id", filterID, update); err != nil {
+		if err := mongo.Setup(output); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -105,7 +118,7 @@ func TestErrorCasesGetFilterOutputPreview(t *testing.T) {
 			})
 		})
 
-		mongo.Teardown(database, "filterOutputs", "_id", filterID)
+		mongo.Teardown(output)
 		graphData.TeardownInstance()
 	})
 }
