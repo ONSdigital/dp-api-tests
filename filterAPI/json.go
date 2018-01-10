@@ -103,14 +103,14 @@ func sexDimension(host, filterID string) Dimension {
 func goodsAndServicesDimension(host, filterID string) Dimension {
 	if filterID == "" {
 		return Dimension{
-			Name:    "Goods and services",
-			Options: []string{"Education", "health", "communication"},
+			Name:    "aggregate",
+			Options: []string{"cpi1dim1T60000", "cpi1dim1S10201", "cpi1dim1S10105"},
 		}
 	}
 	return Dimension{
-		URL:     host + "/filters/" + filterID + "/dimensions/Goods and services",
-		Name:    "Goods and services",
-		Options: []string{"Education", "health", "communication"},
+		URL:     host + "/filters/" + filterID + "/dimensions/aggregate",
+		Name:    "aggregate",
+		Options: []string{"cpi1dim1T60000", "cpi1dim1S10201", "cpi1dim1S10105"},
 	}
 }
 
@@ -149,6 +149,53 @@ func GetValidFilterOutputWithMultipleDimensionsBSON(host, filterID, instanceID, 
 		"$set": bson.M{
 			"_id":                         filterID,
 			"dimensions":                  []Dimension{ageDimension(host, ""), sexDimension(host, ""), goodsAndServicesDimension(host, ""), timeDimension(host, "")},
+			"downloads.csv.url":           "s3-csv-location",
+			"downloads.csv.size":          "12mb",
+			"downloads.json.url":          "s3-json-location",
+			"downloads.json.size":         "6mb",
+			"downloads.xls.url":           "s3-xls-location",
+			"downloads.xls.size":          "24mb",
+			"instance_id":                 instanceID,
+			"filter_id":                   filterOutputID,
+			"links.filter_blueprint.href": host + "/filters/" + filterBlueprintID,
+			"links.filter_blueprint.id":   filterBlueprintID,
+			"links.self.href":             host + "/filter-outputs/" + filterOutputID,
+			"links.version.id":            "1",
+			"links.version.href":          "http://localhost:8080/datasets/123/editions/2017/versions/1",
+			"state":                       "completed",
+			"test_data":                   "true",
+		},
+	}
+}
+
+func GetValidFilterOutputBSON(host, filterID, instanceID, filterOutputID, filterBlueprintID string, dimension Dimension) bson.M {
+	return bson.M{
+		"$set": bson.M{
+			"_id":                         filterID,
+			"dimensions":                  []Dimension{dimension},
+			"downloads.csv.url":           "s3-csv-location",
+			"downloads.csv.size":          "12mb",
+			"downloads.json.url":          "s3-json-location",
+			"downloads.json.size":         "6mb",
+			"downloads.xls.url":           "s3-xls-location",
+			"downloads.xls.size":          "24mb",
+			"instance_id":                 instanceID,
+			"filter_id":                   filterOutputID,
+			"links.filter_blueprint.href": host + "/filters/" + filterBlueprintID,
+			"links.filter_blueprint.id":   filterBlueprintID,
+			"links.self.href":             host + "/filter-outputs/" + filterOutputID,
+			"links.version.id":            "1",
+			"links.version.href":          "http://localhost:8080/datasets/123/editions/2017/versions/1",
+			"state":                       "completed",
+			"test_data":                   "true",
+		},
+	}
+}
+
+func GetValidFilterOutputNoDimensionsBSON(host, filterID, instanceID, filterOutputID, filterBlueprintID string) bson.M {
+	return bson.M{
+		"$set": bson.M{
+			"_id":                         filterID,
 			"downloads.csv.url":           "s3-csv-location",
 			"downloads.csv.size":          "12mb",
 			"downloads.json.url":          "s3-json-location",

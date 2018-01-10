@@ -59,16 +59,16 @@ func TestSuccessfullyGetListOfDimensionOptions(t *testing.T) {
 
 			Convey("Then return a list of options for `goods and services` dimension", func() {
 
-				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/Goods and services/options", filterBlueprintID).
+				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options", filterBlueprintID).
 					Expect().Status(http.StatusOK).JSON().Array()
 
-				response.Element(0).Object().Value("option").Equal("Education")
+				response.Element(0).Object().Value("option").Equal("cpi1dim1T60000")
 				response.Element(0).Object().Value("dimension_option_url").NotNull()
 
-				response.Element(1).Object().Value("option").Equal("health")
+				response.Element(1).Object().Value("option").Equal("cpi1dim1S10201")
 				response.Element(1).Object().Value("dimension_option_url").NotNull()
 
-				response.Element(2).Object().Value("option").Equal("communication")
+				response.Element(2).Object().Value("option").Equal("cpi1dim1S10105")
 				response.Element(2).Object().Value("dimension_option_url").NotNull()
 			})
 

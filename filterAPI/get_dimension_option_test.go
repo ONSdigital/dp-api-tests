@@ -53,11 +53,11 @@ func TestSuccessfullyGetDimensionOption(t *testing.T) {
 
 			Convey("Then return status no content (204) for dimension `goods and services` options", func() {
 
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/Goods and services/options/Education", filterBlueprintID).
+				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1S10201", filterBlueprintID).
 					Expect().Status(http.StatusNoContent)
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/Goods and services/options/health", filterBlueprintID).
+				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1S10105", filterBlueprintID).
 					Expect().Status(http.StatusNoContent)
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/Goods and services/options/communication", filterBlueprintID).
+				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1T60000", filterBlueprintID).
 					Expect().Status(http.StatusNoContent)
 			})
 
