@@ -5,6 +5,15 @@ Generate Files Tests
 
 This package will test a sunny day scenario of the backend and api services.
 
+Make sure all API's have access to the following environment variables before
+starting the services.
+
+```
+export MONGODB_DATABASE=test
+export MONGODB_FILTERS_DATABASE=test
+export MONGODB_IMPORTS_DATABASE=test
+```
+
 #### Services and software
 
 The following software needs to be running for acceptance tests to be able to
@@ -25,6 +34,6 @@ observation extractor
 observation importer
 import tracker
 import reporter
-dataset exporter - Not yet?
-xlsx exporter - Not yet?
+dataset exporter
+xlsx dataset exporter
 ```

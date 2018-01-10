@@ -73,7 +73,7 @@ func deleteMongoTestData(datasetID string) bool {
 	}
 
 	importJob := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoImportsDB,
 		Collection: "imports",
 		Key:        "links.instances.id",
 		Value:      instanceID,
@@ -104,14 +104,14 @@ func deleteMongoTestData(datasetID string) bool {
 	}
 
 	filterBlueprint := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoFiltersDB,
 		Collection: "filters",
 		Key:        "instance_id",
 		Value:      instanceID,
 	}
 
 	filterOutput := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoFiltersDB,
 		Collection: "filterOutputs",
 		Key:        "instance_id",
 		Value:      instanceID,
