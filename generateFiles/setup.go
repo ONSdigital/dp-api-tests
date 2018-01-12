@@ -78,12 +78,7 @@ func getS3File(region, s3URL string) (io.ReadCloser, error) {
 		return nil, err
 	}
 
-	file, err := s3.Get(s3URL)
-	if err != nil {
-		return nil, err
-	}
-
-	return file, nil
+	return s3.Get(s3URL)
 }
 
 func getS3FileSize(region, bucket, filename string) (*int64, error) {

@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ONSdigital/dp-api-tests/filterAPI/expectedTestData"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
@@ -75,37 +76,37 @@ func TestSuccessfulPutFilterBlueprint(t *testing.T) {
 			})
 		})
 
-		// Convey("When a request to submit the filter blueprint occurs", func() {
-		//
-		// 	response := filterAPI.PUT("/filters/{filter_id}", filterBlueprintID).
-		// 		WithQuery("submitted", "true").
-		// 		WithBytes([]byte(`{}`)).
-		// 		Expect().Status(http.StatusOK).JSON().Object()
-		//
-		// 	Convey("Then filter blueprint creates a filter output document and in the response is a link to this resource", func() {
-		//
-		// 		filterOutputLinkObject := response.Value("links").Object()
-		// 		filterOutputLinkObject.Value("filter_output").Object().Value("href").String().Match("(.+)/filter-outputs/(.+)$")
-		// 		filterOutputLinkObject.Value("filter_output").Object().Value("id").NotNull()
-		//
-		// 		filterOutputID := filterOutputLinkObject.Value("filter_output").Object().Value("id").String().Raw()
-		//
-		// 		filterOutput, err := mongo.GetFilter(cfg.MongoFiltersDB, "filterOutputs", "filter_id", filterOutputID)
-		// 		if err != nil {
-		// 			log.ErrorC("Unable to retrieve updated document", err, nil)
-		// 		}
-		//
-		// 		So(filterOutput, ShouldResemble, expectedTestData.ExpectedFilterOutput(cfg.FilterAPIURL, instanceID, filterOutputID, filterBlueprintID))
-		//
-		// 		//enable teardown of resources created during test
-		// 		docs = append(docs, &mongo.Doc{
-		// 			Database:   cfg.MongoFiltersDB,
-		// 			Collection: "filterOutputs",
-		// 			Key:        "filter_id",
-		// 			Value:      filterOutputID,
-		// 		})
-		// 	})
-		//})
+		Convey("When a request to submit the filter blueprint occurs", func() {
+
+			response := filterAPI.PUT("/filters/{filter_id}", filterBlueprintID).
+				WithQuery("submitted", "true").
+				WithBytes([]byte(`{}`)).
+				Expect().Status(http.StatusOK).JSON().Object()
+
+			Convey("Then filter blueprint creates a filter output document and in the response is a link to this resource", func() {
+
+				filterOutputLinkObject := response.Value("links").Object()
+				filterOutputLinkObject.Value("filter_output").Object().Value("href").String().Match("(.+)/filter-outputs/(.+)$")
+				filterOutputLinkObject.Value("filter_output").Object().Value("id").NotNull()
+
+				filterOutputID := filterOutputLinkObject.Value("filter_output").Object().Value("id").String().Raw()
+
+				filterOutput, err := mongo.GetFilter(cfg.MongoFiltersDB, "filterOutputs", "filter_id", filterOutputID)
+				if err != nil {
+					log.ErrorC("Unable to retrieve updated document", err, nil)
+				}
+
+				So(filterOutput, ShouldResemble, expectedTestData.ExpectedFilterOutput(cfg.FilterAPIURL, instanceID, filterOutputID, filterBlueprintID))
+
+				//enable teardown of resources created during test
+				docs = append(docs, &mongo.Doc{
+					Database:   cfg.MongoFiltersDB,
+					Collection: "filterOutputs",
+					Key:        "filter_id",
+					Value:      filterOutputID,
+				})
+			})
+		})
 
 		if err := mongo.Teardown(docs...); err != nil {
 			log.ErrorC("Unable to remove test data from mongo db", err, nil)
@@ -114,58 +115,58 @@ func TestSuccessfulPutFilterBlueprint(t *testing.T) {
 	})
 }
 
-// func TestFailureToPutFilterBlueprint(t *testing.T) {
-//
-// 	filterID := uuid.NewV4().String()
-// 	filterBlueprintID := uuid.NewV4().String()
-// 	instanceID := uuid.NewV4().String()
-//
-// 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
-//
-// 	filter := &mongo.Doc{
-// 		Database:   cfg.MongoFiltersDB,
-// 		Collection: collection,
-// 		Key:        "_id",
-// 		Value:      filterID,
-// 		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
-// 	}
-//
-// 	Convey("Given a filter blueprint does not exist", t, func() {
-// 		Convey("When a post request is made to update filter blueprint", func() {
-// 			Convey("Then the request fails and returns status not found (404)", func() {
-//
-// 				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetValidPUTUpdateFilterBlueprintJSON(instanceID))).
-// 					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found\n")
-// 			})
-// 		})
-// 	})
-//
-// 	Convey("Given an existing filter blueprint", t, func() {
-//
-// 		if err := mongo.Setup(filter); err != nil {
-// 			log.ErrorC("Unable to setup test data", err, nil)
-// 			os.Exit(1)
-// 		}
-//
-// 		Convey("When an invalid json body is sent to update filter blueprint", func() {
-// 			Convey("Then fail to update filter blueprint and return status bad request (400)", func() {
-//
-// 				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetInvalidSyntaxJSON(instanceID))).
-// 					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - Invalid request body\n")
-// 			})
-// 		})
-//
-// 		Convey("When a put request to change the instance id to a non existing one against a filter blueprint", func() {
-// 			Convey("Then fail to update filter blueprint and return status bad request (400)", func() {
-//
-// 				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetValidPUTFilterBlueprintJSON(instanceID, time.Now()))).
-// 					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - instance not found\n")
-// 			})
-// 		})
-//
-// 		if err := mongo.Teardown(filter); err != nil {
-// 			log.ErrorC("Unable to remove test data from mongo db", err, nil)
-// 			os.Exit(1)
-// 		}
-// 	})
-// }
+func TestFailureToPutFilterBlueprint(t *testing.T) {
+
+	filterID := uuid.NewV4().String()
+	filterBlueprintID := uuid.NewV4().String()
+	instanceID := uuid.NewV4().String()
+
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
+
+	filter := &mongo.Doc{
+		Database:   cfg.MongoFiltersDB,
+		Collection: collection,
+		Key:        "_id",
+		Value:      filterID,
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
+	}
+
+	Convey("Given a filter blueprint does not exist", t, func() {
+		Convey("When a post request is made to update filter blueprint", func() {
+			Convey("Then the request fails and returns status not found (404)", func() {
+
+				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetValidPUTUpdateFilterBlueprintJSON(instanceID))).
+					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found\n")
+			})
+		})
+	})
+
+	Convey("Given an existing filter blueprint", t, func() {
+
+		if err := mongo.Setup(filter); err != nil {
+			log.ErrorC("Unable to setup test data", err, nil)
+			os.Exit(1)
+		}
+
+		Convey("When an invalid json body is sent to update filter blueprint", func() {
+			Convey("Then fail to update filter blueprint and return status bad request (400)", func() {
+
+				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetInvalidSyntaxJSON(instanceID))).
+					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - Invalid request body\n")
+			})
+		})
+
+		Convey("When a put request to change the instance id to a non existing one against a filter blueprint", func() {
+			Convey("Then fail to update filter blueprint and return status bad request (400)", func() {
+
+				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetValidPUTFilterBlueprintJSON(instanceID, time.Now()))).
+					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - instance not found\n")
+			})
+		})
+
+		if err := mongo.Teardown(filter); err != nil {
+			log.ErrorC("Unable to remove test data from mongo db", err, nil)
+			os.Exit(1)
+		}
+	})
+}

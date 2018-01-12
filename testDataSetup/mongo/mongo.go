@@ -118,8 +118,8 @@ type Job struct {
 
 // UploadedFile used for a file which has been uploaded to a bucket
 type UploadedFile struct {
-	AliasName string `bson:"alias_name" json:"alias_name" avro:"alias-name"`
-	URL       string `bson:"url"        json:"url"        avro:"url"`
+	AliasName string `bson:"alias_name" json:"alias_name"`
+	URL       string `bson:"url"        json:"url"`
 }
 
 // LinksMap represents an object containing a set of links
@@ -396,13 +396,7 @@ func CountDimensionOptions(database, collection, key, value string) (int, error)
 	s := session.Copy()
 	defer s.Close()
 
-	var count int
-	count, err := s.DB(database).C(collection).Find(bson.M{key: value}).Count()
-	if err != nil {
-		return count, err
-	}
-
-	return count, nil
+	return s.DB(database).C(collection).Find(bson.M{key: value}).Count()
 }
 
 // Filter represents a structure for a filter blueprint or output

@@ -25,6 +25,8 @@ const (
 	invalidInternalTokenID = "FD0108EA-825D-411C-9B1D-41EF7727F465A"
 )
 
+var dropDatabases = []string{"test"}
+
 func init() {
 	var err error
 
@@ -37,6 +39,10 @@ func init() {
 	if err = mongo.NewDatastore(cfg.MongoAddr); err != nil {
 		log.ErrorC("mongodb datastore error", err, nil)
 		os.Exit(1)
+	}
+
+	if err = mongo.DropDatabases(dropDatabases); err != nil {
+		log.ErrorC("failed to drop mongo databases", err, log.Data{"databases": dropDatabases})
 	}
 
 	// Remove test data that is left in mongo from previous test run

@@ -2,12 +2,14 @@ package generateFiles
 
 import (
 	"encoding/csv"
+	"errors"
 	"io"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	mgo "gopkg.in/mgo.v2"
 
@@ -39,6 +41,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		// Send v4 file to aws
 		_, err := sendV4FileToAWS(region, bucketName, filename)
 		if err != nil {
+			log.ErrorC("failed to load in v4 to aws, discontinue with test", err, nil)
 			os.Exit(1)
 		}
 
@@ -111,17 +114,38 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			totalObservations := 1513
 
 			tryAgain := true
+			timeout := time.Duration(30 * time.Second)
+
+			exitInstanceCompleteLoop := make(chan bool)
+
+			go func() {
+				time.Sleep(timeout)
+				close(exitInstanceCompleteLoop)
+			}()
+
+		instanceCompleteLoop:
 			for tryAgain {
-				instanceResource, err = mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
-				if err != nil {
-					log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
-					os.Exit(1)
+				select {
+				case <-exitInstanceCompleteLoop:
+					break instanceCompleteLoop
+				default:
+					instanceResource, err = mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
+					if err != nil {
+						log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
+						os.Exit(1)
+					}
+					if instanceResource.State == "completed" {
+						tryAgain = false
+					} else {
+						So(instanceResource.State, ShouldEqual, "submitted")
+					}
 				}
-				if instanceResource.State == "completed" {
-					tryAgain = false
-				} else {
-					So(instanceResource.State, ShouldEqual, "submitted")
-				}
+			}
+
+			if tryAgain != false {
+				err := errors.New("timed out")
+				log.ErrorC("Timed out - failed to get instance document to a state of completed", err, log.Data{"instance_id": instanceID, "state": instanceResource.State, "timeout": timeout})
+				os.Exit(1)
 			}
 
 			So(instanceResource.Headers, ShouldResemble, &[]string{"V4_0", "Time_codelist", "Time", "Geography_codelist", "Geography", "cpi1dim1aggid", "Aggregate"})
@@ -205,38 +229,58 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(datasetResource.Next.Links.LatestVersion.ID, ShouldEqual, "1")
 			So(datasetResource.Next.State, ShouldEqual, "associated")
 
+			exitHasDownloadsLoop := make(chan bool)
+
+			go func() {
+				time.Sleep(timeout)
+				close(exitHasDownloadsLoop)
+			}()
+
 			// Waiting for version to have downloads before updating state to published
 			hasDownloads := false
 			var XLSSize int
+		hasDownloadsLoop:
 			for !hasDownloads {
-				instanceResource, err = mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
-				if err != nil {
-					log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
-					os.Exit(1)
-				}
-				if instanceResource.Downloads != nil {
-					if instanceResource.Downloads.XLS != nil {
-						if instanceResource.Downloads.XLS.URL != "" {
-							XLSSize, err = strconv.Atoi(instanceResource.Downloads.XLS.Size)
-							if err != nil {
-								log.ErrorC("cannot convert xls size of type string to integer", err, log.Data{"xls_size": instanceResource.Downloads.XLS.Size})
-								os.Exit(1)
-							}
-							So(XLSSize, ShouldBeBetweenOrEqual, 15962, 15968)
-							So(instanceResource.Downloads.XLS.URL, ShouldNotBeEmpty)
-							CSVSize, err := strconv.Atoi(instanceResource.Downloads.CSV.Size)
-							if err != nil {
-								log.ErrorC("cannot convert csv size of type string to integer", err, log.Data{"csv_size": instanceResource.Downloads.CSV.Size})
-								os.Exit(1)
-							}
-							So(CSVSize, ShouldBeBetweenOrEqual, 116739, 116743)
-							So(instanceResource.Downloads.CSV.URL, ShouldNotBeEmpty)
-							hasDownloads = true
-						}
+				select {
+				case <-exitHasDownloadsLoop:
+					break hasDownloadsLoop
+				default:
+
+					instanceResource, err = mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
+					if err != nil {
+						log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
+						os.Exit(1)
 					}
-				} else {
-					So(instanceResource.State, ShouldEqual, "associated")
+					if instanceResource.Downloads != nil {
+						if instanceResource.Downloads.XLS != nil {
+							if instanceResource.Downloads.XLS.URL != "" {
+								XLSSize, err = strconv.Atoi(instanceResource.Downloads.XLS.Size)
+								if err != nil {
+									log.ErrorC("cannot convert xls size of type string to integer", err, log.Data{"xls_size": instanceResource.Downloads.XLS.Size})
+									os.Exit(1)
+								}
+								So(XLSSize, ShouldBeBetweenOrEqual, 16378, 16382)
+								So(instanceResource.Downloads.XLS.URL, ShouldNotBeEmpty)
+								CSVSize, err := strconv.Atoi(instanceResource.Downloads.CSV.Size)
+								if err != nil {
+									log.ErrorC("cannot convert csv size of type string to integer", err, log.Data{"csv_size": instanceResource.Downloads.CSV.Size})
+									os.Exit(1)
+								}
+								So(CSVSize, ShouldBeBetweenOrEqual, 116739, 116743)
+								So(instanceResource.Downloads.CSV.URL, ShouldNotBeEmpty)
+								hasDownloads = true
+							}
+						}
+					} else {
+						So(instanceResource.State, ShouldEqual, "associated")
+					}
 				}
+			}
+
+			if hasDownloads == false {
+				err := errors.New("timed out")
+				log.ErrorC("Timed out - failed to get instance document with available downloads", err, log.Data{"instance_id": instanceID, "downloads": instanceResource.Downloads, "timeout": timeout})
+				os.Exit(1)
 			}
 
 			// STEP 6 -  Update version to a state of published
@@ -400,6 +444,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					filteredCSVReader := csv.NewReader(filteredCSVFile)
 
 					if err = checkFileRowCount(filteredCSVReader, filteredCSVS3URL, 39); err != nil {
+						log.ErrorC("unable to check file row count", err, nil)
 						os.Exit(1)
 					}
 
@@ -423,9 +468,9 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 						os.Exit(1)
 					}
 
-					minExpectedXLSFileSize := int64(6293)
-					maxExpectedXLSFileSize := int64(6297)
-					So(*filteredXLSFileSize, ShouldBeBetween, minExpectedXLSFileSize, maxExpectedXLSFileSize)
+					minExpectedXLSFileSize := int64(6309)
+					maxExpectedXLSFileSize := int64(6313)
+					So(*filteredXLSFileSize, ShouldBeBetweenOrEqual, minExpectedXLSFileSize, maxExpectedXLSFileSize)
 
 					filterBlueprint := &mongo.Doc{
 						Database:   cfg.MongoFiltersDB,
