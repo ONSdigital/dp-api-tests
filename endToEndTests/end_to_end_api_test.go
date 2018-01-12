@@ -20,6 +20,8 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+var timeout = time.Duration(30 * time.Second)
+
 func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
@@ -114,7 +116,6 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			totalObservations := 1513
 
 			tryAgain := true
-			timeout := time.Duration(30 * time.Second)
 
 			exitInstanceCompleteLoop := make(chan bool)
 
