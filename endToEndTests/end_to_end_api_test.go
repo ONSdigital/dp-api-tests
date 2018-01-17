@@ -28,6 +28,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 	recipeAPI := httpexpect.New(t, cfg.RecipeAPIURL)
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
+	hierarchyAPI := httpexpect.New(t, cfg.HierarchyAPIURL)
 
 	hasRemovedAllResources := true
 	filename := "v4TestFile.csv"
@@ -200,8 +201,22 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				os.Exit(1)
 			}
 
-			// TODO Check hierarchies exist by calling the hierarchy api
+			// Check hierarchies exist by calling the hierarchy api
+			getHierarchyParentDimensionResponse := hierarchyAPI.GET("/hierarchies/{instance_id}/{dimension}", instanceID, "aggregate").WithHeader(internalTokenHeader, internalTokenID).
+				Expect().Status(http.StatusOK).JSON().Object()
 
+			getHierarchyParentDimensionResponse.Value("has_data").Equal(true)
+			getHierarchyParentDimensionResponse.Value("label").Equal("Overall Index")
+			getHierarchyParentDimensionResponse.Value("no_of_children").Equal(12)
+			getHierarchyParentDimensionResponse.Value("links").Object().Value("code").Object().Value("href").Equal("http://localhost:22400/code-list/cpih1dim1aggid/code/cpih1dim1A0")
+			getHierarchyParentDimensionResponse.Value("links").Object().Value("code").Object().Value("id").Equal("cpih1dim1A0")
+			getHierarchyParentDimensionResponse.Value("links").Object().Value("self").Object().Value("href").Equal("http://localhost:22600/hierarchies/" + instanceID + "/aggregate")
+			getHierarchyParentDimensionResponse.Value("links").Object().Value("self").Object().Value("id").Equal("cpih1dim1A0")
+
+			numberOfChildren := getHierarchyParentDimensionResponse.Value("no_of_children").Raw()
+			getHierarchyParentDimensionResponse.Value("children").Array().Length().Equal(numberOfChildren)
+
+			// Reset tryAgain for next loop
 			tryAgain = true
 
 			exitInstanceCompleteLoop := make(chan bool)
@@ -231,7 +246,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			}
 
 			if tryAgain != false {
-				err := errors.New("timed out")
+				err = errors.New("timed out")
 				log.ErrorC("Timed out - failed to get instance document to a state of completed", err, log.Data{"instance_id": instanceID, "state": instanceResource.State, "timeout": timeout})
 				os.Exit(1)
 			}
