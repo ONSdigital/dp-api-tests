@@ -113,9 +113,96 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(stateHasChanged, ShouldEqual, true)
 
 			// Check instance has updated with headers, state is completed, total_observations and total_inserted_observations
-			totalObservations := 1513
+			totalObservations := int64(1513)
 
 			tryAgain := true
+
+			exitObservationsCompleteLoop := make(chan bool)
+
+			go func() {
+				time.Sleep(timeout)
+				close(exitObservationsCompleteLoop)
+			}()
+
+		observationsCompleteLoop:
+			for tryAgain {
+				select {
+				case <-exitObservationsCompleteLoop:
+					break observationsCompleteLoop
+				default:
+					instanceResource, err = mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
+					if err != nil {
+						log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
+						os.Exit(1)
+					}
+					if instanceResource.ImportTasks.ImportObservations.State == "completed" {
+						tryAgain = false
+					} else {
+						So(instanceResource.State, ShouldEqual, "submitted")
+						So(instanceResource.ImportTasks.ImportObservations.State, ShouldEqual, "created")
+					}
+				}
+			}
+
+			if tryAgain != false {
+				err = errors.New("timed out")
+				log.ErrorC("Timed out - failed to get instance document to a state of completed", err, log.Data{"instance_id": instanceID, "state": instanceResource.State, "timeout": timeout})
+				os.Exit(1)
+			}
+
+			So(instanceResource.Headers, ShouldResemble, &[]string{"V4_0", "Time_codelist", "Time", "Geography_codelist", "Geography", "cpi1dim1aggid", "Aggregate"})
+			//So(instanceResource.ImportTasks.ImportObservations.InsertedObservations, ShouldResemble, totalObservations)
+			So(instanceResource.State, ShouldEqual, "submitted")
+			So(instanceResource.TotalObservations, ShouldResemble, totalObservations)
+
+			// Check dimension options
+			count, err := mongo.CountDimensionOptions(cfg.MongoDB, "dimension.options", "instance_id", instanceID)
+			if err != nil {
+				log.ErrorC("Unable to retrieve dimension option resources", err, log.Data{"instance_id": instanceID})
+				os.Exit(1)
+			}
+
+			So(count, ShouldEqual, 140)
+
+			// Check hierarchies have been built
+			tryAgain = true
+
+			exitHierarchiesCompleteLoop := make(chan bool)
+
+			go func() {
+				time.Sleep(timeout)
+				close(exitHierarchiesCompleteLoop)
+			}()
+
+		hierarchiesCompleteLoop:
+			for tryAgain {
+				select {
+				case <-exitHierarchiesCompleteLoop:
+					break hierarchiesCompleteLoop
+				default:
+					instanceResource, err = mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
+					if err != nil {
+						log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
+						os.Exit(1)
+					}
+					if instanceResource.ImportTasks.BuildHierarchyTasks[0].State == "completed" {
+						tryAgain = false
+					} else {
+						So(instanceResource.State, ShouldEqual, "submitted")
+						So(instanceResource.ImportTasks.BuildHierarchyTasks[0].State, ShouldEqual, "created")
+					}
+				}
+			}
+
+			if tryAgain != false {
+				err = errors.New("timed out")
+				log.ErrorC("Timed out - failed to get instance document to a state of completed", err, log.Data{"instance_id": instanceID, "state": instanceResource.State, "timeout": timeout})
+				os.Exit(1)
+			}
+
+			// TODO Check hierarchies exist by calling the hierarchy api
+
+			tryAgain = true
 
 			exitInstanceCompleteLoop := make(chan bool)
 
@@ -148,20 +235,6 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				log.ErrorC("Timed out - failed to get instance document to a state of completed", err, log.Data{"instance_id": instanceID, "state": instanceResource.State, "timeout": timeout})
 				os.Exit(1)
 			}
-
-			So(instanceResource.Headers, ShouldResemble, &[]string{"V4_0", "Time_codelist", "Time", "Geography_codelist", "Geography", "cpi1dim1aggid", "Aggregate"})
-			So(instanceResource.InsertedObservations, ShouldResemble, &totalObservations)
-			So(instanceResource.State, ShouldEqual, "completed")
-			So(instanceResource.TotalObservations, ShouldResemble, &totalObservations)
-
-			// Check dimension options
-			count, err := mongo.CountDimensionOptions(cfg.MongoDB, "dimension.options", "instance_id", instanceID)
-			if err != nil {
-				log.ErrorC("Unable to retrieve dimension option resources", err, log.Data{"instance_id": instanceID})
-				os.Exit(1)
-			}
-
-			So(count, ShouldEqual, 140)
 
 			// STEP 4 - Update instance with meta data and change state to `edition-confirmed`
 			datasetAPI.PUT("/instances/{instance_id}", instanceID).WithHeader(internalTokenHeader, internalTokenID).
@@ -469,8 +542,8 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 						os.Exit(1)
 					}
 
-					minExpectedXLSFileSize := int64(6309)
-					maxExpectedXLSFileSize := int64(6313)
+					minExpectedXLSFileSize := int64(7424)
+					maxExpectedXLSFileSize := int64(7428)
 					So(*filteredXLSFileSize, ShouldBeBetweenOrEqual, minExpectedXLSFileSize, maxExpectedXLSFileSize)
 
 					filterBlueprint := &mongo.Doc{

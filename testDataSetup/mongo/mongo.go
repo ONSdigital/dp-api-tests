@@ -295,23 +295,43 @@ type VersionLinks struct {
 
 // Instance which presents a single dataset being imported
 type Instance struct {
-	Alerts               *[]Alert             `bson:"alerts,omitempty"         json:"alerts,omitempty"`
-	InstanceID           string               `bson:"id,omitempty"                          json:"id,omitempty"`
-	CollectionID         string               `bson:"collection_id,omitempty"               json:"collection_id,omitempty"`
-	Dimensions           []CodeList           `bson:"dimensions,omitempty"                  json:"dimensions,omitempty"`
-	Downloads            *DownloadList        `bson:"downloads,omitempty"                   json:"downloads,omitempty"`
-	Edition              string               `bson:"edition,omitempty"                     json:"edition,omitempty"`
-	Events               *[]Event             `bson:"events,omitempty"                      json:"events,omitempty"`
-	Headers              *[]string            `bson:"headers,omitempty"                     json:"headers,omitempty"`
-	InsertedObservations *int                 `bson:"total_inserted_observations,omitempty" json:"total_inserted_observations,omitempty"`
-	LatestChanges        *[]LatestChange      `bson:"latest_changes,omitempty" json:"latest_changes,omitempty"`
-	Links                InstanceLinks        `bson:"links,omitempty"                       json:"links,omitempty"`
-	ReleaseDate          string               `bson:"release_date,omitempty"                json:"release_date,omitempty"`
-	State                string               `bson:"state,omitempty"                       json:"state,omitempty"`
-	Temporal             *[]TemporalFrequency `bson:"temporal,omitempty"                    json:"temporal,omitempty"`
-	TotalObservations    *int                 `bson:"total_observations,omitempty"          json:"total_observations,omitempty"`
-	Version              int                  `bson:"version,omitempty"                     json:"version,omitempty"`
-	LastUpdated          time.Time            `bson:"last_updated,omitempty"                json:"last_updated,omitempty"`
+	Alerts            *[]Alert             `bson:"alerts,omitempty"                      json:"alerts,omitempty"`
+	InstanceID        string               `bson:"id,omitempty"                          json:"id,omitempty"`
+	CollectionID      string               `bson:"collection_id,omitempty"               json:"collection_id,omitempty"`
+	Dimensions        []CodeList           `bson:"dimensions,omitempty"                  json:"dimensions,omitempty"`
+	Downloads         *DownloadList        `bson:"downloads,omitempty"                   json:"downloads,omitempty"`
+	Edition           string               `bson:"edition,omitempty"                     json:"edition,omitempty"`
+	Events            *[]Event             `bson:"events,omitempty"                      json:"events,omitempty"`
+	Headers           *[]string            `bson:"headers,omitempty"                     json:"headers,omitempty"`
+	ImportTasks       *InstanceImportTasks `bson:"import_tasks,omitempty"                json:"import_tasks,omitempty"`
+	LatestChanges     *[]LatestChange      `bson:"latest_changes,omitempty" json:"latest_changes,omitempty"`
+	Links             InstanceLinks        `bson:"links,omitempty"                       json:"links,omitempty"`
+	ReleaseDate       string               `bson:"release_date,omitempty"                json:"release_date,omitempty"`
+	State             string               `bson:"state,omitempty"                       json:"state,omitempty"`
+	Temporal          *[]TemporalFrequency `bson:"temporal,omitempty"                    json:"temporal,omitempty"`
+	TotalObservations int64                `bson:"total_observations,omitempty"          json:"total_observations,omitempty"`
+	Version           int                  `bson:"version,omitempty"                     json:"version,omitempty"`
+	LastUpdated       time.Time            `bson:"last_updated,omitempty"                json:"last_updated,omitempty"`
+}
+
+// InstanceImportTasks represent an object containing specific lists of tasks for import process
+type InstanceImportTasks struct {
+	ImportObservations  *ImportObservationsTask `bson:"import_observations,omitempty" json:"import_observations,omitempty"`
+	BuildHierarchyTasks []*BuildHierarchyTask   `bson:"build_hierarchies,omitempty"   json:"build_hierarchies,omitempty"`
+	SearchTasks         []*BuildHierarchyTask   `bson:"search_dimensions,omitempty"   json:"search_dimensions,omitempty"`
+}
+
+// ImportObservationsTask represents the task of importing instance observation data into the database.
+type ImportObservationsTask struct {
+	State                string `json:"state,omitempty"`
+	InsertedObservations int64  `json:"total_inserted_observations"`
+}
+
+// BuildHierarchyTask represents a task of importing a single hierarchy.
+type BuildHierarchyTask struct {
+	State         string `bson:"state,omitempty"          json:"state,omitempty"`
+	DimensionName string `bson:"dimension_name,omitempty" json:"dimension_name,omitempty"`
+	CodeListID    string `bson:"code_list_id,omitempty"   json:"code_list_id,omitempty"`
 }
 
 // InstanceLinks holds all links for an instance
