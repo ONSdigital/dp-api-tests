@@ -7,6 +7,7 @@ import (
 
 	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
 	"github.com/ONSdigital/go-ns/log"
 )
 
@@ -36,6 +37,8 @@ func init() {
 		os.Exit(1)
 	}
 
+	log.Debug("config is:", log.Data{"config": cfg})
+
 	if err = mongo.NewDatastore(cfg.MongoAddr); err != nil {
 		log.ErrorC("mongodb datastore error", err, nil)
 		os.Exit(1)
@@ -50,7 +53,11 @@ func init() {
 		os.Exit(1)
 	}
 
-	log.Debug("config is:", log.Data{"config": cfg})
+	// Create generic hierarchy for test (CPIH)
+	if err = generateGenericHierarchy(); err != nil {
+		log.ErrorC("neo4j datastore error", err, nil)
+		os.Exit(1)
+	}
 }
 
 func deleteMongoTestData(datasetID string) bool {
@@ -135,4 +142,18 @@ func deleteMongoTestData(datasetID string) bool {
 	log.Info("removed mongo test data", log.Data{"success": successfullyRemovedMongoTestData})
 
 	return successfullyRemovedMongoTestData
+}
+
+func generateGenericHierarchy() error {
+	datastore, err := neo4j.NewDatastore(cfg.Neo4jAddr, "", neo4j.GenericHierarchyCPIHTestData)
+	if err != nil {
+		log.ErrorC("Unable to connect to neo4j", err, nil)
+		return err
+	}
+
+	if err = datastore.CreateGenericHierarchy("cpih1dim1aggid"); err != nil {
+		return err
+	}
+
+	return nil
 }

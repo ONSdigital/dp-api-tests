@@ -1,9 +1,11 @@
 package neo4j
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"html/template"
+	"os"
 
 	"github.com/ONSdigital/go-ns/log"
 	bolt "github.com/johnnadratowski/golang-neo4j-bolt-driver"
@@ -11,6 +13,7 @@ import (
 
 const ObservationTestData = "../testDataSetup/neo4j/instance.cypher"
 const HierarchyTestData = "../testDataSetup/neo4j/hierarchy.cypher"
+const GenericHierarchyCPIHTestData = "../testDataSetup/neo4j/genericHierarchyCPIH.cypher"
 
 // Datastore used to setup data within neo4j
 type Datastore struct {
@@ -94,4 +97,36 @@ func (ds *Datastore) Setup() error {
 		return err
 	}
 	return err
+}
+
+// CreateGenericHierarchy the neo4j database
+func (ds *Datastore) CreateGenericHierarchy(hierarchyCode string) error {
+	_, err := ds.connection.ExecNeo("MATCH (n:`_generic_hierarchy_node_"+hierarchyCode+"`) DETACH DELETE n", nil)
+	if err != nil {
+		return err
+	}
+
+	//b, err := ioutil.ReadFile(ds.testData)
+	file, err := os.Open(ds.testData)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		_, err = ds.connection.ExecNeo(line, nil)
+		if err != nil {
+			log.ErrorC("encountered error writing query to neo4j", err, log.Data{"cypher_file": ds.testData, "cypher_line": scanner.Text()})
+			return err
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return err
+	}
+
+	log.Info("successfully loaded data into neo4j", log.Data{"cypher_file": ds.testData})
+	return nil
 }
