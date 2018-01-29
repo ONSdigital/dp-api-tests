@@ -23,8 +23,15 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Given an instance has been created by an import job", t, func() {
-		docs, err := setupInstance(datasetID, edition, instanceID)
-		if err != nil {
+		instance := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: "instances",
+			Key:        "_id",
+			Value:      instanceID,
+			Update:     validCompletedInstanceData(datasetID, edition, instanceID),
+		}
+
+		if err := mongo.Setup(instance); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
@@ -83,7 +90,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 
 					So(instance.InstanceID, ShouldEqual, instanceID)
 					checkInstanceDoc(datasetID, instanceID, "edition-confirmed", instance)
-					So(instance.Version, ShouldEqual, 1)
+					So(instance.Version, ShouldEqual, 2)
 
 					// Check edition document has been created
 					edition, err := mongo.GetEdition(cfg.MongoDB, "editions", "links.self.href", instance.Links.Edition.HRef)
@@ -96,17 +103,11 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 
 					checkEditionDoc(datasetID, instanceID, edition)
 
-					docs = append(docs, &mongo.Doc{
-						Database:   cfg.MongoDB,
-						Collection: "editions",
-						Key:        "links.self.href",
-						Value:      instance.Links.Edition.HRef,
-					})
 				})
 			})
 		})
 
-		if err := mongo.Teardown(docs...); err != nil {
+		if err := mongo.Teardown(instance); err != nil {
 			if err != mgo.ErrNotFound {
 				os.Exit(1)
 			}
@@ -202,7 +203,7 @@ func TestFailureToPutInstance(t *testing.T) {
 
 				datasetAPI.PUT("/instances/{instance_id}", instanceID).
 					WithHeader(internalToken, internalTokenID).WithBytes([]byte(`{"state": "fake-state"}`)).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - invalid filter state values: [fake-state]\n")
+					Expect().Status(http.StatusBadRequest).Body().Contains("bad request - invalid filter state values: [fake-state]\n")
 			})
 		})
 
@@ -277,19 +278,31 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 		Spatial: &mongo.IDLink{
 			HRef: "http://ons.gov.uk/geography-list",
 		},
+		Dimensions: &mongo.IDLink{
+			ID:   "",
+			HRef: "http://localhost:22000/datasets/" + datasetID + "/editions/2017/versions/2/dimensions",
+		},
+		Edition: &mongo.IDLink{
+			ID:   "2017",
+			HRef: "http://localhost:22000/datasets/" + datasetID + "/editions/2017",
+		},
+		Version: &mongo.IDLink{
+			ID:   "2",
+			HRef: "http://localhost:22000/datasets/" + datasetID + "/editions/2017/versions/2",
+		},
 	}
 
 	if state == "edition-confirmed" {
 		links.Dimensions = &mongo.IDLink{
-			HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/1/dimensions",
+			HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/2/dimensions",
 		}
 		links.Edition = &mongo.IDLink{
 			ID:   "2017",
 			HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017",
 		}
 		links.Version = &mongo.IDLink{
-			ID:   "1",
-			HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/1",
+			ID:   "2",
+			HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/2",
 		}
 	}
 
