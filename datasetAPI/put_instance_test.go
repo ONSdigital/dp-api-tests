@@ -215,6 +215,36 @@ func TestFailureToPutInstance(t *testing.T) {
 	})
 }
 
+func TestUpdatingStateOnPublishedDataset(t *testing.T) {
+	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
+
+	Convey("Given an dataset has been published", t, func() {
+		Convey("When a valid authorised PUT request is made to update the state to `completed`", func() {
+			instance := &mongo.Doc{
+				Database:   cfg.MongoDB,
+				Collection: "instances",
+				Key:        "_id",
+				Value:      instanceID,
+				Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+			}
+			if err := mongo.Setup(instance); err != nil {
+				log.ErrorC("Was unable to run test", err, nil)
+				os.Exit(1)
+			}
+
+			Convey("Then a forbidden http status is returned", func() {
+				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+					WithHeader(internalToken, internalTokenID).
+					WithBytes([]byte(`{"state": "completed"}`)).
+					Expect().Status(http.StatusForbidden)
+			})
+		})
+	})
+}
+
 func setupInstance(datasetID, edition, instanceID string) ([]*mongo.Doc, error) {
 	var docs []*mongo.Doc
 
