@@ -18,6 +18,8 @@ const (
 	internalToken          = "Internal-Token"
 	internalTokenID        = "FD0108EA-825D-411C-9B1D-41EF7727F465"
 	invalidInternalTokenID = "FD0108EA-825D-411C-9B1D-41EF7727F465A"
+	headerName             = "Internal-Token"
+	secret                 = "0C30662F-6CF6-43B0-A96A-954772267FF5"
 )
 
 func init() {

@@ -57,8 +57,8 @@ var validPUTAddFilesJSON string = `{
 
 // Files represents an object containing files information
 type Files struct {
-	AliasName string
-	URL       string
+	AliasName string `bson:"alias_name"`
+	URL       string `bson:"url"`
 }
 
 // GenericObject represents a generic object structure

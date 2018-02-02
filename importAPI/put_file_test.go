@@ -34,7 +34,7 @@ func TestAddFileToImportJob(t *testing.T) {
 		Convey("When a request to add a file into a job and the user is authenticated", func() {
 			Convey("Then the response returns status OK (200)", func() {
 
-				importAPI.PUT("/jobs/{id}/files", jobID).WithHeader(internalToken, internalTokenID).
+				importAPI.PUT("/jobs/{id}/files", jobID).WithHeader(headerName, secret).WithHeader(internalToken, internalTokenID).
 					WithBytes([]byte(validPUTAddFilesJSON)).Expect().Status(http.StatusOK)
 			})
 		})
@@ -42,8 +42,8 @@ func TestAddFileToImportJob(t *testing.T) {
 		Convey("When a request to add a file into a job and the user is unauthenticated", func() {
 			Convey("Then the response returns status OK (200)", func() {
 
-				importAPI.PUT("/jobs/{id}/files", jobID).WithBytes([]byte(validPUTAddFilesJSON)).
-					Expect().Status(http.StatusOK)
+				importAPI.PUT("/jobs/{id}/files", jobID).WithHeader(headerName, secret).
+					WithBytes([]byte(validPUTAddFilesJSON)).Expect().Status(http.StatusOK)
 			})
 		})
 	})
@@ -75,12 +75,12 @@ func TestFailureToAddFileToAnImportJob(t *testing.T) {
 
 	// This test fails.
 	// Bug raised.
-	// TODO Dont skip test once endpoint has been refactored
+	// TODO Dont skip test once endpoint has been refactored ------
 	SkipConvey("Given an import job exists", t, func() {
 		Convey("When a request to add a file into a job with job id that does not exist", func() {
 			Convey("Then the response returns status not found (404)", func() {
-				importAPI.PUT("/jobs/{id}/files", invalidJobID).WithBytes([]byte(validPUTAddFilesJSON)).
-					Expect().Status(http.StatusNotFound)
+				importAPI.PUT("/jobs/{id}/files", invalidJobID).WithHeader(headerName, secret).
+					WithBytes([]byte(validPUTAddFilesJSON)).Expect().Status(http.StatusNotFound)
 			})
 		})
 	})
@@ -88,8 +88,17 @@ func TestFailureToAddFileToAnImportJob(t *testing.T) {
 	Convey("Given an import job exists", t, func() {
 		Convey("When a request to add a file into a job with invalid json", func() {
 			Convey("Then the response returns status bad request(400)", func() {
-				importAPI.PUT("/jobs/{id}/files", jobID).WithHeader(internalToken, internalTokenID).WithBytes([]byte("{")).
-					Expect().Status(http.StatusBadRequest)
+				importAPI.PUT("/jobs/{id}/files", jobID).WithHeader(headerName, secret).
+					WithBytes([]byte("{")).Expect().Status(http.StatusBadRequest)
+			})
+		})
+	})
+
+	Convey("Given an import job exists", t, func() {
+		Convey("When a request to add a file into a job with valid json but no authentication", func() {
+			Convey("Then the response returns status not found (404)", func() {
+				importAPI.PUT("/jobs/{id}/files", jobID).
+					WithBytes([]byte(validPUTAddFilesJSON)).Expect().Status(http.StatusNotFound)
 			})
 		})
 	})
