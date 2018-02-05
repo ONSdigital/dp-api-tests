@@ -139,11 +139,11 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 		})
 
 		Convey("When an unauthorised request is made to update filter output", func() {
-			Convey("Then fail to update filter output and return status unauthorised (401)", func() {
+			Convey("Then fail to update filter output and return status not found (404)", func() {
 
 				filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
 					WithBytes([]byte(GetValidPUTFilterOutputWithCSVDownloadJSON())).
-					Expect().Status(http.StatusUnauthorized).Body().Contains("Unauthorised, request lacks valid authentication credentials\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("resource not found\n")
 			})
 		})
 
