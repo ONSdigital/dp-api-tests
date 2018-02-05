@@ -10,6 +10,8 @@ type Config struct {
 	HierarchyAPIURL           string   `envconfig:"HIERARCHY_API_URL"`
 	CodeListAPIURL            string   `envconfig:"CODELIST_API_URL"`
 	RecipeAPIURL              string   `envconfig:"RECIPE_API_URL"`
+	SearchAPIURL              string   `envconfig:"SEARCH_API_URL"`
+	ElasticSearchAPIURL       string   `envconfig:"ELASTIC_SEARCH_URL"`
 	MongoAddr                 string   `envconfig:"MONGODB_BIND_ADDR"`
 	MongoDB                   string   `envconfig:"MONGODB_DATABASE"`
 	MongoFiltersDB            string   `envconfig:"MONGODB_FILTERS_DATABASE"`
@@ -33,6 +35,8 @@ func Get() (*Config, error) {
 		CodeListAPIURL:            "http://localhost:22400",
 		RecipeAPIURL:              "http://localhost:22300",
 		HierarchyAPIURL:           "http://localhost:22600",
+		SearchAPIURL:              "http://localhost:23100",
+		ElasticSearchAPIURL:       "http://localhost:9200",
 		MongoAddr:                 "localhost:27017",
 		MongoDB:                   "test",
 		MongoImportsDB:            "test",

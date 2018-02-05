@@ -13,6 +13,7 @@ import (
 
 	mgo "gopkg.in/mgo.v2"
 
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
 	"github.com/ONSdigital/go-ns/log"
@@ -29,6 +30,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 	hierarchyAPI := httpexpect.New(t, cfg.HierarchyAPIURL)
+	searchAPI := httpexpect.New(t, cfg.SearchAPIURL)
 
 	hasRemovedAllResources := true
 	filename := "v4TestFile.csv"
@@ -197,7 +199,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 			if tryAgain != false {
 				err = errors.New("timed out")
-				log.ErrorC("Timed out - failed to get instance document to a state of completed", err, log.Data{"instance_id": instanceID, "state": instanceResource.State, "timeout": timeout})
+				log.ErrorC("Timed out - failed to get instance document to have hierarchy tasks with states of completed", err, log.Data{"instance_id": instanceID, "hierarchy_tasks": instanceResource.ImportTasks.BuildHierarchyTasks, "timeout": timeout})
 				os.Exit(1)
 			}
 
@@ -205,7 +207,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			getHierarchyParentDimensionResponse := hierarchyAPI.GET("/hierarchies/{instance_id}/{dimension}", instanceID, "aggregate").WithHeader(internalTokenHeader, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
-			getHierarchyParentDimensionResponse.Value("has_data").Equal(true)
+			getHierarchyParentDimensionResponse.Value("has_data").Equal(false)
 			getHierarchyParentDimensionResponse.Value("label").Equal("Overall Index")
 			getHierarchyParentDimensionResponse.Value("no_of_children").Equal(12)
 			getHierarchyParentDimensionResponse.Value("links").Object().Value("code").Object().Value("href").Equal("http://localhost:22400/code-list/cpih1dim1aggid/code/cpih1dim1A0")
@@ -219,37 +221,43 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			// Reset tryAgain for next loop
 			tryAgain = true
 
-			exitInstanceCompleteLoop := make(chan bool)
+			exitElasticSearchCompleteLoop := make(chan bool)
 
 			go func() {
 				time.Sleep(timeout)
-				close(exitInstanceCompleteLoop)
+				close(exitElasticSearchCompleteLoop)
 			}()
 
-		instanceCompleteLoop:
+			// Check elastic search tasks have completed against instance
+		elasticSearchCompleteLoop:
 			for tryAgain {
 				select {
-				case <-exitInstanceCompleteLoop:
-					break instanceCompleteLoop
+				case <-exitElasticSearchCompleteLoop:
+					break elasticSearchCompleteLoop
 				default:
 					instanceResource, err = mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
 					if err != nil {
 						log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
 						os.Exit(1)
 					}
-					if instanceResource.State == "completed" {
+					if instanceResource.ImportTasks.SearchTasks[0].State == "completed" {
 						tryAgain = false
 					} else {
 						So(instanceResource.State, ShouldEqual, "submitted")
+						So(instanceResource.ImportTasks.SearchTasks[0].State, ShouldEqual, "created")
 					}
 				}
 			}
 
 			if tryAgain != false {
 				err = errors.New("timed out")
-				log.ErrorC("Timed out - failed to get instance document to a state of completed", err, log.Data{"instance_id": instanceID, "state": instanceResource.State, "timeout": timeout})
+				log.ErrorC("Timed out - failed to get instance document to have search tasks with states of completed", err, log.Data{"instance_id": instanceID, "search_tasks": instanceResource.ImportTasks.SearchTasks, "timeout": timeout})
 				os.Exit(1)
 			}
+
+			// Check instance state is completed
+			So(instanceResource.State, ShouldEqual, "completed")
+			So(instanceResource.ImportTasks.SearchTasks[0].DimensionName, ShouldEqual, "aggregate")
 
 			// STEP 4 - Update instance with meta data and change state to `edition-confirmed`
 			datasetAPI.PUT("/instances/{instance_id}", instanceID).WithHeader(internalTokenHeader, internalTokenID).
@@ -405,6 +413,24 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(datasetResource.Current.State, ShouldEqual, "published")
 
 			log.Debug("links", log.Data{"xls_link": versionResource.Downloads.XLS.URL, "csv_link": versionResource.Downloads.CSV.URL})
+
+			// Check data exists in elaticsearch by calling search API to find dimension option
+			getSearchResponse := searchAPI.GET("/search/datasets/{id}/editions/{edition}/versions/{version}/dimension/{name}?q={term}", datasetName, datasetResource.Current.Links.Editions.ID, datasetResource.Current.Links.LatestVersion.ID, "aggregate", "Overall Index").WithHeader(internalTokenHeader, internalTokenID).
+				Expect().Status(http.StatusOK).JSON().Object()
+
+			getSearchResponse.Value("count").Equal(1)
+			getSearchResponse.Value("items").Array().Length().Equal(1)
+			getSearchResponse.Value("items").Array().Element(1).Object().Value("code").Equal("cpi1dwded")
+			getSearchResponse.Value("items").Array().Element(1).Object().Value("dimension_option_url").Equal("http://localhost:23000/madeup")
+			getSearchResponse.Value("items").Array().Element(1).Object().Value("has_data").Equal(false)
+			getSearchResponse.Value("items").Array().Element(1).Object().Value("label").Equal("Overall Index")
+			getSearchResponse.Value("items").Array().Element(1).Object().Value("matches").Object().Value("Code").Null()
+			getSearchResponse.Value("items").Array().Element(1).Object().Value("matches").Object().Value("Label").Array().Length().Equal(1)
+			getSearchResponse.Value("items").Array().Element(1).Object().Value("matches").Object().Value("Label").Array().Element(1).Object().Value("Start").Equal("1")
+			getSearchResponse.Value("items").Array().Element(1).Object().Value("matches").Object().Value("Label").Array().Element(1).Object().Value("End").Equal("4")
+			getSearchResponse.Value("items").Array().Element(1).Object().Value("number_of_children").Equal(2)
+			getSearchResponse.Value("limit").Equal(20)
+			getSearchResponse.Value("offset").Equal(0)
 
 			Convey("Then an api customer should be able to get a csv and xls download link", func() {
 				// Get downloads link from version document
@@ -647,6 +673,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				}
 			}
 
+			// remove all dimension options from mongo collection
 			if err = mongo.TeardownAll(cfg.MongoDB, "dimension.options"); err != nil {
 				if err != mgo.ErrNotFound {
 					log.ErrorC("failed to remove edition resource", err, log.Data{"links.self.href": instanceResource.Links.Edition.HRef})
@@ -654,12 +681,17 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				}
 			}
 
+			// remove elasticsearch index for instance and dimension (call elasticsearch directly)
+			if err = elasticsearch.DeleteIndex(cfg.ElasticSearchAPIURL + "/" + instanceID + "_aggregate"); err != nil {
+				log.ErrorC("Failed to delete index from elasticsearch", err, nil)
+				hasRemovedAllResources = false
+			}
+
 			// remove instance from neo4j
 			datastore, err := neo4j.NewDatastore(cfg.Neo4jAddr, instanceID, "")
 			if err != nil {
 				log.ErrorC("Failed to connecton to neo4j database", err, nil)
 				os.Exit(1)
-
 			}
 
 			if err = datastore.TeardownInstance(); err != nil {

@@ -34,6 +34,8 @@ environment variables, or with a link to a configuration guide.
 | DATASET_API_URL            | http://localhost:22000               | The host name for the Dataset API
 | FILTER_API_URL             | http://localhost:22100               | The host name for the Filter API
 | IMPORT_API_URL             | http://localhost:21800               | The host name for the Import API
+| SEARCH_API_URL             | http://localhost:23100               | The host name for the Search API
+| ELASTIC_SEARCH_URL         | http://localhost:9200                | The host name for elasticsearch
 | MONGODB_BIND_ADDR          | localhost:27017                      | The MongoDB bind address
 
 ### Contributing
