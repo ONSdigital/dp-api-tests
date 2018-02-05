@@ -105,3 +105,11 @@ var validSubmittedImportJobData = bson.M{
 		"test_data":       "true",
 	},
 }
+
+var validCreatedInstanceData = bson.M{
+	"$set": bson.M{
+		"id":            instanceID,
+		"state":         "created",
+		"collection_id": "123",
+	},
+}
