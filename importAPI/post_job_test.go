@@ -20,7 +20,7 @@ func TestSuccessfullyPostImportJob(t *testing.T) {
 		Convey("When a post request with a valid json", func() {
 			Convey("Then the response returns import job created (201)", func() {
 
-				response := importAPI.POST("/jobs").WithHeader(headerName, secret).WithBytes([]byte(validPOSTCreateJobJSON)).
+				response := importAPI.POST("/jobs").WithHeader(tokenName, tokenSecret).WithBytes([]byte(validPOSTCreateJobJSON)).
 					Expect().Status(http.StatusCreated).JSON().Object()
 
 				importJobID := response.Value("id").String().Raw()
@@ -66,7 +66,7 @@ func TestFailureToPostImportJob(t *testing.T) {
 		Convey("When a post request with an invalid json", func() {
 			Convey("Then the response returns bad request (400)", func() {
 
-				importAPI.POST("/jobs").WithHeader(headerName, secret).WithBytes([]byte("{")).
+				importAPI.POST("/jobs").WithHeader(tokenName, tokenSecret).WithBytes([]byte("{")).
 					Expect().Status(http.StatusBadRequest)
 			})
 		})

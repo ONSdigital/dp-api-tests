@@ -44,7 +44,7 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 		Convey("When a request to get a list of all jobs and the user is authenticated", func() {
 			Convey("Then the response returns status OK (200)", func() {
 
-				response := importAPI.GET("/jobs").WithHeader(headerName, secret).Expect().Status(http.StatusOK).JSON().Array()
+				response := importAPI.GET("/jobs").WithHeader(tokenName, tokenSecret).Expect().Status(http.StatusOK).JSON().Array()
 				checkImportJobsResponse(response)
 			})
 		})

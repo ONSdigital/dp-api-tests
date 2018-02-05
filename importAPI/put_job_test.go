@@ -42,7 +42,7 @@ func TestUpdateImportJobState(t *testing.T) {
 		Convey("When a request to update the jobs state with a specific id and the user is authenticated", func() {
 			Convey("Then the response returns status OK (200)", func() {
 
-				importAPI.PUT("/jobs/{id}", jobID).WithHeader(headerName, secret).
+				importAPI.PUT("/jobs/{id}", jobID).WithHeader(tokenName, tokenSecret).
 					WithBytes([]byte(validPUTJobJSON)).Expect().Status(http.StatusOK)
 			})
 		})
@@ -85,7 +85,7 @@ func TestFailureToUpdateAnImportJob(t *testing.T) {
 		Convey("When a request to change job state with job id that does not exist", func() {
 			Convey("Then the response returns status not found (404)", func() {
 				importAPI.PUT("/jobs/{id}", uuid.NewV4().String()).WithBytes([]byte(validPUTJobJSON)).
-					WithHeader(headerName, secret).Expect().Status(http.StatusNotFound)
+					WithHeader(tokenName, tokenSecret).Expect().Status(http.StatusNotFound)
 			})
 		})
 	})
@@ -94,7 +94,7 @@ func TestFailureToUpdateAnImportJob(t *testing.T) {
 		Convey("When a request to change job state with invalid json", func() {
 			Convey("Then the response returns status bad request (400)", func() {
 				importAPI.PUT("/jobs/{id}", jobID).
-					WithHeader(headerName, secret).WithBytes([]byte("{")).Expect().Status(http.StatusBadRequest)
+					WithHeader(tokenName, tokenSecret).WithBytes([]byte("{")).Expect().Status(http.StatusBadRequest)
 			})
 		})
 	})

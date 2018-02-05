@@ -34,7 +34,7 @@ func TestSuccessfullyGetAnImportJob(t *testing.T) {
 		Convey("When a request to get the job with a specific id and the user is authenticated", func() {
 			Convey("Then the response returns status OK (200)", func() {
 
-				response := importAPI.GET("/jobs/{id}", jobID).WithHeader(headerName, secret).Expect().Status(http.StatusOK).JSON().Object()
+				response := importAPI.GET("/jobs/{id}", jobID).WithHeader(tokenName, tokenSecret).Expect().Status(http.StatusOK).JSON().Object()
 				checkImportJobResponse(response)
 			})
 		})
@@ -76,7 +76,7 @@ func TestFailureToGetAnImportJob(t *testing.T) {
 	Convey("Given an import job exists", t, func() {
 		Convey("When a request to get the job with id does not exist", func() {
 			Convey("Then the response returns status not found (404)", func() {
-				importAPI.GET("/jobs/{id}", uuid.NewV4().String()).WithHeader(headerName, secret).
+				importAPI.GET("/jobs/{id}", uuid.NewV4().String()).WithHeader(tokenName, tokenSecret).
 					Expect().Status(http.StatusNotFound)
 			})
 		})
