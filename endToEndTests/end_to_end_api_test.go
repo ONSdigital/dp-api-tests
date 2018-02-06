@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
@@ -143,6 +143,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					} else {
 						So(instanceResource.State, ShouldEqual, "submitted")
 						So(instanceResource.ImportTasks.ImportObservations.State, ShouldEqual, "created")
+						time.Sleep(time.Millisecond * 100)
 					}
 				}
 			}
@@ -193,6 +194,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					} else {
 						So(instanceResource.State, ShouldEqual, "submitted")
 						So(instanceResource.ImportTasks.BuildHierarchyTasks[0].State, ShouldEqual, "created")
+						time.Sleep(time.Millisecond * 100)
 					}
 				}
 			}
@@ -245,6 +247,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					} else {
 						So(instanceResource.State, ShouldEqual, "submitted")
 						So(instanceResource.ImportTasks.SearchTasks[0].State, ShouldEqual, "created")
+						time.Sleep(time.Millisecond * 100)
 					}
 				}
 			}
@@ -252,6 +255,16 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			if tryAgain != false {
 				err = errors.New("timed out")
 				log.ErrorC("Timed out - failed to get instance document to have search tasks with states of completed", err, log.Data{"instance_id": instanceID, "search_tasks": instanceResource.ImportTasks.SearchTasks, "timeout": timeout})
+				os.Exit(1)
+			}
+
+			// todo, add retry loop to check when the instance is set to complete.
+			time.Sleep(time.Second * 5)
+
+			// get the instance again now the tracker has had change to set the instance status to complete
+			instanceResource, err = mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
+			if err != nil {
+				log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
 				os.Exit(1)
 			}
 
