@@ -360,15 +360,15 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 	return
 }
 
-func checkEditionDoc(datasetID, instanceID string, editionDoc mongo.Edition) {
+func checkEditionDoc(datasetID, instanceID string, editionDoc mongo.EditionUpdate) {
 	So(editionDoc.Edition, ShouldEqual, "2017")
 	So(editionDoc.Links.Dataset.ID, ShouldEqual, datasetID)
 	So(editionDoc.Links.Dataset.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID)
-	So(editionDoc.Links.LatestVersion.ID, ShouldEqual, "1")
-	So(editionDoc.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/1")
+	So(editionDoc.Current.LatestVersion.ID, ShouldEqual, "1")
+	So(editionDoc.Current.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/1")
 	So(editionDoc.Links.Self.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017")
 	So(editionDoc.Links.Versions.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions")
-	So(editionDoc.State, ShouldEqual, "created")
+	So(editionDoc.Current, ShouldEqual, "created")
 
 	return
 }

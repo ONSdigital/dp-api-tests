@@ -69,7 +69,7 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 			response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
 			response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + unpublishedEdition + "$")
 			response.Value("links").Object().Value("versions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + unpublishedEdition + "/versions$")
-			response.Value("state").Equal("edition-confirmed")
+			response.Value("next").Object().Value("state").Equal("edition-confirmed")
 		})
 
 		Convey("When user is unauthenticated", func() {
@@ -83,7 +83,7 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 			response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
 			response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
 			response.Value("links").Object().Value("versions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions$")
-			response.Value("state").Equal("published")
+			response.Value("current").Object().Value("state").Equal("published")
 		})
 	})
 
@@ -165,3 +165,4 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 		}
 	})
 }
+
