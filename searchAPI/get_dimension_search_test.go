@@ -206,6 +206,7 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 	// delete mongo test data
 	if err := mongo.Teardown(datasetDoc, editionDoc, versionDoc); err != nil {
 		if err != mgo.ErrNotFound {
+			log.ErrorC("was unable to remove test data", err, nil)
 			os.Exit(1)
 		}
 	}
@@ -283,7 +284,7 @@ func TestFailureToGetDimensionViaSearch(t *testing.T) {
 		})
 
 		if err := mongo.Teardown(datasetDoc, editionDoc, versionDoc); err != nil {
-			log.ErrorC("was unable to run test", err, nil)
+			log.ErrorC("was unable to remove test data", err, nil)
 			os.Exit(1)
 		}
 	})

@@ -14,7 +14,7 @@ pass:
 mongo db
 zookeeper
 kafka
-elasticsearch
+elasticsearch (version can be either 5.* or 6.*)
 dataset API
 search API
 ```
@@ -23,6 +23,4 @@ Both API's will need to have the following configuration:
 
 ```
 export MONGODB_DATABASE=test
-export MONGODB_FILTERS_DATABASE=test
-export MONGODB_IMPORTS_DATABASE=test
 ```
