@@ -179,6 +179,8 @@ func TestFailureToPostfilterBlueprintForPublishedInstance(t *testing.T) {
 func TestPostFilterBlueprintForUnpublishedInstance(t *testing.T) {
 
 	instanceID := uuid.NewV4().String()
+	dimensionOptionOneID := uuid.NewV4().String()
+	dimensionOptionTwoID := uuid.NewV4().String()
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	var docs []*mongo.Doc
@@ -192,8 +194,10 @@ func TestPostFilterBlueprintForUnpublishedInstance(t *testing.T) {
 	}
 
 	docs = append(docs, instance)
+	docs = append(docs, setupDimensionOptions(dimensionOptionOneID, GetValidAgeDimensionData(instanceID, "27")))
+	docs = append(docs, setupDimensionOptions(dimensionOptionTwoID, GetValidAgeDimensionData(instanceID, "42")))
 
-	if err := mongo.Setup(instance); err != nil {
+	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Unable to setup instance test resources", err, nil)
 		os.Exit(1)
 	}
