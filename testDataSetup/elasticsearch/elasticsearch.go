@@ -113,7 +113,7 @@ func (i *Index) CreateSearchIndex() error {
 			log.ErrorC("unable to unmarshal bytes to json", err, log.Data{"line": line})
 			return err
 		}
-		path := index + "/hierarchy/" + dimension.Code
+		path := index + "/dimension_option/" + dimension.Code
 		_, _, err = CallElastic(ctx, path, "PUT", slice)
 		if err != nil {
 			log.ErrorC("encountered error writing to elasticsearch index", err, log.Data{"json_file": i.TestDataFile, "payload": scanner.Text()})
