@@ -3,10 +3,11 @@ package datasetAPI
 import (
 	"net/http"
 	"os"
-	"strconv"
 	"testing"
 
 	mgo "gopkg.in/mgo.v2"
+
+	"strconv"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
@@ -186,7 +187,7 @@ func checkResponse(datasetID, edition, instanceID, version string, response *htt
 	response.Value("temporal").Array().Element(0).Object().Value("start_date").Equal("2014-09-09")
 	response.Value("temporal").Array().Element(0).Object().Value("end_date").Equal("2017-09-09")
 	response.Value("temporal").Array().Element(0).Object().Value("frequency").Equal("monthly")
-	response.Value("total_inserted_observations").Equal(1000)
-	response.Value("total_observations").Equal(1000)
-	response.Value("version").Equal(versionNumber)
+	response.Value("import_tasks").Object().Value("import_observations").Object().Value("total_inserted_observations").Number().Equal(1000)
+	response.Value("total_observations").Number().Equal(1000)
+	response.Value("version").Number().Equal(versionNumber)
 }
