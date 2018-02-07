@@ -56,6 +56,11 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 
 	searchAPI := httpexpect.New(t, cfg.SearchAPIURL)
 
+	if err := createSearchIndex(cfg.ElasticSearchAPIURL, instanceID, "aggregate"); err != nil {
+		log.ErrorC("Unable to setup elasticsearch index with test data", err, nil)
+		os.Exit(1)
+	}
+
 	Convey("Given a version for an edition of  a dataset is published", t, func() {
 		Convey("When a GET request is made with a query term matching a dimension code", func() {
 			Convey("Then the response returns a json document containing a list of results with a status ok (200)", func() {

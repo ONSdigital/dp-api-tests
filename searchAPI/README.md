@@ -14,7 +14,7 @@ pass:
 mongo db
 zookeeper
 kafka
-elasticsearch (version can be either 5.* or 6.*)
+elasticsearch (version can be either 5.x or 6.x)
 dataset API
 search API
 ```

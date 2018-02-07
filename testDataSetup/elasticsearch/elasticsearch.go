@@ -73,7 +73,6 @@ type Dimension struct {
 
 // CreateSearchIndex represents the creation and loading of test data into an index for testing
 func (i *Index) CreateSearchIndex() error {
-	log.Info("nath got here 2", nil)
 	index := i.URL + "/" + i.InstanceID + "_" + i.Dimension
 	// Remove index
 	statusCode, err := DeleteIndex(index)
