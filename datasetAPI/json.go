@@ -291,6 +291,9 @@ func validUnpublishedEditionData(datasetID, editionID, edition string) bson.M {
 			"next.latest_version.href":      cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/1",
 			"next.latest_version.id":        "1",
 			"next.state":                    "edition-confirmed",
+			"current.latest_version.href":   cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/2",
+			"current.latest_version.id":     "2",
+			"current.state":                 "edition-confirmed",
 			"test_data":                     "true",
 		},
 	}
