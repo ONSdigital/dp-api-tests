@@ -116,7 +116,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(stateHasChanged, ShouldEqual, true)
 
 			// Check instance has updated with headers, state is completed, total_observations and total_inserted_observations
-			totalObservations := int64(1503)
+			totalObservations := int64(1510)
 
 			tryAgain := true
 
@@ -154,7 +154,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				os.Exit(1)
 			}
 
-			So(instanceResource.Headers, ShouldResemble, &[]string{"V4_0", "Time_codelist", "Time", "Geography_codelist", "Geography", "cpi1dim1aggid", "Aggregate"})
+			So(instanceResource.Headers, ShouldResemble, &[]string{"V4_0", "time", "time", "uk-only", "geography", "cpih1dim1aggid", "aggregate"})
 			//So(instanceResource.ImportTasks.ImportObservations.InsertedObservations, ShouldResemble, totalObservations)
 			So(instanceResource.State, ShouldEqual, "submitted")
 			So(instanceResource.TotalObservations, ShouldResemble, totalObservations)
@@ -166,7 +166,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				os.Exit(1)
 			}
 
-			So(count, ShouldEqual, 140)
+			So(count, ShouldEqual, 156)
 
 			// Check hierarchies have been built
 			tryAgain = true
@@ -386,14 +386,14 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 									log.ErrorC("cannot convert xls size of type string to integer", err, log.Data{"xls_size": instanceResource.Downloads.XLS.Size})
 									os.Exit(1)
 								}
-								So(XLSSize, ShouldBeBetweenOrEqual, 16378, 16382)
+								So(XLSSize, ShouldBeBetweenOrEqual, 19000, 20000)
 								So(instanceResource.Downloads.XLS.URL, ShouldNotBeEmpty)
 								CSVSize, err := strconv.Atoi(instanceResource.Downloads.CSV.Size)
 								if err != nil {
 									log.ErrorC("cannot convert csv size of type string to integer", err, log.Data{"csv_size": instanceResource.Downloads.CSV.Size})
 									os.Exit(1)
 								}
-								So(CSVSize, ShouldBeBetweenOrEqual, 116739, 116743)
+								So(CSVSize, ShouldBeBetweenOrEqual, 137000, 139000)
 								So(instanceResource.Downloads.CSV.URL, ShouldNotBeEmpty)
 								hasDownloads = true
 							}
@@ -498,7 +498,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					}
 					numberOfCSVRows++
 				}
-				So(numberOfCSVRows, ShouldEqual, 1513)
+				So(numberOfCSVRows, ShouldEqual, 1510)
 
 				xlsURL := versionResource.Downloads.XLS.URL
 				xlsFilename := strings.TrimPrefix(xlsURL, "https://"+bucket+".s3-"+region+".amazonaws.com/")
