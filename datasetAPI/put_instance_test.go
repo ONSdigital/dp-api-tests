@@ -355,7 +355,7 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 	So(instance.State, ShouldEqual, state)
 	So(instance.Temporal, ShouldResemble, &[]mongo.TemporalFrequency{temporal})
 	So(instance.TotalObservations, ShouldResemble, &observations)
-	So(instance.InsertedObservations, ShouldResemble, &observations)
+	So(instance.ImportTasks.ImportObservations.InsertedObservations, ShouldResemble, &observations)
 
 	return
 }
