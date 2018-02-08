@@ -172,7 +172,7 @@ func TestFailureToGetAListOfInstances(t *testing.T) {
 		Convey("When an authorised request to get a list of resources is made with an invalid filter value for 'state'", func() {
 			Convey("Then return a status of bad request (400) with message `Bad request - invalid filter state values`", func() {
 				datasetAPI.GET("/instances").WithQuery("state", "foo").WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - invalid filter state values: [foo]\n")
+					Expect().Status(http.StatusBadRequest).Body().Contains("bad request - invalid filter state values: [foo]\n")
 			})
 		})
 

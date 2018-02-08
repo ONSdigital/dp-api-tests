@@ -495,7 +495,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
 					WithHeader(internalToken, internalTokenID).WithBytes([]byte(`{"state": "edition-confirmed"}`)).
-					Expect().Status(http.StatusForbidden).Body().Contains("unable to update document, already published\n")
+					Expect().Status(http.StatusForbidden).Body().Contains("unable to update version as it has been published\n")
 			})
 		})
 
@@ -505,7 +505,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
 					WithHeader(internalToken, internalTokenID).WithBytes([]byte(`{"links":{"spatial":{"href": "http://ons.gov.uk/spatial-notes"}}}`)).
-					Expect().Status(http.StatusForbidden).Body().Contains("unable to update document, already published\n")
+					Expect().Status(http.StatusForbidden).Body().Contains("unable to update version as it has been published\n")
 			})
 		})
 
