@@ -12,6 +12,7 @@ import (
 	"github.com/gavv/httpexpect"
 	uuid "github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
+	"fmt"
 )
 
 func TestSuccessfullyPutInstance(t *testing.T) {
@@ -35,6 +36,15 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
+
+		fmt.Println(">>>>>>>>>>>>")
+		fmt.Println(">>>>>>>>>>>>")
+		fmt.Println(">>>>>>>>>>>>")
+		fmt.Println(">>>>>>>>>>>>")
+		fmt.Println(instanceID)
+		fmt.Println(">>>>>>>>>>>>")
+		fmt.Println(">>>>>>>>>>>>")
+		fmt.Println(">>>>>>>>>>>>")
 
 		Convey("When a PUT request is made to update instance meta data", func() {
 			Convey("Then the instance is updated and return a status ok (200)", func() {
@@ -364,11 +374,11 @@ func checkEditionDoc(datasetID, instanceID string, editionDoc mongo.EditionUpdat
 	So(editionDoc.Edition, ShouldEqual, "2017")
 	So(editionDoc.Links.Dataset.ID, ShouldEqual, datasetID)
 	So(editionDoc.Links.Dataset.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID)
-	So(editionDoc.Current.LatestVersion.ID, ShouldEqual, "1")
-	So(editionDoc.Current.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/1")
+	So(editionDoc.Next.LatestVersion.ID, ShouldEqual, "1")
+	So(editionDoc.Next.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/1")
 	So(editionDoc.Links.Self.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017")
 	So(editionDoc.Links.Versions.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions")
-	So(editionDoc.Current, ShouldEqual, "created")
+	So(editionDoc.Next, ShouldEqual, "created")
 
 	return
 }
