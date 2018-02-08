@@ -263,17 +263,20 @@ func validAggregateDimensionsData(instanceID string) bson.M {
 func validPublishedEditionData(datasetID, editionID, edition string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"edition":                   edition,
-			"id":                        editionID,
-			"last_updated":              "2017-09-08", // TODO Should be isodate
-			"links.dataset.id":          datasetID,
-			"links.dataset.href":        cfg.DatasetAPIURL + "/datasets/" + datasetID,
-			"links.self.href":           cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
-			"links.versions.href":       cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions",
+			"edition":                      edition,
+			"id":                           editionID,
+			"last_updated":                "2017-09-08", // TODO Should be isodate
+			"links.dataset.id":             datasetID,
+			"links.dataset.href":           cfg.DatasetAPIURL + "/datasets/" + datasetID,
+			"links.self.href":              cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
+			"links.versions.href":          cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions",
 			"current.latest_version.href":  cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/1",
 			"current.latest_version.id":    "1",
 			"current.state":                "published",
-			"test_data":                 "true",
+			"next.latest_version.href":     cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/1",
+			"next.latest_version.id":       "1",
+			"next.state":                   "edition-confirmed",
+			"test_data":                    "true",
 		},
 	}
 }
@@ -291,9 +294,6 @@ func validUnpublishedEditionData(datasetID, editionID, edition string) bson.M {
 			"next.latest_version.href":      cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/1",
 			"next.latest_version.id":        "1",
 			"next.state":                    "edition-confirmed",
-			"current.latest_version.href":   cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/2",
-			"current.latest_version.id":     "2",
-			"current.state":                 "edition-confirmed",
 			"test_data":                     "true",
 		},
 	}

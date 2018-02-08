@@ -142,20 +142,19 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 			})
 		})
 
-		Convey("and an unpublished edition.next document exists for an edition", func() {
+		Convey("and an unpublished edition exists for the dataset", func() {
 
 			if err := mongo.Setup(unpublishedEditionDoc); err != nil {
 				log.ErrorC("Was unable to run test", err, nil)
 				os.Exit(1)
 			}
 
-			Convey("Given an unauthenticated request to get an edition of the dataset", func() {
-				Convey("The edition.next document should not be included in the response", func() {
+			Convey("Given an unauthenticated request to get that edition", func() {
+				Convey("Then the response returns a not found (404)", func() {
 
-					response := datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).
-						Expect().Status(http.StatusOK).JSON().Object()
+					datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).
+						Expect().Status(http.StatusNotFound)
 
-					response.NotContainsKey("next")
 				})
 			})
 		})
