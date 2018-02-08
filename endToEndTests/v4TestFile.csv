@@ -1,6 +1,6 @@
 V4_0,Time_codelist,Time,Geography_codelist,Geography,cpi1dim1aggid,Aggregate
 86.8,Month,Jan-96,K02000001,,cpi1dim1A0,CPI (overall index)
-90.3,Month,Jan-96,K02000001,,cpi1dim1G10100,01.1 Food
+,Month,Jan-96,K02000001,,cpi1dim1G10100,01.1 Food
 93.8,Month,Jan-96,K02000001,,cpi1dim1G10200,01.2 Non-alcoholic beverages
 95.6,Month,Jan-96,K02000001,,cpi1dim1G20100,02.1 Alcoholic beverages
 57.2,Month,Jan-96,K02000001,,cpi1dim1G20200,02.2 Tobacco
@@ -1502,13 +1502,3 @@ V4_0,Time_codelist,Time,Geography_codelist,Geography,cpi1dim1aggid,Aggregate
 62.3,Month,Dec-96,K02000001,,cpi1dim1S100000,10.0.0 Education
 76.7,Month,Dec-96,K02000001,,cpi1dim1S110101,"11.1.1 Restaurants, cafes"
 69.2,Month,Dec-96,K02000001,,cpi1dim1S110102,11.1.2 Canteens
-68.1,Month,Dec-96,K02000001,,cpi1dim1S110200,11.2.0 Accommodation Services
-65,Month,Dec-96,K02000001,,cpi1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
-104.8,Month,Dec-96,K02000001,,cpi1dim1S120102,12.1.2/3 Appliances and products for personal care
-96.9,Month,Dec-96,K02000001,,cpi1dim1S120301,"12.3.1 Jewellery, clocks and watches"
-119.3,Month,Dec-96,K02000001,,cpi1dim1S120302,12.3.2 Other personal effects
-75.3,Month,Dec-96,K02000001,,cpi1dim1S120502,12.5.2 House contents insurance
-57.8,Month,Dec-96,K02000001,,cpi1dim1S120504,12.5.4 Transport insurance
-132.5,Month,Dec-96,K02000001,,cpi1dim1S120602,12.6.2 Other financial services (nec)
-57.7,Month,Dec-96,K02000001,,cpi1dim1S120700,12.7.0 Other Services Not Elsewhere covered
-90.8,Month,Dec-96,K02000001,,cpi1dim1T10000,01 Food and non-alcoholic beverages

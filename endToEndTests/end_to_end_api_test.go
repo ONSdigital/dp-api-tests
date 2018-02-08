@@ -116,7 +116,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(stateHasChanged, ShouldEqual, true)
 
 			// Check instance has updated with headers, state is completed, total_observations and total_inserted_observations
-			totalObservations := int64(1513)
+			totalObservations := int64(1503)
 
 			tryAgain := true
 
@@ -189,6 +189,14 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 						log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
 						os.Exit(1)
 					}
+
+					if instanceResource.ImportTasks.BuildHierarchyTasks == nil ||
+						len (instanceResource.ImportTasks.BuildHierarchyTasks) < 1 {
+
+						log.ErrorC("no build hierarchy tasks found", err, log.Data{"instance_id": instanceID})
+						os.Exit(1)
+					}
+
 					if instanceResource.ImportTasks.BuildHierarchyTasks[0].State == "completed" {
 						tryAgain = false
 					} else {
@@ -242,6 +250,15 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 						log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
 						os.Exit(1)
 					}
+
+
+					if instanceResource.ImportTasks.SearchTasks == nil ||
+						len (instanceResource.ImportTasks.SearchTasks) < 1 {
+
+						log.ErrorC("no build hierarchy tasks found", err, log.Data{"instance_id": instanceID})
+						os.Exit(1)
+					}
+
 					if instanceResource.ImportTasks.SearchTasks[0].State == "completed" {
 						tryAgain = false
 					} else {
