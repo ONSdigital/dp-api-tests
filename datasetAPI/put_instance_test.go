@@ -103,6 +103,20 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 
 					checkEditionDoc(datasetID, instanceID, edition)
 
+					if instance.Links.Edition != nil {
+						e := &mongo.Doc{
+							Database:   cfg.MongoDB,
+							Collection: "editions",
+							Key:        "links.self.href",
+							Value:      instance.Links.Edition.HRef,
+						}
+
+						if err := mongo.Teardown(e); err != nil {
+							if err != mgo.ErrNotFound {
+								os.Exit(1)
+							}
+						}
+					}
 				})
 			})
 		})
@@ -241,6 +255,11 @@ func TestUpdatingStateOnPublishedDataset(t *testing.T) {
 					WithBytes([]byte(`{"state": "completed"}`)).
 					Expect().Status(http.StatusForbidden)
 			})
+
+			if err := mongo.Teardown(instance); err != nil {
+				log.ErrorC("Was unable to teardown test", err, nil)
+				os.Exit(1)
+			}
 		})
 	})
 }
