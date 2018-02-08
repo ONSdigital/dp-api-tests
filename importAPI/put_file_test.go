@@ -15,7 +15,7 @@ import (
 func TestAddFileToImportJob(t *testing.T) {
 
 	importJob := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoImportsDB,
 		Collection: collection,
 		Key:        "id",
 		Value:      jobID,
@@ -67,7 +67,7 @@ func TestAddFileToImportJob(t *testing.T) {
 func TestFailureToAddFileToAnImportJob(t *testing.T) {
 
 	importJob := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoImportsDB,
 		Collection: collection,
 		Key:        "id",
 		Value:      jobID,

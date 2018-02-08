@@ -41,7 +41,7 @@ func TestSuccessfullyPostImportJob(t *testing.T) {
 				response.Value("last_updated").NotNull()
 
 				importJob := &mongo.Doc{
-					Database:   cfg.MongoDB,
+					Database:   cfg.MongoImportsDB,
 					Collection: collection,
 					Key:        "id",
 					Value:      importJobID,

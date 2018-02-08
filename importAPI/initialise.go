@@ -33,7 +33,7 @@ func init() {
 	}
 
 	test := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoImportsDB,
 		Collection: collection,
 		Key:        "test_data",
 		Value:      "true",

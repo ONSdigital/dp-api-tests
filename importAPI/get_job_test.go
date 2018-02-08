@@ -16,7 +16,7 @@ import (
 func TestSuccessfullyGetAnImportJob(t *testing.T) {
 
 	importCreateJobDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoImportsDB,
 		Collection: collection,
 		Key:        "id",
 		Value:      jobID,
@@ -59,7 +59,7 @@ func TestSuccessfullyGetAnImportJob(t *testing.T) {
 func TestFailureToGetAnImportJob(t *testing.T) {
 
 	importCreateJobDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoImportsDB,
 		Collection: collection,
 		Key:        "id",
 		Value:      jobID,

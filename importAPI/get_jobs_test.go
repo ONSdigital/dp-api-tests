@@ -17,7 +17,7 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 	var docs []*mongo.Doc
 
 	importCreateJobDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoImportsDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      jobID,
@@ -25,7 +25,7 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 	}
 
 	importSubmittedJobDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoImportsDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      "01C24F0D-24BE-479F-962B-C76BCCD0AD00",
