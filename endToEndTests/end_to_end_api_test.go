@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"gopkg.in/mgo.v2"
+	mgo "gopkg.in/mgo.v2"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
@@ -191,7 +191,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					}
 
 					if instanceResource.ImportTasks.BuildHierarchyTasks == nil ||
-						len (instanceResource.ImportTasks.BuildHierarchyTasks) < 1 {
+						len(instanceResource.ImportTasks.BuildHierarchyTasks) < 1 {
 
 						log.ErrorC("no build hierarchy tasks found", err, log.Data{"instance_id": instanceID})
 						os.Exit(1)
@@ -217,7 +217,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			getHierarchyParentDimensionResponse := hierarchyAPI.GET("/hierarchies/{instance_id}/{dimension}", instanceID, "aggregate").WithHeader(internalTokenHeader, internalTokenID).
 				Expect().Status(http.StatusOK).JSON().Object()
 
-			getHierarchyParentDimensionResponse.Value("has_data").Equal(false)
+			getHierarchyParentDimensionResponse.Value("has_data").Equal(true)
 			getHierarchyParentDimensionResponse.Value("label").Equal("Overall Index")
 			getHierarchyParentDimensionResponse.Value("no_of_children").Equal(12)
 			getHierarchyParentDimensionResponse.Value("links").Object().Value("code").Object().Value("href").Equal("http://localhost:22400/code-list/cpih1dim1aggid/code/cpih1dim1A0")
@@ -251,9 +251,8 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 						os.Exit(1)
 					}
 
-
 					if instanceResource.ImportTasks.SearchTasks == nil ||
-						len (instanceResource.ImportTasks.SearchTasks) < 1 {
+						len(instanceResource.ImportTasks.SearchTasks) < 1 {
 
 						log.ErrorC("no build hierarchy tasks found", err, log.Data{"instance_id": instanceID})
 						os.Exit(1)
@@ -445,20 +444,22 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			log.Debug("links", log.Data{"xls_link": versionResource.Downloads.XLS.URL, "csv_link": versionResource.Downloads.CSV.URL})
 
 			// Check data exists in elaticsearch by calling search API to find dimension option
-			getSearchResponse := searchAPI.GET("/search/datasets/{id}/editions/{edition}/versions/{version}/dimension/{name}?q={term}", datasetName, datasetResource.Current.Links.Editions.ID, datasetResource.Current.Links.LatestVersion.ID, "aggregate", "Overall Index").WithHeader(internalTokenHeader, internalTokenID).
-				Expect().Status(http.StatusOK).JSON().Object()
+			getSearchResponse := searchAPI.GET("/search/datasets/{id}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetName, versionResource.Edition, strconv.Itoa(versionResource.Version), "aggregate").
+				WithQuery("q", "Overall Index").Expect().Status(http.StatusOK).JSON().Object()
 
 			getSearchResponse.Value("count").Equal(1)
 			getSearchResponse.Value("items").Array().Length().Equal(1)
-			getSearchResponse.Value("items").Array().Element(1).Object().Value("code").Equal("cpi1dwded")
-			getSearchResponse.Value("items").Array().Element(1).Object().Value("dimension_option_url").Equal("http://localhost:23000/madeup")
-			getSearchResponse.Value("items").Array().Element(1).Object().Value("has_data").Equal(false)
-			getSearchResponse.Value("items").Array().Element(1).Object().Value("label").Equal("Overall Index")
-			getSearchResponse.Value("items").Array().Element(1).Object().Value("matches").Object().Value("Code").Null()
-			getSearchResponse.Value("items").Array().Element(1).Object().Value("matches").Object().Value("Label").Array().Length().Equal(1)
-			getSearchResponse.Value("items").Array().Element(1).Object().Value("matches").Object().Value("Label").Array().Element(1).Object().Value("Start").Equal("1")
-			getSearchResponse.Value("items").Array().Element(1).Object().Value("matches").Object().Value("Label").Array().Element(1).Object().Value("End").Equal("4")
-			getSearchResponse.Value("items").Array().Element(1).Object().Value("number_of_children").Equal(2)
+			getSearchResponse.Value("items").Array().Element(0).Object().Value("code").Equal("cpih1dim1A0")
+			getSearchResponse.Value("items").Array().Element(0).Object().Value("dimension_option_url").Equal("http://localhost:22400/code-list/cpih1dim1aggid/code/cpih1dim1A0")
+			getSearchResponse.Value("items").Array().Element(0).Object().Value("has_data").Equal(true)
+			getSearchResponse.Value("items").Array().Element(0).Object().Value("label").Equal("Overall Index")
+			getSearchResponse.Value("items").Array().Element(0).Object().Value("matches").Object().NotContainsKey("code")
+			getSearchResponse.Value("items").Array().Element(0).Object().Value("matches").Object().Value("label").Array().Length().Equal(2)
+			getSearchResponse.Value("items").Array().Element(0).Object().Value("matches").Object().Value("label").Array().Element(0).Object().Value("start").Equal(1)
+			getSearchResponse.Value("items").Array().Element(0).Object().Value("matches").Object().Value("label").Array().Element(0).Object().Value("end").Equal(7)
+			getSearchResponse.Value("items").Array().Element(0).Object().Value("matches").Object().Value("label").Array().Element(1).Object().Value("start").Equal(9)
+			getSearchResponse.Value("items").Array().Element(0).Object().Value("matches").Object().Value("label").Array().Element(1).Object().Value("end").Equal(13)
+			getSearchResponse.Value("items").Array().Element(0).Object().Value("number_of_children").Equal(12)
 			getSearchResponse.Value("limit").Equal(20)
 			getSearchResponse.Value("offset").Equal(0)
 
@@ -712,7 +713,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			}
 
 			// remove elasticsearch index for instance and dimension (call elasticsearch directly)
-			if err = elasticsearch.DeleteIndex(cfg.ElasticSearchAPIURL + "/" + instanceID + "_aggregate"); err != nil {
+			if _, err = elasticsearch.DeleteIndex(cfg.ElasticSearchAPIURL + "/" + instanceID + "_aggregate"); err != nil {
 				log.ErrorC("Failed to delete index from elasticsearch", err, nil)
 				hasRemovedAllResources = false
 			}
