@@ -231,8 +231,8 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				So(updatedEdition.ID, ShouldEqual, editionID)
 				So(updatedEdition.Current.State, ShouldEqual, "published")
 				log.Debug("latest version?", log.Data{"latest_version": updatedEdition.Current.LatestVersion})
-				So(updatedEdition.Current.LatestVersion.ID, ShouldEqual, "2")
-				So(updatedEdition.Current.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2018/versions/2")
+				So(updatedEdition.Current.LatestVersion.ID, ShouldEqual, "1")
+				So(updatedEdition.Current.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2018/versions/1")
 
 				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
 				if err != nil {
@@ -291,8 +291,8 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				// Check edition has been updated
 				So(updatedEdition.ID, ShouldEqual, editionID)
 				So(updatedEdition.Current.State, ShouldEqual, "published")
-				So(updatedEdition.Current.LatestVersion.ID, ShouldEqual, "2")
-				So(updatedEdition.Current.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/2")
+				So(updatedEdition.Current.LatestVersion.ID, ShouldEqual, "1")
+				So(updatedEdition.Current.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/1")
 
 				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
 				if err != nil {
