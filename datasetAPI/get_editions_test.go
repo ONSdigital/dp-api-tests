@@ -162,8 +162,6 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 					datasetAPI.GET("/datasets/{id}/editions", datasetID).
 						Expect().Status(http.StatusNotFound)
 
-					//response.NotContainsKey("next")
-
 				})
 			})
 		})
