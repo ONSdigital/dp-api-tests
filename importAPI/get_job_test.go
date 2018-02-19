@@ -8,6 +8,7 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
+	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 	mgo "gopkg.in/mgo.v2"
 )
@@ -15,7 +16,7 @@ import (
 func TestSuccessfullyGetAnImportJob(t *testing.T) {
 
 	importCreateJobDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoImportsDB,
 		Collection: collection,
 		Key:        "id",
 		Value:      jobID,
@@ -29,13 +30,11 @@ func TestSuccessfullyGetAnImportJob(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
-	// TODO Dont skip test once endpoint has been refactored
-	// These tests needs to refine when authentication was handled in the code.
-	SkipConvey("Given an import job exists", t, func() {
+	Convey("Given an import job exists", t, func() {
 		Convey("When a request to get the job with a specific id and the user is authenticated", func() {
 			Convey("Then the response returns status OK (200)", func() {
 
-				response := importAPI.GET("/jobs/{id}", jobID).WithHeader(internalToken, internalTokenID).Expect().Status(http.StatusOK).JSON().Object()
+				response := importAPI.GET("/jobs/{id}", jobID).WithHeader(tokenName, tokenSecret).Expect().Status(http.StatusOK).JSON().Object()
 				checkImportJobResponse(response)
 			})
 		})
@@ -43,8 +42,7 @@ func TestSuccessfullyGetAnImportJob(t *testing.T) {
 		Convey("When a request to get the job with a specific id and the user is unauthenticated", func() {
 			Convey("Then the response returns status OK (200)", func() {
 
-				response := importAPI.GET("/jobs/{id}", jobID).Expect().Status(http.StatusOK).JSON().Object()
-				checkImportJobResponse(response)
+				importAPI.GET("/jobs/{id}", jobID).Expect().Status(http.StatusNotFound)
 
 			})
 		})
@@ -61,7 +59,7 @@ func TestSuccessfullyGetAnImportJob(t *testing.T) {
 func TestFailureToGetAnImportJob(t *testing.T) {
 
 	importCreateJobDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
+		Database:   cfg.MongoImportsDB,
 		Collection: collection,
 		Key:        "id",
 		Value:      jobID,
@@ -75,11 +73,10 @@ func TestFailureToGetAnImportJob(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
-	// TODO Dont skip test once endpoint has been refactored
-	SkipConvey("Given an import job exists", t, func() {
+	Convey("Given an import job exists", t, func() {
 		Convey("When a request to get the job with id does not exist", func() {
 			Convey("Then the response returns status not found (404)", func() {
-				importAPI.GET("/jobs/{id}", invalidJobID).WithHeader(internalToken, internalTokenID).
+				importAPI.GET("/jobs/{id}", uuid.NewV4().String()).WithHeader(tokenName, tokenSecret).
 					Expect().Status(http.StatusNotFound)
 			})
 		})
@@ -110,6 +107,5 @@ func checkImportJobResponse(response *httpexpect.Object) {
 	response.Value("links").Object().Value("self").Object().Value("id").Equal(jobID)
 	response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/jobs/" + jobID + "$")
 
-	// Raised a bug for this
-	response.NotContainsKey("last_updated")
+	response.ContainsKey("last_updated")
 }

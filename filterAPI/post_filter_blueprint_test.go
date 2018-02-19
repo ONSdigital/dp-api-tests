@@ -13,7 +13,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestSuccessfullyPostfilterBlueprint(t *testing.T) {
+func TestSuccessfullyPostFilterBlueprintForPublishedInstance(t *testing.T) {
 
 	instanceID := uuid.NewV4().String()
 	dimensionOptionOneID := uuid.NewV4().String()
@@ -110,7 +110,7 @@ func TestSuccessfullyPostfilterBlueprint(t *testing.T) {
 	}
 }
 
-func TestFailureToPostfilterBlueprint(t *testing.T) {
+func TestFailureToPostfilterBlueprintForPublishedInstance(t *testing.T) {
 
 	instanceID := uuid.NewV4().String()
 	dimensionOptionID := uuid.NewV4().String()
@@ -174,4 +174,73 @@ func TestFailureToPostfilterBlueprint(t *testing.T) {
 			os.Exit(1)
 		}
 	})
+}
+
+func TestPostFilterBlueprintForUnpublishedInstance(t *testing.T) {
+
+	instanceID := uuid.NewV4().String()
+	dimensionOptionOneID := uuid.NewV4().String()
+	dimensionOptionTwoID := uuid.NewV4().String()
+	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
+
+	var docs []*mongo.Doc
+
+	instance := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "instances",
+		Key:        "instance_id",
+		Value:      instanceID,
+		Update:     GetUnpublishedInstanceDataBSON(instanceID),
+	}
+
+	docs = append(docs, instance)
+	docs = append(docs, setupDimensionOptions(dimensionOptionOneID, GetValidAgeDimensionData(instanceID, "27")))
+	docs = append(docs, setupDimensionOptions(dimensionOptionTwoID, GetValidAgeDimensionData(instanceID, "42")))
+
+	if err := mongo.Setup(docs...); err != nil {
+		log.ErrorC("Unable to setup instance test resources", err, nil)
+		os.Exit(1)
+	}
+
+	Convey("Given an unpublished instance", t, func() {
+		Convey("When no authentication is provided on the POST request", func() {
+			Convey("Then the response returns a status of not found (404)", func() {
+				filterAPI.POST("/filters").WithBytes([]byte(GetValidPOSTCreateFilterJSON(instanceID))).
+					Expect().Status(http.StatusNotFound)
+			})
+		})
+
+		Convey("When invalid authentication is provided on the POST request", func() {
+			Convey("Then the response returns a status of not found (404)", func() {
+				filterAPI.POST("/filters").WithBytes([]byte(GetValidPOSTCreateFilterJSON(instanceID))).
+					WithHeader(internalTokenHeader, "failure").Expect().Status(http.StatusNotFound)
+			})
+		})
+
+		Convey("When valid authentication is provided on the POST request", func() {
+			Convey("Then the response returns a status of created (201)", func() {
+				response := filterAPI.POST("/filters").WithBytes([]byte(GetValidPOSTCreateFilterJSON(instanceID))).
+					WithHeader(internalTokenHeader, internalTokenID).Expect().Status(http.StatusCreated).JSON().Object()
+				response.Value("filter_id").NotNull()
+				response.Value("instance_id").Equal(instanceID)
+				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("/filters/(.+)/dimensions$")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filters/(.+)$")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
+				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+
+				//enable teardown of resources created during test
+				docs = append(docs, &mongo.Doc{
+					Database:   cfg.MongoFiltersDB,
+					Collection: collection,
+					Key:        "filter_id",
+					Value:      response.Value("filter_id").String().Raw(),
+				})
+			})
+		})
+
+	})
+	if err := mongo.Teardown(docs...); err != nil {
+		log.ErrorC("Unable to teardown instance", err, nil)
+		os.Exit(1)
+	}
 }

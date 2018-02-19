@@ -12,13 +12,21 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestSuccessfullyDeleteRemoveDimensionOptions(t *testing.T) {
+func TestSuccessfullyDeleteDimensionOptions(t *testing.T) {
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+
+	instance := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "instances",
+		Key:        "instance_id",
+		Value:      instanceID,
+		Update:     GetValidPublishedInstanceDataBSON(instanceID),
+	}
 
 	filter := &mongo.Doc{
 		Database:   cfg.MongoFiltersDB,
@@ -28,14 +36,16 @@ func TestSuccessfullyDeleteRemoveDimensionOptions(t *testing.T) {
 		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
 	}
 
+	docs := []*mongo.Doc{instance, filter}
+
 	Convey("Given an existing filter", t, func() {
 
-		if err := mongo.Setup(filter); err != nil {
+		if err := mongo.Setup(docs...); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
 
-		Convey("Remove an option to a dimension to filter on and Verify options are removed", func() {
+		Convey("Remove an option to a dimension to filter on and verify options are removed", func() {
 
 			filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/age/options/27", filterBlueprintID).Expect().Status(http.StatusOK)
 			filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).Expect().Status(http.StatusOK)
@@ -59,13 +69,13 @@ func TestSuccessfullyDeleteRemoveDimensionOptions(t *testing.T) {
 		})
 	})
 
-	if err := mongo.Teardown(filter); err != nil {
+	if err := mongo.Teardown(docs...); err != nil {
 		log.ErrorC("Unable to remove test data from mongo db", err, nil)
 		os.Exit(1)
 	}
 }
 
-func TestFailureToDeleteRemoveDimensionOptions(t *testing.T) {
+func TestFailureToDeleteDimensionOptions(t *testing.T) {
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
