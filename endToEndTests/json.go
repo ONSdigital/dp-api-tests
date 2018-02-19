@@ -23,12 +23,12 @@ func GetValidPOSTCreateFilterJSON(instanceID string) string {
 		},
 		{
 			"name": "aggregate",
-			"options": ["cpi1dim1A0","cpi1dim1G10100","cpi1dim1G10200","cpi1dim1G20100","cpi1dim1G20200","cpi1dim1G30100","cpi1dim1G30200","cpi1dim1G40100","cpi1dim1G40300","cpi1dim1G40400","cpi1dim1G40500","cpi1dim1G50100","cpi1dim1G50200","cpi1dim1G50300","cpi1dim1G50400","cpi1dim1G50500","cpi1dim1G50600","cpi1dim1G60100","cpi1dim1G70100","cpi1dim1G70200","cpi1dim1G70300","cpi1dim1G80100","cpi1dim1G80200",
-				"cpi1dim1G90100","cpi1dim1G90300","cpi1dim1G90400","cpi1dim1G90500","cpi1dim1G90600","cpi1dim1G100000","cpi1dim1G110100","cpi1dim1G110200","cpi1dim1G120100","cpi1dim1G120300","cpi1dim1G120500","cpi1dim1G120600","cpi1dim1G120700","cpi1dim1S10101", "cpi1dim1S10102"]
+			"options": ["cpih1dim1G100000","cpih1dim1G110200","cpih1dim1G120600","cpih1dim1G30200","cpih1dim1G40500","cpih1dim1G40900","cpih1dim1G50200","cpih1dim1G50600","cpih1dim1G90100","cpih1dim1G50500","cpih1dim1G60300","cpih1dim1G70200","cpih1dim1G70300","cpih1dim1G110100","cpih1dim1G120100","cpih1dim1S40100","cpih1dim1S40302","cpih1dim1G20200","cpih1dim1S50101","cpih1dim1G60100","cpih1dim1G60200","cpih1dim1S10102","cpih1dim1S10103",
+				"cpih1dim1S10109","cpih1dim1S120301","cpih1dim1S120400","cpih1dim1S120302","cpih1dim1S60300","cpih1dim1S120504","cpih1dim1S120503","cpih1dim1S120700","cpih1dim1S70102","cpih1dim1S30200","cpih1dim1S20102","cpih1dim1S40403","cpih1dim1S70302","cpih1dim1S40503", "cpih1dim1S50200"]
 		},
 		{
 			"name": "time",
-			"options": ["Jan-96"]
+			"options": ["Apr-05"]
 		}
 	]
 }`

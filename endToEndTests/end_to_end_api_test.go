@@ -57,7 +57,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 			// STEP 1 - Create job with state created
 			postJobResponse := importAPI.POST("/jobs").WithBytes([]byte(createValidJobJSON(recipe, location))).
-				Expect().Status(http.StatusCreated).JSON().Object()
+				WithHeader(internalTokenHeader, importAPIInternalToken).Expect().Status(http.StatusCreated).JSON().Object()
 
 			postJobResponse.Value("id").NotNull()
 			jobID := postJobResponse.Value("id").String().Raw()
@@ -96,7 +96,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			postDatasetResponse.Value("next").Object().Value("state").Equal("created")
 
 			// STEP 3 - Update job state to submitted
-			importAPI.PUT("/jobs/{id}", jobID).WithHeader(internalTokenHeader, internalTokenID).WithBytes([]byte(`{"state":"submitted"}`)).
+			importAPI.PUT("/jobs/{id}", jobID).WithHeader(internalTokenHeader, importAPIInternalToken).WithBytes([]byte(`{"state":"submitted"}`)).
 				Expect().Status(http.StatusOK)
 
 			// Check import job state is completed or submitted
@@ -441,8 +441,6 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(datasetResource.Current.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetName+"/editions/2017/versions/1")
 			So(datasetResource.Current.State, ShouldEqual, "published")
 
-			log.Debug("links", log.Data{"xls_link": versionResource.Downloads.XLS.URL, "csv_link": versionResource.Downloads.CSV.URL})
-
 			// Check data exists in elaticsearch by calling search API to find dimension option
 			getSearchResponse := searchAPI.GET("/search/datasets/{id}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetName, versionResource.Edition, strconv.Itoa(versionResource.Version), "aggregate").
 				WithQuery("q", "Overall Index").Expect().Status(http.StatusOK).JSON().Object()
@@ -614,8 +612,8 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 						os.Exit(1)
 					}
 
-					minExpectedXLSFileSize := int64(7424)
-					maxExpectedXLSFileSize := int64(7428)
+					minExpectedXLSFileSize := int64(7432)
+					maxExpectedXLSFileSize := int64(7436)
 					So(*filteredXLSFileSize, ShouldBeBetweenOrEqual, minExpectedXLSFileSize, maxExpectedXLSFileSize)
 
 					filterBlueprint := &mongo.Doc{
