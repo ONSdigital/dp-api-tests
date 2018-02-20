@@ -207,21 +207,27 @@ type Publisher struct {
 	HRef string `bson:"href,omitempty" json:"href,omitempty"`
 }
 
-// Edition represents information related to a single edition for a dataset
-type Edition struct {
-	Edition     string        `bson:"edition,omitempty"      json:"edition,omitempty"`
-	ID          string        `bson:"id,omitempty"          json:"id,omitempty"`
-	Links       *EditionLinks `bson:"links,omitempty"        json:"links,omitempty"`
-	State       string        `bson:"state,omitempty"        json:"state,omitempty"`
-	LastUpdated time.Time     `bson:"last_updated,omitempty" json:"-"`
+// EditionUpdate represents an evolving edition containing both the next and current edition
+type EditionUpdate struct {
+	ID      string              `bson:"_id,omitempty"         json:"id,omitempty"`
+	Edition string              `bson:"edition,omitempty"     json:"edition,omitempty"`
+	Links   *EditionUpdateLinks `bson:"links,omitempty"       json:"links,omitempty"`
+	Current *Edition            `bson:"current,omitempty"     json:"current,omitempty"`
+	Next    *Edition            `bson:"next,omitempty"        json:"next,omitempty"`
 }
 
-// EditionLinks represents a list of specific links related to the edition resource of a dataset
-type EditionLinks struct {
-	Dataset       *LinkObject `bson:"dataset,omitempty"        json:"dataset,omitempty"`
+// EditionUpdateLinks represents those links common the both the current and next edition
+type EditionUpdateLinks struct {
+	Dataset  *LinkObject `bson:"dataset,omitempty"        json:"dataset,omitempty"`
+	Self     *LinkObject `bson:"self,omitempty"           json:"self,omitempty"`
+	Versions *LinkObject `bson:"versions,omitempty"       json:"versions,omitempty"`
+}
+
+// Edition represents information related to a single edition for a dataset
+type Edition struct {
 	LatestVersion *LinkObject `bson:"latest_version,omitempty" json:"latest_version,omitempty"`
-	Self          *LinkObject `bson:"self,omitempty"           json:"self,omitempty"`
-	Versions      *LinkObject `bson:"versions,omitempty"       json:"versions,omitempty"`
+	State         string      `bson:"state,omitempty"        json:"state,omitempty"`
+	LastUpdated   time.Time   `bson:"last_updated,omitempty" json:"-"`
 }
 
 // Version represents information related to a single version for an edition of a dataset
@@ -379,11 +385,11 @@ func GetDataset(database, collection, key, value string) (DatasetUpdate, error) 
 }
 
 // GetEdition retrieves an edition document from mongo
-func GetEdition(database, collection, key, value string) (Edition, error) {
+func GetEdition(database, collection, key, value string) (EditionUpdate, error) {
 	s := session.Copy()
 	defer s.Close()
 
-	var edition Edition
+	var edition EditionUpdate
 	if err := s.DB(database).C(collection).Find(bson.M{key: value}).One(&edition); err != nil {
 		return edition, err
 	}

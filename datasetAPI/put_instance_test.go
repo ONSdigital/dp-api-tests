@@ -36,11 +36,14 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 			os.Exit(1)
 		}
 
+
 		Convey("When a PUT request is made to update instance meta data", func() {
 			Convey("Then the instance is updated and return a status ok (200)", func() {
 				datasetAPI.PUT("/instances/{instance_id}", instanceID).
 					WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPUTFullInstanceJSON)).
 					Expect().Status(http.StatusOK)
+
+					log.Debug("This instance", log.Data{"instance_ID":instanceID})
 
 				instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
 				if err != nil {
@@ -128,6 +131,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 		}
 	})
 }
+
 
 // TODO test to be able to update version after being published with an alert?
 
@@ -221,11 +225,13 @@ func TestFailureToPutInstance(t *testing.T) {
 			})
 		})
 
+
 		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				os.Exit(1)
 			}
 		}
+
 	})
 }
 
@@ -291,6 +297,7 @@ func setupInstance(datasetID, edition, instanceID string) ([]*mongo.Doc, error) 
 
 	return docs, nil
 }
+
 
 func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instance) {
 	alert := mongo.Alert{
@@ -379,15 +386,16 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 	return
 }
 
-func checkEditionDoc(datasetID, instanceID string, editionDoc mongo.Edition) {
+
+func checkEditionDoc(datasetID, instanceID string, editionDoc mongo.EditionUpdate) {
 	So(editionDoc.Edition, ShouldEqual, "2017")
 	So(editionDoc.Links.Dataset.ID, ShouldEqual, datasetID)
 	So(editionDoc.Links.Dataset.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID)
-	So(editionDoc.Links.LatestVersion.ID, ShouldEqual, "1")
-	So(editionDoc.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/1")
+	So(editionDoc.Next.LatestVersion.ID, ShouldEqual, "1")
+	So(editionDoc.Next.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/1")
 	So(editionDoc.Links.Self.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017")
 	So(editionDoc.Links.Versions.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions")
-	So(editionDoc.State, ShouldEqual, "created")
+	So(editionDoc.Next.State, ShouldEqual, "edition-confirmed")
 
 	return
 }

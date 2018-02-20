@@ -69,7 +69,7 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 			response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
 			response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + unpublishedEdition + "$")
 			response.Value("links").Object().Value("versions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + unpublishedEdition + "/versions$")
-			response.Value("state").Equal("edition-confirmed")
+			response.Value("next").Object().Value("state").Equal("edition-confirmed")
 		})
 
 		Convey("When user is unauthenticated", func() {
@@ -83,7 +83,7 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 			response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
 			response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
 			response.Value("links").Object().Value("versions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions$")
-			response.Value("state").Equal("published")
+			response.Value("current").Object().Value("state").Equal("published")
 		})
 	})
 
@@ -142,18 +142,19 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 			})
 		})
 
-		Convey("and an unpublished edition exists for dataset", func() {
+		Convey("and an unpublished edition exists for the dataset", func() {
 
 			if err := mongo.Setup(unpublishedEditionDoc); err != nil {
 				log.ErrorC("Was unable to run test", err, nil)
 				os.Exit(1)
 			}
 
-			Convey("Given an unauthenticated request to get an edition of the dataset", func() {
+			Convey("Given an unauthenticated request to get that edition", func() {
 				Convey("Then the response returns a not found (404)", func() {
 
 					datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).
 						Expect().Status(http.StatusNotFound)
+
 				})
 			})
 		})
@@ -165,3 +166,4 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 		}
 	})
 }
+
