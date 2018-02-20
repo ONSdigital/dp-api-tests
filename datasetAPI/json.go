@@ -264,7 +264,7 @@ func validPublishedEditionData(datasetID, editionID, edition string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"id":                        			editionID,
-			"next.links.edition":					edition,
+			"next.edition":					        edition,
 			"next.links.dataset.id":	 			datasetID,
 			"next.links.dataset.href":	 			cfg.DatasetAPIURL + "/datasets/" + datasetID,
 			"next.links.self.href":		 			cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
@@ -273,7 +273,7 @@ func validPublishedEditionData(datasetID, editionID, edition string) bson.M {
 			"next.links.latest_version.href":		cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/1",
 			"next.state":							"published",
 			"next.last_updated":					"2017-09-08", // TODO Should be isodate
-			"current.links.edition":				edition,
+			"current.edition":				        edition,
 			"current.links.dataset.id":	 			datasetID,
 			"current.links.dataset.href":	 		cfg.DatasetAPIURL + "/datasets/" + datasetID,
 			"current.links.self.href":		 		cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
@@ -291,7 +291,7 @@ func validUnpublishedEditionData(datasetID, editionID, edition string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"id":                        		editionID,
-			"next.links.edition":				edition,
+			"next.edition":				        edition,
 			"next.links.dataset.id":	 		datasetID,
 			"next.links.dataset.href":	 		cfg.DatasetAPIURL + "/datasets/" + datasetID,
 			"next.links.self.href":		 		cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
@@ -301,33 +301,6 @@ func validUnpublishedEditionData(datasetID, editionID, edition string) bson.M {
 			"next.state":						"edition-confirmed",
 			"next.last_updated":				"2017-09-08", // TODO Should be isodate
 			"test_data":                 		"true",
-		},
-	}
-}
-
-func validPublishedEditionWithUnpublishedUpdates(datasetID, editionID, edition string) bson.M {
-	return bson.M{
-		"$set": bson.M{
-			"id":                        			editionID,
-			"next.links.edition":					edition,
-			"next.links.dataset.id":	 			datasetID,
-			"next.links.dataset.href":	 			cfg.DatasetAPIURL + "/datasets/" + datasetID,
-			"next.links.self.href":		 			cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
-			"next.links.versions.href":	 			cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions",
-			"next.links.latest_version.id":			"2",
-			"next.links.latest_version.href":		cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/2",
-			"next.state":							"edition-confirmed",
-			"next.last_updated":					"2017-09-08", // TODO Should be isodate
-			"current.links.edition":				edition,
-			"current.links.dataset.id":	 			datasetID,
-			"current.links.dataset.href":	 		cfg.DatasetAPIURL + "/datasets/" + datasetID,
-			"current.links.self.href":		 		cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
-			"current.links.versions.href":	 		cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions",
-			"current.links.latest_version.id":		"1",
-			"current.links.latest_version.href":	cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/1",
-			"current.state":						"published",
-			"current.last_updated":					"2017-09-08", // TODO Should be isodate
-			"test_data":                 			"true",
 		},
 	}
 }

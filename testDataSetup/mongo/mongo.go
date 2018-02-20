@@ -390,11 +390,11 @@ func GetDataset(database, collection, key, value string) (DatasetUpdate, error) 
 }
 
 // GetEdition retrieves an edition document from mongo
-func GetEdition(database, collection, key, value string) (Edition, error) {
+func GetEdition(database, collection, key, value string) (EditionUpdate, error) {
 	s := session.Copy()
 	defer s.Close()
 
-	var edition Edition
+	var edition EditionUpdate
 	if err := s.DB(database).C(collection).Find(bson.M{key: value}).One(&edition); err != nil {
 		return edition, err
 	}

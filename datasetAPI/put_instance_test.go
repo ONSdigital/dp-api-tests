@@ -107,7 +107,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 						e := &mongo.Doc{
 							Database:   cfg.MongoDB,
 							Collection: "editions",
-							Key:        "links.self.href",
+							Key:        "next.links.self.href",
 							Value:      instance.Links.Edition.HRef,
 						}
 
@@ -379,15 +379,15 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 	return
 }
 
-func checkEditionDoc(datasetID, instanceID string, editionDoc mongo.Edition) {
-	So(editionDoc.Edition, ShouldEqual, "2017")
-	So(editionDoc.Links.Dataset.ID, ShouldEqual, datasetID)
-	So(editionDoc.Links.Dataset.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID)
-	So(editionDoc.Links.LatestVersion.ID, ShouldEqual, "1")
-	So(editionDoc.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/1")
-	So(editionDoc.Links.Self.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017")
-	So(editionDoc.Links.Versions.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions")
-	So(editionDoc.State, ShouldEqual, "created")
+func checkEditionDoc(datasetID, instanceID string, editionDoc mongo.EditionUpdate) {
+	So(editionDoc.Next.Edition, ShouldEqual, "2017")
+	So(editionDoc.Next.Links.Dataset.ID, ShouldEqual, datasetID)
+	So(editionDoc.Next.Links.Dataset.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID)
+	So(editionDoc.Next.Links.LatestVersion.ID, ShouldEqual, "1")
+	So(editionDoc.Next.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/1")
+	So(editionDoc.Next.Links.Self.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017")
+	So(editionDoc.Next.Links.Versions.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions")
+	So(editionDoc.Next.State, ShouldEqual, "created")
 
 	return
 }
