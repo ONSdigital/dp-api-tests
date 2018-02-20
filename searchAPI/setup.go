@@ -5,12 +5,9 @@ import (
 	"path/filepath"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
-	"github.com/ian-kent/go-log/log"
 )
 
 func createSearchIndex(url, instanceID, dimension string) error {
-	log.Info("nath got here", nil)
-
 	currentPath, err := os.Getwd()
 	if err != nil {
 		return err

@@ -143,7 +143,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					} else {
 						So(instanceResource.State, ShouldEqual, "submitted")
 						So(instanceResource.ImportTasks.ImportObservations.State, ShouldEqual, "created")
-						time.Sleep(time.Millisecond * 100)
+						time.Sleep(time.Millisecond * 100) // Relax the continuous battering of mongo database
 					}
 				}
 			}
@@ -155,8 +155,9 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			}
 
 			So(instanceResource.Headers, ShouldResemble, &[]string{"V4_0", "time", "time", "uk-only", "geography", "cpih1dim1aggid", "aggregate"})
-			//So(instanceResource.ImportTasks.ImportObservations.InsertedObservations, ShouldResemble, totalObservations)
 			So(instanceResource.State, ShouldEqual, "submitted")
+			So(instanceResource.ImportTasks.ImportObservations.State, ShouldEqual, "completed")
+			So(instanceResource.ImportTasks.ImportObservations.InsertedObservations, ShouldResemble, totalObservations)
 			So(instanceResource.TotalObservations, ShouldResemble, totalObservations)
 
 			// Check dimension options

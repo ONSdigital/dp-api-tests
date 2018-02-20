@@ -19,7 +19,8 @@ const (
 	region     = "eu-west-1"
 	bucketName = "ons-dp-cmd-test"
 
-	datasetName = "cpih01"
+	datasetName      = "cpih01"
+	genericHierarchy = "cpih1dim1aggid"
 
 	internalTokenHeader    = "Internal-Token"
 	internalTokenID        = "FD0108EA-825D-411C-9B1D-41EF7727F465"
@@ -148,11 +149,12 @@ func deleteMongoTestData(datasetID string) bool {
 func generateGenericHierarchy() error {
 	datastore, err := neo4j.NewDatastore(cfg.Neo4jAddr, "", neo4j.GenericHierarchyCPIHTestData)
 	if err != nil {
-		log.ErrorC("Unable to connect to neo4j", err, nil)
+		log.ErrorC("unable to connect to neo4j", err, nil)
 		return err
 	}
 
-	if err = datastore.CreateGenericHierarchy("cpih1dim1aggid"); err != nil {
+	if err = datastore.CreateGenericHierarchy(genericHierarchy); err != nil {
+		log.ErrorC("unable to create generic hierarchy", err, log.Data{"generic_hierarchy": genericHierarchy})
 		return err
 	}
 

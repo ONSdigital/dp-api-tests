@@ -88,6 +88,7 @@ func (i *Index) CreateSearchIndex() error {
 	// Create index
 	indexMappings, err := ioutil.ReadFile(i.MappingsFile)
 	if err != nil {
+		log.ErrorC("failed to read elasticsearch mappings file", err, log.Data{"elasticsearch_mappings_file": i.MappingsFile})
 		return err
 	}
 
@@ -100,6 +101,7 @@ func (i *Index) CreateSearchIndex() error {
 	// Add docs to index
 	file, err := os.Open(i.TestDataFile)
 	if err != nil {
+		log.ErrorC("fail to open file containing elasticsearch test data", err, log.Data{"json_file": i.TestDataFile})
 		return err
 	}
 	defer file.Close()
@@ -122,6 +124,7 @@ func (i *Index) CreateSearchIndex() error {
 	}
 
 	if err := scanner.Err(); err != nil {
+		log.ErrorC("encountered problem scanning file", err, log.Data{"json_file": i.TestDataFile})
 		return err
 	}
 

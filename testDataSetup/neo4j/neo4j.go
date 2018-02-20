@@ -106,7 +106,6 @@ func (ds *Datastore) CreateGenericHierarchy(hierarchyCode string) error {
 		return err
 	}
 
-	//b, err := ioutil.ReadFile(ds.testData)
 	file, err := os.Open(ds.testData)
 	if err != nil {
 		return err
