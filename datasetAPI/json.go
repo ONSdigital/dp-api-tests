@@ -444,8 +444,8 @@ func validCompletedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"links.version.id":      "2",
 			"release_date":          "2017-12-12", // TODO Should be isodate
 			"state":                 "completed",
-			"total_inserted_observations": 1000,
-			"total_observations":          1000,
+			"total_observations": 1000,
+			"import_tasks.import_observations.total_inserted_observations": 1000,
 			"version":                     2,
 			"test_data":                   "true",
 		},
