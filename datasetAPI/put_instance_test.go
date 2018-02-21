@@ -99,7 +99,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 							log.ErrorC("Was unable to remove test data", err, nil)
 							os.Exit(1)
 						}
-						log.Info("mike", log.Data{"edition":edition})
+
 					}
 
 					checkEditionDoc(datasetID, instanceID, edition)
