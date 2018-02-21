@@ -27,7 +27,7 @@ func TestGetInstanceDimensionOptions_ReturnsAllDimensionOptionsFromAnInstance(t 
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedDatasetData(datasetID),
+		Update:     validPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	editionDoc := &mongo.Doc{

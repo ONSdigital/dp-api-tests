@@ -136,7 +136,7 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedDatasetData(datasetID),
+		Update:     validPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	unpublishedEdition := &mongo.Doc{
@@ -284,7 +284,7 @@ func setupPublishedAndUnpublishedVersions(datasetID, editionID, edition, instanc
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedDatasetData(datasetID),
+		Update:     validPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	publishedEditionDoc := &mongo.Doc{

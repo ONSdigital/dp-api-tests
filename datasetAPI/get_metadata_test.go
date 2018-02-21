@@ -257,7 +257,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 			Collection: collection,
 			Key:        "_id",
 			Value:      datasetID,
-			Update:     validPublishedDatasetData(datasetID),
+			Update:     validPublishedWithUpdatesDatasetData(datasetID),
 		}
 
 		if err := mongo.Setup(publishedDataset); err != nil {
@@ -335,7 +335,7 @@ func setupMetadataDocs(datasetID, editionID, edition, instanceID, unpublishedIns
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedDatasetData(datasetID),
+		Update:     validPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	publishedEditionDoc := &mongo.Doc{

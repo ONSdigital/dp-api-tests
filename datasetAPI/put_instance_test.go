@@ -272,7 +272,7 @@ func setupInstance(datasetID, edition, instanceID string) ([]*mongo.Doc, error) 
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedDatasetData(datasetID),
+		Update:     validPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	instanceOneDoc := &mongo.Doc{
@@ -373,8 +373,10 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 	So(instance.ReleaseDate, ShouldEqual, "2017-11-11")
 	So(instance.State, ShouldEqual, state)
 	So(instance.Temporal, ShouldResemble, &[]mongo.TemporalFrequency{temporal})
-	So(instance.TotalObservations, ShouldResemble, &observations)
-	So(instance.ImportTasks.ImportObservations.InsertedObservations, ShouldResemble, &observations)
+	So(instance.TotalObservations, ShouldEqual, observations)
+	So(instance.ImportTasks, ShouldNotBeNil)
+	So(instance.ImportTasks.ImportObservations, ShouldNotBeNil)
+	So(instance.ImportTasks.ImportObservations.InsertedObservations, ShouldEqual, observations)
 
 	return
 }
