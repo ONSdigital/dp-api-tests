@@ -141,8 +141,9 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 
 				// Check edition has been updated
 				So(updatedEdition.ID, ShouldEqual, editionID)
-				So(updatedEdition.Next.State, ShouldEqual, "published")
-				So(updatedEdition.Current, ShouldEqual, updatedEdition.Next)
+				So(updatedEdition.Current.State, ShouldEqual, "published")
+				So(updatedEdition.Current.Links.Versions.ID , ShouldEqual, updatedEdition.Next.Links.Versions.ID)
+				So(updatedEdition.Current.Links.Versions.HRef , ShouldEqual, updatedEdition.Next.Links.Versions.HRef)
 
 				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
 				if err != nil {
@@ -232,9 +233,12 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				So(updatedEdition.ID, ShouldEqual, editionID)
 				So(updatedEdition.Next.State, ShouldEqual, "published")
 				log.Debug("latest version?", log.Data{"latest_version": updatedEdition.Next.Links.LatestVersion})
-				So(updatedEdition.Next.Links.LatestVersion.ID, ShouldEqual, "2")
-				So(updatedEdition.Next.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2018/versions/2")
-				So(updatedEdition.Current, ShouldEqual, updatedEdition.Next)
+				So(updatedEdition.Current.Links.LatestVersion.ID, ShouldEqual, "1")
+				So(updatedEdition.Current.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2018/versions/1")
+
+				So(updatedEdition.Current.Links.LatestVersion.ID, ShouldEqual, updatedEdition.Next.Links.LatestVersion.ID)
+				So(updatedEdition.Current.Links.LatestVersion.HRef, ShouldEqual, updatedEdition.Next.Links.LatestVersion.HRef)
+				So(updatedEdition.Current.State, ShouldEqual, updatedEdition.Next.State)
 
 				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
 				if err != nil {
@@ -292,10 +296,11 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 
 				// Check edition has been updated
 				So(updatedEdition.ID, ShouldEqual, editionID)
-				So(updatedEdition.Next.State, ShouldEqual, "published")
-				So(updatedEdition.Next.Links.LatestVersion.ID, ShouldEqual, "2")
-				So(updatedEdition.Next.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/2")
-				So(updatedEdition.Current, ShouldEqual, updatedEdition.Next)
+				So(updatedEdition.Current.State, ShouldEqual, "published")
+				So(updatedEdition.Current.Links.LatestVersion.ID, ShouldEqual, "1")
+				So(updatedEdition.Current.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/1")
+				So(updatedEdition.Current.Links.LatestVersion.ID, ShouldEqual, updatedEdition.Next.Links.LatestVersion.ID)
+				So(updatedEdition.Current.Links.LatestVersion.HRef, ShouldEqual, updatedEdition.Next.Links.LatestVersion.HRef)
 
 				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
 				if err != nil {

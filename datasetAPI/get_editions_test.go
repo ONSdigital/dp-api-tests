@@ -66,9 +66,9 @@ func TestSuccessfullyGetListOfDatasetEditions(t *testing.T) {
 				response.Value("items").Array().Length().Equal(2)
 				checkEditionsResponse(datasetID, editionID, "2017", response)
 
-				response.Value("items").Array().Element(1).Object().Value("edition").Equal("2018")
 				response.Value("items").Array().Element(1).Object().Value("id").Equal(unpublishedEditionID)
-				response.Value("items").Array().Element(1).Object().Value("state").Equal("edition-confirmed")
+				response.Value("items").Array().Element(1).Object().Value("next").Object().Value("edition").Equal("2018")
+				response.Value("items").Array().Element(1).Object().Value("next").Object().Value("state").Equal("edition-confirmed")
 			})
 		})
 
@@ -79,7 +79,7 @@ func TestSuccessfullyGetListOfDatasetEditions(t *testing.T) {
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("items").Array().Length().Equal(1)
-				checkEditionsResponse(datasetID, editionID, "2017", response)
+				checkPublicEditionsResponse(datasetID, "2017", response)
 			})
 		})
 
@@ -166,8 +166,18 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 }
 
 func checkEditionsResponse(datasetID, editionID, edition string, response *httpexpect.Object) {
-	response.Value("items").Array().Element(0).Object().Value("edition").Equal(edition)
 	response.Value("items").Array().Element(0).Object().Value("id").Equal(editionID)
+	response.Value("items").Array().Element(0).Object().Value("next").Object().Value("edition").Equal(edition)
+	response.Value("items").Array().Element(0).Object().Value("next").Object().Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
+	response.Value("items").Array().Element(0).Object().Value("next").Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
+	response.Value("items").Array().Element(0).Object().Value("next").Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
+	response.Value("items").Array().Element(0).Object().Value("next").Object().Value("links").Object().Value("versions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions$")
+	response.Value("items").Array().Element(0).Object().Value("next").Object().Value("state").Equal("published")
+}
+
+// A PublicEditionsResponse consists of the flattened contents of the edition.Current sub document
+func checkPublicEditionsResponse(datasetID, edition string, response *httpexpect.Object) {
+	response.Value("items").Array().Element(0).Object().Value("edition").Equal(edition)
 	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
 	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
 	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
