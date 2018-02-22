@@ -67,7 +67,7 @@ var temporal = mongo.TemporalFrequency{
 	StartDate: "2014-09-09",
 }
 
-func validPublishedDatasetData(datasetID string) bson.M {
+func validPublishedWithUpdatesDatasetData(datasetID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"id": datasetID,
@@ -134,6 +134,73 @@ func validPublishedDatasetData(datasetID string) bson.M {
 	}
 }
 
+func validPublishedDatasetData(datasetID string) bson.M {
+	return bson.M{
+		"$set": bson.M{
+			"id": datasetID,
+			"current.collection_id":             "108064B3-A808-449B-9041-EA3A2F72CFAA",
+			"current.contacts":                  []mongo.ContactDetails{contact},
+			"current.description":               "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
+			"current.id":                        datasetID,
+			"current.keywords":                  []string{"cpi", "boy"},
+			"current.last_updated":              "2017-06-06", // TODO this should be an isodate
+			"current.license":                   "ONS license",
+			"current.links.access_rights.href":  "http://ons.gov.uk/accessrights",
+			"current.links.editions.href":       cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions",
+			"current.links.latest_version.id":   "1",
+			"current.links.latest_version.href": cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/1",
+			"current.links.self.href":           cfg.DatasetAPIURL + "/datasets/" + datasetID,
+			"current.methodologies":             []mongo.GeneralDetails{methodology},
+			"current.national_statistic":        true,
+			"current.next_release":              "2017-10-10",
+			"current.publications":              []mongo.GeneralDetails{publication},
+			"current.publisher.name":            "Automation Tester",
+			"current.publisher.type":            "publisher",
+			"current.publisher.href":            "https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/consumerpriceinflation/aug2017",
+			"current.qmi.description":           "Consumer price inflation is the rate at which the prices of goods and services bought by households rise and fall",
+			"current.qmi.href":                  "https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi",
+			"current.qmi.title":                 "Consumer Price Inflation (includes all 3 indices – CPIH, CPI and RPI)",
+			"current.related_datasets":          []mongo.GeneralDetails{relatedDatasets},
+			"current.release_frequency":         "Monthly",
+			"current.state":                     "published",
+			"current.theme":                     "Goods and services",
+			"current.title":                     "CPI",
+			"current.unit_of_measure":           "Pounds Sterling",
+			"current.uri":                       "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation",
+			"next.collection_id":                "208064B3-A808-449B-9041-EA3A2F72CFAB",
+			"next.contacts":                     []mongo.ContactDetails{contact},
+			"next.description":                  "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
+			"next.id":                           datasetID,
+			"next.keywords":                     []string{"cpi", "boy"},
+			"next.last_updated":                 "2017-06-06", // TODO this should be an isodate
+			"next.license":                      "ONS license",
+			"next.links.access_rights.href":     "http://ons.gov.uk/accessrights",
+			"next.links.editions.href":          cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions",
+			"next.links.latest_version.id":      "1",
+			"next.links.latest_version.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2018/versions/1",
+			"next.links.self.href":              cfg.DatasetAPIURL + "/datasets/" + datasetID,
+			"next.methodologies":                []mongo.GeneralDetails{methodology},
+			"next.national_statistic":           true,
+			"next.next_release":                 "2017-10-10",
+			"next.publications":                 []mongo.GeneralDetails{publication},
+			"next.publisher.name":               "Automation Tester",
+			"next.publisher.type":               "publisher",
+			"next.publisher.href":               "https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/consumerpriceinflation/aug2017",
+			"next.qmi.description":              "Consumer price inflation is the rate at which the prices of goods and services bought by households rise and fall",
+			"next.qmi.href":                     "https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi",
+			"next.qmi.title":                    "Consumer Price Inflation (includes all 3 indices – CPIH, CPI and RPI)",
+			"next.related_datasets":             []mongo.GeneralDetails{relatedDatasets},
+			"next.release_frequency":            "Monthly",
+			"next.state":                        "published",
+			"next.theme":                        "Goods and services",
+			"next.title":                        "CPI",
+			"next.unit_of_measure":              "Pounds Sterling",
+			"next.uri":                          "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation",
+			"test_data":                         "true",
+		},
+	}
+}
+
 func validAssociatedDatasetData(datasetID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
@@ -148,7 +215,7 @@ func validAssociatedDatasetData(datasetID string) bson.M {
 			"next.links.editions.href":       cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions",
 			"next.links.latest_version.id":   "1",
 			"next.links.latest_version.href": cfg.DatasetAPIURL + "/datasets" + datasetID + "/editions/2018/versions/1",
-			"next.links.self.href":           cfg.DatasetAPIURL + "/datasets" + datasetID,
+			"next.links.self.href":           cfg.DatasetAPIURL + "/datasets/" + datasetID,
 			"next.methodologies":             []mongo.GeneralDetails{methodology},
 			"next.national_statistic":        true,
 			"next.next_release":              "2018-10-10",
@@ -364,6 +431,7 @@ func validAssociatedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"state":                 "associated",
 			"temporal":              []mongo.TemporalFrequency{temporal},
 			"import_tasks.import_observations.total_inserted_observations": 1000,
+			"import_tasks.import_observations.state":                       "completed",
 			"total_observations":                                           1000,
 			"version":                                                      2,
 			"test_data":                                                    "true",
@@ -374,34 +442,35 @@ func validAssociatedInstanceData(datasetID, edition, instanceID string) bson.M {
 func validEditionConfirmedInstanceData(datasetID, edition, instanceID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"dimensions":                  []mongo.CodeList{dimension},
-			"downloads.csv.url":           cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
-			"downloads.csv.size":          "10",
-			"downloads.xls.url":           cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
-			"downloads.xls.size":          "24",
-			"edition":                     edition,
-			"headers":                     []string{"time", "geography"},
-			"id":                          instanceID,
-			"last_updated":                "2017-09-08", // TODO Should be isodate
-			"license":                     "ONS license",
-			"links.job.id":                "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
-			"links.job.href":              cfg.DatasetAPIURL + "/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
-			"links.dataset.id":            datasetID,
-			"links.dataset.href":          cfg.DatasetAPIURL + "/datasets/" + datasetID,
-			"links.dimensions.href":       cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/2/dimensions",
-			"links.edition.id":            edition,
-			"links.edition.href":          cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
-			"links.self.href":             cfg.DatasetAPIURL + "/instances/" + instanceID,
-			"links.spatial.href":          "http://ons.gov.uk/geographylist",
-			"links.version.href":          cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/2",
-			"links.version.id":            "2",
-			"release_date":                "2017-12-12", // TODO Should be isodate
-			"state":                       "edition-confirmed",
-			"temporal":                    []mongo.TemporalFrequency{temporal},
-			"total_inserted_observations": 1000,
-			"total_observations":          1000,
-			"version":                     2,
-			"test_data":                   "true",
+			"dimensions":            []mongo.CodeList{dimension},
+			"downloads.csv.url":     cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
+			"downloads.csv.size":    "10",
+			"downloads.xls.url":     cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
+			"downloads.xls.size":    "24",
+			"edition":               edition,
+			"headers":               []string{"time", "geography"},
+			"id":                    instanceID,
+			"last_updated":          "2017-09-08", // TODO Should be isodate
+			"license":               "ONS license",
+			"links.job.id":          "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+			"links.job.href":        cfg.DatasetAPIURL + "/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+			"links.dataset.id":      datasetID,
+			"links.dataset.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID,
+			"links.dimensions.href": cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/2/dimensions",
+			"links.edition.id":      edition,
+			"links.edition.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
+			"links.self.href":       cfg.DatasetAPIURL + "/instances/" + instanceID,
+			"links.spatial.href":    "http://ons.gov.uk/geographylist",
+			"links.version.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/2",
+			"links.version.id":      "2",
+			"release_date":          "2017-12-12", // TODO Should be isodate
+			"state":                 "edition-confirmed",
+			"temporal":              []mongo.TemporalFrequency{temporal},
+			"import_tasks.import_observations.state":                       "completed",
+			"import_tasks.import_observations.total_inserted_observations": 1000,
+			"total_observations":                                           1000,
+			"version":                                                      2,
+			"test_data":                                                    "true",
 		},
 	}
 }
@@ -432,10 +501,11 @@ func validCompletedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"links.version.id":      "2",
 			"release_date":          "2017-12-12", // TODO Should be isodate
 			"state":                 "completed",
-			"total_inserted_observations": 1000,
-			"total_observations":          1000,
-			"version":                     2,
-			"test_data":                   "true",
+			"import_tasks.import_observations.state":                       "completed",
+			"import_tasks.import_observations.total_inserted_observations": 1000,
+			"total_observations":                                           1000,
+			"version":                                                      2,
+			"test_data":                                                    "true",
 		},
 	}
 }
@@ -572,6 +642,58 @@ var validPUTUpdateDatasetJSON = `{
 		"uri": "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/producerpriceindex"
 }`
 
+var validPUTUpdateDatasetWithoutStateJSON = `{
+	"collection_id": "308064B3-A808-449B-9041-EA3A2F72CFAC",
+	"contacts": [
+		{
+		"email": "rpi@onstest.gov.uk",
+		"name": "Test Automation",
+		"telephone": "+44 (0)1833 456123"
+		}
+	],
+	"description": "Producer Price Indices (PPIs) are a series of economic indicators that measure the price movement of goods bought and sold by UK manufacturers",
+	"keywords": [
+		"rpi"
+	],
+	"methodologies": [
+		{
+		"description": "The Producer Price Index (PPI) is a monthly survey that measures the price changes of goods bought and sold by UK manufacturers",
+		"href": "https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/producerpriceindicesqmi",
+		"title": "Producer price indices QMI"
+		}
+	],
+	"national_statistic": false,
+	"next_release": "18 September 2017",
+	"publications": [
+		{
+		"description": "Changes in the prices of goods bought and sold by UK manufacturers including price indices of materials and fuels purchased (input prices) and factory gate prices (output prices)",
+		"href": "https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/producerpriceinflation/september2017",
+		"title": "Producer price inflation, UK: September 2017"
+		}
+	],
+	"publisher": {
+		"name": "Test Automation Engineer",
+		"type": "publisher",
+		"href": "https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/producerpriceinflation/september2017"
+	},
+	"qmi": {
+		"description": "PPI provides an important measure of inflation",
+		"href": "https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/producerpriceindicesqmi",
+		"title": "The Producer Price Index (PPI) is a monthly survey that measures the price changes"
+	},
+	"related_datasets": [
+		{
+		"href": "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/producerpriceindex",
+		"title": "Producer Price Index time series dataset"
+		}
+	],
+	"release_frequency": "Quarterly",
+	"theme": "Price movement of goods",
+	"title": "RPI",
+	"unit_of_measure": "Pounds",
+	"uri": "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/producerpriceindex"
+}`
+
 var validPOSTCreateInstanceJSON = `
 {
   "links": {
@@ -597,7 +719,7 @@ var validPOSTCreateFullInstanceJSON = `
 	"dimensions": [
 	  {
 			"description": "The age ranging from 16 to 75+",
-			"href": "http://localhost:22400//code-lists/43513D18-B4D8-4227-9820-492B2971E7T5",
+			"href": "http://localhost:22400/code-lists/43513D18-B4D8-4227-9820-492B2971E7T5",
 			"id": "43513D18-B4D8-4227-9820-492B2971E7T5",
 			"name": "age"
 	  }

@@ -89,7 +89,7 @@ func TestGetVersions_Failed(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedDatasetData(datasetID),
+		Update:     validPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	publishedEdition := &mongo.Doc{
@@ -283,7 +283,7 @@ func setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpu
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedDatasetData(datasetID),
+		Update:     validPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	editionDoc := &mongo.Doc{

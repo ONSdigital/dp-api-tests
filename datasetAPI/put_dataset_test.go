@@ -14,7 +14,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestSuccessfulyUpdateDataset(t *testing.T) {
+func TestSuccessfullyUpdateDataset(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
 
@@ -26,6 +26,14 @@ func TestSuccessfulyUpdateDataset(t *testing.T) {
 		Key:        "_id",
 		Value:      datasetID,
 		Update:     validPublishedDatasetData(datasetID),
+	}
+
+	unpublishedUpdates := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "datasets",
+		Key:        "_id",
+		Value:      datasetID,
+		Update:     validPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	Convey("Given a published dataset already exists", t, func() {
@@ -44,13 +52,37 @@ func TestSuccessfulyUpdateDataset(t *testing.T) {
 		// Check dataset current subdocument
 		expectedCurrentSubDoc := expectedCurrentSubDoc(datasetID, "2017")
 		So(originalDataset.Current, ShouldResemble, expectedCurrentSubDoc)
+		So(originalDataset.Next.State, ShouldResemble, "published")
 
-		Convey("When a Put request is made to update the dataset", func() {
+		Convey("When a Put request is made to update the dataset including state", func() {
 			Convey("Then the dataset resource is updated and response contains a status ok (200)", func() {
 				datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPUTUpdateDatasetJSON)).
 					Expect().Status(http.StatusOK)
 
-				expectedNextSubDoc := expectedNextSubDoc(datasetID, "2018")
+				expectedNextSubDoc := expectedNextSubDoc(datasetID, "2018", "associated")
+
+				dataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
+				if err != nil {
+					log.ErrorC("Unable to retrieve updated dataset document", err, nil)
+					os.Exit(1)
+				}
+
+				// Check dataset current subdocument has not changed
+				So(dataset.Current, ShouldResemble, expectedCurrentSubDoc)
+
+				// Check dataset next subdocument does not match the original dataset next subdocument
+				So(originalDataset.Next, ShouldNotResemble, expectedNextSubDoc)
+
+				So(dataset.Next, ShouldResemble, expectedNextSubDoc)
+			})
+		})
+
+		Convey("When a Put request is made to update the dataset without state", func() {
+			Convey("Then the dataset next resource is updated to a state of created and response contains a status ok (200)", func() {
+				datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPUTUpdateDatasetWithoutStateJSON)).
+					Expect().Status(http.StatusOK)
+
+				expectedNextSubDoc := expectedNextSubDoc(datasetID, "2018", "created")
 
 				dataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
 				if err != nil {
@@ -74,6 +106,52 @@ func TestSuccessfulyUpdateDataset(t *testing.T) {
 			}
 		}
 	})
+
+	Convey("Given a published dataset already exists, and has unpublished updates", t, func() {
+
+		if err := mongo.Setup(unpublishedUpdates); err != nil {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
+
+		originalDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
+		if err != nil {
+			log.ErrorC("Unable to retrieve original dataset document", err, nil)
+			os.Exit(1)
+		}
+
+		// Check dataset current subdocument
+		currentSubDoc := expectedCurrentSubDoc(datasetID, "2017")
+		So(originalDataset.Current, ShouldResemble, currentSubDoc)
+		So(originalDataset.Next.State, ShouldNotEqual, "published")
+
+		Convey("When a Put request is made to update the dataset state to published", func() {
+			Convey("Then the dataset resource is updated and response contains a status ok (200)", func() {
+				datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader(internalToken, internalTokenID).WithBytes([]byte(`{"state":"published"}`)).
+					Expect().Status(http.StatusOK)
+
+				expectedSubDoc := expectedPublishedSubDoc(datasetID, "2018")
+
+				dataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
+				if err != nil {
+					log.ErrorC("Unable to retrieve updated dataset document", err, nil)
+					os.Exit(1)
+				}
+
+				// Check dataset current subdocument has been updated, and the next matches
+				So(dataset.Current, ShouldResemble, expectedSubDoc)
+				So(dataset.Next, ShouldResemble, expectedSubDoc)
+				So(dataset.Next.State, ShouldResemble, "published")
+			})
+		})
+
+		if err := mongo.Teardown(unpublishedUpdates); err != nil {
+			if err != mgo.ErrNotFound {
+				os.Exit(1)
+			}
+		}
+	})
+
 }
 
 func TestFailureToUpdateDataset(t *testing.T) {
@@ -86,7 +164,7 @@ func TestFailureToUpdateDataset(t *testing.T) {
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedDatasetData(datasetID),
+		Update:     validPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	Convey("Given a published dataset does not exist", t, func() {
@@ -212,7 +290,16 @@ func expectedCurrentSubDoc(datasetID, edition string) *mongo.Dataset {
 	return currentSubDoc
 }
 
-func expectedNextSubDoc(datasetID, edition string) *mongo.Dataset {
+func expectedPublishedSubDoc(datasetID, edition string) *mongo.Dataset {
+	base := expectedCurrentSubDoc(datasetID, edition)
+	base.CollectionID = "208064B3-A808-449B-9041-EA3A2F72CFAB"
+	base.NextRelease = "2018-10-10"
+	base.State = "published"
+
+	return base
+}
+
+func expectedNextSubDoc(datasetID, edition, state string) *mongo.Dataset {
 	contactDetails := mongo.ContactDetails{
 		Email:     "rpi@onstest.gov.uk",
 		Name:      "Test Automation",
@@ -276,7 +363,7 @@ func expectedNextSubDoc(datasetID, edition string) *mongo.Dataset {
 		},
 		RelatedDatasets:  []mongo.GeneralDetails{relatedDataset},
 		ReleaseFrequency: "Quarterly",
-		State:            "associated",
+		State:            state,
 		Theme:            "Price movement of goods",
 		Title:            "RPI",
 		UnitOfMeasure:    "Pounds",

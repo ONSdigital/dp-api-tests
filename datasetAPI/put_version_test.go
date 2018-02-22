@@ -526,7 +526,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedDatasetData(datasetID),
+		Update:     validPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	associatedDatasetDoc := &mongo.Doc{

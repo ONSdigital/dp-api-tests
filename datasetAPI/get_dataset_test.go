@@ -23,7 +23,7 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedDatasetData(datasetID),
+		Update:     validPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	if err := mongo.Setup(dataset); err != nil {
