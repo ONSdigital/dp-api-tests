@@ -64,12 +64,12 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("id").Equal(unpublishedEditionID)
-			response.Value("edition").Equal(unpublishedEdition)
-			response.Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
-			response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
-			response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + unpublishedEdition + "$")
-			response.Value("links").Object().Value("versions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + unpublishedEdition + "/versions$")
-			response.Value("state").Equal("edition-confirmed")
+			response.Value("next").Object().Value("edition").Equal(unpublishedEdition)
+			response.Value("next").Object().Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
+			response.Value("next").Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
+			response.Value("next").Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + unpublishedEdition + "$")
+			response.Value("next").Object().Value("links").Object().Value("versions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + unpublishedEdition + "/versions$")
+			response.Value("next").Object().Value("state").Equal("edition-confirmed")
 		})
 
 		Convey("When user is unauthenticated", func() {
@@ -77,7 +77,6 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 			response := datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, edition).
 				Expect().Status(http.StatusOK).JSON().Object()
 
-			response.Value("id").Equal(editionID)
 			response.Value("edition").Equal(edition)
 			response.Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
 			response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")

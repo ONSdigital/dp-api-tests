@@ -93,12 +93,13 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 					So(instance.Version, ShouldEqual, 2)
 
 					// Check edition document has been created
-					edition, err := mongo.GetEdition(cfg.MongoDB, "editions", "links.self.href", instance.Links.Edition.HRef)
+					edition, err := mongo.GetEdition(cfg.MongoDB, "editions", "next.links.self.href", instance.Links.Edition.HRef)
 					if err != nil {
 						if err != mgo.ErrNotFound {
 							log.ErrorC("Was unable to remove test data", err, nil)
 							os.Exit(1)
 						}
+
 					}
 
 					checkEditionDoc(datasetID, instanceID, edition)
@@ -107,7 +108,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 						e := &mongo.Doc{
 							Database:   cfg.MongoDB,
 							Collection: "editions",
-							Key:        "links.self.href",
+							Key:        "next.links.self.href",
 							Value:      instance.Links.Edition.HRef,
 						}
 
@@ -355,7 +356,7 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 		}
 	}
 
-	observations := 1000
+	observations := int64(1000)
 
 	temporal := mongo.TemporalFrequency{
 		EndDate:   "2016-10-10",
@@ -373,21 +374,21 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 	So(instance.ReleaseDate, ShouldEqual, "2017-11-11")
 	So(instance.State, ShouldEqual, state)
 	So(instance.Temporal, ShouldResemble, &[]mongo.TemporalFrequency{temporal})
-	So(instance.TotalObservations, ShouldResemble, &observations)
-	So(instance.ImportTasks.ImportObservations.InsertedObservations, ShouldResemble, &observations)
+	So(instance.TotalObservations, ShouldEqual, observations)
+	So(instance.ImportTasks.ImportObservations.InsertedObservations, ShouldEqual, 1000)
 
 	return
 }
 
-func checkEditionDoc(datasetID, instanceID string, editionDoc mongo.Edition) {
-	So(editionDoc.Edition, ShouldEqual, "2017")
-	So(editionDoc.Links.Dataset.ID, ShouldEqual, datasetID)
-	So(editionDoc.Links.Dataset.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID)
-	So(editionDoc.Links.LatestVersion.ID, ShouldEqual, "1")
-	So(editionDoc.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/1")
-	So(editionDoc.Links.Self.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017")
-	So(editionDoc.Links.Versions.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions")
-	So(editionDoc.State, ShouldEqual, "created")
+func checkEditionDoc(datasetID, instanceID string, editionDoc mongo.EditionUpdate) {
+	So(editionDoc.Next.Edition, ShouldEqual, "2017")
+	So(editionDoc.Next.Links.Dataset.ID, ShouldEqual, datasetID)
+	So(editionDoc.Next.Links.Dataset.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID)
+	So(editionDoc.Next.Links.LatestVersion.ID, ShouldEqual, "1")
+	So(editionDoc.Next.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/1")
+	So(editionDoc.Next.Links.Self.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017")
+	So(editionDoc.Next.Links.Versions.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions")
+	So(editionDoc.Next.State, ShouldEqual, "edition-confirmed")
 
 	return
 }

@@ -263,17 +263,26 @@ func validAggregateDimensionsData(instanceID string) bson.M {
 func validPublishedEditionData(datasetID, editionID, edition string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"edition":                   edition,
-			"id":                        editionID,
-			"last_updated":              "2017-09-08", // TODO Should be isodate
-			"links.dataset.id":          datasetID,
-			"links.dataset.href":        cfg.DatasetAPIURL + "/datasets/" + datasetID,
-			"links.latest_version.id":   "1",
-			"links.latest_version.href": cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/1",
-			"links.self.href":           cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
-			"links.versions.href":       cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions",
-			"state":                     "published",
-			"test_data":                 "true",
+			"id":                        			editionID,
+			"next.edition":					        edition,
+			"next.links.dataset.id":	 			datasetID,
+			"next.links.dataset.href":	 			cfg.DatasetAPIURL + "/datasets/" + datasetID,
+			"next.links.self.href":		 			cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
+			"next.links.versions.href":	 			cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions",
+			"next.links.latest_version.id":			"1",
+			"next.links.latest_version.href":		cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/1",
+			"next.state":							"published",
+			"next.last_updated":					"2017-09-08", // TODO Should be isodate
+			"current.edition":				        edition,
+			"current.links.dataset.id":	 			datasetID,
+			"current.links.dataset.href":	 		cfg.DatasetAPIURL + "/datasets/" + datasetID,
+			"current.links.self.href":		 		cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
+			"current.links.versions.href":	 		cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions",
+			"current.links.latest_version.id":		"1",
+			"current.links.latest_version.href":	cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/1",
+			"current.state":						"published",
+			"current.last_updated":					"2017-09-08", // TODO Should be isodate
+			"test_data":                 			"true",
 		},
 	}
 }
@@ -281,18 +290,21 @@ func validPublishedEditionData(datasetID, editionID, edition string) bson.M {
 func validUnpublishedEditionData(datasetID, editionID, edition string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"edition":             edition,
-			"id":                  editionID,
-			"last_updated":        "2017-10-08", // TODO Should be isodate
-			"links.dataset.id":    datasetID,
-			"links.dataset.href":  cfg.DatasetAPIURL + "/datasets/" + datasetID,
-			"links.self.href":     cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
-			"links.versions.href": cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions",
-			"state":               "edition-confirmed",
-			"test_data":           "true",
+			"id":                        		editionID,
+			"next.edition":				        edition,
+			"next.links.dataset.id":	 		datasetID,
+			"next.links.dataset.href":	 		cfg.DatasetAPIURL + "/datasets/" + datasetID,
+			"next.links.self.href":		 		cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
+			"next.links.versions.href":	 		cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions",
+			"next.links.latest_version.id":		"1",
+			"next.links.latest_version.href":	cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/1",
+			"next.state":						"edition-confirmed",
+			"next.last_updated":				"2017-09-08", // TODO Should be isodate
+			"test_data":                 		"true",
 		},
 	}
 }
+
 
 func validPublishedInstanceData(datasetID, edition, instanceID string) bson.M {
 	return bson.M{
@@ -432,8 +444,8 @@ func validCompletedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"links.version.id":      "2",
 			"release_date":          "2017-12-12", // TODO Should be isodate
 			"state":                 "completed",
-			"total_inserted_observations": 1000,
-			"total_observations":          1000,
+			"total_observations": 1000,
+			"import_tasks.import_observations.total_inserted_observations": 1000,
 			"version":                     2,
 			"test_data":                   "true",
 		},
