@@ -232,7 +232,6 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				// Check edition has been updated
 				So(updatedEdition.ID, ShouldEqual, editionID)
 				So(updatedEdition.Next.State, ShouldEqual, "published")
-				log.Debug("latest version?", log.Data{"latest_version": updatedEdition.Next.Links.LatestVersion})
 				So(updatedEdition.Current.Links.LatestVersion.ID, ShouldEqual, "1")
 				So(updatedEdition.Current.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2018/versions/1")
 
