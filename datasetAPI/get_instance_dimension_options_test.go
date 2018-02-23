@@ -119,54 +119,62 @@ func TestGetInstanceDimensionOptions_ReturnsAllDimensionOptionsFromAnInstance(t 
 	}
 }
 
-// TODO Reinstate tests once code has been fixed
-// func TestFailureToGetInstanceDimensionOptions(t *testing.T) {
-//
-// 	datasetID := uuid.NewV4().String()
-// 	instanceID := uuid.NewV4().String()
-//
-// 	edition := "2017"
-//
-// 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
-//
-// 	Convey("Fail to get instance document", t, func() {
-// 		Convey("and return status bad request", func() {
-// 			Convey("when instance document does not exist", func() {
-// 				datasetAPI.GET("/instances/{id}/dimensions/time/options", "7990").WithHeader(internalToken, internalTokenID).
-// 					Expect().Status(http.StatusBadRequest)
-// 			})
-// 		})
-// 		Convey("and return status request is forbidden", func() {
-// 			Convey("when an unauthorised user sends a GET request", func() {
-// 				if err := mongo.Setup(database, "instances", "_id", "799", validEditionConfirmedInstanceData(datasetID, edition, instanceID)); err != nil {
-// 					log.ErrorC("Was unable to run test", err, nil)
-// 					os.Exit(1)
-// 				}
-//
-// 				datasetAPI.GET("/instances/{id}/dimensions/time/options", "789").
-// 					Expect().Status(http.StatusForbidden)
-// 			})
-// 		})
-//
-// 		Convey("and return status not unauthorised", func() {
-// 			Convey("when an invalid token is provided", func() {
-// 				datasetAPI.GET("/instances/{id}/dimensions/time/options", "789").WithHeader(internalToken, invalidInternalTokenID).
-// 					Expect().Status(http.StatusUnauthorized)
-// 			})
-// 		})
-//
-// 		Convey("and return status not found", func() {
-// 			Convey("dimension_id does not match any dimensions within the instance", func() {
-// 				datasetAPI.GET("/instances/{id}/dimensions/timeeww2342/options", "789").WithHeader(internalToken, internalTokenID).
-// 					Expect().Status(http.StatusNotFound)
-// 			})
-// 		})
-// 	})
-//
-// 	if err := mongo.Teardown(database, "instances", "_id", "799"); err != nil {
-// 		if err != mgo.ErrNotFound {
-// 			log.ErrorC("Failed to tear down test data", err, nil)
-// 			os.Exit(1)
-// 		}
-// 	}
-// }
+// TODO Reinstate skipped tests once code has been fixed
+func TestFailureToGetInstanceDimensionOptions(t *testing.T) {
+
+	datasetID := uuid.NewV4().String()
+	instanceID := uuid.NewV4().String()
+
+	edition := "2017"
+
+	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
+
+	Convey("Fail to get instance document", t, func() {
+		SkipConvey("when instance document does not exist", func() {
+			Convey("and return status not found", func() {
+				datasetAPI.GET("/instances/{id}/dimensions/time/options", "7990").WithHeader(internalToken, internalTokenID).
+					Expect().Status(http.StatusNotFound).Body().Contains("Instance not found\n")
+			})
+		})
+		Convey("when an unauthorised user sends a GET request", func() {
+			SkipConvey("and return status not found", func() {
+				instanceDoc := &mongo.Doc{
+					Database:   cfg.MongoDB,
+					Collection: "instances",
+					Key:        "_id",
+					Value:      "799",
+					Update:     validEditionConfirmedInstanceData(datasetID, edition, instanceID),
+				}
+
+				if err := mongo.Setup(instanceDoc); err != nil {
+					log.ErrorC("Was unable to run test", err, nil)
+					os.Exit(1)
+				}
+
+				datasetAPI.GET("/instances/{id}/dimensions/time/options", "789").
+					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
+
+				if err := mongo.Teardown(instanceDoc); err != nil {
+					if err != mgo.ErrNotFound {
+						log.ErrorC("Failed to tear down test data", err, nil)
+						os.Exit(1)
+					}
+				}
+			})
+		})
+
+		SkipConvey("when an invalid token is provided", func() {
+			Convey("then return status not found", func() {
+				datasetAPI.GET("/instances/{id}/dimensions/time/options", "789").WithHeader(internalToken, invalidInternalTokenID).
+					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
+			})
+		})
+
+		Convey("dimension_id does not match any dimensions within the instance", func() {
+			Convey("then return status not found", func() {
+				datasetAPI.GET("/instances/{id}/dimensions/timeeww2342/options", "789").WithHeader(internalToken, internalTokenID).
+					Expect().Status(http.StatusNotFound).Body().Contains("Dimension node not found\n")
+			})
+		})
+	})
+}

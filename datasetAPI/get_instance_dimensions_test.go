@@ -123,10 +123,10 @@ func TestFailureToGetInstanceDimensions(t *testing.T) {
 		Convey("and return status not found", func() {
 			Convey("when instance document does not exist", func() {
 				datasetAPI.GET("/instances/{id}/dimensions", "7990").WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusNotFound)
+					Expect().Status(http.StatusNotFound).Body().Contains("Instance not found\n")
 			})
 		})
-		Convey("and return status request is forbidden", func() {
+		Convey("and return status not found", func() {
 			Convey("when an unauthorised user sends a GET request", func() {
 				if err := mongo.Setup(instance); err != nil {
 					log.ErrorC("Was unable to run test", err, nil)
@@ -134,14 +134,14 @@ func TestFailureToGetInstanceDimensions(t *testing.T) {
 				}
 
 				datasetAPI.GET("/instances/{id}/dimensions", "789").
-					Expect().Status(http.StatusForbidden)
+					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
 			})
 		})
 
-		Convey("and return status not unauthorised", func() {
+		Convey("and return status not found", func() {
 			Convey("when an invalid token is provided", func() {
 				datasetAPI.GET("/instances/{id}/dimensions", "789").WithHeader(internalToken, invalidInternalTokenID).
-					Expect().Status(http.StatusUnauthorized)
+					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
 			})
 		})
 	})
