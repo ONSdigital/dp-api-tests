@@ -39,18 +39,18 @@ func TestFailToCreateSearchIndex(t *testing.T) {
 		deleteIndex(instanceID, dimension)
 
 		Convey("When a PUT request is made to search API without an authentication header", func() {
-			Convey("Then the response returns status not found (401)", func() {
+			Convey("Then the response returns status not found (404)", func() {
 
 				searchAPI.PUT("/search/instances/{instanceID}/dimensions/{dimension}", instanceID, "aggregate").
-					Expect().Status(http.StatusUnauthorized).Body().Contains("No authentication header provided\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
 			})
 		})
 
 		Convey("When a PUT request is made to search API with Invalid authentication header", func() {
-			Convey("Then the response returns status unauthorised (401)", func() {
+			Convey("Then the response returns status not found (404)", func() {
 
 				searchAPI.PUT("/search/instances/{instanceID}/dimensions/{dimension}", instanceID, "aggregate").
-					WithHeader(internalTokenHeader, "grey").Expect().Status(http.StatusUnauthorized).Body().Contains("Unauthorised access to API\n")
+					WithHeader(internalTokenHeader, "grey").Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
 			})
 		})
 	})
