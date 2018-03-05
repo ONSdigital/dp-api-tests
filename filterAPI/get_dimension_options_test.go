@@ -119,10 +119,10 @@ func TestFailureToGetListOfDimensionOptions(t *testing.T) {
 
 	Convey("Given a filter blueprint does not exist", t, func() {
 		Convey("When a request to get a dimension option against filter blueprint", func() {
-			Convey("Then return status bad request (400)", func() {
+			Convey("Then return status not found (404)", func() {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age/options", filterBlueprintID).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - filter blueprint not found")
+					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found")
 			})
 		})
 	})

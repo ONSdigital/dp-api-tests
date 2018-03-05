@@ -53,6 +53,8 @@ func TestSuccessfullyDeleteDimensionOptions(t *testing.T) {
 			filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/time/options/April 1997", filterBlueprintID).Expect().Status(http.StatusOK)
 
 			// TODO call mongo directly instead of using API to get dimension options
+			filterAPI.GET("/filters/{filter_blueprint_id}/dimensions", filterBlueprintID).Expect().Status(http.StatusOK).JSON().Array().Length().Equal(4)
+
 			filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age/options", filterBlueprintID).Expect().Status(http.StatusOK)
 			sexDimResponse := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex/options", filterBlueprintID).Expect().Status(http.StatusOK).JSON().Array()
 			goodsAndServicesDimResponse := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options", filterBlueprintID).Expect().Status(http.StatusOK).JSON().Array()
@@ -93,10 +95,10 @@ func TestFailureToDeleteDimensionOptions(t *testing.T) {
 
 	Convey("Given filter job does not exist", t, func() {
 		Convey("When requesting to delete an option from the filter job", func() {
-			Convey("Then the response returns status bad request (400)", func() {
+			Convey("Then the response returns status not found (404)", func() {
 
 				filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/wages/options/27000", filterBlueprintID).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - filter blueprint not found")
+					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found")
 			})
 		})
 	})
@@ -109,10 +111,10 @@ func TestFailureToDeleteDimensionOptions(t *testing.T) {
 		}
 
 		Convey("When requesting to delete an option from a dimension that does not exist against the filter job", func() {
-			Convey("Then the response returns status bad request (400)", func() {
+			Convey("Then the response returns status not found (404)", func() {
 
 				filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/wages/options/27000", filterBlueprintID).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - filter dimension not found")
+					Expect().Status(http.StatusNotFound).Body().Contains("Dimension not found")
 			})
 		})
 

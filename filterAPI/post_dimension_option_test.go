@@ -113,10 +113,10 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 		invalidfilterBlueprintID := uuid.NewV4().String()
 
 		Convey("When a post request to add an option to a dimension for that filter blueprint", func() {
-			Convey("Then return status bad request (400)", func() {
+			Convey("Then return status not found (404)", func() {
 
 				filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/age/options/30", invalidfilterBlueprintID).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - filter blueprint not found")
+					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found")
 			})
 		})
 	})

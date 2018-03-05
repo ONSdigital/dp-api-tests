@@ -98,10 +98,10 @@ func TestFailureToDeleteDimension(t *testing.T) {
 
 	Convey("Given filter blueprint does not exist", t, func() {
 		Convey("When requesting to delete a dimension from filter blueprint", func() {
-			Convey("Then response returns status bad request (400)", func() {
+			Convey("Then response returns status not found (404)", func() {
 
 				filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/age", filterBlueprintID).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - filter blueprint not found")
+					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found")
 			})
 		})
 	})

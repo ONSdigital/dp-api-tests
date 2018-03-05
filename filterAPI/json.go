@@ -101,6 +101,7 @@ func GetValidCreatedFilterBlueprintBSON(host, filterID, instanceID, filterBluepr
 			"links.self.href":       host + "/filters/" + filterBlueprintID,
 			"links.version.id":      "1",
 			"links.version.href":    "http://localhost:8080/datasets/123/editions/2017/versions/1",
+			"published":             true,
 			"test_data":             "true",
 		},
 	}
@@ -173,6 +174,7 @@ func GetValidFilterWithMultipleDimensionsBSON(host, filterID, instanceID, filter
 			"links.self.href":       host + "/filters/" + filterBlueprintID,
 			"links.version.id":      "1",
 			"links.version.href":    "http://localhost:8080/datasets/123/editions/2017/versions/1",
+			"published":             true,
 			"test_data":             "true",
 		},
 	}
@@ -197,6 +199,7 @@ func GetValidFilterOutputWithMultipleDimensionsBSON(host, filterID, instanceID, 
 			"links.version.id":            "1",
 			"links.version.href":          "http://localhost:8080/datasets/123/editions/2017/versions/1",
 			"state":                       "completed",
+			"published":                   true,
 			"test_data":                   "true",
 		},
 	}
@@ -221,6 +224,7 @@ func GetValidFilterOutputBSON(host, filterID, instanceID, filterOutputID, filter
 			"links.version.id":            "1",
 			"links.version.href":          "http://localhost:8080/datasets/123/editions/2017/versions/1",
 			"state":                       "completed",
+			"published":                   true,
 			"test_data":                   "true",
 		},
 	}
@@ -244,6 +248,7 @@ func GetValidFilterOutputNoDimensionsBSON(host, filterID, instanceID, filterOutp
 			"links.version.id":            "1",
 			"links.version.href":          "http://localhost:8080/datasets/123/editions/2017/versions/1",
 			"state":                       "completed",
+			"published":                   true,
 			"test_data":                   "true",
 		},
 	}
@@ -260,6 +265,7 @@ func GetValidFilterOutputWithoutDownloadsBSON(host, filterID, instanceID, filter
 			"links.version.id":   "1",
 			"links.version.href": "http://localhost:8080/datasets/123/editions/2017/versions/1",
 			"state":              "created",
+			"published":          true,
 			"test_data":          "true",
 		},
 	}
