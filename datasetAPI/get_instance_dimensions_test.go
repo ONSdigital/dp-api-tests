@@ -107,7 +107,7 @@ func TestFailureToGetInstanceDimensions(t *testing.T) {
 			})
 		})
 
-		Convey("When an authenticated user sends a GET request of a list fo dimensions for instance", func() {
+		Convey("When an authenticated user sends a GET request of a list of dimensions for instance", func() {
 			Convey("Then return status not found (404) with a message `Instance not found`", func() {
 
 				datasetAPI.GET("/instances/{id}/dimensions", instanceID).WithHeader(internalToken, internalTokenID).

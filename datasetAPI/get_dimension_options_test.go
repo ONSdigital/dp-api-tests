@@ -173,7 +173,7 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-	Convey("Gieven Fail to get a list of time dimension options for a dataset", t, func() {
+	Convey("Given Fail to get a list of time dimension options for a dataset", t, func() {
 		SkipConvey("When user is authenticated and the dataset does not exist", func() {
 			Convey("Then return status not found (404)", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", "1234", edition).WithHeader(internalToken, internalTokenID).
