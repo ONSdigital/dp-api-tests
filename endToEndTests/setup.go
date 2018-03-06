@@ -3,16 +3,20 @@ package generateFiles
 import (
 	"bytes"
 	"context"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
+	"errors"
 	"io"
 	"net/http"
 	"os"
 
 	"github.com/ONSdigital/go-ns/log"
-	ons3 "github.com/ONSdigital/go-ns/s3"
+	"github.com/ONSdigital/s3crypto"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/aws/aws-sdk-go/service/s3/s3iface"
 )
 
 var client = http.Client{}
@@ -31,8 +35,9 @@ type Store struct {
 	bucket string
 }
 
-func sendV4FileToAWS(region, bucket, filename string) (string, error) {
-
+// TODO Once export services have been updated with encryption and decryption
+// remove decrypt boolean flag
+func sendV4FileToAWS(region, bucket, filename string, decrypt bool) error {
 	config := aws.NewConfig().WithRegion(region)
 
 	store := &Store{
@@ -40,48 +45,40 @@ func sendV4FileToAWS(region, bucket, filename string) (string, error) {
 		bucket: bucket,
 	}
 
-	session, err := session.NewSession(store.config)
+	sess, err := session.NewSession(store.config)
 	if err != nil {
 		log.ErrorC("failed to create session", err, nil)
-		return "", err
+		return err
 	}
 
 	v4File, err := os.Open(filename)
 	if err != nil {
 		log.ErrorC("failed to open file", err, nil)
-		return "", err
+		return err
 	}
-
 	log.Info("successfully retrieved file", nil)
 
-	uploader := s3manager.NewUploader(session)
+	client, err := getClient(sess, decrypt)
+	if err != nil {
+		log.ErrorC("failed to create client", err, nil)
+		return err
+	}
 
-	// the AWS uploader automatically handles large files breaking them into
-	//  parts and using the multi part API.
-	result, err := uploader.Upload(&s3manager.UploadInput{
-		Body:   v4File,
-		Bucket: &store.bucket,
+	putObject := &s3.PutObjectInput{
 		Key:    &filename,
-	})
+		Bucket: &bucket,
+		Body:   v4File,
+	}
+
+	_, err = client.PutObject(putObject)
 	if err != nil {
 		log.ErrorC("failed to upload file", err, nil)
-		return "", err
+		return err
 	}
-
-	return result.Location, nil
+	return nil
 }
 
-func getS3File(region, s3URL string) (io.ReadCloser, error) {
-	s3, err := ons3.New(region)
-	if err != nil {
-		log.Error(err, nil)
-		return nil, err
-	}
-
-	return s3.Get(s3URL)
-}
-
-func getS3FileSize(region, bucket, filename string) (*int64, error) {
+func getS3File(region, bucket, filename string, decrypt bool) (io.ReadCloser, error) {
 	config := aws.NewConfig().WithRegion(region)
 
 	store := &Store{
@@ -89,13 +86,51 @@ func getS3FileSize(region, bucket, filename string) (*int64, error) {
 		bucket: bucket,
 	}
 
-	session, err := session.NewSession(store.config)
+	sess, err := session.NewSession(store.config)
 	if err != nil {
 		log.ErrorC("failed to create session", err, nil)
 		return nil, err
 	}
 
-	svc := s3.New(session)
+	client, err := getClient(sess, decrypt)
+	if err != nil {
+		log.ErrorC("failed to create client", err, nil)
+		return nil, err
+	}
+
+	input := &s3.GetObjectInput{
+		Key:    aws.String(filename),
+		Bucket: aws.String(bucket),
+	}
+
+	output, err := client.GetObject(input)
+	if err != nil {
+		log.ErrorC("encountered error retrieving csv file", err, nil)
+		return nil, err
+	}
+
+	return output.Body, nil
+}
+
+func getS3FileSize(region, bucket, filename string, decrypt bool) (*int64, error) {
+	config := aws.NewConfig().WithRegion(region)
+
+	store := &Store{
+		config: config,
+		bucket: bucket,
+	}
+
+	sess, err := session.NewSession(store.config)
+	if err != nil {
+		log.ErrorC("failed to create session", err, nil)
+		return nil, err
+	}
+
+	client, err := getClient(sess, decrypt)
+	if err != nil {
+		log.ErrorC("failed to create client", err, nil)
+		return nil, err
+	}
 
 	input := &s3.GetObjectInput{
 		Key:    aws.String(filename),
@@ -103,7 +138,7 @@ func getS3FileSize(region, bucket, filename string) (*int64, error) {
 	}
 
 	ctx := context.Background()
-	result, err := svc.GetObjectWithContext(ctx, input)
+	result, err := client.GetObjectWithContext(ctx, input)
 	if err != nil {
 		log.ErrorC("failed to find file", err, nil)
 		return nil, err
@@ -189,4 +224,33 @@ func (req request) createRequest() *http.Request {
 	}
 
 	return r
+}
+
+func getClient(sess *session.Session, decrypt bool) (client s3iface.S3API, err error) {
+	logData := log.Data{"encryption_disabled_flag": cfg.EncryptionDisabled, "decrpyt_flag": decrypt}
+
+	// Encrypt v4 file with PrivateKey
+	if !cfg.EncryptionDisabled && decrypt {
+		log.Debug("accessing encryption/decryption client", logData)
+		privateKey, err := getPrivateKey([]byte(cfg.PrivateKey))
+		if err != nil {
+			return nil, err
+		}
+		cryptoConfig := &s3crypto.Config{PrivateKey: privateKey}
+		client = s3crypto.New(sess, cryptoConfig)
+	} else {
+		log.Debug("regular client", logData)
+		client = s3.New(sess)
+	}
+
+	return client, nil
+}
+
+func getPrivateKey(keyBytes []byte) (*rsa.PrivateKey, error) {
+	block, _ := pem.Decode(keyBytes)
+	if block == nil || block.Type != "RSA PRIVATE KEY" {
+		return nil, errors.New("invalid RSA PRIVATE KEY provided")
+	}
+
+	return x509.ParsePKCS1PrivateKey(block.Bytes)
 }

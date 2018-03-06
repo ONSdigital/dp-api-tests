@@ -23,6 +23,8 @@ import (
 
 var timeout = time.Duration(30 * time.Second)
 
+// TODO Once export services have been updated with encryption and decryption
+// remove decrypt boolean flag from all setup functions
 func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
@@ -44,7 +46,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 	Convey("Given a v4 file exists in aws", t, func() {
 		// Send v4 file to aws
-		_, err := sendV4FileToAWS(region, bucketName, filename)
+		err := sendV4FileToAWS(region, bucketName, filename, true)
 		if err != nil {
 			log.ErrorC("failed to load in v4 to aws, discontinue with test", err, nil)
 			os.Exit(1)
@@ -468,14 +470,13 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				csvURL := versionResource.Downloads.CSV.URL
 				csvFilename := strings.TrimPrefix(csvURL, "https://"+bucket+".s3."+region+".amazonaws.com/")
 
-				csvS3URL := "s3://" + bucket + "/" + csvFilename
-
 				// read csv download from s3
-				csvFile, err := getS3File(region, csvS3URL)
+				csvFile, err := getS3File(region, bucket, csvFilename, false)
 				if err != nil {
-					log.ErrorC("unable to find csv full download in s3", err, log.Data{"s3_url": csvS3URL, "csv_url": csvURL, "csv_filename": csvFilename})
+					log.ErrorC("unable to find csv full download in s3", err, log.Data{"csv_url": csvURL, "csv_filename": csvFilename})
 					os.Exit(1)
 				}
+				defer csvFile.Close()
 
 				csvReader := csv.NewReader(csvFile)
 				headerRow, err := csvReader.Read()
@@ -503,20 +504,19 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				xlsURL := versionResource.Downloads.XLS.URL
 				xlsFilename := strings.TrimPrefix(xlsURL, "https://"+bucket+".s3-"+region+".amazonaws.com/")
 
-				xlsS3URL := "s3://" + bucket + "/" + xlsFilename
-
 				// read xls download from s3
-				xlsFile, err := getS3File(region, xlsS3URL)
+				xlsFile, err := getS3File(region, bucket, xlsFilename, false)
 				if err != nil {
-					log.ErrorC("unable to find xls full download in s3", err, log.Data{"s3_url": xlsS3URL, "xls_url": xlsURL, "csv_filename": xlsFilename})
+					log.ErrorC("unable to find xls full download in s3", err, log.Data{"xls_url": xlsURL, "csv_filename": xlsFilename})
 					os.Exit(1)
 				}
+				defer xlsFile.Close()
 
 				So(xlsFile, ShouldNotBeEmpty)
 
-				xlsFileSize, err := getS3FileSize(region, bucket, xlsFilename)
+				xlsFileSize, err := getS3FileSize(region, bucket, xlsFilename, false)
 				if err != nil {
-					log.ErrorC("unable to extract size of xls full download in s3", err, log.Data{"s3_url": xlsS3URL, "xls_url": xlsURL, "csv_filename": xlsFilename})
+					log.ErrorC("unable to extract size of xls full download in s3", err, log.Data{"xls_url": xlsURL, "csv_filename": xlsFilename})
 					os.Exit(1)
 				}
 
@@ -577,18 +577,16 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					filteredCSVURL := filterOutputResource.Downloads.CSV.URL
 					filteredCSVFilename := strings.TrimPrefix(filteredCSVURL, "https://"+bucket+".s3."+region+".amazonaws.com/")
 
-					filteredCSVS3URL := "s3://" + bucket + "/" + filteredCSVFilename
-
 					// read csv download from s3
-					filteredCSVFile, err := getS3File(region, filteredCSVS3URL)
+					filteredCSVFile, err := getS3File(region, bucket, filteredCSVFilename, false)
 					if err != nil {
-						log.ErrorC("unable to find filtered csv download in s3", err, log.Data{"filtered_csv_s3_url": filteredCSVS3URL, "filtered_csv_url": filteredCSVURL, "filtered_csv_filename": filteredCSVFilename})
+						log.ErrorC("unable to find filtered csv download in s3", err, log.Data{"filtered_csv_url": filteredCSVURL, "filtered_csv_filename": filteredCSVFilename})
 						os.Exit(1)
 					}
 
 					filteredCSVReader := csv.NewReader(filteredCSVFile)
 
-					if err = checkFileRowCount(filteredCSVReader, filteredCSVS3URL, 39); err != nil {
+					if err = checkFileRowCount(filteredCSVReader, 39); err != nil {
 						log.ErrorC("unable to check file row count", err, nil)
 						os.Exit(1)
 					}
@@ -596,20 +594,18 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					filteredXLSURL := filterOutputResource.Downloads.XLS.URL
 					filteredXLSFilename := strings.TrimPrefix(filteredXLSURL, "https://"+bucket+".s3-"+region+".amazonaws.com/")
 
-					filteredXLSS3URL := "s3://" + bucket + "/" + filteredXLSFilename
-
 					// read xls download from s3
-					filteredXLSFile, err := getS3File(region, filteredXLSS3URL)
+					filteredXLSFile, err := getS3File(region, bucket, filteredXLSFilename, false)
 					if err != nil {
-						log.ErrorC("unable to find filtered xls download in s3", err, log.Data{"filtered_s3_url": filteredXLSS3URL, "filtered_xls_url": filteredXLSURL, "filtered_xls_filename": filteredXLSFilename})
+						log.ErrorC("unable to find filtered xls download in s3", err, log.Data{"filtered_xls_url": filteredXLSURL, "filtered_xls_filename": filteredXLSFilename})
 						os.Exit(1)
 					}
 
 					So(filteredXLSFile, ShouldNotBeEmpty)
 
-					filteredXLSFileSize, err := getS3FileSize(region, bucket, filteredXLSFilename)
+					filteredXLSFileSize, err := getS3FileSize(region, bucket, filteredXLSFilename, false)
 					if err != nil {
-						log.ErrorC("unable to extract size of filtered xls download in s3", err, log.Data{"filtered_s3_url": filteredXLSS3URL, "filtered_xls_url": filteredXLSURL, "filtered_xls_filename": filteredXLSFilename})
+						log.ErrorC("unable to extract size of filtered xls download in s3", err, log.Data{"filtered_xls_url": filteredXLSURL, "filtered_xls_filename": filteredXLSFilename})
 						os.Exit(1)
 					}
 
@@ -744,7 +740,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 	})
 }
 
-func checkFileRowCount(csvReader *csv.Reader, s3URL string, expectedCount int64) error {
+func checkFileRowCount(csvReader *csv.Reader, expectedCount int64) error {
 	numberOfRows := int64(0)
 	// Iterate over file counting the number of rows that exist
 	for {
@@ -753,7 +749,7 @@ func checkFileRowCount(csvReader *csv.Reader, s3URL string, expectedCount int64)
 			break
 		}
 		if err != nil {
-			log.ErrorC("encountered error reading csv", err, log.Data{"s3_url": s3URL, "csv_line": line})
+			log.ErrorC("encountered error reading csv", err, log.Data{"csv_line": line})
 			return err
 		}
 		numberOfRows++
