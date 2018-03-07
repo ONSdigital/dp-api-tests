@@ -92,18 +92,18 @@ func TestFailureToPostDataset(t *testing.T) {
 		})
 
 		Convey("When an unauthorised POST request is made to create a dataset resource with an invalid authentication header", func() {
-			Convey("Then return a status of unauthorized with a message `Unauthorised access to API`", func() {
+			Convey("Then return a status not found (404) with a message `Resource not found`", func() {
 
 				datasetAPI.POST("/datasets/{id}", datasetID).WithHeader(internalToken, invalidInternalTokenID).WithBytes([]byte(validPOSTCreateDatasetJSON)).
-					Expect().Status(http.StatusUnauthorized).Body().Contains("Unauthorised access to API\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
 			})
 		})
 
 		Convey("When no authentication header is provided in POST request to create a dataset resource", func() {
-			Convey("Then return a status of unauthorized with a message `No authentication header provided`", func() {
+			Convey("Then return a status not found (404) with a message `Resource not found`", func() {
 
 				datasetAPI.POST("/datasets/{id}", datasetID).WithBytes([]byte(validPOSTCreateDatasetJSON)).
-					Expect().Status(http.StatusUnauthorized).Body().Contains("No authentication header provided\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
 			})
 		})
 	})

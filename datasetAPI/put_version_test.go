@@ -338,11 +338,11 @@ func TestFailureToUpdateVersion(t *testing.T) {
 		}
 
 		Convey("When an authorised PUT request is made to update version resource", func() {
-			Convey("Then fail to update resource and return a status of bad request (400) with a message `Dataset not found`", func() {
+			Convey("Then fail to update resource and return a status of not found (404) with a message `Dataset not found`", func() {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
 					WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Dataset not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found\n")
 			})
 		})
 
@@ -364,11 +364,11 @@ func TestFailureToUpdateVersion(t *testing.T) {
 		}
 
 		Convey("When an authorised PUT request is made to update version resource", func() {
-			Convey("Then fail to update resource and return a status of bad request (400) with a message `Edition not found`", func() {
+			Convey("Then fail to update resource and return a status of not found (404) with a message `Edition not found`", func() {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
 					WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Edition not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("Edition not found\n")
 			})
 		})
 
@@ -451,22 +451,22 @@ func TestFailureToUpdateVersion(t *testing.T) {
 
 		// test for unauthorised request to update version
 		Convey("When an unauthorised PUT request is made to update version resource", func() {
-			Convey("Then fail to update resource and return a status of unauthorised (401) with a message `Unauthorised access to API`", func() {
+			Convey("Then fail to update resource and return a status not found (404) with a message `Resource not found`", func() {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
 					WithHeader(internalToken, invalidInternalTokenID).WithBytes([]byte(validPUTUpdateVersionMetaDataJSON)).
-					Expect().Status(http.StatusUnauthorized).Body().Contains("Unauthorised access to API\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
 
 			})
 		})
 
 		// test for missing auth header when making a request to update version
 		Convey("When a PUT request is made to update version resource without an authentication header", func() {
-			Convey("Then fail to update resource and return a status of unauthorised (401) with a message `No authentication header provided`", func() {
+			Convey("Then fail to update resource and return a status not found (404) with a message `Resource not found`", func() {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
 					WithBytes([]byte(validPUTUpdateVersionMetaDataJSON)).
-					Expect().Status(http.StatusUnauthorized).Body().Contains("No authentication header provided\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
 
 			})
 		})
