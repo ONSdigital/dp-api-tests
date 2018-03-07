@@ -1,6 +1,7 @@
 package generateFiles
 
 import (
+	"errors"
 	"os"
 
 	mgo "gopkg.in/mgo.v2"
@@ -40,6 +41,14 @@ func init() {
 	}
 
 	log.Debug("config is:", log.Data{"config": cfg})
+
+	if !cfg.EncryptionDisabled {
+		if cfg.PrivateKey == "" {
+			err = errors.New("missing private key for encryption of v4 file")
+			log.ErrorC("unable to run test", err, nil)
+			os.Exit(1)
+		}
+	}
 
 	if err = mongo.NewDatastore(cfg.MongoAddr); err != nil {
 		log.ErrorC("mongodb datastore error", err, nil)
