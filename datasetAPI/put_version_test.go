@@ -47,6 +47,8 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				// Check version has been updated
 				So(updatedVersion.ID, ShouldEqual, instanceID)
 				So(updatedVersion.ReleaseDate, ShouldEqual, "2018-11-11")
+				So(len(updatedVersion.UserNotes), ShouldEqual, 2)
+				So(updatedVersion.UserNotes[0].Title, ShouldEqual, "Coefficients of variation")
 
 				alert := mongo.Alert{
 					Description: "All data entries (observations) for Plymouth have been updated",

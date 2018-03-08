@@ -827,6 +827,16 @@ var validPUTUpdateVersionMetaDataJSON = `
 		"type": "Correction"
 	}
 ],
+"user_notes": [
+    	{
+    		"title": "Coefficients of variation",
+    		"note": "CV"
+    	},
+    	{
+    	    "title": "Data Markings",
+             "note":"x - value not reliable"
+    	}
+],
 "latest_changes": [
 	{
 		"description": "change to the period frequency from quarterly to monthly",
