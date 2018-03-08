@@ -185,18 +185,18 @@ func TestFailureToUpdateDataset(t *testing.T) {
 		}
 
 		Convey("When an unauthorised PUT request is made to update a dataset resource with an invalid authentication header", func() {
-			Convey("Then fail to update resource and return a status unauthorized (401) with a message `Unauthorised access to API`", func() {
+			Convey("Then fail to update resource and return a status not found (404) with a message `Resource not found`", func() {
 
 				datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader(internalToken, invalidInternalTokenID).WithBytes([]byte(validPUTUpdateDatasetJSON)).
-					Expect().Status(http.StatusUnauthorized).Body().Contains("Unauthorised access to API\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
 			})
 		})
 
 		Convey("When no authentication header is provided in PUT request to update dataset resource", func() {
-			Convey("Then fail to update resource and return a status of unauthorized (401) with a message `No authentication header provided`", func() {
+			Convey("Then fail to update resource and return a status not found (404) with a message `Resource not found`", func() {
 
 				datasetAPI.POST("/datasets/{id}", datasetID).WithBytes([]byte(validPUTUpdateDatasetJSON)).
-					Expect().Status(http.StatusUnauthorized).Body().Contains("No authentication header provided\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
 			})
 		})
 

@@ -110,9 +110,9 @@ func TestGetVersions_Failed(t *testing.T) {
 
 	Convey("Given the dataset and subsequently the edition does not exist", t, func() {
 		Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
-			Convey("Then return status bad request (400)", func() {
+			Convey("Then return status not found (404)", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Dataset not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found\n")
 			})
 		})
 	})
@@ -125,9 +125,9 @@ func TestGetVersions_Failed(t *testing.T) {
 
 		Convey("but the edition does not", func() {
 			Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
-				Convey("Then return status bad request (400)", func() {
+				Convey("Then return status not found (404)", func() {
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(internalToken, internalTokenID).
-						Expect().Status(http.StatusBadRequest).Body().Contains("Edition not found\n")
+						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found\n")
 				})
 			})
 		})
@@ -168,9 +168,9 @@ func TestGetVersions_Failed(t *testing.T) {
 		}
 
 		Convey("When an unauthenticated request is made to get a list of versions of the dataset edition", func() {
-			Convey("Then return status bad request (400)", func() {
+			Convey("Then return status not found (404)", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Dataset not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found\n")
 			})
 		})
 
@@ -193,9 +193,9 @@ func TestGetVersions_Failed(t *testing.T) {
 			}
 
 			Convey("When an unauthenticated request is made to get a list of versions of the dataset edition", func() {
-				Convey("Then return status bad request (400)", func() {
+				Convey("Then return status not found (404)", func() {
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
-						Expect().Status(http.StatusBadRequest).Body().Contains("Edition not found\n")
+						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found\n")
 				})
 			})
 

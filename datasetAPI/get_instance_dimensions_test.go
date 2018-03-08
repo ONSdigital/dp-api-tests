@@ -20,6 +20,179 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 
 	edition := "2017"
 
+	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
+
+	Convey("Given a list of dimensions for an instance exists", t, func() {
+		docs, err := getInstanceDimensionsSetup(datasetID, editionID, edition, instanceID)
+		if err != nil {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
+
+		Convey("When an authenticated user sends a GET request for a list of dimensions for instance", func() {
+			Convey("Then a list of dimensions is returned with a status of OK (200)", func() {
+
+				response := datasetAPI.GET("/instances/{instance_id}/dimensions", instanceID).WithHeader(internalToken, internalTokenID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				response.Value("items").Array().Length().Equal(2)
+
+				checkInstanceDimensionsResponse(response)
+			})
+		})
+
+		if err := mongo.Teardown(docs...); err != nil {
+			if err != mgo.ErrNotFound {
+				log.ErrorC("Failed to tear down test data", err, nil)
+				os.Exit(1)
+			}
+		}
+	})
+
+	Convey("Given no dimensions exist for an existing instance", t, func() {
+		instance := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: "instances",
+			Key:        "_id",
+			Value:      instanceID,
+			Update:     validEditionConfirmedInstanceData(datasetID, edition, instanceID),
+		}
+
+		if err := mongo.Setup(instance); err != nil {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
+
+		Convey("When an authenticated user sends a GET request for a list of dimensions for instance", func() {
+			Convey("Then return status OK (200) with an empty items array", func() {
+
+				dimensionsResource := datasetAPI.GET("/instances/{id}/dimensions", instanceID).WithHeader(internalToken, internalTokenID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				dimensionsResource.Value("items").Null()
+			})
+		})
+
+		if err := mongo.Teardown(instance); err != nil {
+			if err != mgo.ErrNotFound {
+				log.ErrorC("Failed to tear down test data", err, nil)
+				os.Exit(1)
+			}
+		}
+	})
+}
+
+func TestFailureToGetInstanceDimensions(t *testing.T) {
+	datasetID := uuid.NewV4().String()
+	instanceID := uuid.NewV4().String()
+
+	edition := "2017"
+
+	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
+
+	Convey("Given an instance document does not exist", t, func() {
+		Convey("When a user sends a GET request of a list of dimensions for instance without sending a token", func() {
+			Convey("Then return status not found (404) with a message `Resource not found`", func() {
+
+				datasetAPI.GET("/instances/{id}/dimensions", instanceID).
+					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
+			})
+		})
+
+		Convey("When a user sends a GET request of a list of dimensions for instance with an invalid token", func() {
+			Convey("Then return status not found (404) with a message `Resource not found`", func() {
+
+				datasetAPI.GET("/instances/{id}/dimensions", instanceID).WithHeader(internalToken, invalidInternalTokenID).
+					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
+			})
+		})
+
+		Convey("When an authenticated user sends a GET request of a list of dimensions for instance", func() {
+			Convey("Then return status not found (404) with a message `Instance not found`", func() {
+
+				datasetAPI.GET("/instances/{id}/dimensions", instanceID).WithHeader(internalToken, internalTokenID).
+					Expect().Status(http.StatusNotFound).Body().Contains("Instance not found\n")
+			})
+		})
+	})
+
+	Convey("Given an instance document does exist", t, func() {
+
+		instance := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: "instances",
+			Key:        "_id",
+			Value:      instanceID,
+			Update:     validEditionConfirmedInstanceData(datasetID, edition, instanceID),
+		}
+
+		if err := mongo.Setup(instance); err != nil {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
+
+		Convey("When a user sends a GET request for a list of dimensions for instance without sending a token", func() {
+			Convey("Then return status not found (404) with a message `Resource not found`", func() {
+
+				datasetAPI.GET("/instances/{id}/dimensions", instanceID).
+					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
+			})
+		})
+
+		Convey("When a user sends a GET request for a list of dimensions for instance with an invalid token", func() {
+			Convey("Then return status not found (404) with a message `Resource not found`", func() {
+
+				datasetAPI.GET("/instances/{id}/dimensions", instanceID).WithHeader(internalToken, invalidInternalTokenID).
+					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
+			})
+		})
+
+		if err := mongo.Teardown(instance); err != nil {
+			if err != mgo.ErrNotFound {
+				log.ErrorC("Failed to tear down test data", err, nil)
+				os.Exit(1)
+			}
+		}
+	})
+}
+
+func checkInstanceDimensionsResponse(response *httpexpect.Object) {
+
+	response.Value("items").Array().Element(0).Object().Value("dimension").Equal("time")
+
+	response.Value("items").Array().Element(0).Object().Value("label").Equal("")
+
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("id").Equal("202.45")
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/202.45$")
+
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("version").Object().Empty()
+
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("id").Equal("64d384f1-ea3b-445c-8fb8-aa453f96e58a")
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")
+
+	response.Value("items").Array().Element(0).Object().Value("option").Equal("202.45")
+
+	response.Value("items").Array().Element(0).Object().Value("node_id").Equal("")
+
+	response.Value("items").Array().Element(1).Object().Value("dimension").Equal("aggregate")
+
+	response.Value("items").Array().Element(1).Object().Value("label").Equal("CPI (Overall Index)")
+
+	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code").Object().Value("id").Equal("cpi1dimA19")
+	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/cpi1dimA19$")
+
+	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("version").Object().Empty()
+
+	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code_list").Object().Value("id").Equal("64d384f1-ea3b-445c-8fb8-aa453f96e58a")
+	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")
+
+	response.Value("items").Array().Element(1).Object().Value("option").Equal("cpi1dimA19")
+
+	response.Value("items").Array().Element(1).Object().Value("node_id").Equal("")
+
+}
+
+func getInstanceDimensionsSetup(datasetID, editionID, edition, instanceID string) ([]*mongo.Doc, error) {
 	var docs []*mongo.Doc
 
 	datasetDoc := &mongo.Doc{
@@ -65,127 +238,8 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 	docs = append(docs, datasetDoc, editionDoc, dimensionOneDoc, dimensionTwoDoc, instanceOneDoc)
 
 	if err := mongo.Setup(docs...); err != nil {
-		log.ErrorC("Was unable to run test", err, nil)
-		os.Exit(1)
-	}
-	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
-
-	Convey("Get a list of all dimensions from an instance", t, func() {
-		Convey("When user is authenticated", func() {
-
-			response := datasetAPI.GET("/instances/{instance_id}/dimensions", instanceID).WithHeader(internalToken, internalTokenID).
-				Expect().Status(http.StatusOK).JSON().Object()
-
-			response.Value("items").Array().Length().Equal(2)
-
-			checkInstanceDimensionsResponse(response)
-
-		})
-
-		Convey("When a user is not authenticated", func() {
-			response := datasetAPI.GET("/instances/{instance_id}/dimensions", instanceID).
-				Expect().Status(http.StatusOK).JSON().Object()
-
-			response.Value("items").Array().Length().Equal(2)
-
-			checkInstanceDimensionsResponse(response)
-
-		})
-	})
-
-	if err := mongo.Teardown(docs...); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Failed to tear down test data", err, nil)
-			os.Exit(1)
-		}
-	}
-}
-
-// TODO Remove skipped tests when code has been refactored (and hence fixed)
-// 1 test skipped
-func TestFailureToGetInstanceDimensions(t *testing.T) {
-	datasetID := uuid.NewV4().String()
-	instanceID := uuid.NewV4().String()
-
-	edition := "2017"
-
-	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
-
-	instance := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "instances",
-		Key:        "_id",
-		Value:      "799",
-		Update:     validEditionConfirmedInstanceData(datasetID, edition, instanceID),
+		return nil, err
 	}
 
-	SkipConvey("Fail to get instance document", t, func() {
-		Convey("and return status not found", func() {
-			Convey("when instance document does not exist", func() {
-				datasetAPI.GET("/instances/{id}/dimensions", "7990").WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusNotFound)
-			})
-		})
-		Convey("and return status request is forbidden", func() {
-			Convey("when an unauthorised user sends a GET request", func() {
-				if err := mongo.Setup(instance); err != nil {
-					log.ErrorC("Was unable to run test", err, nil)
-					os.Exit(1)
-				}
-
-				datasetAPI.GET("/instances/{id}/dimensions", "789").
-					Expect().Status(http.StatusForbidden)
-			})
-		})
-
-		Convey("and return status not unauthorised", func() {
-			Convey("when an invalid token is provided", func() {
-				datasetAPI.GET("/instances/{id}/dimensions", "789").WithHeader(internalToken, invalidInternalTokenID).
-					Expect().Status(http.StatusUnauthorized)
-			})
-		})
-	})
-
-	if err := mongo.Teardown(instance); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Failed to tear down test data", err, nil)
-			os.Exit(1)
-		}
-	}
-}
-
-func checkInstanceDimensionsResponse(response *httpexpect.Object) {
-
-	response.Value("items").Array().Element(0).Object().Value("dimension").Equal("time")
-
-	response.Value("items").Array().Element(0).Object().Value("label").Equal("")
-
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("id").Equal("202.45")
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/202.45$")
-
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("version").Object().Empty()
-
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("id").Equal("64d384f1-ea3b-445c-8fb8-aa453f96e58a")
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")
-
-	response.Value("items").Array().Element(0).Object().Value("option").Equal("202.45")
-
-	response.Value("items").Array().Element(0).Object().Value("node_id").Equal("")
-
-	response.Value("items").Array().Element(1).Object().Value("dimension").Equal("aggregate")
-
-	response.Value("items").Array().Element(1).Object().Value("label").Equal("CPI (Overall Index)")
-
-	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code").Object().Value("id").Equal("cpi1dimA19")
-	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/cpi1dimA19$")
-
-	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("version").Object().Empty()
-
-	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code_list").Object().Value("id").Equal("64d384f1-ea3b-445c-8fb8-aa453f96e58a")
-	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")
-
-	response.Value("items").Array().Element(1).Object().Value("option").Equal("cpi1dimA19")
-
-	response.Value("items").Array().Element(1).Object().Value("node_id").Equal("")
-
+	return docs, nil
 }
