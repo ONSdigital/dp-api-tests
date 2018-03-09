@@ -63,6 +63,16 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 				response.Value("temporal").Array().Element(0).Object().Value("frequency").Equal("monthly")
 				response.Value("version").Equal(2)
 			})
+
+			Convey("When an authenticated request including a valid download service token is made to get the published version", func() {
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2", datasetID, edition).WithHeader(downloadServiceAuthToken, downloadServiceAuthTokenID).WithHeader(internalToken, internalTokenID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/csv-exported/myfile.csv")
+				response.Value("downloads").Object().Value("csv").Object().Value("private").String().Equal("s3://csv-exported/myfile.csv")
+				response.Value("downloads").Object().Value("xls").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/csv-exported/myfile.xls")
+				response.Value("downloads").Object().Value("xls").Object().Value("private").String().Equal("s3://csv-exported/myfile.xls")
+			})
 		})
 
 		Convey("When an unauthenticated request is made to get the published version", func() {
@@ -100,6 +110,16 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 				response.Value("temporal").Array().Element(0).Object().Value("end_date").Equal("2017-09-09")
 				response.Value("temporal").Array().Element(0).Object().Value("frequency").Equal("monthly")
 				response.Value("version").Equal(1)
+			})
+
+			Convey("When a request including a valid download service token is made to get the published version", func() {
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeader(downloadServiceAuthToken, downloadServiceAuthTokenID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/csv-exported/myfile.csv")
+				response.Value("downloads").Object().Value("csv").Object().Value("private").String().Equal("s3://csv-exported/myfile.csv")
+				response.Value("downloads").Object().Value("xls").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/csv-exported/myfile.xls")
+				response.Value("downloads").Object().Value("xls").Object().Value("private").String().Equal("s3://csv-exported/myfile.xls")
 			})
 		})
 
