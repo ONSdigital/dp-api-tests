@@ -239,7 +239,7 @@ type Version struct {
 	Temporal      *[]TemporalFrequency `bson:"temporal,omitempty"       json:"temporal,omitempty"`
 	LastUpdated   time.Time            `bson:"last_updated,omitempty"   json:"-"`
 	Version       int                  `bson:"version,omitempty"        json:"version,omitempty"`
-	UserNotes     []UserNote           `bson:"user_notes,omitempty"     json:"user_notes,omitempty"`
+	UserNotes     *[]UserNote          `bson:"user_notes,omitempty"     json:"user_notes,omitempty"`
 }
 
 type UserNote struct {
