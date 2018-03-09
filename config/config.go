@@ -6,6 +6,7 @@ import "github.com/kelseyhightower/envconfig"
 type Config struct {
 	CodeListAPIURL            string   `envconfig:"CODELIST_API_URL"`
 	DatasetAPIURL             string   `envconfig:"DATASET_API_URL"`
+	DownloadServiceURL        string   `envconfig:"DOWNLOAD_SERVICE_URL"`
 	FilterAPIURL              string   `envconfig:"FILTER_API_URL"`
 	HierarchyAPIURL           string   `envconfig:"HIERARCHY_API_URL"`
 	ImportAPIURL              string   `envconfig:"IMPORT_API_URL"`
@@ -33,6 +34,7 @@ func Get() (*Config, error) {
 	cfg := &Config{
 		CodeListAPIURL:            "http://localhost:22400",
 		DatasetAPIURL:             "http://localhost:22000",
+		DownloadServiceURL:        "http://localhost:23500",
 		FilterAPIURL:              "http://localhost:22100",
 		HierarchyAPIURL:           "http://localhost:22600",
 		ImportAPIURL:              "http://localhost:21800",
