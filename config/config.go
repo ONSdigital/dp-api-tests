@@ -34,7 +34,7 @@ func Get() (*Config, error) {
 	cfg := &Config{
 		CodeListAPIURL:            "http://localhost:22400",
 		DatasetAPIURL:             "http://localhost:22000",
-		DownloadServiceURL:        "http://localhost:23500",
+		DownloadServiceURL:        "http://localhost:23600",
 		FilterAPIURL:              "http://localhost:22100",
 		HierarchyAPIURL:           "http://localhost:22600",
 		ImportAPIURL:              "http://localhost:21800",
