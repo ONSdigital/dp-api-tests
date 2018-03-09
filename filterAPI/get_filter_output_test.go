@@ -15,23 +15,48 @@ import (
 func TestSuccessfullyGetFilterOutput(t *testing.T) {
 
 	filterID := uuid.NewV4().String()
-	filterOutputID := uuid.NewV4().String()
+	publishedFilterOutputID := uuid.NewV4().String()
+	unpublishedFilterOutputID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
-	output := &mongo.Doc{
+	publishedOutput := &mongo.Doc{
 		Database:   cfg.MongoFiltersDB,
 		Collection: "filterOutputs",
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID),
+		Update:     GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, publishedFilterOutputID, filterBlueprintID, true),
 	}
 
-	Convey("Given an existing filter output with downloads", t, func() {
+	unpublishedOutput := &mongo.Doc{
+		Database:   cfg.MongoFiltersDB,
+		Collection: "filterOutputs",
+		Key:        "_id",
+		Value:      filterID,
+		Update:     GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, unpublishedFilterOutputID, filterBlueprintID, false),
+	}
 
-		if err := mongo.Setup(output); err != nil {
+	filterBlueprint := &mongo.Doc{
+		Database:   cfg.MongoFiltersDB,
+		Collection: collection,
+		Key:        "_id",
+		Value:      filterID,
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID, false),
+	}
+
+	instance := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "instances",
+		Key:        "instance_id",
+		Value:      instanceID,
+		Update:     GetUnpublishedInstanceDataBSON(instanceID),
+	}
+
+	Convey("Given an existing public filter output with downloads", t, func() {
+
+		if err := mongo.Setup(publishedOutput); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -39,7 +64,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 		Convey("When requesting to get filter output", func() {
 			Convey("Then filter output is returned in the response body", func() {
 
-				response := filterAPI.GET("/filter-outputs/{filter_output_id}", filterOutputID).
+				response := filterAPI.GET("/filter-outputs/{filter_output_id}", publishedFilterOutputID).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("dimensions").Array().Length().Equal(4)
@@ -52,17 +77,91 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 				response.Value("downloads").Object().Value("json").Object().Value("size").Equal("6mb")
 				response.Value("downloads").Object().Value("xls").Object().Value("url").Equal("s3-xls-location")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
-				response.Value("filter_id").Equal(filterOutputID)
+				response.Value("filter_id").Equal(publishedFilterOutputID)
 				response.Value("instance_id").Equal(instanceID)
 				response.Value("links").Object().Value("filter_blueprint").Object().Value("href").String().Match("/filters/" + filterBlueprintID + "$")
 				response.Value("links").Object().Value("filter_blueprint").Object().Value("id").Equal(filterBlueprintID)
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filter-outputs/" + filterOutputID + "$")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filter-outputs/" + publishedFilterOutputID + "$")
 				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
 			})
 		})
 
-		if err := mongo.Teardown(output); err != nil {
+		if err := mongo.Teardown(publishedOutput); err != nil {
+			log.ErrorC("Unable to remove test data from mongo db", err, nil)
+			os.Exit(1)
+		}
+	})
+
+	Convey("Given an unpublished instance, and an existing pre-publish filter output with downloads", t, func() {
+
+		if err := mongo.Setup(instance, filterBlueprint, unpublishedOutput); err != nil {
+			log.ErrorC("Unable to setup test data", err, nil)
+			os.Exit(1)
+		}
+
+		Convey("When making an authenticated request to get filter output", func() {
+			Convey("Then filter output is returned in the response body", func() {
+
+				response := filterAPI.GET("/filter-outputs/{filter_output_id}", unpublishedFilterOutputID).
+					WithHeader(internalTokenHeader, internalTokenID).Expect().
+					Status(http.StatusOK).JSON().Object()
+
+				response.Value("dimensions").Array().Length().Equal(4)
+				response.Value("dimensions").Array().Element(0).Object().NotContainsKey("dimension_url") // Check dimension url is not set
+				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
+				response.Value("dimensions").Array().Element(0).Object().Value("options").Equal([]string{"27"})
+				response.Value("downloads").Object().Value("csv").Object().Value("url").Equal("s3-csv-location")
+				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("12mb")
+				response.Value("downloads").Object().Value("json").Object().Value("url").Equal("s3-json-location")
+				response.Value("downloads").Object().Value("json").Object().Value("size").Equal("6mb")
+				response.Value("downloads").Object().Value("xls").Object().Value("url").Equal("s3-xls-location")
+				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
+				response.Value("filter_id").Equal(unpublishedFilterOutputID)
+				response.Value("instance_id").Equal(instanceID)
+				response.Value("links").Object().Value("filter_blueprint").Object().Value("href").String().Match("/filters/" + filterBlueprintID + "$")
+				response.Value("links").Object().Value("filter_blueprint").Object().Value("id").Equal(filterBlueprintID)
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filter-outputs/" + unpublishedFilterOutputID + "$")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
+				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+			})
+		})
+
+		Convey("When the instance has been published and a request is made with no authentication", func() {
+
+			instance.Update = GetValidPublishedInstanceDataBSON(instanceID)
+
+			if err := mongo.Setup(instance); err != nil {
+				log.ErrorC("Unable to setup test data", err, nil)
+				os.Exit(1)
+			}
+
+			Convey("Then filter output is returned in the response body", func() {
+
+				response := filterAPI.GET("/filter-outputs/{filter_output_id}", unpublishedFilterOutputID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				response.Value("dimensions").Array().Length().Equal(4)
+				response.Value("dimensions").Array().Element(0).Object().NotContainsKey("dimension_url") // Check dimension url is not set
+				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
+				response.Value("dimensions").Array().Element(0).Object().Value("options").Equal([]string{"27"})
+				response.Value("downloads").Object().Value("csv").Object().Value("url").Equal("s3-csv-location")
+				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("12mb")
+				response.Value("downloads").Object().Value("json").Object().Value("url").Equal("s3-json-location")
+				response.Value("downloads").Object().Value("json").Object().Value("size").Equal("6mb")
+				response.Value("downloads").Object().Value("xls").Object().Value("url").Equal("s3-xls-location")
+				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
+				response.Value("filter_id").Equal(unpublishedFilterOutputID)
+				response.Value("instance_id").Equal(instanceID)
+				response.Value("links").Object().Value("filter_blueprint").Object().Value("href").String().Match("/filters/" + filterBlueprintID + "$")
+				response.Value("links").Object().Value("filter_blueprint").Object().Value("id").Equal(filterBlueprintID)
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filter-outputs/" + unpublishedFilterOutputID + "$")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
+				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+			})
+		})
+
+		if err := mongo.Teardown(instance, filterBlueprint, unpublishedOutput); err != nil {
 			log.ErrorC("Unable to remove test data from mongo db", err, nil)
 			os.Exit(1)
 		}
@@ -72,8 +171,19 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 func TestFailureToGetFilterOutput(t *testing.T) {
 
 	filterID := uuid.NewV4().String()
+	instanceID := uuid.NewV4().String()
+	filterOutputID := uuid.NewV4().String()
+	filterBlueprintID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
+
+	unpublishedOutput := &mongo.Doc{
+		Database:   cfg.MongoFiltersDB,
+		Collection: "filterOutputs",
+		Key:        "_id",
+		Value:      filterID,
+		Update:     GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, false),
+	}
 
 	Convey("Given filter output does not exist", t, func() {
 		Convey("When requesting to get filter output", func() {
@@ -83,5 +193,26 @@ func TestFailureToGetFilterOutput(t *testing.T) {
 					Expect().Status(http.StatusNotFound).Body().Contains("Filter output not found\n")
 			})
 		})
+	})
+
+	Convey("Given an unpublished instance, and an existing pre-publish filter output with downloads", t, func() {
+
+		if err := mongo.Setup(unpublishedOutput); err != nil {
+			log.ErrorC("Unable to setup test data", err, nil)
+			os.Exit(1)
+		}
+
+		Convey("When making an unauthenticated request to get filter output", func() {
+			Convey("Then the response returns status not found (404)", func() {
+
+				filterAPI.GET("/filter-outputs/{filter_output_id}", filterOutputID).
+					Expect().Status(http.StatusNotFound).Body().Contains("Filter output not found\n")
+			})
+		})
+
+		if err := mongo.Teardown(unpublishedOutput); err != nil {
+			log.ErrorC("Unable to remove test data from mongo db", err, nil)
+			os.Exit(1)
+		}
 	})
 }

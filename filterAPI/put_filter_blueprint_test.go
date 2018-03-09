@@ -28,7 +28,7 @@ func TestSuccessfulPutFilterBlueprint(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID, true),
 	}
 
 	instance := &mongo.Doc{
@@ -140,7 +140,7 @@ func TestFailureToPutFilterBlueprint(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, validInstanceID, filterBlueprintID),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, validInstanceID, filterBlueprintID, true),
 	}
 
 	instance := &mongo.Doc{

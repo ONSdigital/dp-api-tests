@@ -163,7 +163,7 @@ func timeDimension(host, filterID string) Dimension {
 	}
 }
 
-func GetValidFilterWithMultipleDimensionsBSON(host, filterID, instanceID, filterBlueprintID string) bson.M {
+func GetValidFilterWithMultipleDimensionsBSON(host, filterID, instanceID, filterBlueprintID string, published bool) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"_id":                   filterID,
@@ -174,13 +174,13 @@ func GetValidFilterWithMultipleDimensionsBSON(host, filterID, instanceID, filter
 			"links.self.href":       host + "/filters/" + filterBlueprintID,
 			"links.version.id":      "1",
 			"links.version.href":    "http://localhost:8080/datasets/123/editions/2017/versions/1",
-			"published":             true,
+			"published":             published,
 			"test_data":             "true",
 		},
 	}
 }
 
-func GetValidFilterOutputWithMultipleDimensionsBSON(host, filterID, instanceID, filterOutputID, filterBlueprintID string) bson.M {
+func GetValidFilterOutputWithMultipleDimensionsBSON(host, filterID, instanceID, filterOutputID, filterBlueprintID string, published bool) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"_id":                         filterID,
@@ -199,7 +199,7 @@ func GetValidFilterOutputWithMultipleDimensionsBSON(host, filterID, instanceID, 
 			"links.version.id":            "1",
 			"links.version.href":          "http://localhost:8080/datasets/123/editions/2017/versions/1",
 			"state":                       "completed",
-			"published":                   true,
+			"published":                   published,
 			"test_data":                   "true",
 		},
 	}

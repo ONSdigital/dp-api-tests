@@ -16,6 +16,7 @@ func TestSuccessfullyGetFilterBlueprint(t *testing.T) {
 
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
+	unpublishedFilterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
@@ -25,7 +26,23 @@ func TestSuccessfullyGetFilterBlueprint(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID, true),
+	}
+
+	unpublishedFilter := &mongo.Doc{
+		Database:   cfg.MongoFiltersDB,
+		Collection: collection,
+		Key:        "_id",
+		Value:      filterID,
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, unpublishedFilterBlueprintID, false),
+	}
+
+	instance := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "instances",
+		Key:        "instance_id",
+		Value:      instanceID,
+		Update:     GetUnpublishedInstanceDataBSON(instanceID),
 	}
 
 	Convey("Given an existing filter", t, func() {
@@ -55,13 +72,74 @@ func TestSuccessfullyGetFilterBlueprint(t *testing.T) {
 			os.Exit(1)
 		}
 	})
+
+	Convey("Given an existing filter for an unpublished instance", t, func() {
+
+		if err := mongo.Setup(unpublishedFilter, instance); err != nil {
+			log.ErrorC("Unable to setup test data", err, nil)
+			os.Exit(1)
+		}
+
+		Convey("When requesting to get filter blueprint with authentication", func() {
+			Convey("Then filter blueprint is returned in the response body", func() {
+
+				response := filterAPI.GET("/filters/{filter_blueprint_id}", unpublishedFilterBlueprintID).
+					WithHeader(internalTokenHeader, internalTokenID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				response.Value("filter_id").Equal(unpublishedFilterBlueprintID)
+				response.Value("instance_id").Equal(instanceID)
+				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("/filters/" + unpublishedFilterBlueprintID + "/dimensions$")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filters/(.+)$")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
+				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+			})
+		})
+
+		Convey("When the instance is published and a request is made to get filter blueprint", func() {
+			instance.Update = GetValidPublishedInstanceDataBSON(instanceID)
+
+			if err := mongo.Setup(instance); err != nil {
+				log.ErrorC("Unable to setup test data", err, nil)
+				os.Exit(1)
+			}
+
+			Convey("Then filter blueprint is returned in the response body", func() {
+
+				response := filterAPI.GET("/filters/{filter_blueprint_id}", unpublishedFilterBlueprintID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				response.Value("filter_id").Equal(unpublishedFilterBlueprintID)
+				response.Value("instance_id").Equal(instanceID)
+				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("/filters/" + unpublishedFilterBlueprintID + "/dimensions$")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filters/(.+)$")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
+				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+			})
+		})
+
+		if err := mongo.Teardown(unpublishedFilter, instance); err != nil {
+			log.ErrorC("Unable to remove test data from mongo db", err, nil)
+			os.Exit(1)
+		}
+	})
 }
 
 func TestFailureToGetFilterBlueprint(t *testing.T) {
 
 	filterID := uuid.NewV4().String()
+	instanceID := uuid.NewV4().String()
+	unpublishedFilterBlueprintID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
+
+	unpublishedFilter := &mongo.Doc{
+		Database:   cfg.MongoFiltersDB,
+		Collection: collection,
+		Key:        "_id",
+		Value:      filterID,
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, unpublishedFilterBlueprintID, false),
+	}
 
 	Convey("Given filter blueprint does not exist", t, func() {
 		Convey("When requesting to get filter blueprint", func() {
@@ -71,5 +149,25 @@ func TestFailureToGetFilterBlueprint(t *testing.T) {
 					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found\n")
 			})
 		})
+	})
+
+	Convey("Given an existing filter for an unpublished instance", t, func() {
+
+		if err := mongo.Setup(unpublishedFilter); err != nil {
+			log.ErrorC("Unable to setup test data", err, nil)
+			os.Exit(1)
+		}
+
+		Convey("When requesting to get filter blueprint without authentication", func() {
+			Convey("Then the response returns status not found (404)", func() {
+				filterAPI.GET("/filters/{filter_blueprint_id}", unpublishedFilterBlueprintID).
+					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found\n")
+			})
+		})
+
+		if err := mongo.Teardown(unpublishedFilter); err != nil {
+			log.ErrorC("Unable to remove test data from mongo db", err, nil)
+			os.Exit(1)
+		}
 	})
 }
