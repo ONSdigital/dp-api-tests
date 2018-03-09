@@ -29,7 +29,7 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedWithUpdatesDatasetData(datasetID),
+		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	publishedEditionDoc := &mongo.Doc{
@@ -37,7 +37,7 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
-		Update:     validPublishedEditionData(datasetID, editionID, edition),
+		Update:     ValidPublishedEditionData(datasetID, editionID, edition),
 	}
 
 	unpublishedEditionDoc := &mongo.Doc{
@@ -107,7 +107,7 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedWithUpdatesDatasetData(datasetID),
+		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	unpublishedEditionDoc := &mongo.Doc{

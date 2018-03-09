@@ -1,16 +1,20 @@
 package filterAPI
 
 import (
+	"strconv"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"
 )
 
-func GetValidPublishedInstanceDataBSON(instanceID string) bson.M {
+func GetValidPublishedInstanceDataBSON(instanceID, datasetID, edition string, version int) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"_id":                   instanceID,
 			"collection_id":         "108064B3-A808-449B-9041-EA3A2F72CFAA",
+			"dataset.id":            datasetID,
+			"dataset.edition":       edition,
+			"dataset.version":       version,
 			"downloads.csv.url":     "http://localhost:8080/aws/census-2017-1-csv",
 			"downloads.csv.size":    "10mb",
 			"downloads.xls.url":     "http://localhost:8080/aws/census-2017-1-xls",
@@ -22,29 +26,32 @@ func GetValidPublishedInstanceDataBSON(instanceID string) bson.M {
 			"license":               "ONS License",
 			"links.job.id":          "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
 			"links.job.href":        "http://localhost:8080/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
-			"links.dataset.id":      "123",
-			"links.dataset.href":    "http://localhost:8080/datasets/123",
-			"links.dimensions.href": "http://localhost:8080/datasets/123/editions/2017/versions/1/dimensions",
-			"links.edition.id":      "2017",
-			"links.edition.href":    "http://localhost:8080/datasets/123/editions/2017",
+			"links.dataset.id":      datasetID,
+			"links.dataset.href":    "http://localhost:8080/datasets/" + datasetID,
+			"links.dimensions.href": "http://localhost:8080/datasets/" + datasetID + "/editions/" + edition + "/versions/" + strconv.Itoa(version) + "/dimensions",
+			"links.edition.id":      edition,
+			"links.edition.href":    "http://localhost:8080/datasets/" + datasetID + "/editions/" + edition,
 			"links.self.href":       "http://localhost:8080/instances/" + instanceID,
-			"links.version.href":    "http://localhost:8080/datasets/123/editions/2017/versions/1",
-			"links.version.id":      "1",
+			"links.version.href":    "http://localhost:8080/datasets/" + datasetID + "/editions/" + edition + "/versions/" + strconv.Itoa(version),
+			"links.version.id":      strconv.Itoa(version),
 			"release_date":          "2017-12-12", // TODO Should be isodate
 			"state":                 "published",
 			"total_inserted_observations": 1000,
 			"total_observations":          1000,
-			"version":                     1,
+			"version":                     version,
 			"test_data":                   "true",
 		},
 	}
 }
 
-func GetUnpublishedInstanceDataBSON(instanceID string) bson.M {
+func GetUnpublishedInstanceDataBSON(instanceID string, datasetID, edition string, version int) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"_id":                   instanceID,
 			"collection_id":         "108064B3-A808-449B-9041-EA3A2F72CFAA",
+			"dataset.id":            datasetID,
+			"dataset.edition":       edition,
+			"dataset.version":       version,
 			"downloads.csv.url":     "http://localhost:8080/aws/census-2017-1-csv",
 			"downloads.csv.size":    "10mb",
 			"downloads.xls.url":     "http://localhost:8080/aws/census-2017-1-xls",
@@ -56,10 +63,10 @@ func GetUnpublishedInstanceDataBSON(instanceID string) bson.M {
 			"license":               "ONS License",
 			"links.job.id":          "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
 			"links.job.href":        "http://localhost:8080/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
-			"links.dataset.id":      "123",
+			"links.dataset.id":      datasetID,
 			"links.dataset.href":    "http://localhost:8080/datasets/123",
 			"links.dimensions.href": "http://localhost:8080/datasets/123/editions/2017/versions/1/dimensions",
-			"links.edition.id":      "2017",
+			"links.edition.id":      edition,
 			"links.edition.href":    "http://localhost:8080/datasets/123/editions/2017",
 			"links.self.href":       "http://localhost:8080/instances/" + instanceID,
 			"links.version.href":    "http://localhost:8080/datasets/123/editions/2017/versions/1",
@@ -88,10 +95,13 @@ func dimension(host, filterBlueprintID string) Dimension {
 	}
 }
 
-func GetValidCreatedFilterBlueprintBSON(host, filterID, instanceID, filterBlueprintID string) bson.M {
+func GetValidCreatedFilterBlueprintBSON(host, filterID, instanceID, filterBlueprintID, datasetID, edition string, version int) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"_id": filterID,
+			"_id":             filterID,
+			"dataset.id":      datasetID,
+			"dataset.edition": edition,
+			"dataset.version": version,
 			"dimensions": []Dimension{
 				dimension(host, filterBlueprintID),
 			},
@@ -162,10 +172,13 @@ func timeDimension(host, filterID string) Dimension {
 	}
 }
 
-func GetValidFilterWithMultipleDimensionsBSON(host, filterID, instanceID, filterBlueprintID string) bson.M {
+func GetValidFilterWithMultipleDimensionsBSON(host, filterID, instanceID, datasetID, edition, filterBlueprintID string, version int) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"_id":                   filterID,
+			"dataset.id":            datasetID,
+			"dataset.edition":       edition,
+			"dataset.version":       version,
 			"dimensions":            []Dimension{ageDimension(host, filterBlueprintID), sexDimension(host, filterBlueprintID), goodsAndServicesDimension(host, filterBlueprintID), timeDimension(host, filterBlueprintID)},
 			"instance_id":           instanceID,
 			"filter_id":             filterBlueprintID,
@@ -249,10 +262,13 @@ func GetValidFilterOutputNoDimensionsBSON(host, filterID, instanceID, filterOutp
 	}
 }
 
-func GetValidFilterOutputWithoutDownloadsBSON(host, filterID, instanceID, filterOutputID string) bson.M {
+func GetValidFilterOutputWithoutDownloadsBSON(host, filterID, instanceID, filterOutputID, datasetID, edition string, version int) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"_id":                filterID,
+			"dataset.id":         datasetID,
+			"dataset.edition":    edition,
+			"dataset.version":    version,
 			"dimensions":         []Dimension{ageDimension(host, ""), sexDimension(host, ""), goodsAndServicesDimension(host, ""), timeDimension(host, "")},
 			"instance_id":        instanceID,
 			"filter_id":          filterOutputID,
@@ -384,22 +400,26 @@ func GetValidResidenceTypeDimensionData(instanceID, option string) bson.M {
 	}
 }
 
-func GetValidPOSTCreateFilterJSON(instanceID string) string {
+func GetValidPOSTCreateFilterJSON(datasetID, edition string, version int) string {
 	return `{
-	"instance_id": "` + instanceID + `" ,
+	"dataset": {
+		"id": "` + datasetID + `",
+		"edition": "` + edition + `",
+		"version": ` + strconv.Itoa(version) + `
+	},
 	"dimensions": [
 	  {
-		"name": "age",
-		"options": [
-		  "27", "42"
-		]
+		  "name": "age",
+		  "options": [
+		    "27", "42"
+		  ]
 	  }
 	]
-  }`
+}`
 }
 
 // Invalid Json body without dataset filter id
-func GetInvalidJSON(instanceID string) string {
+func GetInvalidJSON() string {
 	return `
 {
 	"dimensions": [
@@ -414,50 +434,58 @@ func GetInvalidJSON(instanceID string) string {
 }
 
 // GetInvalidDimensionJSON contains an invalid dimension for instance
-func GetInvalidDimensionJSON(instanceID string) string {
+func GetInvalidDimensionJSON(datasetID, edition string, version int) string {
 	return `
-{
-	"instance_id": "` + instanceID + `",
-	"dimensions": [
-	  {
-		"name": "weight",
-		"options": [
-		  "27", "42"
+	{
+		"dataset": {
+			"id": "` + datasetID + `",
+			"edition": "` + edition + `",
+			"version": ` + strconv.Itoa(version) + `
+		},
+		"dimensions": [
+	  	{
+			"name": "weight",
+			"options": [
+		  	"27", "42"
+				]
+	  	}
 		]
-	  }
-	]
 	}`
 }
 
 // GetInvalidDimensionOptionJSON contains an invalid dimension for instance
-func GetInvalidDimensionOptionJSON(instanceID string) string {
+func GetInvalidDimensionOptionJSON(datasetID, edition string, version int) string {
 	return `
-{
-	"instance_id": "` + instanceID + `",
-	"dimensions": [
-	  {
-		"name": "age",
-		"options": [
-		  "27", "33"
+	{
+		"dataset": {
+			"id": "` + datasetID + `",
+			"edition": "` + edition + `",
+			"version": ` + strconv.Itoa(version) + `
+		},
+		"dimensions": [
+	  	{
+			"name": "age",
+			"options": [
+		  	"27", "33"
+				]
+	  	}
 		]
-	  }
-	]
 	}`
 }
 
 // GetValidPUTUpdateFilterBlueprintJSON Json body with state and new dimension options
 func GetValidPUTUpdateFilterBlueprintJSON(instanceID string) string {
 	return `
-{
-	"instance_id": "` + instanceID + `" ,
-	"dimensions": [
-	  {
-		"name": "sex",
-		"options": [
-		  "intersex", "other"
+	{
+		"instance_id": "` + instanceID + `" ,
+		"dimensions": [
+	  	{
+				"name": "sex",
+				"options": [
+		  		"intersex", "other"
+				]
+	  	}
 		]
-	  }
-	]
 	}`
 }
 
@@ -494,9 +522,11 @@ func GetInvalidPOSTDimensionToFilterBlueprintJSON() string {
 }`
 }
 
-func GetValidPUTFilterBlueprintJSON(instanceID string, time time.Time) string {
+func GetValidPUTFilterBlueprintJSON(version int, time time.Time) string {
 	return `{
-	  "instance_id": "` + instanceID + `",
+	  "dataset": {
+			"version": ` + strconv.Itoa(version) + `
+		},
 	  "events": {
 		  "info": [
 		    {
@@ -507,6 +537,22 @@ func GetValidPUTFilterBlueprintJSON(instanceID string, time time.Time) string {
 	    ]
 		}
   }`
+}
+
+func GetInValidPUTFilterBlueprintJSON(id, edition string, version int, time time.Time) string {
+	json := `{"dataset": {`
+
+	if id != "" {
+		json = json + `"id": "` + id + `",`
+	}
+
+	if edition != "" {
+		json = json + `"edition": "` + edition + `",`
+	}
+
+	json = json + `"version": ` + strconv.Itoa(version) + `}}`
+
+	return json
 }
 
 func GetValidPUTFilterOutputWithCSVDownloadJSON() string {

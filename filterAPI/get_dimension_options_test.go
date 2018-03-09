@@ -17,6 +17,9 @@ func TestSuccessfullyGetListOfDimensionOptions(t *testing.T) {
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -25,7 +28,7 @@ func TestSuccessfullyGetListOfDimensionOptions(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version),
 	}
 
 	Convey("Given an existing filter blueprint with dimensions and options", t, func() {
@@ -106,6 +109,9 @@ func TestFailureToGetListOfDimensionOptions(t *testing.T) {
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -114,7 +120,7 @@ func TestFailureToGetListOfDimensionOptions(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version),
 	}
 
 	Convey("Given a filter blueprint does not exist", t, func() {

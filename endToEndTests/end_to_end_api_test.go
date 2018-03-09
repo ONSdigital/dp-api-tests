@@ -524,8 +524,10 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				So(xlsFileSize, ShouldResemble, &expectedXLSFileSize)
 
 				Convey("Then an api customer should be able to filter a dataset and be able to download a csv and xlsx download of the data", func() {
+					json := GetValidPOSTCreateFilterJSON(datasetName, "2017", "1")
+					log.Info("ajhgjlabfjlarebvjkrbvqlj", log.Data{"json": json})
 					filterBlueprintResponse := filterAPI.POST("/filters").WithQuery("submitted", "true").
-						WithBytes([]byte(GetValidPOSTCreateFilterJSON(instanceID))).Expect().Status(http.StatusCreated).JSON().Object()
+						WithBytes([]byte(json)).Expect().Status(http.StatusCreated).JSON().Object()
 
 					filterBlueprintID := filterBlueprintResponse.Value("filter_id").String().Raw()
 
@@ -543,6 +545,8 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					filterBlueprintResponse.Value("links").Object().Value("version").Object().Value("id").Equal("1")
 					filterBlueprintResponse.Value("links").Object().Value("filter_output").Object().Value("href").String().Match("/filter-outputs/(.+)$")
 					filterBlueprintResponse.Value("links").Object().Value("filter_output").Object().Value("id").NotNull()
+
+					log.Info("filter response", log.Data{"resp": filterBlueprintResponse.Raw()})
 
 					filterOutputID := filterBlueprintResponse.Value("links").Object().Value("filter_output").Object().Value("id").String().Raw()
 

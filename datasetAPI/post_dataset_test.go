@@ -114,7 +114,7 @@ func TestFailureToPostDataset(t *testing.T) {
 			Collection: collection,
 			Key:        "_id",
 			Value:      datasetID,
-			Update:     validPublishedWithUpdatesDatasetData(datasetID),
+			Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
 		}
 
 		if err := mongo.Setup(publishedDataset); err != nil {

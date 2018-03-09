@@ -151,7 +151,7 @@ func getInstanceDimensionOptionsSetup(datasetID, editionID, edition, instanceID 
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedWithUpdatesDatasetData(datasetID),
+		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	editionDoc := &mongo.Doc{
@@ -159,7 +159,7 @@ func getInstanceDimensionOptionsSetup(datasetID, editionID, edition, instanceID 
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
-		Update:     validPublishedEditionData(datasetID, editionID, edition),
+		Update:     ValidPublishedEditionData(datasetID, editionID, edition),
 	}
 
 	instanceOneDoc := &mongo.Doc{

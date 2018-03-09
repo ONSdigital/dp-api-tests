@@ -67,7 +67,8 @@ var temporal = mongo.TemporalFrequency{
 	StartDate: "2014-09-09",
 }
 
-func validPublishedWithUpdatesDatasetData(datasetID string) bson.M {
+// ValidPublishedWithUpdatesDatasetData returns an example of a published dataset
+func ValidPublishedWithUpdatesDatasetData(datasetID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"id": datasetID,
@@ -327,7 +328,8 @@ func validAggregateDimensionsData(instanceID string) bson.M {
 	}
 }
 
-func validPublishedEditionData(datasetID, editionID, edition string) bson.M {
+// ValidPublishedEditionData returns an example bson object fo a published edition resource
+func ValidPublishedEditionData(datasetID, editionID, edition string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"edition":                   edition,

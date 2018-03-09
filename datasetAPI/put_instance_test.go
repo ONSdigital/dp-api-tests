@@ -271,7 +271,7 @@ func setupInstance(datasetID, edition, instanceID string) ([]*mongo.Doc, error) 
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedWithUpdatesDatasetData(datasetID),
+		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	instanceOneDoc := &mongo.Doc{
