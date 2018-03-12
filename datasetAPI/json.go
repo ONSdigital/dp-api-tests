@@ -827,7 +827,7 @@ var validPUTUpdateVersionMetaDataJSON = `
 		"type": "Correction"
 	}
 ],
-"user_notes": [
+"usage_notes": [
     	{
     		"title": "Coefficients of variation",
     		"note": "CV"
