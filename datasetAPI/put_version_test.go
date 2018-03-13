@@ -526,7 +526,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedWithUpdatesDatasetData(datasetID),
+		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	associatedDatasetDoc := &mongo.Doc{
@@ -550,7 +550,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
-		Update:     validPublishedEditionData(datasetID, editionID, edition),
+		Update:     ValidPublishedEditionData(datasetID, editionID, edition),
 	}
 
 	unpublishedEditionDoc := &mongo.Doc{

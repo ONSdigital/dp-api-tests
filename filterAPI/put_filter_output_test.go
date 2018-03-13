@@ -17,6 +17,9 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 	filterID := uuid.NewV4().String()
 	filterOutputID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -25,7 +28,7 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 		Collection: "filterOutputs",
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterOutputWithoutDownloadsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID),
+		Update:     GetValidFilterOutputWithoutDownloadsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, datasetID, edition, version),
 	}
 
 	Convey("Given an existing filter output", t, func() {
@@ -98,6 +101,9 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 	filterID := uuid.NewV4().String()
 	filterOutputID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -106,7 +112,7 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 		Collection: "filterOutputs",
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterOutputWithoutDownloadsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID),
+		Update:     GetValidFilterOutputWithoutDownloadsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, datasetID, edition, version),
 	}
 
 	Convey("Given a filter output does not exist", t, func() {

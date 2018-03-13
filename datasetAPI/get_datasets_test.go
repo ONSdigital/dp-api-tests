@@ -27,7 +27,7 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedWithUpdatesDatasetData(datasetID),
+		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	unpublishedDatasetDoc := &mongo.Doc{

@@ -19,13 +19,16 @@ func TestSuccessfullyDeleteDimensionOptions(t *testing.T) {
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	instance := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "instance_id",
 		Value:      instanceID,
-		Update:     GetValidPublishedInstanceDataBSON(instanceID),
+		Update:     GetValidPublishedInstanceDataBSON(instanceID, datasetID, edition, version),
 	}
 
 	filter := &mongo.Doc{
@@ -33,7 +36,7 @@ func TestSuccessfullyDeleteDimensionOptions(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version),
 	}
 
 	docs := []*mongo.Doc{instance, filter}
@@ -82,13 +85,16 @@ func TestFailureToDeleteDimensionOptions(t *testing.T) {
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	filter := &mongo.Doc{
 		Database:   cfg.MongoFiltersDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version),
 	}
 
 	Convey("Given filter job does not exist", t, func() {
