@@ -33,7 +33,7 @@ func TestSuccessfullyUpdateDataset(t *testing.T) {
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedWithUpdatesDatasetData(datasetID),
+		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	Convey("Given a published dataset already exists", t, func() {
@@ -164,7 +164,7 @@ func TestFailureToUpdateDataset(t *testing.T) {
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedWithUpdatesDatasetData(datasetID),
+		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	Convey("Given a published dataset does not exist", t, func() {

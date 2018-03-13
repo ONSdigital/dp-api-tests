@@ -17,6 +17,9 @@ func TestSuccessfullyDeleteDimension(t *testing.T) {
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -25,7 +28,7 @@ func TestSuccessfullyDeleteDimension(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version),
 	}
 
 	Convey("Given an existing filter blueprint", t, func() {
@@ -85,6 +88,9 @@ func TestFailureToDeleteDimension(t *testing.T) {
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -93,7 +99,7 @@ func TestFailureToDeleteDimension(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version),
 	}
 
 	Convey("Given filter blueprint does not exist", t, func() {

@@ -17,6 +17,9 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -25,7 +28,7 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version),
 	}
 
 	instance := &mongo.Doc{
@@ -33,9 +36,8 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 		Collection: "instances",
 		Key:        "instance_id",
 		Value:      instanceID,
-		Update:     GetValidPublishedInstanceDataBSON(instanceID),
+		Update:     GetValidPublishedInstanceDataBSON(instanceID, datasetID, edition, version),
 	}
-
 	docs := setupMultipleDimensionsAndOptions(instanceID)
 	docs = append(docs, instance, filter)
 
@@ -84,6 +86,9 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -94,7 +99,7 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidCreatedFilterBlueprintBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID),
+		Update:     GetValidCreatedFilterBlueprintBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID, datasetID, edition, version),
 	}
 
 	instance := &mongo.Doc{
@@ -102,7 +107,7 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 		Collection: "instances",
 		Key:        "instance_id",
 		Value:      instanceID,
-		Update:     GetValidPublishedInstanceDataBSON(instanceID),
+		Update:     GetValidPublishedInstanceDataBSON(instanceID, datasetID, edition, version),
 	}
 
 	option := setupDimensionOptions(uuid.NewV4().String(), GetValidAgeDimensionData(instanceID, "27"))
@@ -128,15 +133,15 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 			os.Exit(1)
 		}
 
-		Convey("When a post request to add an option for a dimension for an instance that does not exist", func() {
+		Convey("When a post request to add an option for a dimension for a version of a dataset that does not exist", func() {
 			Convey("Then return status unprocessable entity (422)", func() {
 
 				filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
-					Expect().Status(http.StatusUnprocessableEntity).Body().Contains("Unprocessable entity - instance for filter blueprint no longer exists\n")
+					Expect().Status(http.StatusUnprocessableEntity).Body().Contains("Unprocessable entity - version for filter blueprint no longer exists\n")
 			})
 		})
 
-		Convey("And the instance that is associated with this filter blueprint does exist", func() {
+		Convey("And the version that is associated with this filter blueprint does exist", func() {
 			if err := mongo.Setup(instance); err != nil {
 				log.ErrorC("Unable to setup instance test resource", err, nil)
 				os.Exit(1)

@@ -20,6 +20,54 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 
 	edition := "2017"
 
+	var docs []*mongo.Doc
+
+	datasetDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "datasets",
+		Key:        "_id",
+		Value:      datasetID,
+		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
+	}
+
+	editionDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "editions",
+		Key:        "_id",
+		Value:      editionID,
+		Update:     ValidPublishedEditionData(datasetID, editionID, edition),
+	}
+
+	instanceOneDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "instances",
+		Key:        "_id",
+		Value:      instanceID,
+		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+	}
+
+	dimensionOneDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "dimension.options",
+		Key:        "_id",
+		Value:      "9811",
+		Update:     validTimeDimensionsData(instanceID),
+	}
+
+	dimensionTwoDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "dimension.options",
+		Key:        "_id",
+		Value:      "9812",
+		Update:     validAggregateDimensionsData(instanceID),
+	}
+
+	docs = append(docs, datasetDoc, editionDoc, dimensionOneDoc, dimensionTwoDoc, instanceOneDoc)
+
+	if err := mongo.Setup(docs...); err != nil {
+		log.ErrorC("Was unable to run test", err, nil)
+		os.Exit(1)
+	}
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Given a list of dimensions for an instance exists", t, func() {
@@ -200,7 +248,7 @@ func getInstanceDimensionsSetup(datasetID, editionID, edition, instanceID string
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedWithUpdatesDatasetData(datasetID),
+		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	editionDoc := &mongo.Doc{
@@ -208,7 +256,7 @@ func getInstanceDimensionsSetup(datasetID, editionID, edition, instanceID string
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
-		Update:     validPublishedEditionData(datasetID, editionID, edition),
+		Update:     ValidPublishedEditionData(datasetID, editionID, edition),
 	}
 
 	instanceOneDoc := &mongo.Doc{
