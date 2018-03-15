@@ -270,8 +270,10 @@ type DownloadList struct {
 
 // DownloadObject represents information on the downloadable file
 type DownloadObject struct {
-	URL  string `bson:"url,omitempty"  json:"url,omitempty"`
-	Size string `bson:"size,omitempty" json:"size,omitempty"`
+	URL     string `bson:"url,omitempty"     json:"url,omitempty"`
+	Size    string `bson:"size,omitempty"    json:"size,omitempty"`
+	Public  string `bson:"public,omitempty"  json:"public,omitempty"`
+	Private string `bson:"private,omitempty" json:"private,omitempty"`
 }
 
 // TemporalFrequency represents a frequency for a particular period of time
