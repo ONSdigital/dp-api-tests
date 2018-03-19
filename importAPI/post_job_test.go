@@ -9,7 +9,7 @@ import (
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
-	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2"
 )
 
 func TestSuccessfullyPostImportJob(t *testing.T) {
@@ -20,8 +20,11 @@ func TestSuccessfullyPostImportJob(t *testing.T) {
 		Convey("When a post request with a valid json", func() {
 			Convey("Then the response returns import job created (201)", func() {
 
-				response := importAPI.POST("/jobs").WithHeader(tokenName, tokenSecret).WithBytes([]byte(validPOSTCreateJobJSON)).
-					Expect().Status(http.StatusCreated).JSON().Object()
+				response := importAPI.POST("/jobs").
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
+					WithBytes([]byte(validPOSTCreateJobJSON)).
+					Expect().Status(http.StatusCreated).
+					JSON().Object()
 
 				importJobID := response.Value("id").String().Raw()
 
@@ -66,7 +69,9 @@ func TestFailureToPostImportJob(t *testing.T) {
 		Convey("When a post request with an invalid json", func() {
 			Convey("Then the response returns bad request (400)", func() {
 
-				importAPI.POST("/jobs").WithHeader(tokenName, tokenSecret).WithBytes([]byte("{")).
+				importAPI.POST("/jobs").
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
+					WithBytes([]byte("{")).
 					Expect().Status(http.StatusBadRequest)
 			})
 		})
@@ -81,9 +86,27 @@ func TestPostImportJobWithNoAuthentication(t *testing.T) {
 		Convey("When a post request with an valid json body but no authentication header", func() {
 			Convey("Then the response returns not found (404)", func() {
 
-				importAPI.POST("/jobs").WithBytes([]byte(validPOSTCreateJobJSON)).
+				importAPI.POST("/jobs").
+					WithBytes([]byte(validPOSTCreateJobJSON)).
 					Expect().Status(http.StatusNotFound)
 
+			})
+		})
+	})
+}
+
+func TestPostImportJobUnauthorised(t *testing.T) {
+
+	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
+
+	Convey("Given a requirement to create an import job exists", t, func() {
+		Convey("When a post request is sent with an unauthorised service token", func() {
+			Convey("Then the response is 401 unauthorised", func() {
+
+				importAPI.POST("/jobs").
+					WithBytes([]byte(validPOSTCreateJobJSON)).
+					WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 	})
