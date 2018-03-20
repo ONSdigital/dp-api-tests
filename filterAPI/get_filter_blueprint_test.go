@@ -37,7 +37,7 @@ func TestSuccessfullyGetFilterBlueprint(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, false),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, unpublishedFilterBlueprintID, version, false),
 	}
 
 	instance := &mongo.Doc{
@@ -110,6 +110,7 @@ func TestSuccessfullyGetFilterBlueprint(t *testing.T) {
 			Convey("Then filter blueprint is returned in the response body", func() {
 
 				response := filterAPI.GET("/filters/{filter_blueprint_id}", unpublishedFilterBlueprintID).
+					WithHeader(internalTokenHeader, internalTokenID).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("filter_id").Equal(unpublishedFilterBlueprintID)

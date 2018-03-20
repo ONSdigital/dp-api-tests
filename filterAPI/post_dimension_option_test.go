@@ -111,7 +111,6 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 	}
 
 	option := setupDimensionOptions(uuid.NewV4().String(), GetValidAgeDimensionData(instanceID, "27"))
-
 	docs = append(docs, filter, instance, option)
 
 	Convey("Given filter blueprint does not exist", t, func() {
@@ -128,7 +127,7 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 
 	Convey("Given a filter blueprint exists", t, func() {
 
-		if err := mongo.Setup(filter); err != nil {
+		if err := mongo.Setup(filter, option); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -151,7 +150,8 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 				Convey("Then return status not found (400)", func() {
 
 					filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
-						Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - dimension not found\n")
+						Expect().Status(http.StatusBadRequest).
+						Body().Contains("Bad request - incorrect dimensions chosen: [sex]\n")
 				})
 			})
 
