@@ -47,6 +47,9 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				// Check version has been updated
 				So(updatedVersion.ID, ShouldEqual, instanceID)
 				So(updatedVersion.ReleaseDate, ShouldEqual, "2018-11-11")
+				So(len(*updatedVersion.UsageNotes), ShouldEqual, 2)
+
+				So((*updatedVersion.UsageNotes)[0].Title, ShouldEqual, "Coefficients of variation")
 
 				alert := mongo.Alert{
 					Description: "All data entries (observations) for Plymouth have been updated",
@@ -526,7 +529,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Collection: "datasets",
 		Key:        "_id",
 		Value:      datasetID,
-		Update:     validPublishedWithUpdatesDatasetData(datasetID),
+		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
 	}
 
 	associatedDatasetDoc := &mongo.Doc{
@@ -550,7 +553,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
-		Update:     validPublishedEditionData(datasetID, editionID, edition),
+		Update:     ValidPublishedEditionData(datasetID, editionID, edition),
 	}
 
 	unpublishedEditionDoc := &mongo.Doc{

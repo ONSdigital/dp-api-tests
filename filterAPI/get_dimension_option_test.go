@@ -8,7 +8,7 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -17,6 +17,9 @@ func TestSuccessfullyGetDimensionOption(t *testing.T) {
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -25,7 +28,7 @@ func TestSuccessfullyGetDimensionOption(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID, true),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, true),
 	}
 
 	Convey("Given an existing filter", t, func() {
@@ -88,6 +91,9 @@ func TestFailureToGetDimensionOption(t *testing.T) {
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -96,7 +102,7 @@ func TestFailureToGetDimensionOption(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID, true),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, true),
 	}
 
 	Convey("Given a filter blueprint does not exist", t, func() {

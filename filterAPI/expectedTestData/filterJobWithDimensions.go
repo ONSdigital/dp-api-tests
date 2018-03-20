@@ -1,6 +1,10 @@
 package expectedTestData
 
-import "github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+import (
+	"strconv"
+
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+)
 
 func age(host, filterBlueprintID string) mongo.Dimension {
 	if filterBlueprintID == "" {
@@ -145,7 +149,7 @@ func ExpectedFilterOutput(host, instanceID, filterOutputID, filterBlueprintID st
 }
 
 // ExpectedFilterOutputOnPost represents the expected data stored against a filter output resource
-func ExpectedFilterOutputOnPost(host, instanceID, filterOutputID, filterBlueprintID string) mongo.Filter {
+func ExpectedFilterOutputOnPost(host, datasetID, edition, instanceID, filterOutputID, filterBlueprintID string, version int) mongo.Filter {
 	return mongo.Filter{
 		FilterID:   filterOutputID,
 		InstanceID: instanceID,
@@ -176,7 +180,7 @@ func ExpectedFilterOutputOnPost(host, instanceID, filterOutputID, filterBlueprin
 			},
 			Version: mongo.LinkObject{
 				ID:   "1",
-				HRef: "http://localhost:8080/datasets/123/editions/2017/versions/1",
+				HRef: "http://localhost:8080/datasets/" + datasetID + "/editions/" + edition + "/versions/" + strconv.Itoa(version),
 			},
 		},
 		State: "created",

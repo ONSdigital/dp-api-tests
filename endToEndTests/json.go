@@ -13,9 +13,13 @@ func createValidJobJSON(recipe, location string) string {
 	return body
 }
 
-func GetValidPOSTCreateFilterJSON(instanceID string) string {
+func GetValidPOSTCreateFilterJSON(datasetID, edition, version string) string {
 	return `{
-	"instance_id": "` + instanceID + `" ,
+	"dataset": {
+		"id": "` + datasetID + `",
+		"edition": "` + edition + `",
+		"version": ` + version + `
+	},
 	"dimensions": [
   	{
 	  	"name": "geography",

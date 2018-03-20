@@ -9,7 +9,7 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -18,6 +18,9 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -26,7 +29,7 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID, true),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, true),
 	}
 
 	instance := &mongo.Doc{
@@ -34,7 +37,7 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 		Collection: "instances",
 		Key:        "instance_id",
 		Value:      instanceID,
-		Update:     GetValidPublishedInstanceDataBSON(instanceID),
+		Update:     GetValidPublishedInstanceDataBSON(instanceID, datasetID, edition, version),
 	}
 
 	docs := setupMultipleDimensionsAndOptions(instanceID)
@@ -110,6 +113,9 @@ func TestFailureToPostDimension(t *testing.T) {
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -120,7 +126,7 @@ func TestFailureToPostDimension(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID, true),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, true),
 	}
 
 	instance := &mongo.Doc{
@@ -128,7 +134,7 @@ func TestFailureToPostDimension(t *testing.T) {
 		Collection: "instances",
 		Key:        "instance_id",
 		Value:      instanceID,
-		Update:     GetValidPublishedInstanceDataBSON(instanceID),
+		Update:     GetValidPublishedInstanceDataBSON(instanceID, datasetID, edition, version),
 	}
 
 	dimensions := setupMultipleDimensionsAndOptions(instanceID)
@@ -163,23 +169,23 @@ func TestFailureToPostDimension(t *testing.T) {
 			})
 		})
 
-		Convey("When the instance does not exist for filter blueprint", func() {
+		Convey("When the version associated with filter blueprint no longer exists", func() {
 			Convey("Then the response returns a status unprocessable entity (422)", func() {
 
 				filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/{dimension}", filterBlueprintID, "Residence Type").
 					WithBytes([]byte(GetValidPOSTDimensionToFilterBlueprintJSON())).
-					Expect().Status(http.StatusUnprocessableEntity).Body().Contains("Unprocessable entity - instance for filter blueprint no longer exists\n")
+					Expect().Status(http.StatusUnprocessableEntity).Body().Contains("Unprocessable entity - version for filter blueprint no longer exists\n")
 			})
 		})
 
-		Convey("And the instance exists", func() {
+		Convey("And the version associated with filter blueprint exists", func() {
 
 			if err := mongo.Setup(instance); err != nil {
 				log.ErrorC("Unable to setup instance test resource", err, nil)
 				os.Exit(1)
 			}
 
-			Convey("When the dimension does not exist against instance", func() {
+			Convey("When the dimension does not exist against version", func() {
 				Convey("Then the response returns a status bad request (400)", func() {
 
 					filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/{dimension}", filterBlueprintID, "foobar").
@@ -188,7 +194,7 @@ func TestFailureToPostDimension(t *testing.T) {
 				})
 			})
 
-			Convey("When the option for a valid dimension does not exist against instance", func() {
+			Convey("When the option for a valid dimension does not exist against version", func() {
 
 				if err := mongo.Setup(dimensions...); err != nil {
 					log.ErrorC("Unable to setup dimension option test resources", err, nil)

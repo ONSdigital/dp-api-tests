@@ -8,7 +8,7 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -19,13 +19,16 @@ func TestSuccessfullyDeleteDimensionOptions(t *testing.T) {
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	instance := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "instance_id",
 		Value:      instanceID,
-		Update:     GetValidPublishedInstanceDataBSON(instanceID),
+		Update:     GetValidPublishedInstanceDataBSON(instanceID, datasetID, edition, version),
 	}
 
 	filter := &mongo.Doc{
@@ -33,7 +36,7 @@ func TestSuccessfullyDeleteDimensionOptions(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID, true),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, true),
 	}
 
 	docs := []*mongo.Doc{instance, filter}
@@ -84,13 +87,16 @@ func TestFailureToDeleteDimensionOptions(t *testing.T) {
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	filter := &mongo.Doc{
 		Database:   cfg.MongoFiltersDB,
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID, true),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, true),
 	}
 
 	Convey("Given filter job does not exist", t, func() {

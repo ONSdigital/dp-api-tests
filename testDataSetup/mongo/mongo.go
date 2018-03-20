@@ -239,6 +239,12 @@ type Version struct {
 	Temporal      *[]TemporalFrequency `bson:"temporal,omitempty"       json:"temporal,omitempty"`
 	LastUpdated   time.Time            `bson:"last_updated,omitempty"   json:"-"`
 	Version       int                  `bson:"version,omitempty"        json:"version,omitempty"`
+	UsageNotes    *[]UsageNote         `bson:"usage_notes,omitempty"     json:"usage_notes,omitempty"`
+}
+
+type UsageNote struct {
+	Title string `bson:"title,omitempty"    json:"title,omitempty"`
+	Note  string `bson:"note,omitempty"     json:"note,omitempty"`
 }
 
 // Alert represents an object containing information on an alert
@@ -264,8 +270,10 @@ type DownloadList struct {
 
 // DownloadObject represents information on the downloadable file
 type DownloadObject struct {
-	URL  string `bson:"url,omitempty"  json:"url,omitempty"`
-	Size string `bson:"size,omitempty" json:"size,omitempty"`
+	URL     string `bson:"url,omitempty"     json:"url,omitempty"`
+	Size    string `bson:"size,omitempty"    json:"size,omitempty"`
+	Public  string `bson:"public,omitempty"  json:"public,omitempty"`
+	Private string `bson:"private,omitempty" json:"private,omitempty"`
 }
 
 // TemporalFrequency represents a frequency for a particular period of time

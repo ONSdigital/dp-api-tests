@@ -6,11 +6,12 @@ import (
 	"testing"
 	"time"
 
+	datasetJSON "github.com/ONSdigital/dp-api-tests/datasetAPI"
 	"github.com/ONSdigital/dp-api-tests/filterAPI/expectedTestData"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -20,6 +21,10 @@ func TestSuccessfulPutFilterBlueprint(t *testing.T) {
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
 	newInstanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	editionID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -28,7 +33,23 @@ func TestSuccessfulPutFilterBlueprint(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID, true),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, true),
+	}
+
+	dataset := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "datasets",
+		Key:        "_id",
+		Value:      datasetID,
+		Update:     datasetJSON.ValidPublishedWithUpdatesDatasetData(datasetID),
+	}
+
+	editionDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "editions",
+		Key:        "_id",
+		Value:      datasetID,
+		Update:     datasetJSON.ValidPublishedEditionData(datasetID, editionID, edition),
 	}
 
 	instance := &mongo.Doc{
@@ -36,22 +57,21 @@ func TestSuccessfulPutFilterBlueprint(t *testing.T) {
 		Collection: "instances",
 		Key:        "instance_id",
 		Value:      instanceID,
-		Update:     GetValidPublishedInstanceDataBSON(instanceID),
+		Update:     GetValidPublishedInstanceDataBSON(instanceID, datasetID, edition, version),
 	}
-
-	docs := setupMultipleDimensionsAndOptions(instanceID)
 
 	newInstance := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "instance_id",
 		Value:      newInstanceID,
-		Update:     GetValidPublishedInstanceDataBSON(newInstanceID),
+		Update:     GetValidPublishedInstanceDataBSON(newInstanceID, datasetID, edition, 2),
 	}
 
-	dims := setupMultipleDimensionsAndOptions(newInstanceID)
-	docs = append(docs, dims...)
-	docs = append(docs, filter, instance, newInstance)
+	docs := setupMultipleDimensionsAndOptions(instanceID)
+	newInstanceDimensionDocs := setupMultipleDimensionsAndOptions(newInstanceID)
+	docs = append(docs, newInstanceDimensionDocs...)
+	docs = append(docs, filter, dataset, editionDoc, instance, newInstance)
 
 	Convey("Given an existing filter blueprint", t, func() {
 
@@ -60,12 +80,12 @@ func TestSuccessfulPutFilterBlueprint(t *testing.T) {
 			os.Exit(1)
 		}
 
-		Convey("When a request to update the filter blueprint with an info event and new instance id", func() {
+		Convey("When a request to update the filter blueprint with an info event and new version of the same edition and dataset", func() {
 
 			time := time.Now()
 
 			response := filterAPI.PUT("/filters/{filter_id}", filterBlueprintID).
-				WithBytes([]byte(GetValidPUTFilterBlueprintJSON(newInstanceID, time))).
+				WithBytes([]byte(GetValidPUTFilterBlueprintJSON(2, time))).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			Convey("Then the response contains the updated filter blueprint", func() {
@@ -74,7 +94,7 @@ func TestSuccessfulPutFilterBlueprint(t *testing.T) {
 				response.Value("instance_id").Equal(newInstanceID)
 				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/filters/" + filterBlueprintID + "/dimensions$")
 				response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/filters/" + filterBlueprintID + "$")
-				response.Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/datasets/123/editions/2017/versions/1$")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/2$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
 				response.NotContainsKey("last_updated")
 				response.NotContainsKey("downloads")
@@ -130,8 +150,10 @@ func TestFailureToPutFilterBlueprint(t *testing.T) {
 
 	filterID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
-	validInstanceID := uuid.NewV4().String()
-	invalidInstanceID := uuid.NewV4().String()
+	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -140,22 +162,22 @@ func TestFailureToPutFilterBlueprint(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, validInstanceID, filterBlueprintID, true),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, true),
 	}
 
 	instance := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "instance_id",
-		Value:      validInstanceID,
-		Update:     GetValidPublishedInstanceDataBSON(validInstanceID),
+		Value:      instanceID,
+		Update:     GetValidPublishedInstanceDataBSON(instanceID, datasetID, edition, version),
 	}
 
 	Convey("Given a filter blueprint does not exist", t, func() {
 		Convey("When a post request is made to update filter blueprint", func() {
 			Convey("Then the request fails and returns status not found (404)", func() {
 
-				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetValidPUTUpdateFilterBlueprintJSON(validInstanceID))).
+				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetValidPUTUpdateFilterBlueprintJSON(instanceID))).
 					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found\n")
 			})
 		})
@@ -171,16 +193,37 @@ func TestFailureToPutFilterBlueprint(t *testing.T) {
 		Convey("When an invalid json body is sent to update filter blueprint", func() {
 			Convey("Then fail to update filter blueprint and return status bad request (400)", func() {
 
-				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetInvalidSyntaxJSON(validInstanceID))).
+				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetInvalidSyntaxJSON(instanceID))).
 					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - Invalid request body\n")
 			})
 		})
 
-		Convey("When a put request to change the instance id to a non existing one against a filter blueprint", func() {
+		Convey("When a put request to change the dataset against a filter blueprint", func() {
 			Convey("Then fail to update filter blueprint and return status bad request (400)", func() {
+				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetInValidPUTFilterBlueprintJSON(datasetID, "", version, time.Now()))).
+					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - Invalid request body\n")
+			})
+		})
 
-				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetValidPUTFilterBlueprintJSON(invalidInstanceID, time.Now()))).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - instance not found\n")
+		Convey("When a put request to change the edition against a filter blueprint", func() {
+			Convey("Then fail to update filter blueprint and return status bad request (400)", func() {
+				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetInValidPUTFilterBlueprintJSON("", edition, version, time.Now()))).
+					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - Invalid request body\n")
+			})
+		})
+
+		Convey("When a put request to change the dataset and edition against a filter blueprint", func() {
+			Convey("Then fail to update filter blueprint and return status bad request (400)", func() {
+				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetInValidPUTFilterBlueprintJSON(datasetID, edition, version, time.Now()))).
+					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - Invalid request body\n")
+			})
+		})
+
+		Convey("When a put request to change the version to a non existing one against a filter blueprint", func() {
+			Convey("Then fail to update filter blueprint and return status bad request (400)", func() {
+				newVersion := 2
+				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetValidPUTFilterBlueprintJSON(newVersion, time.Now()))).
+					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - version not found\n")
 			})
 		})
 

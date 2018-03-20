@@ -8,7 +8,7 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -19,6 +19,9 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 	unpublishedFilterOutputID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	datasetID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
@@ -43,7 +46,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterBlueprintID, false),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, true),
 	}
 
 	instance := &mongo.Doc{
@@ -51,7 +54,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 		Collection: "instances",
 		Key:        "instance_id",
 		Value:      instanceID,
-		Update:     GetUnpublishedInstanceDataBSON(instanceID),
+		Update:     GetUnpublishedInstanceDataBSON(instanceID, datasetID, edition, version),
 	}
 
 	Convey("Given an existing public filter output with downloads", t, func() {
@@ -129,7 +132,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 
 		Convey("When the instance has been published and a request is made with no authentication", func() {
 
-			instance.Update = GetValidPublishedInstanceDataBSON(instanceID)
+			instance.Update = GetValidPublishedInstanceDataBSON(instanceID, datasetID, edition, version)
 
 			if err := mongo.Setup(instance); err != nil {
 				log.ErrorC("Unable to setup test data", err, nil)

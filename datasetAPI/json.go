@@ -67,7 +67,8 @@ var temporal = mongo.TemporalFrequency{
 	StartDate: "2014-09-09",
 }
 
-func validPublishedWithUpdatesDatasetData(datasetID string) bson.M {
+// ValidPublishedWithUpdatesDatasetData returns an example of a published dataset
+func ValidPublishedWithUpdatesDatasetData(datasetID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"id": datasetID,
@@ -327,7 +328,8 @@ func validAggregateDimensionsData(instanceID string) bson.M {
 	}
 }
 
-func validPublishedEditionData(datasetID, editionID, edition string) bson.M {
+// ValidPublishedEditionData returns an example bson object fo a published edition resource
+func ValidPublishedEditionData(datasetID, editionID, edition string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"edition":                   edition,
@@ -369,8 +371,12 @@ func validPublishedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"dimensions":                                                   []mongo.CodeList{dimension, dimensionTwo, dimensionThree},
 			"downloads.csv.url":                                            cfg.DatasetAPIURL + "/aws/census-2017-1-csv",
 			"downloads.csv.size":                                           "10",
+			"downloads.csv.public":                                         "https://s3-eu-west-1.amazon.com/csv-exported/myfile.csv",
+			"downloads.csv.private":                                        "s3://csv-exported/myfile.csv",
 			"downloads.xls.url":                                            cfg.DatasetAPIURL + "/aws/census-2017-1-xls",
 			"downloads.xls.size":                                           "24",
+			"downloads.xls.public":                                         "https://s3-eu-west-1.amazon.com/csv-exported/myfile.xls",
+			"downloads.xls.private":                                        "s3://csv-exported/myfile.xls",
 			"edition":                                                      edition,
 			"headers":                                                      []string{"time", "geography"},
 			"id":                                                           instanceID,
@@ -408,8 +414,12 @@ func validAssociatedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"dimensions":            []mongo.CodeList{dimension},
 			"downloads.csv.url":     cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
 			"downloads.csv.size":    "10",
+			"downloads.csv.public":  "https://s3-eu-west-1.amazon.com/csv-exported/myfile.csv",
+			"downloads.csv.private": "s3://csv-exported/myfile.csv",
 			"downloads.xls.url":     cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
 			"downloads.xls.size":    "24",
+			"downloads.xls.public":  "https://s3-eu-west-1.amazon.com/csv-exported/myfile.xls",
+			"downloads.xls.private": "s3://csv-exported/myfile.xls",
 			"edition":               edition,
 			"headers":               []string{"time", "geography"},
 			"id":                    instanceID,
@@ -826,6 +836,16 @@ var validPUTUpdateVersionMetaDataJSON = `
 		"description": "All data entries (observations) for Plymouth have been updated",
 		"type": "Correction"
 	}
+],
+"usage_notes": [
+    	{
+    		"title": "Coefficients of variation",
+    		"note": "CV"
+    	},
+    	{
+    	    "title": "Data Markings",
+             "note":"x - value not reliable"
+    	}
 ],
 "latest_changes": [
 	{
