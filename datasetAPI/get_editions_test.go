@@ -18,6 +18,7 @@ func TestSuccessfullyGetListOfDatasetEditions(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
 	editionID := uuid.NewV4().String()
+	edition := "2017"
 	unpublishedEditionID := uuid.NewV4().String()
 
 	var docs []*mongo.Doc
@@ -35,7 +36,7 @@ func TestSuccessfullyGetListOfDatasetEditions(t *testing.T) {
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
-		Update:     ValidPublishedEditionData(datasetID, editionID, "2017"),
+		Update:     ValidPublishedEditionData(datasetID, editionID, edition),
 	}
 
 	unpublishedEditionDoc := &mongo.Doc{
@@ -43,7 +44,7 @@ func TestSuccessfullyGetListOfDatasetEditions(t *testing.T) {
 		Collection: "editions",
 		Key:        "_id",
 		Value:      unpublishedEditionID,
-		Update:     validUnpublishedEditionData(datasetID, unpublishedEditionID, "2018"),
+		Update:     validUnpublishedEditionData(datasetID, unpublishedEditionID, edition),
 	}
 
 	docs = append(docs, datasetDoc, publishedEditionDoc, unpublishedEditionDoc)
@@ -64,11 +65,11 @@ func TestSuccessfullyGetListOfDatasetEditions(t *testing.T) {
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("items").Array().Length().Equal(2)
-				checkEditionsResponse(datasetID, editionID, "2017", response)
+				checkEditionsResponse(datasetID, editionID, "2017", true, response)
 
-				response.Value("items").Array().Element(1).Object().Value("edition").Equal("2018")
+				response.Value("items").Array().Element(1).Object().Value("next").Object().Value("edition").Equal(edition)
 				response.Value("items").Array().Element(1).Object().Value("id").Equal(unpublishedEditionID)
-				response.Value("items").Array().Element(1).Object().Value("state").Equal("edition-confirmed")
+				response.Value("items").Array().Element(1).Object().Value("next").Object().Value("state").Equal("edition-confirmed")
 			})
 		})
 
@@ -79,7 +80,7 @@ func TestSuccessfullyGetListOfDatasetEditions(t *testing.T) {
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("items").Array().Length().Equal(1)
-				checkEditionsResponse(datasetID, editionID, "2017", response)
+				checkEditionsResponse(datasetID, editionID, edition, false, response)
 			})
 		})
 
@@ -164,12 +165,28 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 	})
 }
 
-func checkEditionsResponse(datasetID, editionID, edition string, response *httpexpect.Object) {
-	response.Value("items").Array().Element(0).Object().Value("edition").Equal(edition)
-	response.Value("items").Array().Element(0).Object().Value("id").Equal(editionID)
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("versions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions$")
-	response.Value("items").Array().Element(0).Object().Value("state").Equal("published")
+func checkEditionsResponse(datasetID, editionID, edition string, authenticated bool, response *httpexpect.Object) {
+	if !authenticated {
+		response.Value("items").Array().Element(0).Object().Value("edition").Equal(edition)
+		response.Value("items").Array().Element(0).Object().Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
+		response.Value("items").Array().Element(0).Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
+		response.Value("items").Array().Element(0).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
+		response.Value("items").Array().Element(0).Object().Value("links").Object().Value("versions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions$")
+		response.Value("items").Array().Element(0).Object().Value("state").Equal("published")
+		return
+	}
+
+	response.Value("items").Array().Element(0).Object().Value("current").Object().Value("edition").Equal(edition)
+	response.Value("items").Array().Element(0).Object().Value("current").Object().Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
+	response.Value("items").Array().Element(0).Object().Value("current").Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
+	response.Value("items").Array().Element(0).Object().Value("current").Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
+	response.Value("items").Array().Element(0).Object().Value("current").Object().Value("links").Object().Value("versions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions$")
+	response.Value("items").Array().Element(0).Object().Value("current").Object().Value("state").Equal("published")
+
+	response.Value("items").Array().Element(1).Object().Value("next").Object().Value("edition").Equal(edition)
+	response.Value("items").Array().Element(1).Object().Value("next").Object().Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
+	response.Value("items").Array().Element(1).Object().Value("next").Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
+	response.Value("items").Array().Element(1).Object().Value("next").Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
+	response.Value("items").Array().Element(1).Object().Value("next").Object().Value("links").Object().Value("versions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions$")
+	response.Value("items").Array().Element(1).Object().Value("next").Object().Value("state").Equal("edition-confirmed")
 }

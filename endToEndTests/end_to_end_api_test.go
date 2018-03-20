@@ -21,7 +21,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-var timeout = time.Duration(30 * time.Second)
+var timeout = time.Duration(15 * time.Second)
 
 // TODO Once export services have been updated with encryption and decryption
 // remove decrypt boolean flag from all setup functions
@@ -317,20 +317,20 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(instanceResource.Version, ShouldEqual, 1)
 
 			// Check Edition has been created
-			editionResource, err := mongo.GetEdition(cfg.MongoDB, "editions", "links.self.href", instanceResource.Links.Edition.HRef)
+			editionResource, err := mongo.GetEdition(cfg.MongoDB, "editions", "next.links.self.href", instanceResource.Links.Edition.HRef)
 			if err != nil {
 				log.ErrorC("Unable to retrieve edition resource", err, log.Data{"links.self.href": instanceResource.Links.Edition.HRef})
 				os.Exit(1)
 			}
 
-			So(editionResource.Edition, ShouldEqual, "2017")
-			So(editionResource.Links.Dataset.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetName)
-			So(editionResource.Links.Dataset.ID, ShouldEqual, datasetName)
-			So(editionResource.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetName+"/editions/2017/versions/1")
-			So(editionResource.Links.LatestVersion.ID, ShouldEqual, "1")
-			So(editionResource.Links.Self.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetName+"/editions/2017")
-			So(editionResource.Links.Versions.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetName+"/editions/2017/versions")
-			So(editionResource.State, ShouldEqual, "created")
+			So(editionResource.Next.Edition, ShouldEqual, "2017")
+			So(editionResource.Next.Links.Dataset.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetName)
+			So(editionResource.Next.Links.Dataset.ID, ShouldEqual, datasetName)
+			So(editionResource.Next.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetName+"/editions/2017/versions/1")
+			So(editionResource.Next.Links.LatestVersion.ID, ShouldEqual, "1")
+			So(editionResource.Next.Links.Self.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetName+"/editions/2017")
+			So(editionResource.Next.Links.Versions.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetName+"/editions/2017/versions")
+			So(editionResource.Next.State, ShouldEqual, "edition-confirmed")
 
 			// STEP 5 - Update version with collection_id and change state to associated
 			datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetName, "2017", "1").WithHeader(internalTokenHeader, internalTokenID).
@@ -425,13 +425,15 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(versionResource.State, ShouldEqual, "published")
 
 			// Check edition has updated
-			editionResource, err = mongo.GetEdition(cfg.MongoDB, "editions", "links.self.href", instanceResource.Links.Edition.HRef)
+			editionResource, err = mongo.GetEdition(cfg.MongoDB, "editions", "current.links.self.href", instanceResource.Links.Edition.HRef)
 			if err != nil {
 				log.ErrorC("Unable to retrieve dataset resource", err, log.Data{"dataset_id": datasetName})
 				os.Exit(1)
 			}
 
-			So(editionResource.State, ShouldEqual, "published")
+			So(editionResource.Next.State, ShouldEqual, "published")
+			So(editionResource.Current, ShouldNotBeNil)
+			So(editionResource.Current.State, ShouldEqual, "published")
 
 			// Check dataset has updated
 			datasetResource, err = mongo.GetDataset(cfg.MongoDB, "datasets", "_id", datasetName)
@@ -613,8 +615,8 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 						os.Exit(1)
 					}
 
-					minExpectedXLSFileSize := int64(7432)
-					maxExpectedXLSFileSize := int64(7436)
+					minExpectedXLSFileSize := int64(7465)
+					maxExpectedXLSFileSize := int64(7469)
 					So(*filteredXLSFileSize, ShouldBeBetweenOrEqual, minExpectedXLSFileSize, maxExpectedXLSFileSize)
 
 					filterBlueprint := &mongo.Doc{

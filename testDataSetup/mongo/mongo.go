@@ -207,6 +207,13 @@ type Publisher struct {
 	HRef string `bson:"href,omitempty" json:"href,omitempty"`
 }
 
+// EditionUpdate represents an evolving edition containing both the next and current edition
+type EditionUpdate struct {
+	ID      string   `bson:"_id,omitempty"         json:"id,omitempty"`
+	Current *Edition `bson:"current,omitempty"     json:"current,omitempty"`
+	Next    *Edition `bson:"next,omitempty"        json:"next,omitempty"`
+}
+
 // Edition represents information related to a single edition for a dataset
 type Edition struct {
 	Edition     string        `bson:"edition,omitempty"      json:"edition,omitempty"`
@@ -387,11 +394,11 @@ func GetDataset(database, collection, key, value string) (DatasetUpdate, error) 
 }
 
 // GetEdition retrieves an edition document from mongo
-func GetEdition(database, collection, key, value string) (Edition, error) {
+func GetEdition(database, collection, key, value string) (EditionUpdate, error) {
 	s := session.Copy()
 	defer s.Close()
 
-	var edition Edition
+	var edition EditionUpdate
 	if err := s.DB(database).C(collection).Find(bson.M{key: value}).One(&edition); err != nil {
 		return edition, err
 	}

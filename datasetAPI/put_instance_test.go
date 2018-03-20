@@ -93,7 +93,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 					So(instance.Version, ShouldEqual, 2)
 
 					// Check edition document has been created
-					edition, err := mongo.GetEdition(cfg.MongoDB, "editions", "links.self.href", instance.Links.Edition.HRef)
+					edition, err := mongo.GetEdition(cfg.MongoDB, "editions", "next.links.self.href", instance.Links.Edition.HRef)
 					if err != nil {
 						if err != mgo.ErrNotFound {
 							log.ErrorC("Was unable to remove test data", err, nil)
@@ -101,7 +101,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 						}
 					}
 
-					checkEditionDoc(datasetID, instanceID, edition)
+					checkEditionDoc(datasetID, instanceID, edition.Next)
 
 					if instance.Links.Edition != nil {
 						e := &mongo.Doc{
@@ -130,7 +130,6 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 }
 
 // TODO test to be able to update version after being published with an alert?
-
 func TestFailureToPutInstance(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
@@ -380,7 +379,8 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 	return
 }
 
-func checkEditionDoc(datasetID, instanceID string, editionDoc mongo.Edition) {
+func checkEditionDoc(datasetID, instanceID string, editionDoc *mongo.Edition) {
+	log.Info("edition", log.Data{"edition": editionDoc})
 	So(editionDoc.Edition, ShouldEqual, "2017")
 	So(editionDoc.Links.Dataset.ID, ShouldEqual, datasetID)
 	So(editionDoc.Links.Dataset.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID)
@@ -388,7 +388,7 @@ func checkEditionDoc(datasetID, instanceID string, editionDoc mongo.Edition) {
 	So(editionDoc.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/1")
 	So(editionDoc.Links.Self.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017")
 	So(editionDoc.Links.Versions.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions")
-	So(editionDoc.State, ShouldEqual, "created")
+	So(editionDoc.State, ShouldEqual, "edition-confirmed")
 
 	return
 }
