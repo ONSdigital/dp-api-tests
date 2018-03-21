@@ -16,8 +16,8 @@ func TestSuccessfullyPostImportJob(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
-	Convey("Given a requirement to create an import job exists", t, func() {
-		Convey("When a post request with a valid json", func() {
+	Convey("Given a valid JSON request", t, func() {
+		Convey("When create job is called", func() {
 			Convey("Then the response returns import job created (201)", func() {
 
 				response := importAPI.POST("/jobs").
@@ -65,8 +65,8 @@ func TestFailureToPostImportJob(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
-	Convey("Given a requirement to create an import job exists", t, func() {
-		Convey("When a post request with an invalid json", func() {
+	Convey("Given an invalid JSON request", t, func() {
+		Convey("When create job is called", func() {
 			Convey("Then the response returns bad request (400)", func() {
 
 				importAPI.POST("/jobs").
@@ -82,14 +82,13 @@ func TestPostImportJobWithNoAuthentication(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
-	Convey("Given a requirement to create an import job exists", t, func() {
-		Convey("When a post request with an valid json body but no authentication header", func() {
+	Convey("Given a request with no Authorization header", t, func() {
+		Convey("When create job is called", func() {
 			Convey("Then the response returns not found (404)", func() {
 
 				importAPI.POST("/jobs").
 					WithBytes([]byte(validPOSTCreateJobJSON)).
 					Expect().Status(http.StatusNotFound)
-
 			})
 		})
 	})
@@ -99,8 +98,8 @@ func TestPostImportJobUnauthorised(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
-	Convey("Given a requirement to create an import job exists", t, func() {
-		Convey("When a post request is sent with an unauthorised service token", func() {
+	Convey("Given a request with an unauthorised Authorization header", t, func() {
+		Convey("When create job is called", func() {
 			Convey("Then the response is 401 unauthorised", func() {
 
 				importAPI.POST("/jobs").

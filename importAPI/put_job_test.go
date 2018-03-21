@@ -8,7 +8,6 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
-	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 	"gopkg.in/mgo.v2"
 )
@@ -38,8 +37,8 @@ func TestUpdateImportJobState(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
-	Convey("Given an import job exists", t, func() {
-		Convey("When a request to update the jobs state with a specific id and the user is authenticated", func() {
+	Convey("Given a valid authenticated request", t, func() {
+		Convey("When update job is called", func() {
 			Convey("Then the response returns status OK (200)", func() {
 
 				importAPI.PUT("/jobs/{id}", jobID).
@@ -83,8 +82,8 @@ func TestUpdateImportJobStateUnauthorised(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
-	Convey("Given an import job exists", t, func() {
-		Convey("When a request has no auth headers", func() {
+	Convey("Given a request with no Authorization header", t, func() {
+		Convey("When update job is called", func() {
 			Convey("Then the response returns status 404 not found", func() {
 				importAPI.PUT("/jobs/{id}", jobID).
 					WithBytes([]byte(validPUTJobJSON)).
@@ -93,8 +92,8 @@ func TestUpdateImportJobStateUnauthorised(t *testing.T) {
 		})
 	})
 
-	Convey("Given an import job exists", t, func() {
-		Convey("When a request has an unauthorised service token", func() {
+	Convey("Given a request with an unauthorised Authorization header", t, func() {
+		Convey("When update job is called", func() {
 			Convey("Then the response returns status 401 unauthorised", func() {
 
 				importAPI.PUT("/jobs/{id}", jobID).
@@ -130,10 +129,10 @@ func TestFailureToUpdateAnImportJob(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
-	Convey("Given an import job exists", t, func() {
-		Convey("When a request to change job state with job id that does not exist", func() {
+	Convey("Given a request for a job that does not exist", t, func() {
+		Convey("When update job is called", func() {
 			Convey("Then the response returns status not found (404)", func() {
-				importAPI.PUT("/jobs/{id}", uuid.NewV4().String()).
+				importAPI.PUT("/jobs/{id}", invalidJobID).
 					WithBytes([]byte(validPUTJobJSON)).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusNotFound)
@@ -141,8 +140,8 @@ func TestFailureToUpdateAnImportJob(t *testing.T) {
 		})
 	})
 
-	Convey("Given an import job exists", t, func() {
-		Convey("When a request to change job state with invalid json", func() {
+	Convey("Given a request with an invalid job JSON body", t, func() {
+		Convey("When update job is called", func() {
 			Convey("Then the response returns status bad request (400)", func() {
 				importAPI.PUT("/jobs/{id}", jobID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).

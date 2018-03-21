@@ -41,7 +41,7 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
 	Convey("Given an import job exists", t, func() {
-		Convey("When a request to get a list of all jobs and the user is authenticated", func() {
+		Convey("When get jobs is called with an authenticated request", func() {
 			Convey("Then the response returns status OK (200)", func() {
 
 				response := importAPI.GET("/jobs").
@@ -82,7 +82,7 @@ func TestGetListOfImportJobsUnauthorised(t *testing.T) {
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
 	Convey("Given an import job exists", t, func() {
-		Convey("When a request to get a list of all jobs and the user is not authenticated", func() {
+		Convey("When get jobs is called with no Authorization header", func() {
 			Convey("Then the response returns status Not Found (404)", func() {
 				importAPI.GET("/jobs").
 					Expect().Status(http.StatusNotFound)
@@ -91,7 +91,7 @@ func TestGetListOfImportJobsUnauthorised(t *testing.T) {
 	})
 
 	Convey("Given an import job exists", t, func() {
-		Convey("When a request to get a list of all jobs and the request is not authorised", func() {
+		Convey("when get jobs is called with an unauthorised Authorization header", func() {
 			Convey("Then the response returns status 401 unauthorised", func() {
 				importAPI.GET("/jobs").
 					WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
