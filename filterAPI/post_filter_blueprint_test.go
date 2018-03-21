@@ -11,7 +11,7 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -282,8 +282,13 @@ func TestPostFilterBlueprintForUnpublishedInstance(t *testing.T) {
 
 		Convey("When valid authentication is provided on the POST request", func() {
 			Convey("Then the response returns a status of created (201)", func() {
-				response := filterAPI.POST("/filters").WithBytes([]byte(GetValidPOSTCreateFilterJSON(datasetID, edition, version))).
-					WithHeader(internalTokenHeader, internalTokenID).Expect().Status(http.StatusCreated).JSON().Object()
+
+				response := filterAPI.POST("/filters").
+					WithBytes([]byte(GetValidPOSTCreateFilterJSON(datasetID, edition, version))).
+					WithHeader(internalTokenHeader, internalTokenID).
+					Expect().Status(http.StatusCreated).
+					JSON().Object()
+
 				response.Value("filter_id").NotNull()
 				response.Value("instance_id").Equal(instanceID)
 				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("/filters/(.+)/dimensions$")
