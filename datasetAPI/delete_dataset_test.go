@@ -1,11 +1,12 @@
 package datasetAPI
 
 import (
+	"net/http"
 	"testing"
+
 	"github.com/gavv/httpexpect"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
-	"net/http"
 )
 
 func TestDeleteDataset(t *testing.T) {
