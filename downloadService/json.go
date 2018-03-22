@@ -17,9 +17,12 @@ func validPublishedDataset(datasetID string) bson.M {
 func validPublishedEdition(datasetID, edition string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"edition":          edition,
-			"links.dataset.id": datasetID,
-			"state":            "published",
+			"current.edition":          edition,
+			"current.links.dataset.id": datasetID,
+			"current.state":            "published",
+			"next.edition":             edition,
+			"next.links.dataset.id":    datasetID,
+			"next.state":               "published",
 		},
 	}
 }
