@@ -28,7 +28,7 @@ func TestSuccessfullyPostDataset(t *testing.T) {
 
 		Convey("When an authorised POST request is made to create a dataset resource", func() {
 			Convey("Then return a status ok and the expected response body", func() {
-				response := datasetAPI.POST("/datasets/{id}", datasetID).WithHeader(internalToken, internalTokenID).WithBytes([]byte(validPOSTCreateDatasetJSON)).
+				response := datasetAPI.POST("/datasets/{id}", datasetID).WithHeader(serviceAuthTokenName, serviceAuthToken).WithBytes([]byte(validPOSTCreateDatasetJSON)).
 					Expect().Status(http.StatusCreated).JSON().Object()
 
 				response.Value("id").Equal(datasetID)
@@ -86,24 +86,24 @@ func TestFailureToPostDataset(t *testing.T) {
 
 			Convey("Then return a status of bad request with a message `Failed to parse json body`", func() {
 
-				datasetAPI.POST("/datasets/{id}", datasetID).WithHeader(internalToken, internalTokenID).WithBytes([]byte("{")).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Failed to parse json body\n")
+				datasetAPI.POST("/datasets/{id}", datasetID).WithHeader(serviceAuthTokenName, serviceAuthToken).WithBytes([]byte("{")).
+					Expect().Status(http.StatusBadRequest).Body().Contains("Failed to parse json body")
 			})
 		})
 
 		Convey("When an unauthorised POST request is made to create a dataset resource with an invalid authentication header", func() {
-			Convey("Then return a status not found (404) with a message `Resource not found`", func() {
+			Convey("Then return a status unauthorized (401)", func() {
 
-				datasetAPI.POST("/datasets/{id}", datasetID).WithHeader(internalToken, invalidInternalTokenID).WithBytes([]byte(validPOSTCreateDatasetJSON)).
-					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
+				datasetAPI.POST("/datasets/{id}", datasetID).WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).WithBytes([]byte(validPOSTCreateDatasetJSON)).
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 
 		Convey("When no authentication header is provided in POST request to create a dataset resource", func() {
-			Convey("Then return a status not found (404) with a message `Resource not found`", func() {
+			Convey("Then return a status not found (404) with a message `requested resource not found`", func() {
 
 				datasetAPI.POST("/datasets/{id}", datasetID).WithBytes([]byte(validPOSTCreateDatasetJSON)).
-					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("requested resource not found")
 			})
 		})
 	})
@@ -125,8 +125,8 @@ func TestFailureToPostDataset(t *testing.T) {
 		Convey("When an authorised POST request to create the same dataset resource is made", func() {
 			Convey("Then return a status of forbidden with a message `forbidden - dataset already exists`", func() {
 
-				datasetAPI.POST("/datasets/{id}", datasetID).WithBytes([]byte(validPOSTCreateDatasetJSON)).WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusForbidden).Body().Contains("forbidden - dataset already exists\n")
+				datasetAPI.POST("/datasets/{id}", datasetID).WithBytes([]byte(validPOSTCreateDatasetJSON)).WithHeader(serviceAuthTokenName, serviceAuthToken).
+					Expect().Status(http.StatusForbidden).Body().Contains("forbidden - dataset already exists")
 			})
 		})
 

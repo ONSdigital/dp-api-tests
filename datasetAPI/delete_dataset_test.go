@@ -2,29 +2,62 @@ package datasetAPI
 
 import (
 	"net/http"
+	"os"
 	"testing"
 
+	mgo "gopkg.in/mgo.v2"
+
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestDeleteDataset(t *testing.T) {
+func TestSuccessfullyDeleteDataset(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Given a dataset with the an id of ["+datasetID+"] exists", t, func() {
 
-		datasetAPI.POST("/datasets/{id}", datasetID).
-			WithHeader(internalToken, internalTokenID).
-			WithBytes([]byte(validPOSTCreateDatasetJSON)).
-			Expect().Status(http.StatusCreated).JSON().Object()
+		associatedDataset := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: collection,
+			Key:        "_id",
+			Value:      datasetID,
+			Update:     validAssociatedDatasetData(datasetID),
+		}
+
+		if err := mongo.Setup(associatedDataset); err != nil {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
 
 		Convey("When an authorised DELETE request is made to delete a dataset resource", func() {
 
 			request := datasetAPI.DELETE("/datasets/{id}", datasetID).
-				WithHeader(internalToken, internalTokenID)
+				WithHeader(serviceAuthTokenName, serviceAuthToken)
+
+			Convey("Then the expected response is returned", func() {
+				request.Expect().Status(http.StatusNoContent)
+			})
+		})
+
+		if err := mongo.Teardown(associatedDataset); err != nil {
+			if err != mgo.ErrNotFound {
+				os.Exit(1)
+			}
+		}
+	})
+
+	// Check idempotent request, if resource is already deleted it should respond with 204
+	Convey("Given a dataset with the an id of ["+datasetID+"] does not already exist", t, func() {
+
+		Convey("When an authorised DELETE request is made to delete a dataset resource", func() {
+
+			request := datasetAPI.DELETE("/datasets/{id}", datasetID).
+				WithHeader(serviceAuthTokenName, serviceAuthToken)
 
 			Convey("Then the expected response is returned", func() {
 				request.Expect().Status(http.StatusNoContent)
@@ -33,21 +66,81 @@ func TestDeleteDataset(t *testing.T) {
 	})
 }
 
-func TestDeleteDataset_Idempotent(t *testing.T) {
+func TestFailureToDeleteDataset(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
+	secondDatasetID := uuid.NewV4().String()
 
-	Convey("Given a dataset with the an id of ["+datasetID+"] does not already exist", t, func() {
+	Convey("Given a published dataset with the an id of ["+datasetID+"] exists", t, func() {
+		publishedDataset := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: collection,
+			Key:        "_id",
+			Value:      datasetID,
+			Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
+		}
+
+		if err := mongo.Setup(publishedDataset); err != nil {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
 
 		Convey("When an authorised DELETE request is made to delete a dataset resource", func() {
 
 			request := datasetAPI.DELETE("/datasets/{id}", datasetID).
-				WithHeader(internalToken, internalTokenID)
+				WithHeader(serviceAuthTokenName, serviceAuthToken)
 
 			Convey("Then the expected response is returned", func() {
-				request.Expect().Status(http.StatusNoContent)
+				request.Expect().Status(http.StatusForbidden).Body().Contains("forbidden - a published dataset cannot be deleted")
 			})
 		})
+
+		if err := mongo.Teardown(publishedDataset); err != nil {
+			if err != mgo.ErrNotFound {
+				os.Exit(1)
+			}
+		}
+	})
+
+	Convey("Given an associated dataset with the an id of ["+secondDatasetID+"] exists", t, func() {
+
+		associatedDataset := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: collection,
+			Key:        "_id",
+			Value:      secondDatasetID,
+			Update:     validAssociatedDatasetData(secondDatasetID),
+		}
+
+		if err := mongo.Setup(associatedDataset); err != nil {
+			log.ErrorC("Was unable to run test", err, nil)
+			os.Exit(1)
+		}
+
+		Convey("When an unauthorised DELETE request is made to delete a dataset resource", func() {
+
+			request := datasetAPI.DELETE("/datasets/{id}", datasetID).
+				WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken)
+
+			Convey("Then the expected response is returned", func() {
+				request.Expect().Status(http.StatusUnauthorized)
+			})
+		})
+
+		Convey("When a DELETE request is made to delete a dataset resource without authentication", func() {
+
+			request := datasetAPI.DELETE("/datasets/{id}", datasetID)
+
+			Convey("Then the expected response is returned", func() {
+				request.Expect().Status(http.StatusNotFound)
+			})
+		})
+
+		if err := mongo.Teardown(associatedDataset); err != nil {
+			if err != mgo.ErrNotFound {
+				os.Exit(1)
+			}
+		}
 	})
 }

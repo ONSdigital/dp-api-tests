@@ -41,7 +41,7 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 
 		Convey("When an authenticated request to get instance", func() {
 			Convey("Then response contains the expected json object and a status ok (200)", func() {
-				response := datasetAPI.GET("/instances/{id}", publishedInstanceID).WithHeader(internalToken, internalTokenID).
+				response := datasetAPI.GET("/instances/{id}", publishedInstanceID).WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("alerts").Array().Element(0).Object().Value("date").String().Equal("2017-12-10")
@@ -77,7 +77,7 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 
 		Convey("When an authenticated request to get instance", func() {
 			Convey("Then response contains the expected json object and a status ok (200)", func() {
-				response := datasetAPI.GET("/instances/{id}", unpublishedInstanceID).WithHeader(internalToken, internalTokenID).
+				response := datasetAPI.GET("/instances/{id}", unpublishedInstanceID).WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				checkResponse(datasetID, edition, unpublishedInstanceID, "2", response)
@@ -106,8 +106,8 @@ func TestFailureToGetInstance(t *testing.T) {
 	Convey("Given an instance resource does not exist", t, func() {
 		Convey("When an authorised request is made to get instance", func() {
 			Convey("Then return a status not found (404) with message `Instance not found`", func() {
-				datasetAPI.GET("/instances/{id}", instanceID).WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Instance not found\n")
+				datasetAPI.GET("/instances/{id}", instanceID).WithHeader(serviceAuthTokenName, serviceAuthToken).
+					Expect().Status(http.StatusNotFound).Body().Contains("Instance not found")
 			})
 		})
 	})
@@ -126,18 +126,18 @@ func TestFailureToGetInstance(t *testing.T) {
 			os.Exit(1)
 		}
 		Convey("When no authentication header is provided in request to get resource", func() {
-			Convey("Then return a status of not found (404) with message `Resource not found`", func() {
+			Convey("Then return a status of not found (404) with message `requested resource not found`", func() {
 
 				datasetAPI.GET("/instances/{id}", instanceID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("requested resource not found")
 			})
 		})
 
 		Convey("When an unauthorised request is made to get resource", func() {
-			Convey("Then return a status of not found (404) with message `Resource not found`", func() {
+			Convey("Then return a status of unauthorized (401)", func() {
 
-				datasetAPI.GET("/instances/{id}", instanceID).WithHeader(internalToken, "wrong-header").
-					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
+				datasetAPI.GET("/instances/{id}", instanceID).WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 

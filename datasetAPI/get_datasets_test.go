@@ -63,11 +63,16 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 					response.Value("items").Array().Element(i).Object().Value("id").Equal(datasetID)
 					checkDatasetResponse(datasetID, response.Value("items").Array().Element(i).Object())
 				}
+
+				if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == "133" {
+					// user is not authenticated to see this item, if it is returned force failure
+					t.Fail()
+				}
 			}
 		})
 
 		Convey("when the user is authorised", func() {
-			response := datasetAPI.GET("/datasets").WithHeader(internalToken, internalTokenID).
+			response := datasetAPI.GET("/datasets").WithHeader(serviceAuthTokenName, serviceAuthToken).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("items").Array().Element(0).Object().Value("id").NotNull()
