@@ -276,7 +276,7 @@ func TestPostFilterBlueprintForUnpublishedInstance(t *testing.T) {
 		Convey("When invalid authentication is provided on the POST request", func() {
 			Convey("Then the response returns a status of not found (404)", func() {
 				filterAPI.POST("/filters").WithBytes([]byte(GetValidPOSTCreateFilterJSON(datasetID, edition, version))).
-					WithHeader(internalTokenHeader, "failure").Expect().Status(http.StatusNotFound)
+					WithHeader(serviceAuthTokenName, "failure").Expect().Status(http.StatusUnauthorized)
 			})
 		})
 
@@ -285,7 +285,7 @@ func TestPostFilterBlueprintForUnpublishedInstance(t *testing.T) {
 
 				response := filterAPI.POST("/filters").
 					WithBytes([]byte(GetValidPOSTCreateFilterJSON(datasetID, edition, version))).
-					WithHeader(internalTokenHeader, internalTokenID).
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusCreated).
 					JSON().Object()
 

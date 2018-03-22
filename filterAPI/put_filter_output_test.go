@@ -8,7 +8,7 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -41,7 +41,7 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 		Convey("When an authorised request to update the filter output with csv download", func() {
 
 			filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
-				WithHeader(internalTokenHeader, internalTokenID).
+				WithHeader(serviceAuthTokenName, serviceAuthToken).
 				WithBytes([]byte(GetValidPUTFilterOutputWithCSVDownloadJSON())).
 				Expect().Status(http.StatusOK)
 
@@ -64,12 +64,12 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 		Convey("When an authorised request to update the filter output with csv download and xls download", func() {
 
 			filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
-				WithHeader(internalTokenHeader, internalTokenID).
+				WithHeader(serviceAuthTokenName, serviceAuthToken).
 				WithBytes([]byte(GetValidPUTFilterOutputWithCSVDownloadJSON())).
 				Expect().Status(http.StatusOK)
 
 			filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
-				WithHeader(internalTokenHeader, internalTokenID).
+				WithHeader(serviceAuthTokenName, serviceAuthToken).
 				WithBytes([]byte(GetValidPUTFilterOutputWithXLSDownloadJSON())).
 				Expect().Status(http.StatusOK)
 
@@ -120,7 +120,7 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 			Convey("Then the request fails and returns status not found (404)", func() {
 
 				filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
-					WithHeader(internalTokenHeader, internalTokenID).
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					WithBytes([]byte(GetValidPUTFilterOutputWithCSVDownloadJSON())).
 					Expect().Status(http.StatusNotFound).Body().Contains("Filter output not found\n")
 			})
@@ -138,7 +138,7 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 			Convey("Then fail to update filter output and return status bad request (400)", func() {
 
 				filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
-					WithHeader(internalTokenHeader, internalTokenID).
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					WithBytes([]byte(`{`)).
 					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - Invalid request body\n")
 			})
@@ -157,12 +157,12 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 			Convey("Then fail to update filter output and return status forbidden (403)", func() {
 
 				filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
-					WithHeader(internalTokenHeader, internalTokenID).
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					WithBytes([]byte(GetValidPUTFilterOutputWithDimensionsJSON())).
 					Expect().Status(http.StatusForbidden).Body().Contains("Forbidden from updating the following fields: [dimensions]\n")
 
 				filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
-					WithHeader(internalTokenHeader, internalTokenID).
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					WithBytes([]byte(`{"instance_id": "1234"}`)).
 					Expect().Status(http.StatusForbidden).Body().Contains("Forbidden from updating the following fields: [instance_id]")
 			})
