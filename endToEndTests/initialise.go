@@ -23,10 +23,12 @@ const (
 	datasetName      = "cpih01"
 	genericHierarchy = "cpih1dim1aggid"
 
-	internalTokenHeader    = "Internal-Token"
-	internalTokenID        = "FD0108EA-825D-411C-9B1D-41EF7727F465"
-	invalidInternalTokenID = "FD0108EA-825D-411C-9B1D-41EF7727F465A"
-	importAPIInternalToken = "0C30662F-6CF6-43B0-A96A-954772267FF5"
+	internalTokenHeader          = "Internal-Token"
+	internalTokenID              = "FD0108EA-825D-411C-9B1D-41EF7727F465"
+	invalidInternalTokenID       = "FD0108EA-825D-411C-9B1D-41EF7727F465A"
+	importAPIInternalToken       = "0C30662F-6CF6-43B0-A96A-954772267FF5"
+	downloadServiceInternalToken = "AL0108EA-825D-411C-9B1D-41EF7727F465"
+	bucket                       = "csv-exported"
 )
 
 var dropDatabases = []string{"test"}
