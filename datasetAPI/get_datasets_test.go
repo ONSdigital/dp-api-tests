@@ -66,6 +66,7 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 
 				if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == "133" {
 					// user is not authenticated to see this item, if it is returned force failure
+					t.Log("user is not authenticated to see this item, forced test failure")
 					t.Fail()
 				}
 			}
