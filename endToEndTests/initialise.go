@@ -1,7 +1,6 @@
 package generateFiles
 
 import (
-	"errors"
 	"os"
 
 	mgo "gopkg.in/mgo.v2"
@@ -10,6 +9,7 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
 	"github.com/ONSdigital/go-ns/log"
+	"github.com/ONSdigital/go-ns/vault"
 )
 
 var cfg *config.Config
@@ -29,7 +29,10 @@ const (
 	importAPIInternalToken = "0C30662F-6CF6-43B0-A96A-954772267FF5"
 )
 
-var dropDatabases = []string{"test"}
+var (
+	dropDatabases = []string{"test"}
+	vaultClient   *vault.VaultClient
+)
 
 func init() {
 	var err error
@@ -43,9 +46,9 @@ func init() {
 	log.Debug("config is:", log.Data{"config": cfg})
 
 	if !cfg.EncryptionDisabled {
-		if cfg.PrivateKey == "" {
-			err = errors.New("missing private key for encryption of v4 file")
-			log.ErrorC("unable to run test", err, nil)
+		vaultClient, err = vault.CreateVaultClient(cfg.VaultToken, cfg.VaultAddress, 3)
+		if err != nil {
+			log.ErrorC("vault client creation error", err, nil)
 			os.Exit(1)
 		}
 	}

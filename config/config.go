@@ -23,7 +23,9 @@ type Config struct {
 	ObservationConsumerGroup  string   `envconfig:"OBSERVATION_CONSUMER_GROUP"`
 	ObservationConsumerTopic  string   `envconfig:"OBSERVATION_CONSUMER_TOPIC"`
 	EncryptionDisabled        bool     `envconfig:"ENCRYPTION_DISABLED"`
-	PrivateKey                string   `envconfig:"RSA_PRIVATE_KEY"`
+	VaultToken                string   `envconfig:"VAULT_TOKEN"`
+	VaultAddress              string   `envconfig:"VAULT_ADDR"`
+	VaultPath                 string   `envconfig:"VAULT_PATH"`
 }
 
 var cfg *Config
@@ -50,7 +52,10 @@ func Get() (*Config, error) {
 		ObservationsInsertedTopic: "import-observations-inserted",
 		ObservationConsumerGroup:  "observation-extracted",
 		ObservationConsumerTopic:  "observation-extracted",
-		EncryptionDisabled:        true,
+		EncryptionDisabled:        false,
+		VaultAddress:              "http://localhost:8200",
+		VaultToken:                "",
+		VaultPath:                 "secret/shared/psk",
 	}
 
 	return cfg, envconfig.Process("", cfg)
