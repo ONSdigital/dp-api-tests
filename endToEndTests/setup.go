@@ -56,7 +56,7 @@ type Store struct {
 
 // TODO Once export services have been updated with encryption and decryption
 // remove decrypt boolean flag
-func sendV4FileToAWS(region, bucket, filename string, decrypt bool) error {
+func sendV4FileToAWS(region, bucket, filename string, encrypt bool) error {
 	config := aws.NewConfig().WithRegion(region)
 
 	store := &Store{
@@ -77,7 +77,7 @@ func sendV4FileToAWS(region, bucket, filename string, decrypt bool) error {
 	}
 	log.Info("successfully retrieved file", nil)
 
-	client, err := getClient(sess, decrypt)
+	client, err := getClient(sess, encrypt)
 	if err != nil {
 		log.ErrorC("failed to create client", err, nil)
 		return err
@@ -89,7 +89,7 @@ func sendV4FileToAWS(region, bucket, filename string, decrypt bool) error {
 		Body:   v4File,
 	}
 
-	if decrypt {
+	if encrypt {
 		psk := createPSK()
 		pskStr := hex.EncodeToString(psk)
 
