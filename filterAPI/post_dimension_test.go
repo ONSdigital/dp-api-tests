@@ -9,7 +9,7 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -29,7 +29,7 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, true),
 	}
 
 	instance := &mongo.Doc{
@@ -126,7 +126,7 @@ func TestFailureToPostDimension(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, true),
 	}
 
 	instance := &mongo.Doc{

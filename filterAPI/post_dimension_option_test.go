@@ -9,7 +9,7 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -28,7 +28,7 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 		Collection: collection,
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version),
+		Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, true),
 	}
 
 	instance := &mongo.Doc{
@@ -111,24 +111,23 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 	}
 
 	option := setupDimensionOptions(uuid.NewV4().String(), GetValidAgeDimensionData(instanceID, "27"))
-
 	docs = append(docs, filter, instance, option)
 
 	Convey("Given filter blueprint does not exist", t, func() {
 		invalidfilterBlueprintID := uuid.NewV4().String()
 
 		Convey("When a post request to add an option to a dimension for that filter blueprint", func() {
-			Convey("Then return status bad request (400)", func() {
+			Convey("Then return status not found (404)", func() {
 
 				filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/age/options/30", invalidfilterBlueprintID).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - filter blueprint not found")
+					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found")
 			})
 		})
 	})
 
 	Convey("Given a filter blueprint exists", t, func() {
 
-		if err := mongo.Setup(filter); err != nil {
+		if err := mongo.Setup(filter, option); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -151,7 +150,8 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 				Convey("Then return status not found (400)", func() {
 
 					filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
-						Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - dimension not found\n")
+						Expect().Status(http.StatusBadRequest).
+						Body().Contains("Bad request - incorrect dimensions chosen: [sex]\n")
 				})
 			})
 
