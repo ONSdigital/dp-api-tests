@@ -59,7 +59,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 			// STEP 1 - Create job with state created
 			postJobResponse := importAPI.POST("/jobs").WithBytes([]byte(createValidJobJSON(recipe, location))).
-				WithHeader(internalTokenHeader, importAPIInternalToken).Expect().Status(http.StatusCreated).JSON().Object()
+				WithHeaders(headers).Expect().Status(http.StatusCreated).JSON().Object()
 
 			postJobResponse.Value("id").NotNull()
 			jobID := postJobResponse.Value("id").String().Raw()
@@ -91,14 +91,14 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(instanceResource.State, ShouldEqual, "created")
 
 			// STEP 2 - Create dataset with dataset id from previous response
-			postDatasetResponse := datasetAPI.POST("/datasets/{id}", datasetName).WithHeader(internalTokenHeader, internalTokenID).WithBytes([]byte(validPOSTCreateDatasetJSON)).
+			postDatasetResponse := datasetAPI.POST("/datasets/{id}", datasetName).WithHeaders(headers).WithBytes([]byte(validPOSTCreateDatasetJSON)).
 				Expect().Status(http.StatusCreated).JSON().Object()
 
 			postDatasetResponse.Value("next").Object().Value("links").Object().Value("self").Object().Value("href").String().Match(cfg.DatasetAPIURL + "/datasets/" + datasetName + "$")
 			postDatasetResponse.Value("next").Object().Value("state").Equal("created")
 
 			// STEP 3 - Update job state to submitted
-			importAPI.PUT("/jobs/{id}", jobID).WithHeader(internalTokenHeader, importAPIInternalToken).WithBytes([]byte(`{"state":"submitted"}`)).
+			importAPI.PUT("/jobs/{id}", jobID).WithHeaders(headers).WithBytes([]byte(`{"state":"submitted"}`)).
 				Expect().Status(http.StatusOK)
 
 			// Check import job state is completed or submitted
@@ -217,7 +217,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			}
 
 			// Check hierarchies exist by calling the hierarchy api
-			getHierarchyParentDimensionResponse := hierarchyAPI.GET("/hierarchies/{instance_id}/{dimension}", instanceID, "aggregate").WithHeader(internalTokenHeader, internalTokenID).
+			getHierarchyParentDimensionResponse := hierarchyAPI.GET("/hierarchies/{instance_id}/{dimension}", instanceID, "aggregate").WithHeaders(headers).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			getHierarchyParentDimensionResponse.Value("has_data").Equal(true)
@@ -292,7 +292,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(instanceResource.ImportTasks.SearchTasks[0].DimensionName, ShouldEqual, "aggregate")
 
 			// STEP 4 - Update instance with meta data and change state to `edition-confirmed`
-			datasetAPI.PUT("/instances/{instance_id}", instanceID).WithHeader(internalTokenHeader, internalTokenID).
+			datasetAPI.PUT("/instances/{instance_id}", instanceID).WithHeaders(headers).
 				WithBytes([]byte(validPUTInstanceMetadataJSON)).Expect().Status(http.StatusOK)
 
 			// Check instance has updated
@@ -333,7 +333,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(editionResource.Next.State, ShouldEqual, "edition-confirmed")
 
 			// STEP 5 - Update version with collection_id and change state to associated
-			datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetName, "2017", "1").WithHeader(internalTokenHeader, internalTokenID).
+			datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetName, "2017", "1").WithHeaders(headers).
 				WithBytes([]byte(validPUTUpdateVersionToAssociatedJSON)).Expect().Status(http.StatusOK)
 
 			versionResource, err := mongo.GetVersion(cfg.MongoDB, "instances", "id", instanceID)
@@ -413,7 +413,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			}
 
 			// STEP 6 -  Update version to a state of published
-			datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetName, "2017", "1").WithHeader(internalTokenHeader, internalTokenID).
+			datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetName, "2017", "1").WithHeaders(headers).
 				WithBytes([]byte(`{"state":"published"}`)).Expect().Status(http.StatusOK)
 
 			versionResource, err = mongo.GetVersion(cfg.MongoDB, "instances", "id", instanceID)

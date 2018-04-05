@@ -17,6 +17,7 @@ func TestGetDimensionOptions_ReturnsAllDimensionOptionsFromADataset(t *testing.T
 	datasetID := uuid.NewV4().String()
 	editionID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	secondInstanceID := uuid.NewV4().String()
 
 	edition := "2017"
 
@@ -38,7 +39,7 @@ func TestGetDimensionOptions_ReturnsAllDimensionOptionsFromADataset(t *testing.T
 		Update:     ValidPublishedEditionData(datasetID, editionID, edition),
 	}
 
-	instanceOneDoc := &mongo.Doc{
+	publishedInstanceDoc := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
@@ -46,23 +47,47 @@ func TestGetDimensionOptions_ReturnsAllDimensionOptionsFromADataset(t *testing.T
 		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
 	}
 
-	dimensionOneDoc := &mongo.Doc{
+	associatedInstanceDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "instances",
+		Key:        "_id",
+		Value:      secondInstanceID,
+		Update:     validAssociatedInstanceData(datasetID, edition, secondInstanceID),
+	}
+
+	publishedTimeDimensionDoc := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9811",
-		Update:     validTimeDimensionsData(instanceID),
+		Update:     validTimeDimensionsData("9811", instanceID),
 	}
 
-	dimensionTwoDoc := &mongo.Doc{
+	publishedAggregateDimensionDoc := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9812",
-		Update:     validAggregateDimensionsData(instanceID),
+		Update:     validAggregateDimensionsData("9812", instanceID),
 	}
 
-	docs = append(docs, datasetDoc, editionDoc, dimensionOneDoc, dimensionTwoDoc, instanceOneDoc)
+	unpublishedTimeDimensionDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "dimension.options",
+		Key:        "_id",
+		Value:      "9813",
+		Update:     validTimeDimensionsData("9813", secondInstanceID),
+	}
+
+	unpublishedAggregateDimensionDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "dimension.options",
+		Key:        "_id",
+		Value:      "9814",
+		Update:     validAggregateDimensionsData("9814", secondInstanceID),
+	}
+
+	docs = append(docs, datasetDoc, editionDoc, publishedInstanceDoc, publishedTimeDimensionDoc, publishedAggregateDimensionDoc, associatedInstanceDoc, unpublishedTimeDimensionDoc, unpublishedAggregateDimensionDoc)
 
 	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
@@ -70,46 +95,55 @@ func TestGetDimensionOptions_ReturnsAllDimensionOptionsFromADataset(t *testing.T
 	}
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-	Convey("Get a list of time dimension options of a dataset", t, func() {
-		Convey("When user is authenticated", func() {
+	Convey("Given a list of time dimension options for a published version", t, func() {
+		Convey("When a request is made to get a list of time dimension options", func() {
+			Convey("Then return status OK and response body containing dimension options", func() {
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/time/options", datasetID, edition, 1).
+					Expect().Status(http.StatusOK).JSON().Object()
 
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/time/options", datasetID, edition, 1).WithHeader(internalToken, internalTokenID).
-				Expect().Status(http.StatusOK).JSON().Object()
+				response.Value("items").Array().Length().Equal(1)
 
-			checkTimeDimensionResponse(instanceID, response)
-
-		})
-
-		Convey("When a user is not authenticated", func() {
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/time/options", datasetID, edition, 1).
-				Expect().Status(http.StatusOK).JSON().Object()
-
-			response.Value("items").Array().Length().Equal(1)
-
-			checkTimeDimensionResponse(instanceID, response)
-
+				checkTimeDimensionResponse(instanceID, response)
+			})
 		})
 	})
 
-	Convey("Get a list of aggregate dimension options of a dataset", t, func() {
-		Convey("When user is authenticated", func() {
+	Convey("Given a list of time dimension options for a unpublished version", t, func() {
+		Convey("When an authenticated request is made to get a list of time dimension options", func() {
+			Convey("Then return with status OK and response body containing dimension ", func() {
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/time/options", datasetID, edition, 2).
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
+					Expect().Status(http.StatusOK).JSON().Object()
 
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/aggregate/options", datasetID, edition, 1).WithHeader(internalToken, internalTokenID).
-				Expect().Status(http.StatusOK).JSON().Object()
-			response.Value("items").Array().Length().Equal(1)
-
-			checkAggregateDimensionResponse(instanceID, response)
-
+				checkTimeDimensionResponse(secondInstanceID, response)
+			})
 		})
+	})
 
-		Convey("When a user is not authenticated", func() {
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/aggregate/options", datasetID, edition, 1).
-				Expect().Status(http.StatusOK).JSON().Object()
+	Convey("Given a list of aggregate dimension options for a published version", t, func() {
+		Convey("When a request is made to get a list of aggregate dimension options", func() {
+			Convey("Then return status OK and response body containing dimension options", func() {
 
-			response.Value("items").Array().Length().Equal(1)
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/aggregate/options", datasetID, edition, 1).
+					Expect().Status(http.StatusOK).JSON().Object()
+				response.Value("items").Array().Length().Equal(1)
 
-			checkAggregateDimensionResponse(instanceID, response)
+				checkAggregateDimensionResponse(instanceID, response)
+			})
+		})
+	})
 
+	Convey("Given a list of aggregate dimension options for a unpublished version", t, func() {
+		Convey("When an authenticated request is made to get a list of aggregate dimension options", func() {
+			Convey("Then return with status OK and response body containing dimension ", func() {
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/aggregate/options", datasetID, edition, 2).
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				response.Value("items").Array().Length().Equal(1)
+
+				checkAggregateDimensionResponse(secondInstanceID, response)
+			})
 		})
 	})
 
@@ -122,49 +156,17 @@ func TestGetDimensionOptions_ReturnsAllDimensionOptionsFromADataset(t *testing.T
 }
 
 // TODO Unskip skipped tests when code has been refactored (and hence fixed)
-// 2 tests skipped
+// 4 tests skipped
 func TestGetDimensionOptions_Failed(t *testing.T) {
 	datasetID := uuid.NewV4().String()
 	editionID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
+	unpublishedInstanceID := uuid.NewV4().String()
 
 	edition := "2017"
 
-	var docs []*mongo.Doc
-
-	datasetDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "datasets",
-		Key:        "_id",
-		Value:      datasetID,
-		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
-	}
-
-	editionDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "editions",
-		Key:        "_id",
-		Value:      editionID,
-		Update:     ValidPublishedEditionData(datasetID, editionID, edition),
-	}
-
-	instanceOneDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "instances",
-		Key:        "_id",
-		Value:      instanceID,
-		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
-	}
-
-	dimensionOneDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "dimension.options",
-		Key:        "_id",
-		Value:      "9811",
-		Update:     validTimeDimensionsDataWithOutOptions(instanceID),
-	}
-
-	docs = append(docs, datasetDoc, editionDoc, instanceOneDoc, dimensionOneDoc)
+	docs := setUpDimensionOptionTestData(datasetID, editionID, instanceID,
+		unpublishedInstanceID, edition)
 
 	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
@@ -173,83 +175,59 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-	Convey("Given Fail to get a list of time dimension options for a dataset", t, func() {
-		SkipConvey("When user is authenticated and the dataset does not exist", func() {
-			Convey("Then return status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", "1234", edition).WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found\n")
-			})
-		})
-
-		SkipConvey("When user is authenticated and the edition does not exist", func() {
-			Convey("Then return status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", datasetID, "2018").WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Edition not found\n")
-			})
-		})
-
-		Convey("When user is authenticated and there are no versions", func() {
-			Convey("Then return status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/5/dimensions/time/options", datasetID, edition).WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Version not found\n")
-			})
-		})
-
-		SkipConvey("When user is unauthenticated and the dataset does not exist", func() {
+	Convey("Given a list of time dimension options for a dataset that does not exist", t, func() {
+		SkipConvey("When a request is made to get a list of time dimension options", func() {
 			Convey("Then return status not found (404)", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", "1234", edition).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found\n")
-			})
-		})
-
-		SkipConvey("When user is unauthenticated and the edition does not exist", func() {
-			Convey("Then return status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", datasetID, "2018").
-					Expect().Status(http.StatusNotFound).Body().Contains("Edition not found\n")
-			})
-		})
-
-		Convey("When user is unauthenticated and there are no published versions", func() {
-			Convey("Then return status not found (404)", func() {
-				// Create an unpublished instance document
-				unpublishedInstance := &mongo.Doc{
-					Database:   cfg.MongoDB,
-					Collection: "instances",
-					Key:        "_id",
-					Value:      "799",
-					Update:     validEditionConfirmedInstanceData(datasetID, edition, instanceID),
-				}
-
-				if err := mongo.Setup(unpublishedInstance); err != nil {
-					log.ErrorC("Was unable to run test", err, nil)
-					os.Exit(1)
-				}
-
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/5/dimensions/time/options", datasetID, edition).
-					Expect().Status(http.StatusNotFound).Body().Contains("Version not found\n")
-
-				if err := mongo.Teardown(unpublishedInstance); err != nil {
-					if err != mgo.ErrNotFound {
-						log.ErrorC("Failed to tear down test data", err, nil)
-						os.Exit(1)
-					}
-				}
+					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
 			})
 		})
 	})
 
-	SkipConvey("Given a valid dataset id, edition and version with no dimensions", t, func() {
-		Convey("When user is authenticated", func() {
+	Convey("Given a list of time dimension options for an edition that does not exist", t, func() {
+		SkipConvey("When a request is made to get a list of time dimension options", func() {
 			Convey("Then return status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", datasetID, edition).WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dimension not found\n")
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", datasetID, "2018").
+					Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
 			})
 		})
+	})
 
-		Convey("When user is unauthenticated", func() {
+	Convey("Given a list of time dimension options for a version that is not exist", t, func() {
+		Convey("When a request is made to get a list of time dimension options", func() {
 			Convey("Then return status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", datasetID, edition).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dimension not found\n")
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/5/dimensions/time/options", datasetID, edition).
+					Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
+			})
+		})
+	})
+
+	Convey("Given a list of time dimension options for an unpublished version", t, func() {
+		Convey("When a request is made to get a list of time dimension options", func() {
+			Convey("Then return status not found (404)", func() {
+
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/dimensions/time/options", datasetID, edition).
+					Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
+
+			})
+		})
+	})
+
+	SkipConvey("Given aggregate dimension does not exist for a version", t, func() {
+		Convey("When a request is made to get a list of aggregate dimension options", func() {
+			Convey("Then return status not found (404)", func() {
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/aggregate/options", datasetID, edition).
+					Expect().Status(http.StatusNotFound).Body().Contains("Dimension not found")
+			})
+		})
+	})
+
+	SkipConvey("Given aggregate dimension does not exist for a unpublished version", t, func() {
+		Convey("When an authenticated request is made to get a list of aggregate dimension options", func() {
+			Convey("Then return status not found (404)", func() {
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/dimensions/time/options", datasetID, edition).
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
+					Expect().Status(http.StatusNotFound).Body().Contains("Dimension not found")
 			})
 		})
 	})
@@ -296,4 +274,60 @@ func checkAggregateDimensionResponse(instanceID string, response *httpexpect.Obj
 
 	response.Value("items").Array().Element(0).Object().Value("option").Equal("cpi1dimA19")
 
+}
+
+func setUpDimensionOptionTestData(datasetID, editionID, instanceID, unpublishedInstanceID, edition string) []*mongo.Doc {
+	var docs []*mongo.Doc
+
+	datasetDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "datasets",
+		Key:        "_id",
+		Value:      datasetID,
+		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
+	}
+
+	editionDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "editions",
+		Key:        "_id",
+		Value:      editionID,
+		Update:     ValidPublishedEditionData(datasetID, editionID, edition),
+	}
+
+	publishedInstanceDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "instances",
+		Key:        "_id",
+		Value:      instanceID,
+		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+	}
+
+	publishedTimeDimensionDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "dimension.options",
+		Key:        "_id",
+		Value:      "9811",
+		Update:     validTimeDimensionsDataWithOutOptions("9811", instanceID),
+	}
+
+	unpublishedInstance := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "instances",
+		Key:        "_id",
+		Value:      "799",
+		Update:     validEditionConfirmedInstanceData(datasetID, edition, unpublishedInstanceID),
+	}
+
+	unpublishedTimeDimensionDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "dimension.options",
+		Key:        "_id",
+		Value:      "9812",
+		Update:     validTimeDimensionsDataWithOutOptions("9812", instanceID),
+	}
+
+	docs = append(docs, datasetDoc, editionDoc, publishedInstanceDoc, publishedTimeDimensionDoc, unpublishedInstance, unpublishedTimeDimensionDoc)
+
+	return docs
 }

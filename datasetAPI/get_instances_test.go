@@ -39,7 +39,7 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 
 		Convey("When an authorised request to get a list of instances is received", func() {
 			Convey("Then a list of instances are returned", func() {
-				response := datasetAPI.GET("/instances").WithHeader(internalToken, internalTokenID).
+				response := datasetAPI.GET("/instances").WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("items").Array().Element(0).Object().Value("id").NotNull()
@@ -78,10 +78,10 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 			os.Exit(1)
 		}
 
-		Convey("When the authorised request contains a query parameter 'state' of value completed", func() {
+		Convey("When the authorised request Contains a query parameter 'state' of value completed", func() {
 			Convey("Then return only instances that contain a 'state' of value completed", func() {
 
-				response := datasetAPI.GET("/instances").WithQuery("state", "completed").WithHeader(internalToken, internalTokenID).
+				response := datasetAPI.GET("/instances").WithQuery("state", "completed").WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				var foundInstance bool
@@ -98,10 +98,10 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 			})
 		})
 
-		Convey("When the authorised request contains a query parameter 'state' of value `completed` and `edition-confirmed`", func() {
+		Convey("When the authorised request Contains a query parameter 'state' of value `completed` and `edition-confirmed`", func() {
 			Convey("Then return all instances that contain a 'state' of value `completed` or `edition-confirmed`", func() {
 
-				response := datasetAPI.GET("/instances").WithQuery("state", "completed,edition-confirmed").WithHeader(internalToken, internalTokenID).
+				response := datasetAPI.GET("/instances").WithQuery("state", "completed,edition-confirmed").WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				count := 0
@@ -156,23 +156,23 @@ func TestFailureToGetAListOfInstances(t *testing.T) {
 		}
 
 		Convey("When no authentication header is provided in request to get list of resources", func() {
-			Convey("Then return a status of not found (404) with message `Resource not found`", func() {
+			Convey("Then return a status of not found (404) with message `requested resource not found`", func() {
 				datasetAPI.GET("/instances").Expect().Status(http.StatusNotFound).
-					Body().Contains("Resource not found\n")
+					Body().Contains("requested resource not found")
 			})
 		})
 
 		Convey("When an unauthorised request is made to get resource", func() {
-			Convey("Then return a status of not found (404) with message `Resource not found`", func() {
-				datasetAPI.GET("/instances").WithHeader(internalToken, "wrong-header").
-					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
+			Convey("Then return a status of unauthorized (401)", func() {
+				datasetAPI.GET("/instances").WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 
 		Convey("When an authorised request to get a list of resources is made with an invalid filter value for 'state'", func() {
 			Convey("Then return a status of bad request (400) with message `Bad request - invalid filter state values`", func() {
-				datasetAPI.GET("/instances").WithQuery("state", "foo").WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusBadRequest).Body().Contains("bad request - invalid filter state values: [foo]\n")
+				datasetAPI.GET("/instances").WithQuery("state", "foo").WithHeader(serviceAuthTokenName, serviceAuthToken).
+					Expect().Status(http.StatusBadRequest).Body().Contains("bad request - invalid filter state values: [foo]")
 			})
 		})
 

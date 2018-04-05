@@ -34,7 +34,7 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 
 		Convey("When user is authenticated", func() {
 			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
-				WithHeader("Internal-Token", internalTokenID).Expect().Status(http.StatusOK).JSON().Object()
+				WithHeader(serviceAuthTokenName, serviceAuthToken).Expect().Status(http.StatusOK).JSON().Object()
 
 			Convey("Then response contains a list of all versions of the dataset edition", func() {
 				response.Value("items").Array().Length().Equal(2)
@@ -74,6 +74,7 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 
 func TestGetVersions_Failed(t *testing.T) {
 
+	publishedInstanceID := uuid.NewV4().String()
 	unpublishedInstanceID := uuid.NewV4().String()
 	datasetID := uuid.NewV4().String()
 	editionID := uuid.NewV4().String()
@@ -100,6 +101,14 @@ func TestGetVersions_Failed(t *testing.T) {
 		Update:     ValidPublishedEditionData(datasetID, editionID, edition),
 	}
 
+	publishedInstance := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "instances",
+		Key:        "_id",
+		Value:      publishedInstanceID,
+		Update:     validPublishedInstanceData(datasetID, edition, publishedInstanceID),
+	}
+
 	unpublishedEdition := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "editions",
@@ -110,9 +119,9 @@ func TestGetVersions_Failed(t *testing.T) {
 
 	Convey("Given the dataset and subsequently the edition does not exist", t, func() {
 		Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
-			Convey("Then return status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found\n")
+			Convey("Then return status not found (404) with message `Dataset not found`", func() {
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
 			})
 		})
 	})
@@ -125,9 +134,9 @@ func TestGetVersions_Failed(t *testing.T) {
 
 		Convey("but the edition does not", func() {
 			Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
-				Convey("Then return status not found (404)", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(internalToken, internalTokenID).
-						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found\n")
+				Convey("Then return status not found (404) with message `EDition not found`", func() {
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
 				})
 			})
 		})
@@ -139,9 +148,9 @@ func TestGetVersions_Failed(t *testing.T) {
 			}
 
 			Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
-				Convey("Then return status not found (404)", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(internalToken, internalTokenID).
-						Expect().Status(http.StatusNotFound).Body().Contains("Version not found\n")
+				Convey("Then return status not found (404) with message `Version not found`", func() {
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+						Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
 				})
 			})
 		})
@@ -168,9 +177,9 @@ func TestGetVersions_Failed(t *testing.T) {
 		}
 
 		Convey("When an unauthenticated request is made to get a list of versions of the dataset edition", func() {
-			Convey("Then return status not found (404)", func() {
+			Convey("Then return status not found (404) with message `Dataset not found`", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
 			})
 		})
 
@@ -193,9 +202,9 @@ func TestGetVersions_Failed(t *testing.T) {
 			}
 
 			Convey("When an unauthenticated request is made to get a list of versions of the dataset edition", func() {
-				Convey("Then return status not found (404)", func() {
+				Convey("Then return status not found (404) with message `Edition not found`", func() {
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
-						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found\n")
+						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
 				})
 			})
 
@@ -227,13 +236,32 @@ func TestGetVersions_Failed(t *testing.T) {
 				}
 
 				Convey("When an unauthenticated request is made to get a list of versions of the dataset edition", func() {
-					Convey("Then return status not found (404)", func() {
+					Convey("Then return status not found (404) with message `Version not found`", func() {
 						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
-							Expect().Status(http.StatusNotFound).Body().Contains("Version not found\n")
+							Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
 					})
 				})
 
-				if err := mongo.Teardown(unpublishedInstance, publishedEdition, publishedDataset); err != nil {
+				if err := mongo.Teardown(unpublishedInstance); err != nil {
+					log.ErrorC("Unable to remove test data from mongo db", err, nil)
+					os.Exit(1)
+				}
+			})
+
+			Convey("and a published version exists", func() {
+				if err := mongo.Setup(publishedInstance); err != nil {
+					log.ErrorC("Unable to setup test data", err, nil)
+					os.Exit(1)
+				}
+
+				Convey("When an unauthenticated request is made to get a list of versions of the dataset edition", func() {
+					Convey("Then return status unauthorized (401)", func() {
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
+							Expect().Status(http.StatusUnauthorized)
+					})
+				})
+
+				if err := mongo.Teardown(publishedInstance, publishedEdition, publishedDataset); err != nil {
 					log.ErrorC("Unable to remove test data from mongo db", err, nil)
 					os.Exit(1)
 				}
