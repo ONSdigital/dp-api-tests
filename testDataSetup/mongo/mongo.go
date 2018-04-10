@@ -468,15 +468,16 @@ type Dimension struct {
 
 // Downloads represents a list of file types possible to download
 type Downloads struct {
-	CSV  *DownloadItem `bson:"csv,omitempty"  json:"csv,omitempty"`
-	JSON *DownloadItem `bson:"json,omitempty" json:"json,omitempty"`
-	XLS  *DownloadItem `bson:"xls,omitempty"  json:"xls,omitempty"`
+	CSV *DownloadItem `bson:"csv,omitempty"  json:"csv,omitempty"`
+	XLS *DownloadItem `bson:"xls,omitempty"  json:"xls,omitempty"`
 }
 
 // DownloadItem represents an object containing information for the download item
 type DownloadItem struct {
-	Size string `bson:"size" json:"size"`
-	URL  string `bson:"url"  json:"url"`
+	HRef    string `bson:"href,omitempty"    json:"href,omitempty"`
+	Private string `bson:"private,omitempty" json:"private,omitempty"`
+	Public  string `bson:"public,omitempty"  json:"public,omitempty"`
+	Size    string `bson:"size,omitempty"    json:"size,omitempty"`
 }
 
 // Events represents a list of array objects containing event information against the filter blueprint or output

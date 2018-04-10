@@ -30,7 +30,7 @@ func TestSuccessfullyGetFilterOutputPreview(t *testing.T) {
 			Collection: "filterOutputs",
 			Key:        "_id",
 			Value:      filterID,
-			Update:     GetValidFilterOutputBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, dimensions),
+			Update:     GetValidFilterOutputBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, "test-cpih01", "2017", "", "", 1, dimensions),
 		}
 
 		if err := mongo.Setup(output); err != nil {

@@ -580,7 +580,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					So(filterOutputResource.Downloads.CSV, ShouldNotBeNil)
 					So(filterOutputResource.Downloads.XLS, ShouldNotBeNil)
 
-					filteredCSVURL := filterOutputResource.Downloads.CSV.URL
+					filteredCSVURL := filterOutputResource.Downloads.CSV.Public
 					filteredCSVFilename := strings.TrimPrefix(filteredCSVURL, "https://"+bucket+".s3."+region+".amazonaws.com/")
 
 					// read csv download from s3
@@ -597,7 +597,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 						os.Exit(1)
 					}
 
-					filteredXLSURL := filterOutputResource.Downloads.XLS.URL
+					filteredXLSURL := filterOutputResource.Downloads.XLS.Public
 					filteredXLSFilename := strings.TrimPrefix(filteredXLSURL, "https://"+bucket+".s3-"+region+".amazonaws.com/")
 
 					// read xls download from s3

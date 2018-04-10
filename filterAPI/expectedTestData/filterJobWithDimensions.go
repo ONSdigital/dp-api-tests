@@ -119,16 +119,16 @@ func ExpectedFilterOutput(host, instanceID, filterOutputID, filterBlueprintID st
 		},
 		Downloads: &mongo.Downloads{
 			CSV: &mongo.DownloadItem{
-				Size: "",
-				URL:  "",
-			},
-			JSON: &mongo.DownloadItem{
-				Size: "",
-				URL:  "",
+				HRef:    "",
+				Private: "",
+				Public:  "",
+				Size:    "",
 			},
 			XLS: &mongo.DownloadItem{
-				Size: "",
-				URL:  "",
+				HRef:    "",
+				Private: "",
+				Public:  "",
+				Size:    "",
 			},
 		},
 		Links: mongo.LinkMap{
@@ -158,16 +158,16 @@ func ExpectedFilterOutputOnPost(host, datasetID, edition, instanceID, filterOutp
 		},
 		Downloads: &mongo.Downloads{
 			CSV: &mongo.DownloadItem{
-				Size: "",
-				URL:  "",
-			},
-			JSON: &mongo.DownloadItem{
-				Size: "",
-				URL:  "",
+				HRef:    "",
+				Private: "",
+				Public:  "",
+				Size:    "",
 			},
 			XLS: &mongo.DownloadItem{
-				Size: "",
-				URL:  "",
+				HRef:    "",
+				Private: "",
+				Public:  "",
+				Size:    "",
 			},
 		},
 		Links: mongo.LinkMap{
