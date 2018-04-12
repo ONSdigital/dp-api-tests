@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"errors"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -11,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
@@ -468,22 +469,19 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 			Convey("Then an api customer should be able to get a csv and xls download link", func() {
 				// Get downloads link from version document
-				bucket := "csv-exported"
 				csvURL := versionResource.Downloads.CSV.URL
-				csvFilename := strings.TrimPrefix(csvURL, "https://"+bucket+".s3."+region+".amazonaws.com/")
 
-				// read csv download from s3
-				csvFile, err := getS3File(region, bucket, csvFilename, false)
+				response, err := http.Get(csvURL)
 				if err != nil {
-					log.ErrorC("unable to find csv full download in s3", err, log.Data{"csv_url": csvURL, "csv_filename": csvFilename})
-					os.Exit(1)
+					log.Error(err, nil)
 				}
-				defer csvFile.Close()
+				defer response.Body.Close()
 
-				csvReader := csv.NewReader(csvFile)
+				csvReader := csv.NewReader(response.Body)
+
 				headerRow, err := csvReader.Read()
 				if err != nil {
-					log.ErrorC("unable to read header row", err, log.Data{"csv_url": csvURL, "csv_filename": csvFilename})
+					log.ErrorC("unable to read header row", err, log.Data{"csv_url": csvURL})
 				}
 
 				So(len(headerRow), ShouldEqual, 7)
@@ -496,7 +494,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 						if err == io.EOF {
 							break
 						}
-						log.ErrorC("unable to read row", err, log.Data{"csv_url": csvURL, "csv_filename": csvFilename})
+						log.ErrorC("unable to read row", err, log.Data{"csv_url": csvURL})
 						os.Exit(1)
 					}
 					numberOfCSVRows++
@@ -504,26 +502,20 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				So(numberOfCSVRows, ShouldEqual, 1510)
 
 				xlsURL := versionResource.Downloads.XLS.URL
-				xlsFilename := strings.TrimPrefix(xlsURL, "https://"+bucket+".s3-"+region+".amazonaws.com/")
 
-				// read xls download from s3
-				xlsFile, err := getS3File(region, bucket, xlsFilename, false)
+				xlsResponse, err := http.Get(xlsURL)
 				if err != nil {
-					log.ErrorC("unable to find xls full download in s3", err, log.Data{"xls_url": xlsURL, "csv_filename": xlsFilename})
-					os.Exit(1)
+					log.Error(err, nil)
 				}
-				defer xlsFile.Close()
+				xlsFile := xlsResponse.Body
 
 				So(xlsFile, ShouldNotBeEmpty)
 
-				xlsFileSize, err := getS3FileSize(region, bucket, xlsFilename, false)
-				if err != nil {
-					log.ErrorC("unable to extract size of xls full download in s3", err, log.Data{"xls_url": xlsURL, "csv_filename": xlsFilename})
-					os.Exit(1)
-				}
+				b, _ := ioutil.ReadAll(xlsFile)
+				xlsFileSize := len(b)
 
-				expectedXLSFileSize := int64(XLSSize)
-				So(xlsFileSize, ShouldResemble, &expectedXLSFileSize)
+				expectedXLSFileSize := XLSSize
+				So(xlsFileSize, ShouldResemble, expectedXLSFileSize)
 
 				Convey("Then an api customer should be able to filter a dataset and be able to download a csv and xlsx download of the data", func() {
 					json := GetValidPOSTCreateFilterJSON(datasetName, "2017", "1")
@@ -618,7 +610,6 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					minExpectedXLSFileSize := int64(7465)
 					maxExpectedXLSFileSize := int64(7469)
 					So(*filteredXLSFileSize, ShouldBeBetweenOrEqual, minExpectedXLSFileSize, maxExpectedXLSFileSize)
-
 					filterBlueprint := &mongo.Doc{
 						Database:   cfg.MongoFiltersDB,
 						Collection: "filters",
@@ -641,28 +632,8 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 						}
 					}
 
-					if err = deleteS3File("eu-west-1", "csv-exported", filteredCSVFilename); err != nil {
-						log.ErrorC("Failed to remove filtered csv file from s3", err, log.Data{"filename": filteredCSVFilename})
-						hasRemovedAllResources = false
-					}
-
-					if err = deleteS3File("eu-west-1", "csv-exported", filteredXLSFilename); err != nil {
-						log.ErrorC("Failed to remove filtered xls file from s3", err, log.Data{"filename": filteredXLSFilename})
-						hasRemovedAllResources = false
-					}
 				})
 
-				// remove test file from s3
-				if err := deleteS3File(region, bucket, csvFilename); err != nil {
-					log.ErrorC("Failed to remove full downloadable test csv file from s3", err, nil)
-					hasRemovedAllResources = false
-				}
-
-				// remove test file from s3
-				if err := deleteS3File(region, bucket, xlsFilename); err != nil {
-					log.ErrorC("Failed to remove full downloadable test xls file from s3", err, nil)
-					hasRemovedAllResources = false
-				}
 			})
 
 			var docs []*mongo.Doc

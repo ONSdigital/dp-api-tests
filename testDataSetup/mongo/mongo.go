@@ -277,7 +277,7 @@ type DownloadList struct {
 
 // DownloadObject represents information on the downloadable file
 type DownloadObject struct {
-	URL     string `bson:"url,omitempty"     json:"url,omitempty"`
+	URL     string `bson:"href,omitempty"     json:"href,omitempty"`
 	Size    string `bson:"size,omitempty"    json:"size,omitempty"`
 	Public  string `bson:"public,omitempty"  json:"public,omitempty"`
 	Private string `bson:"private,omitempty" json:"private,omitempty"`
