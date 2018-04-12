@@ -60,6 +60,7 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 				So(filterOutput.Downloads.CSV.Size, ShouldEqual, "12mb")
 				So(filterOutput.Downloads.XLS, ShouldBeNil)
 				So(filterOutput.State, ShouldEqual, "created")
+				So(*filterOutput.Published, ShouldEqual, true)
 			})
 		})
 
@@ -81,12 +82,15 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 				So(filterOutput.Downloads.CSV, ShouldNotBeNil)
 				So(filterOutput.Downloads.CSV.HRef, ShouldEqual, "download-service-url.csv")
 				So(filterOutput.Downloads.CSV.Private, ShouldEqual, "private-s3-csv-location")
+				So(filterOutput.Downloads.CSV.Public, ShouldBeEmpty)
 				So(filterOutput.Downloads.CSV.Size, ShouldEqual, "12mb")
 				So(filterOutput.Downloads.XLS, ShouldNotBeNil)
 				So(filterOutput.Downloads.XLS.HRef, ShouldEqual, "download-service-url.xlsx")
 				So(filterOutput.Downloads.XLS.Private, ShouldEqual, "private-s3-xls-location")
+				So(filterOutput.Downloads.XLS.Public, ShouldBeEmpty)
 				So(filterOutput.Downloads.XLS.Size, ShouldEqual, "24mb")
 				So(filterOutput.State, ShouldEqual, "completed")
+				So(*filterOutput.Published, ShouldEqual, true)
 			})
 		})
 
@@ -123,6 +127,7 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 				So(filterOutput.Downloads.XLS.Public, ShouldEqual, "public-s3-xls-location")
 				So(filterOutput.Downloads.XLS.Size, ShouldEqual, "24mb")
 				So(filterOutput.State, ShouldEqual, "completed")
+				So(*filterOutput.Published, ShouldEqual, true)
 			})
 		})
 	})
@@ -157,7 +162,7 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 	csvPublicLink := "public-s3-csv-location"
 	xlsPublicLink := "public-s3-xls-location"
 
-	publishedFilterOutput := &mongo.Doc{
+	publishedFilterOutputWithPublicLinks := &mongo.Doc{
 		Database:   cfg.MongoFiltersDB,
 		Collection: "filterOutputs",
 		Key:        "_id",
@@ -165,7 +170,7 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 		Update:     GetValidFilterOutputBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, csvPublicLink, xlsPublicLink, version, dimensions),
 	}
 
-	unpublishedFilterOutput := &mongo.Doc{
+	publishedFilterOutputWithoutPublicLinks := &mongo.Doc{
 		Database:   cfg.MongoFiltersDB,
 		Collection: "filterOutputs",
 		Key:        "_id",
@@ -211,6 +216,16 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 			})
 		})
 
+		Convey("When an invalid authorization header is set on request to update filter output", func() {
+			Convey("Then fail to update filter output and return status unauthorized (401)", func() {
+
+				filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
+					WithHeader(serviceAuthTokenName, invalidServiceAuthToken).
+					WithBytes([]byte(GetValidPUTFilterOutputWithCSVDownloadJSON())).
+					Expect().Status(http.StatusUnauthorized)
+			})
+		})
+
 		Convey("When an authorised request is made to update filter output and json body contains dimensions or an instance id", func() {
 			Convey("Then fail to update filter output and return status forbidden (403)", func() {
 
@@ -232,9 +247,9 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 		}
 	})
 
-	Convey("Given an existing filter output with downloads object", t, func() {
-		Convey("But the document is unpublished and does not have a csv or xls publish link", func() {
-			if err := mongo.Setup(unpublishedFilterOutput); err != nil {
+	Convey("Given an existing filter output and the version is published", t, func() {
+		Convey("But the downloads object is missing csv and xls public links", func() {
+			if err := mongo.Setup(publishedFilterOutputWithoutPublicLinks); err != nil {
 				log.ErrorC("Unable to setup test data", err, nil)
 				os.Exit(1)
 			}
@@ -254,14 +269,14 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 				})
 			})
 
-			if err := mongo.Teardown(unpublishedFilterOutput); err != nil {
+			if err := mongo.Teardown(publishedFilterOutputWithoutPublicLinks); err != nil {
 				log.ErrorC("Unable to remove test data from mongo db", err, nil)
 				os.Exit(1)
 			}
 		})
 
-		Convey("And the document is published", func() {
-			if err := mongo.Setup(publishedFilterOutput); err != nil {
+		Convey("But downloads object contains public csv and xls download links", func() {
+			if err := mongo.Setup(publishedFilterOutputWithPublicLinks); err != nil {
 				log.ErrorC("Unable to setup test data", err, nil)
 				os.Exit(1)
 			}
@@ -281,7 +296,7 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 				})
 			})
 
-			if err := mongo.Teardown(publishedFilterOutput); err != nil {
+			if err := mongo.Teardown(publishedFilterOutputWithPublicLinks); err != nil {
 				log.ErrorC("Unable to remove test data from mongo db", err, nil)
 				os.Exit(1)
 			}

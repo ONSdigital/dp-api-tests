@@ -440,6 +440,13 @@ func CountDimensionOptions(database, collection, key, value string) (int, error)
 	return s.DB(database).C(collection).Find(bson.M{key: value}).Count()
 }
 
+// Possible values for flagging whether a filter resource (output or blueprint)
+// is a filter against a published or unpublished version
+var (
+	Published   = true
+	Unpublished = false
+)
+
 // Filter represents a structure for a filter blueprint or output
 type Filter struct {
 	InstanceID string      `bson:"instance_id"          json:"instance_id"`
@@ -449,6 +456,7 @@ type Filter struct {
 	FilterID   string      `bson:"filter_id"            json:"filter_id,omitempty"`
 	State      string      `bson:"state,omitempty"      json:"state,omitempty"`
 	Links      LinkMap     `bson:"links"                json:"links,omitempty"`
+	Published  *bool       `bson:"published,omitempty"  json:"published,omitempty"`
 }
 
 // LinkMap contains a named LinkObject for each link to other resources

@@ -67,6 +67,7 @@ func TestSuccessfullyGetFilterBlueprint(t *testing.T) {
 				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filters/(.+)$")
 				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+				response.Value("published").Equal(true)
 			})
 		})
 
@@ -96,6 +97,7 @@ func TestSuccessfullyGetFilterBlueprint(t *testing.T) {
 				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filters/(.+)$")
 				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+				response.Value("published").Equal(false)
 			})
 		})
 
