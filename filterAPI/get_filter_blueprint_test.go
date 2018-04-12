@@ -87,7 +87,7 @@ func TestSuccessfullyGetFilterBlueprint(t *testing.T) {
 			Convey("Then filter blueprint is returned in the response body", func() {
 
 				response := filterAPI.GET("/filters/{filter_blueprint_id}", unpublishedFilterBlueprintID).
-					WithHeader(internalTokenHeader, internalTokenID).
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("filter_id").Equal(unpublishedFilterBlueprintID)
@@ -110,7 +110,7 @@ func TestSuccessfullyGetFilterBlueprint(t *testing.T) {
 			Convey("Then filter blueprint is returned in the response body", func() {
 
 				response := filterAPI.GET("/filters/{filter_blueprint_id}", unpublishedFilterBlueprintID).
-					WithHeader(internalTokenHeader, internalTokenID).
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("filter_id").Equal(unpublishedFilterBlueprintID)

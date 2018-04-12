@@ -60,7 +60,7 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 	Convey("Get an edition of a dataset", t, func() {
 		Convey("When user is authenticated and edition is not published", func() {
 
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).WithHeader(internalToken, internalTokenID).
+			response := datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).WithHeader(serviceAuthTokenName, serviceAuthToken).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("id").Equal(unpublishedEditionID)
@@ -120,8 +120,8 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 	Convey("When the dataset does not exist", t, func() {
 		Convey("Given a request to get an edition of the dataset", func() {
 			Convey("Then the response returns status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found\n")
+				datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
 			})
 		})
 	})
@@ -135,8 +135,8 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 		Convey("but no editions exist against the dataset", func() {
 			Convey("Given a request to get an edition of the dataset", func() {
 				Convey("Then the response returns status not found (404)", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).WithHeader(internalToken, internalTokenID).
-						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found\n")
+					datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
 				})
 			})
 		})
@@ -152,7 +152,7 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 				Convey("Then the response returns status not found (404)", func() {
 
 					datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).
-						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found\n")
+						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
 				})
 			})
 		})

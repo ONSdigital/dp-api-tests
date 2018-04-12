@@ -107,7 +107,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 			Convey("Then filter output is returned in the response body", func() {
 
 				response := filterAPI.GET("/filter-outputs/{filter_output_id}", unpublishedFilterOutputID).
-					WithHeader(internalTokenHeader, internalTokenID).Expect().
+					WithHeader(serviceAuthTokenName, serviceAuthToken).Expect().
 					Status(http.StatusOK).JSON().Object()
 
 				response.Value("dimensions").Array().Length().Equal(4)

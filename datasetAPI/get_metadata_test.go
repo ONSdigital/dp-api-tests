@@ -33,7 +33,7 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 
 		Convey("When an authenticated request is made to get the unpublished version", func() {
 			Convey("Then the response body contains the expected metadata", func() {
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/metadata", datasetID, edition).WithHeader(internalToken, internalTokenID).
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/metadata", datasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("contacts").Array().Element(0).Object().Value("email").Equal("cpi@onstest.gov.uk")
@@ -188,8 +188,8 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 	Convey("Given the dataset, edition and version do not exist", t, func() {
 		Convey("When an authorised request to get the metadata relevant to a version", func() {
 			Convey("Then return status not found (404) with message `Dataset not found`", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found\n")
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
 			})
 		})
 	})
@@ -203,8 +203,8 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 		Convey("but an edition and version do not exist", func() {
 			Convey("When a request to get the metadata relevant to a version", func() {
 				Convey("Then return status not found (404) with message `Edition not found`", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(internalToken, internalTokenID).
-						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found\n")
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
 				})
 			})
 		})
@@ -218,8 +218,8 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 			Convey("but a version does not exist", func() {
 				Convey("When a request to get the metadata relevant to a version", func() {
 					Convey("Then return status bad request (404) with message `Version not found`", func() {
-						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(internalToken, internalTokenID).
-							Expect().Status(http.StatusNotFound).Body().Contains("Version not found\n")
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+							Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
 					})
 				})
 			})
@@ -241,7 +241,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 		Convey("When an unauthorised request to get the metadate relevant to a version", func() {
 			Convey("Then return status not found (404) with message `Dataset not found`", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
 			})
 		})
 
@@ -275,7 +275,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 			Convey("When an unauthorised request to get the metadata relevant to a version", func() {
 				Convey("Then return status not found (404) with message `Edition not found`", func() {
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
-						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found\n")
+						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
 				})
 			})
 
@@ -310,7 +310,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 			Convey("When an unauthorised request to get the metadata relevant to a version", func() {
 				Convey("Then return status not found (404) with message `Version not found`", func() {
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
-						Expect().Status(http.StatusNotFound).Body().Contains("Version not found\n")
+						Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
 				})
 			})
 
