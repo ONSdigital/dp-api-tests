@@ -143,7 +143,11 @@ func getS3FileSize(region, bucket, filename string, decrypt bool) (*int64, error
 		log.ErrorC("failed to find file", err, nil)
 		return nil, err
 	}
-	defer result.Body.Close()
+	defer func() {
+		if err := result.Body.Close(); err != nil {
+			log.ErrorC("getS3FileSize", err, nil)
+		}
+	}()
 
 	size := result.ContentLength
 
@@ -206,7 +210,11 @@ func makeRequest(req *http.Request) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.ErrorC("makeRequest", err, nil)
+		}
+	}()
 
 	return resp, nil
 }

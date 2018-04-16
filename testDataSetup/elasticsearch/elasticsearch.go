@@ -51,7 +51,11 @@ func DeleteIndex(path string) (int, error) {
 		log.ErrorC("failed to call elasticsearch", err, logData)
 		return 0, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.ErrorC("DeleteIndex", err, logData)
+		}
+	}()
 
 	logData["http_code"] = resp.StatusCode
 	if resp.StatusCode != http.StatusOK {
@@ -98,13 +102,19 @@ func (i *Index) CreateSearchIndex() error {
 		return err
 	}
 
+	logData := log.Data{"json_file": i.TestDataFile}
+
 	// Add docs to index
 	file, err := os.Open(i.TestDataFile)
 	if err != nil {
-		log.ErrorC("fail to open file containing elasticsearch test data", err, log.Data{"json_file": i.TestDataFile})
+		log.ErrorC("fail to open file containing elasticsearch test data", err, logData)
 		return err
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.ErrorC("CreateSearchIndex", err, logData)
+		}
+	}()
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -163,7 +173,11 @@ func CallElastic(ctx context.Context, path, method string, payload interface{}) 
 		log.ErrorC("failed to call elastic", err, logData)
 		return nil, 0, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.ErrorC("CallElastic", err, logData)
+		}
+	}()
 
 	logData["http_code"] = resp.StatusCode
 
@@ -177,7 +191,7 @@ func CallElastic(ctx context.Context, path, method string, payload interface{}) 
 	logData["status_code"] = resp.StatusCode
 
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= 300 {
-		log.ErrorC("failed", ErrorUnexpectedStatusCode, logData)
+		log.ErrorC("CallElastic", ErrorUnexpectedStatusCode, logData)
 		return nil, resp.StatusCode, ErrorUnexpectedStatusCode
 	}
 
