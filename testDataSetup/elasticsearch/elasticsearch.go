@@ -23,7 +23,7 @@ type Index struct {
 	MappingsFile string
 }
 
-var client = rchttp.DefaultClient
+var client = rchttp.NewClient()
 
 // ErrorUnexpectedStatusCode represents the error message to be returned when
 // the status received from elastic is not as expected
@@ -59,7 +59,7 @@ func DeleteIndex(path string) (int, error) {
 
 	logData["http_code"] = resp.StatusCode
 	if resp.StatusCode != http.StatusOK {
-		log.Error(ErrorUnexpectedStatusCode, logData)
+		log.ErrorC("DeleteIndex", ErrorUnexpectedStatusCode, logData)
 		return resp.StatusCode, ErrorUnexpectedStatusCode
 	}
 
