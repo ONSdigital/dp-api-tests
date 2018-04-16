@@ -20,7 +20,6 @@ import (
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
-	"fmt"
 	"net/url"
 )
 
@@ -386,9 +385,6 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 					if instanceResource.Downloads != nil {
 						if instanceResource.Downloads.XLS != nil {
-
-							fmt.Printf("%+v\n", instanceResource.Downloads.XLS)
-
 							if instanceResource.Downloads.XLS.Private != "" {
 								XLSSize, err = strconv.Atoi(instanceResource.Downloads.XLS.Size)
 								if err != nil {
@@ -564,7 +560,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					So(filterOutputResource.InstanceID, ShouldEqual, instanceID)
 					So(filterOutputResource.State, ShouldEqual, "created")
 
-					for i := 0; i < 10 ;i++  {
+					for i := 0; i < 10; i++ {
 
 						filterOutputResource, err = mongo.GetFilter(cfg.MongoFiltersDB, "filterOutputs", "filter_id", filterOutputID)
 						if err != nil {
