@@ -12,6 +12,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+// this is to cover "Resource" and "resource" not found
 const resourceNotFound = "esource not found"
 
 func TestSuccessfullyDeleteSearchIndex(t *testing.T) {
