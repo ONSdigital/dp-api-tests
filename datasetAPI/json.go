@@ -275,10 +275,10 @@ func validCreatedDatasetData(datasetID string) bson.M {
 	}
 }
 
-func validTimeDimensionsData(instanceID string) bson.M {
+func validTimeDimensionsData(dimensionID, instanceID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"_id":                  "9811",
+			"_id":                  dimensionID,
 			"instance_id":          instanceID,
 			"name":                 "time",
 			"option":               "202.45",
@@ -293,10 +293,10 @@ func validTimeDimensionsData(instanceID string) bson.M {
 	}
 }
 
-func validTimeDimensionsDataWithOutOptions(instanceID string) bson.M {
+func validTimeDimensionsDataWithOutOptions(dimensionID, instanceID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"_id":                  "9811",
+			"_id":                  dimensionID,
 			"instance_id":          instanceID,
 			"name":                 "time",
 			"links.code_list.id":   "64d384f1-ea3b-445c-8fb8-aa453f96e58a",
@@ -310,10 +310,10 @@ func validTimeDimensionsDataWithOutOptions(instanceID string) bson.M {
 	}
 }
 
-func validAggregateDimensionsData(instanceID string) bson.M {
+func validAggregateDimensionsData(dimensionID, instanceID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"_id":                  "9812",
+			"_id":                  dimensionID,
 			"instance_id":          instanceID,
 			"name":                 "aggregate",
 			"option":               "cpi1dimA19",

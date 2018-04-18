@@ -4,8 +4,10 @@ import (
 	"encoding/csv"
 	"errors"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"testing"
@@ -59,7 +61,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 			// STEP 1 - Create job with state created
 			postJobResponse := importAPI.POST("/jobs").WithBytes([]byte(createValidJobJSON(recipe, location))).
-				WithHeader(internalTokenHeader, importAPIInternalToken).Expect().Status(http.StatusCreated).JSON().Object()
+				WithHeaders(headers).Expect().Status(http.StatusCreated).JSON().Object()
 
 			postJobResponse.Value("id").NotNull()
 			jobID := postJobResponse.Value("id").String().Raw()
@@ -91,14 +93,14 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(instanceResource.State, ShouldEqual, "created")
 
 			// STEP 2 - Create dataset with dataset id from previous response
-			postDatasetResponse := datasetAPI.POST("/datasets/{id}", datasetName).WithHeader(internalTokenHeader, internalTokenID).WithBytes([]byte(validPOSTCreateDatasetJSON)).
+			postDatasetResponse := datasetAPI.POST("/datasets/{id}", datasetName).WithHeaders(headers).WithBytes([]byte(validPOSTCreateDatasetJSON)).
 				Expect().Status(http.StatusCreated).JSON().Object()
 
 			postDatasetResponse.Value("next").Object().Value("links").Object().Value("self").Object().Value("href").String().Match(cfg.DatasetAPIURL + "/datasets/" + datasetName + "$")
 			postDatasetResponse.Value("next").Object().Value("state").Equal("created")
 
 			// STEP 3 - Update job state to submitted
-			importAPI.PUT("/jobs/{id}", jobID).WithHeader(internalTokenHeader, importAPIInternalToken).WithBytes([]byte(`{"state":"submitted"}`)).
+			importAPI.PUT("/jobs/{id}", jobID).WithHeaders(headers).WithBytes([]byte(`{"state":"submitted"}`)).
 				Expect().Status(http.StatusOK)
 
 			// Check import job state is completed or submitted
@@ -217,7 +219,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			}
 
 			// Check hierarchies exist by calling the hierarchy api
-			getHierarchyParentDimensionResponse := hierarchyAPI.GET("/hierarchies/{instance_id}/{dimension}", instanceID, "aggregate").WithHeader(internalTokenHeader, internalTokenID).
+			getHierarchyParentDimensionResponse := hierarchyAPI.GET("/hierarchies/{instance_id}/{dimension}", instanceID, "aggregate").WithHeaders(headers).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			getHierarchyParentDimensionResponse.Value("has_data").Equal(true)
@@ -292,7 +294,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(instanceResource.ImportTasks.SearchTasks[0].DimensionName, ShouldEqual, "aggregate")
 
 			// STEP 4 - Update instance with meta data and change state to `edition-confirmed`
-			datasetAPI.PUT("/instances/{instance_id}", instanceID).WithHeader(internalTokenHeader, internalTokenID).
+			datasetAPI.PUT("/instances/{instance_id}", instanceID).WithHeaders(headers).
 				WithBytes([]byte(validPUTInstanceMetadataJSON)).Expect().Status(http.StatusOK)
 
 			// Check instance has updated
@@ -333,7 +335,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(editionResource.Next.State, ShouldEqual, "edition-confirmed")
 
 			// STEP 5 - Update version with collection_id and change state to associated
-			datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetName, "2017", "1").WithHeader(internalTokenHeader, internalTokenID).
+			datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetName, "2017", "1").WithHeaders(headers).
 				WithBytes([]byte(validPUTUpdateVersionToAssociatedJSON)).Expect().Status(http.StatusOK)
 
 			versionResource, err := mongo.GetVersion(cfg.MongoDB, "instances", "id", instanceID)
@@ -413,7 +415,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			}
 
 			// STEP 6 -  Update version to a state of published
-			datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetName, "2017", "1").WithHeader(internalTokenHeader, internalTokenID).
+			datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetName, "2017", "1").WithHeaders(headers).
 				WithBytes([]byte(`{"state":"published"}`)).Expect().Status(http.StatusOK)
 
 			versionResource, err = mongo.GetVersion(cfg.MongoDB, "instances", "id", instanceID)
@@ -468,22 +470,19 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 			Convey("Then an api customer should be able to get a csv and xls download link", func() {
 				// Get downloads link from version document
-				bucket := "csv-exported"
 				csvURL := versionResource.Downloads.CSV.URL
-				csvFilename := strings.TrimPrefix(csvURL, "https://"+bucket+".s3."+region+".amazonaws.com/")
 
-				// read csv download from s3
-				csvFile, err := getS3File(region, bucket, csvFilename, false)
+				response, err := http.Get(csvURL)
 				if err != nil {
-					log.ErrorC("unable to find csv full download in s3", err, log.Data{"csv_url": csvURL, "csv_filename": csvFilename})
-					os.Exit(1)
+					log.Error(err, nil)
 				}
-				defer csvFile.Close()
+				defer response.Body.Close()
 
-				csvReader := csv.NewReader(csvFile)
+				csvReader := csv.NewReader(response.Body)
+
 				headerRow, err := csvReader.Read()
 				if err != nil {
-					log.ErrorC("unable to read header row", err, log.Data{"csv_url": csvURL, "csv_filename": csvFilename})
+					log.ErrorC("unable to read header row", err, log.Data{"csv_url": csvURL})
 				}
 
 				So(len(headerRow), ShouldEqual, 7)
@@ -496,7 +495,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 						if err == io.EOF {
 							break
 						}
-						log.ErrorC("unable to read row", err, log.Data{"csv_url": csvURL, "csv_filename": csvFilename})
+						log.ErrorC("unable to read row", err, log.Data{"csv_url": csvURL})
 						os.Exit(1)
 					}
 					numberOfCSVRows++
@@ -504,26 +503,20 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				So(numberOfCSVRows, ShouldEqual, 1510)
 
 				xlsURL := versionResource.Downloads.XLS.URL
-				xlsFilename := strings.TrimPrefix(xlsURL, "https://"+bucket+".s3-"+region+".amazonaws.com/")
 
-				// read xls download from s3
-				xlsFile, err := getS3File(region, bucket, xlsFilename, false)
+				xlsResponse, err := http.Get(xlsURL)
 				if err != nil {
-					log.ErrorC("unable to find xls full download in s3", err, log.Data{"xls_url": xlsURL, "csv_filename": xlsFilename})
-					os.Exit(1)
+					log.Error(err, nil)
 				}
-				defer xlsFile.Close()
+				xlsFile := xlsResponse.Body
 
 				So(xlsFile, ShouldNotBeEmpty)
 
-				xlsFileSize, err := getS3FileSize(region, bucket, xlsFilename, false)
-				if err != nil {
-					log.ErrorC("unable to extract size of xls full download in s3", err, log.Data{"xls_url": xlsURL, "csv_filename": xlsFilename})
-					os.Exit(1)
-				}
+				b, _ := ioutil.ReadAll(xlsFile)
+				xlsFileSize := len(b)
 
-				expectedXLSFileSize := int64(XLSSize)
-				So(xlsFileSize, ShouldResemble, &expectedXLSFileSize)
+				expectedXLSFileSize := XLSSize
+				So(xlsFileSize, ShouldResemble, expectedXLSFileSize)
 
 				Convey("Then an api customer should be able to filter a dataset and be able to download a csv and xlsx download of the data", func() {
 					json := GetValidPOSTCreateFilterJSON(datasetName, "2017", "1")
@@ -598,8 +591,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					}
 
 					filteredXLSURL := filterOutputResource.Downloads.XLS.URL
-					filteredXLSFilename := strings.TrimPrefix(filteredXLSURL, "https://"+bucket+".s3-"+region+".amazonaws.com/")
-
+					filteredXLSFilename := filepath.Base(filteredXLSURL)
 					// read xls download from s3
 					filteredXLSFile, err := getS3File(region, bucket, filteredXLSFilename, false)
 					if err != nil {
@@ -618,7 +610,6 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					minExpectedXLSFileSize := int64(7465)
 					maxExpectedXLSFileSize := int64(7469)
 					So(*filteredXLSFileSize, ShouldBeBetweenOrEqual, minExpectedXLSFileSize, maxExpectedXLSFileSize)
-
 					filterBlueprint := &mongo.Doc{
 						Database:   cfg.MongoFiltersDB,
 						Collection: "filters",
@@ -641,28 +632,8 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 						}
 					}
 
-					if err = deleteS3File("eu-west-1", "csv-exported", filteredCSVFilename); err != nil {
-						log.ErrorC("Failed to remove filtered csv file from s3", err, log.Data{"filename": filteredCSVFilename})
-						hasRemovedAllResources = false
-					}
-
-					if err = deleteS3File("eu-west-1", "csv-exported", filteredXLSFilename); err != nil {
-						log.ErrorC("Failed to remove filtered xls file from s3", err, log.Data{"filename": filteredXLSFilename})
-						hasRemovedAllResources = false
-					}
 				})
 
-				// remove test file from s3
-				if err := deleteS3File(region, bucket, csvFilename); err != nil {
-					log.ErrorC("Failed to remove full downloadable test csv file from s3", err, nil)
-					hasRemovedAllResources = false
-				}
-
-				// remove test file from s3
-				if err := deleteS3File(region, bucket, xlsFilename); err != nil {
-					log.ErrorC("Failed to remove full downloadable test xls file from s3", err, nil)
-					hasRemovedAllResources = false
-				}
 			})
 
 			var docs []*mongo.Doc

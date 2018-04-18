@@ -13,11 +13,12 @@ var cfg *config.Config
 const (
 	collection = "datasets"
 
-	internalToken              = "Internal-Token"
 	downloadServiceAuthToken   = "X-Download-Service-Token"
 	downloadServiceAuthTokenID = "QB0108EZ-825D-412C-9B1D-41EF7747F462"
-	internalTokenID            = "FD0108EA-825D-411C-9B1D-41EF7727F465"
-	invalidInternalTokenID     = "FD0108EA-825D-411C-9B1D-41EF7727F465A"
+
+	serviceAuthTokenName         = "Authorization"
+	serviceAuthToken             = "939616dc-7599-4ded-9a86-a9c66fbf98e0"
+	unauthorisedServiceAuthToken = "0dd023bd-9cc0-4c18-9b4f-e030a1f2b71c"
 )
 
 func init() {

@@ -11,12 +11,13 @@ import (
 var cfg *config.Config
 
 const (
-	collection   = "imports"
-	jobID        = "42B41AE3-8EA6-4D0F-8526-71D1999B4A7D"
-	invalidJobID = "42B41AE38EA64D0F852671D1999B4A7D1234"
-	instanceID   = "da814aee-66f5-4020-a260-3b6bc7363170"
-	tokenName    = "Internal-Token"
-	tokenSecret  = "0C30662F-6CF6-43B0-A96A-954772267FF5"
+	collection                   = "imports"
+	jobID                        = "42B41AE3-8EA6-4D0F-8526-71D1999B4A7D"
+	invalidJobID                 = "42B41AE38EA64D0F852671D1999B4A7D1234"
+	instanceID                   = "da814aee-66f5-4020-a260-3b6bc7363170"
+	serviceAuthTokenName         = "Authorization"
+	serviceAuthToken             = "939616dc-7599-4ded-9a86-a9c66fbf98e0"
+	unauthorisedServiceAuthToken = "0dd023bd-9cc0-4c18-9b4f-e030a1f2b71c"
 )
 
 func init() {

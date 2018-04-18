@@ -9,7 +9,7 @@ import (
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
-	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2"
 )
 
 func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
@@ -41,10 +41,13 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
 	Convey("Given an import job exists", t, func() {
-		Convey("When a request to get a list of all jobs and the user is authenticated", func() {
+		Convey("When get jobs is called with an authenticated request", func() {
 			Convey("Then the response returns status OK (200)", func() {
 
-				response := importAPI.GET("/jobs").WithHeader(tokenName, tokenSecret).Expect().Status(http.StatusOK).JSON().Array()
+				response := importAPI.GET("/jobs").
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
+					Expect().Status(http.StatusOK).
+					JSON().Array()
 				checkImportJobsResponse(response)
 			})
 		})
@@ -58,7 +61,7 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 	}
 }
 
-func TestGetListOfImportJobsWithNoAuthentication(t *testing.T) {
+func TestGetListOfImportJobsUnauthorised(t *testing.T) {
 
 	var docs []*mongo.Doc
 
@@ -79,11 +82,20 @@ func TestGetListOfImportJobsWithNoAuthentication(t *testing.T) {
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
 	Convey("Given an import job exists", t, func() {
-		Convey("When a request to get a list of all jobs and the user is not authenticated", func() {
+		Convey("When get jobs is called with no Authorization header", func() {
 			Convey("Then the response returns status Not Found (404)", func() {
+				importAPI.GET("/jobs").
+					Expect().Status(http.StatusNotFound)
+			})
+		})
+	})
 
-				importAPI.GET("/jobs").Expect().Status(http.StatusNotFound)
-
+	Convey("Given an import job exists", t, func() {
+		Convey("when get jobs is called with an unauthorised Authorization header", func() {
+			Convey("Then the response returns status 401 unauthorised", func() {
+				importAPI.GET("/jobs").
+					WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 	})

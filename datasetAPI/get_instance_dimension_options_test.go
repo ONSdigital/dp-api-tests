@@ -33,7 +33,7 @@ func TestGetInstanceDimensionOptions_ReturnsAllDimensionOptionsFromAnInstance(t 
 		Convey("When an authenticated user sends a GET request for a list of time options for instance", func() {
 			Convey("Then a list of time options is returned with a status of OK (200)", func() {
 
-				response := datasetAPI.GET("/instances/{instance_id}/dimensions/time/options", instanceID).WithHeader(internalToken, internalTokenID).
+				response := datasetAPI.GET("/instances/{instance_id}/dimensions/time/options", instanceID).WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("dimension").Equal("time")
@@ -44,7 +44,7 @@ func TestGetInstanceDimensionOptions_ReturnsAllDimensionOptionsFromAnInstance(t 
 		Convey("When an authenticated user sends a GET request for a list of aggregate options for instance", func() {
 			Convey("Then a list of aggregate options is returned with a status of OK (200)", func() {
 
-				response := datasetAPI.GET("/instances/{instance_id}/dimensions/aggregate/options", instanceID).WithHeader(internalToken, internalTokenID).
+				response := datasetAPI.GET("/instances/{instance_id}/dimensions/aggregate/options", instanceID).WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("dimension").Equal("aggregate")
@@ -70,27 +70,27 @@ func TestFailureToGetInstanceDimensionOptions(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Given an instance document does not exist", t, func() {
-		Convey("When a user sends a GET request for an instances dimension options without sending a token", func() {
-			Convey("Then return status not found (404) with a message `Resource not found`", func() {
+		Convey("When an unauthenticated request to get an instances dimension options", func() {
+			Convey("Then return status not found (404) with a message `requested resource not found`", func() {
 
 				datasetAPI.GET("/instances/{id}/dimensions/time/options", instanceID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("requested resource not found")
 			})
 		})
 
-		Convey("When a user sends a GET request for an instances dimension options with an invalid token", func() {
-			Convey("Then return status not found (404) with a message `Resource not found`", func() {
+		Convey("When a user sends a GET request for an instances dimension options with an invalid Authentication header", func() {
+			Convey("Then return status unauthorized (401)", func() {
 
-				datasetAPI.GET("/instances/{id}/dimensions/time/options", instanceID).WithHeader(internalToken, invalidInternalTokenID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
+				datasetAPI.GET("/instances/{id}/dimensions/time/options", instanceID).WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 
 		Convey("When an authenticated user sends a GET request for an instances dimension options", func() {
 			Convey("Then return status not found (404) with a message `Instance not found`", func() {
 
-				datasetAPI.GET("/instances/{id}/dimensions/time/options", instanceID).WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Instance not found\n")
+				datasetAPI.GET("/instances/{id}/dimensions/time/options", instanceID).WithHeader(serviceAuthTokenName, serviceAuthToken).
+					Expect().Status(http.StatusNotFound).Body().Contains("Instance not found")
 			})
 		})
 	})
@@ -111,25 +111,25 @@ func TestFailureToGetInstanceDimensionOptions(t *testing.T) {
 		}
 
 		Convey("When a user sends a GET request for an instances dimension options without sending a token", func() {
-			Convey("Then return status not found (404) with a message `Resource not found`", func() {
+			Convey("Then return status not found (404) with a message `requested resource not found`", func() {
 
 				datasetAPI.GET("/instances/{id}/dimensions/time/options", instanceID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains("requested resource not found")
 			})
 		})
 
 		Convey("When a user sends a GET request for an instances dimension options with an invalid token", func() {
-			Convey("Then return status not found (404) with a message `Resource not found`", func() {
+			Convey("Then return status unauthorized (401)", func() {
 
-				datasetAPI.GET("/instances/{id}/dimensions/time/options", instanceID).WithHeader(internalToken, invalidInternalTokenID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
+				datasetAPI.GET("/instances/{id}/dimensions/time/options", instanceID).WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 
 		Convey("When an authenticated user sends a GET request for an instances dimension options", func() {
 			Convey("Then return status not found (404) with a message `Dimension node not found`", func() {
 
-				datasetAPI.GET("/instances/{id}/dimensions/time/options", instanceID).WithHeader(internalToken, internalTokenID).
+				datasetAPI.GET("/instances/{id}/dimensions/time/options", instanceID).WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("Dimension node not found\n")
 			})
 		})
@@ -175,7 +175,7 @@ func getInstanceDimensionOptionsSetup(datasetID, editionID, edition, instanceID 
 		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9811",
-		Update:     validTimeDimensionsData(instanceID),
+		Update:     validTimeDimensionsData("9811", instanceID),
 	}
 
 	dimensionTwoDoc := &mongo.Doc{
@@ -183,7 +183,7 @@ func getInstanceDimensionOptionsSetup(datasetID, editionID, edition, instanceID 
 		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9812",
-		Update:     validAggregateDimensionsData(instanceID),
+		Update:     validAggregateDimensionsData("9812", instanceID),
 	}
 
 	docs = append(docs, datasetDoc, editionDoc, dimensionOneDoc, dimensionTwoDoc, instanceOneDoc)

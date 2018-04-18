@@ -3,7 +3,7 @@ package generateFiles
 import (
 	"os"
 
-	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2"
 
 	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
@@ -23,15 +23,23 @@ const (
 	datasetName      = "cpih01"
 	genericHierarchy = "cpih1dim1aggid"
 
-	internalTokenHeader    = "Internal-Token"
-	internalTokenID        = "FD0108EA-825D-411C-9B1D-41EF7727F465"
-	invalidInternalTokenID = "FD0108EA-825D-411C-9B1D-41EF7727F465A"
-	importAPIInternalToken = "0C30662F-6CF6-43B0-A96A-954772267FF5"
+	florenceTokenHeader      = "X-Florence-Token"
+	florenceToken            = "85c718c3-9ba4-4f31-99bb-3e4eaabb2cc1"
+	authorizationTokenHeader = "Authorization"
+	authorizationToken       = "939616dc-7599-4ded-9a86-a9c66fbf98e0"
+	bucket                   = "csv-exported"
+
+	invalidToken = "FD0108EA-825D-411C-9B1D-41EF7727F465A"
 )
 
 var (
 	dropDatabases = []string{"test"}
 	vaultClient   *vault.VaultClient
+
+	headers = map[string]string{
+		florenceTokenHeader:      florenceToken,
+		authorizationTokenHeader: authorizationToken,
+	}
 )
 
 func init() {

@@ -47,4 +47,5 @@ import tracker
 import reporter
 dataset exporter
 xlsx dataset exporter
+auth api stub (mimics zebedee)
 ```
