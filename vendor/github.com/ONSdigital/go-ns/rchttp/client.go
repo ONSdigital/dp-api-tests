@@ -25,7 +25,6 @@ type Client struct {
 	HTTPClient           *http.Client
 	AuthToken            string
 	DownloadServiceToken string
-	FlorenceToken        string
 }
 
 // DefaultClient is a go-ns specific http client with sensible timeouts,
@@ -91,18 +90,6 @@ func (c *Client) SetDownloadServiceToken(token string) {
 	c.DownloadServiceToken = token
 }
 
-// ClientWithFlorenceToken facilitates creating a client and setting service auth
-func ClientWithFlorenceToken(c common.RCHTTPClienter, token string) common.RCHTTPClienter {
-	if c == nil {
-		c = NewClient()
-	}
-	c.SetFlorenceToken(token)
-	return c
-}
-func (c *Client) SetFlorenceToken(token string) {
-	c.FlorenceToken = token
-}
-
 func (c *Client) GetMaxRetries() int {
 	return c.MaxRetries
 }
@@ -117,6 +104,18 @@ func (c *Client) Do(ctx context.Context, req *http.Request) (*http.Response, err
 		// only add this header if not already set (e.g. for authClient)
 		if len(req.Header.Get(common.AuthHeaderKey)) == 0 {
 			common.AddServiceTokenHeader(req, c.AuthToken)
+		}
+	}
+	if len(c.DownloadServiceToken) > 0 {
+		// only add this header if not already set
+		if len(req.Header.Get(common.DownloadServiceHeaderKey)) == 0 {
+			common.AddDownloadServiceTokenHeader(req, c.DownloadServiceToken)
+		}
+	}
+	if common.IsUserPresent(ctx) {
+		// only add this header if not already set
+		if len(req.Header.Get(common.UserHeaderKey)) == 0 {
+			common.AddUserHeader(req, common.User(ctx))
 		}
 	}
 

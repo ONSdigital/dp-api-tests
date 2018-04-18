@@ -50,6 +50,13 @@ func AddServiceTokenHeader(r *http.Request, serviceToken string) {
 	}
 }
 
+// AddDownloadServiceTokenHeader sets the given download service token on the given request
+func AddDownloadServiceTokenHeader(r *http.Request, serviceToken string) {
+	if len(serviceToken) > 0 {
+		r.Header.Add(DownloadServiceHeaderKey, serviceToken)
+	}
+}
+
 // User gets the user identity from the context
 func User(ctx context.Context) string {
 	userIdentity, _ := ctx.Value(UserIdentityKey).(string)
@@ -75,8 +82,8 @@ func AddDeprecatedHeader(r *http.Request, token string) {
 	}
 }
 
-// IsPresent determines if an identity is present on the given context.
-func IsPresent(ctx context.Context) bool {
+// IsCallerPresent determines if an identity is present on the given context.
+func IsCallerPresent(ctx context.Context) bool {
 
 	callerIdentity := ctx.Value(CallerIdentityKey)
 	isPresent := callerIdentity != nil && callerIdentity != ""
