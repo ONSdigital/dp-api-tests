@@ -6,9 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"strconv"
-	"strings"
 	"testing"
 	"time"
 
@@ -51,7 +49,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		err := sendV4FileToAWS(region, bucketName, filename, true)
 		if err != nil {
 			log.ErrorC("failed to load in v4 to aws, discontinue with test", err, nil)
-			os.Exit(1)
+			t.FailNow()
 		}
 
 		// import API expects a s3 url as the location of the file
@@ -81,7 +79,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			instanceResource, err := mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve instance resource", err, log.Data{"instance_id": instanceID})
-				os.Exit(1)
+				t.FailNow()
 			}
 
 			So(len(instanceResource.Dimensions), ShouldEqual, 3)
@@ -107,7 +105,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			jobResource, err := mongo.GetJob(cfg.MongoImportsDB, "imports", "id", jobID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve job resource", err, log.Data{"job_id": jobID})
-				os.Exit(1)
+				t.FailNow()
 			}
 
 			So(jobResource.State, ShouldNotEqual, "created")
@@ -140,7 +138,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					instanceResource, err = mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
 					if err != nil {
 						log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
-						os.Exit(1)
+						t.FailNow()
 					}
 					if instanceResource.ImportTasks.ImportObservations.State == "completed" {
 						tryAgain = false
@@ -155,7 +153,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			if tryAgain != false {
 				err = errors.New("timed out")
 				log.ErrorC("Timed out - failed to get instance document to a state of completed", err, log.Data{"instance_id": instanceID, "state": instanceResource.State, "timeout": timeout})
-				os.Exit(1)
+				t.FailNow()
 			}
 
 			So(instanceResource.Headers, ShouldResemble, &[]string{"V4_0", "time", "time", "uk-only", "geography", "cpih1dim1aggid", "aggregate"})
@@ -168,7 +166,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			count, err := mongo.CountDimensionOptions(cfg.MongoDB, "dimension.options", "instance_id", instanceID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve dimension option resources", err, log.Data{"instance_id": instanceID})
-				os.Exit(1)
+				t.FailNow()
 			}
 
 			So(count, ShouldEqual, 156)
@@ -192,14 +190,14 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					instanceResource, err = mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
 					if err != nil {
 						log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
-						os.Exit(1)
+						t.FailNow()
 					}
 
 					if instanceResource.ImportTasks.BuildHierarchyTasks == nil ||
 						len(instanceResource.ImportTasks.BuildHierarchyTasks) < 1 {
 
 						log.ErrorC("no build hierarchy tasks found", err, log.Data{"instance_id": instanceID})
-						os.Exit(1)
+						t.FailNow()
 					}
 
 					if instanceResource.ImportTasks.BuildHierarchyTasks[0].State == "completed" {
@@ -215,7 +213,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			if tryAgain != false {
 				err = errors.New("timed out")
 				log.ErrorC("Timed out - failed to get instance document to have hierarchy tasks with states of completed", err, log.Data{"instance_id": instanceID, "hierarchy_tasks": instanceResource.ImportTasks.BuildHierarchyTasks, "timeout": timeout})
-				os.Exit(1)
+				t.FailNow()
 			}
 
 			// Check hierarchies exist by calling the hierarchy api
@@ -253,14 +251,14 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					instanceResource, err = mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
 					if err != nil {
 						log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
-						os.Exit(1)
+						t.FailNow()
 					}
 
 					if instanceResource.ImportTasks.SearchTasks == nil ||
 						len(instanceResource.ImportTasks.SearchTasks) < 1 {
 
 						log.ErrorC("no build hierarchy tasks found", err, log.Data{"instance_id": instanceID})
-						os.Exit(1)
+						t.FailNow()
 					}
 
 					if instanceResource.ImportTasks.SearchTasks[0].State == "completed" {
@@ -276,7 +274,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			if tryAgain != false {
 				err = errors.New("timed out")
 				log.ErrorC("Timed out - failed to get instance document to have search tasks with states of completed", err, log.Data{"instance_id": instanceID, "search_tasks": instanceResource.ImportTasks.SearchTasks, "timeout": timeout})
-				os.Exit(1)
+				t.FailNow()
 			}
 
 			// todo, add retry loop to check when the instance is set to complete.
@@ -286,7 +284,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			instanceResource, err = mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
-				os.Exit(1)
+				t.FailNow()
 			}
 
 			// Check instance state is completed
@@ -301,7 +299,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			instanceResource, err = mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve instance resource", err, log.Data{"instance_id": instanceID})
-				os.Exit(1)
+				t.FailNow()
 			}
 
 			So(instanceResource.Alerts, ShouldNotBeNil)
@@ -322,7 +320,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			editionResource, err := mongo.GetEdition(cfg.MongoDB, "editions", "next.links.self.href", instanceResource.Links.Edition.HRef)
 			if err != nil {
 				log.ErrorC("Unable to retrieve edition resource", err, log.Data{"links.self.href": instanceResource.Links.Edition.HRef})
-				os.Exit(1)
+				t.FailNow()
 			}
 
 			So(editionResource.Next.Edition, ShouldEqual, "2017")
@@ -341,7 +339,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			versionResource, err := mongo.GetVersion(cfg.MongoDB, "instances", "id", instanceID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve version resource", err, log.Data{"instance_id": instanceID})
-				os.Exit(1)
+				t.FailNow()
 			}
 
 			So(versionResource.CollectionID, ShouldEqual, "308064B3-A808-449B-9041-EA3A2F72CFAC")
@@ -351,7 +349,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			datasetResource, err := mongo.GetDataset(cfg.MongoDB, "datasets", "_id", datasetName)
 			if err != nil {
 				log.ErrorC("Unable to retrieve dataset resource", err, log.Data{"dataset_id": datasetName})
-				os.Exit(1)
+				t.FailNow()
 			}
 
 			So(datasetResource.Current, ShouldBeNil)
@@ -380,7 +378,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					instanceResource, err = mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceID)
 					if err != nil {
 						log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
-						os.Exit(1)
+						t.FailNow()
 					}
 
 					if instanceResource.Downloads != nil {
@@ -389,14 +387,14 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 								XLSSize, err = strconv.Atoi(instanceResource.Downloads.XLS.Size)
 								if err != nil {
 									log.ErrorC("cannot convert xls size of type string to integer", err, log.Data{"xls_size": instanceResource.Downloads.XLS.Size})
-									os.Exit(1)
+									t.FailNow()
 								}
 								So(XLSSize, ShouldBeBetweenOrEqual, 19000, 20000)
 								So(instanceResource.Downloads.XLS.Private, ShouldNotBeEmpty)
 								CSVSize, err := strconv.Atoi(instanceResource.Downloads.CSV.Size)
 								if err != nil {
 									log.ErrorC("cannot convert csv size of type string to integer", err, log.Data{"csv_size": instanceResource.Downloads.CSV.Size})
-									os.Exit(1)
+									t.FailNow()
 								}
 								So(CSVSize, ShouldBeBetweenOrEqual, 137000, 139000)
 								So(instanceResource.Downloads.CSV.URL, ShouldNotBeEmpty)
@@ -414,7 +412,33 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			if hasDownloads == false {
 				err := errors.New("timed out")
 				log.ErrorC("Timed out - failed to get instance document with available downloads", err, log.Data{"instance_id": instanceID, "downloads": instanceResource.Downloads, "timeout": timeout})
-				os.Exit(1)
+				t.FailNow()
+			}
+
+			log.Info("Then an authenticated user should be able to filter a dataset", nil)
+
+			filterBlueprintID, filterOutputID := testFiltering(t, filterAPI, instanceID, false)
+
+			filterBlueprint := &mongo.Doc{
+				Database:   cfg.MongoFiltersDB,
+				Collection: "filters",
+				Key:        "filter_id",
+				Value:      filterBlueprintID,
+			}
+
+			filterOutput := &mongo.Doc{
+				Database:   cfg.MongoFiltersDB,
+				Collection: "filterOutputs",
+				Key:        "filter_id",
+				Value:      filterOutputID,
+			}
+
+			// remove filter output
+			if err = mongo.Teardown(filterBlueprint, filterOutput); err != nil {
+				if err != mgo.ErrNotFound {
+					log.ErrorC("failed to remove filter output resource", err, log.Data{"filter_output_id": filterOutputID})
+					hasRemovedAllResources = false
+				}
 			}
 
 			log.Info("STEP 6 - Update version to a state of published", nil)
@@ -424,7 +448,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			versionResource, err = mongo.GetVersion(cfg.MongoDB, "instances", "id", instanceID)
 			if err != nil {
 				log.ErrorC("Unable to retrieve version resource", err, log.Data{"instance_id": instanceID})
-				os.Exit(1)
+				t.FailNow()
 			}
 
 			So(versionResource.State, ShouldEqual, "published")
@@ -433,7 +457,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			editionResource, err = mongo.GetEdition(cfg.MongoDB, "editions", "current.links.self.href", instanceResource.Links.Edition.HRef)
 			if err != nil {
 				log.ErrorC("Unable to retrieve dataset resource", err, log.Data{"dataset_id": datasetName})
-				os.Exit(1)
+				t.FailNow()
 			}
 
 			So(editionResource.Next.State, ShouldEqual, "published")
@@ -444,7 +468,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			datasetResource, err = mongo.GetDataset(cfg.MongoDB, "datasets", "_id", datasetName)
 			if err != nil {
 				log.ErrorC("Unable to retrieve dataset resource", err, log.Data{"dataset_id": datasetName})
-				os.Exit(1)
+				t.FailNow()
 			}
 
 			So(datasetResource.Current, ShouldNotBeNil)
@@ -500,7 +524,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 							break
 						}
 						log.ErrorC("unable to read row", err, log.Data{"csv_url": csvURL})
-						os.Exit(1)
+						t.FailNow()
 					}
 					numberOfCSVRows++
 				}
@@ -524,105 +548,12 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 				log.Info("Then an api customer should be able to filter a dataset and be able to download", nil)
 				Convey("Then an api customer should be able to filter a dataset and be able to download a csv and xlsx download of the data", func() {
-					json := GetValidPOSTCreateFilterJSON(datasetName, "2017", "1")
-					log.Info("ajhgjlabfjlarebvjkrbvqlj", log.Data{"json": json})
-					filterBlueprintResponse := filterAPI.POST("/filters").WithQuery("submitted", "true").
-						WithBytes([]byte(json)).Expect().Status(http.StatusCreated).JSON().Object()
 
-					filterBlueprintID := filterBlueprintResponse.Value("filter_id").String().Raw()
-
-					filterBlueprintResponse.Value("filter_id").NotNull()
-					filterBlueprintResponse.Value("instance_id").Equal(instanceID)
-					filterBlueprintResponse.Value("dimensions").Array().Element(0).Object().Value("name").Equal("geography")
-					filterBlueprintResponse.Value("dimensions").Array().Element(0).Object().Value("options").Array().Length().Equal(1)
-					filterBlueprintResponse.Value("dimensions").Array().Element(1).Object().Value("name").Equal("aggregate")
-					filterBlueprintResponse.Value("dimensions").Array().Element(1).Object().Value("options").Array().Length().Equal(38)
-					filterBlueprintResponse.Value("dimensions").Array().Element(2).Object().Value("name").Equal("time")
-					filterBlueprintResponse.Value("dimensions").Array().Element(2).Object().Value("options").Array().Length().Equal(1)
-					filterBlueprintResponse.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("/filters/" + filterBlueprintID + "/dimensions$")
-					filterBlueprintResponse.Value("links").Object().Value("self").Object().Value("href").String().Match("/filters/(.+)$")
-					filterBlueprintResponse.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetName + "/editions/2017/versions/1$")
-					filterBlueprintResponse.Value("links").Object().Value("version").Object().Value("id").Equal("1")
-					filterBlueprintResponse.Value("links").Object().Value("filter_output").Object().Value("href").String().Match("/filter-outputs/(.+)$")
-					filterBlueprintResponse.Value("links").Object().Value("filter_output").Object().Value("id").NotNull()
-
-					log.Info("filter response", log.Data{"resp": filterBlueprintResponse.Raw()})
-
-					filterOutputID := filterBlueprintResponse.Value("links").Object().Value("filter_output").Object().Value("id").String().Raw()
-
-					filterOutputResource, err := mongo.GetFilter(cfg.MongoFiltersDB, "filterOutputs", "filter_id", filterOutputID)
+					filterBlueprintID, filterOutputID := testFiltering(t, filterAPI, instanceID, true)
 					if err != nil {
-						log.ErrorC("Unable to retrieve filter output document", err, log.Data{"filter_output_id": filterOutputID})
-						os.Exit(1)
+						return
 					}
 
-					So(filterOutputResource.FilterID, ShouldEqual, filterOutputID)
-					So(filterOutputResource.InstanceID, ShouldEqual, instanceID)
-					So(filterOutputResource.State, ShouldEqual, "created")
-
-					for i := 0; i < 10; i++ {
-
-						filterOutputResource, err = mongo.GetFilter(cfg.MongoFiltersDB, "filterOutputs", "filter_id", filterOutputID)
-						if err != nil {
-							log.ErrorC("Unable to retrieve filter output document", err, log.Data{"filter_output_id": filterOutputID})
-							os.Exit(1)
-						}
-						if filterOutputResource.State == "completed" {
-							break
-						}
-
-						log.Info("waiting for filter to be complete", log.Data{"state": filterOutputResource.State})
-						time.Sleep(time.Millisecond * 200)
-					}
-
-					So(filterOutputResource.FilterID, ShouldEqual, filterOutputID)
-					So(filterOutputResource.InstanceID, ShouldEqual, instanceID)
-					So(filterOutputResource.State, ShouldEqual, "completed")
-					So(filterOutputResource.Downloads.CSV, ShouldNotBeNil)
-					So(filterOutputResource.Downloads.XLS, ShouldNotBeNil)
-
-					filteredCSVURL := filterOutputResource.Downloads.CSV.Public
-					filteredCSVFilename := strings.TrimPrefix(filteredCSVURL, "https://"+bucket+".s3."+region+".amazonaws.com/")
-
-					// read csv download from s3
-					filteredCSVFile, err := getS3File(region, bucket, filteredCSVFilename, false)
-					if err != nil {
-						log.ErrorC("unable to find filtered csv download in s3", err, log.Data{"filtered_csv_url": filteredCSVURL, "filtered_csv_filename": filteredCSVFilename})
-						os.Exit(1)
-					}
-
-					filteredCSVReader := csv.NewReader(filteredCSVFile)
-
-					if err = checkFileRowCount(filteredCSVReader, 39); err != nil {
-						log.ErrorC("unable to check file row count", err, nil)
-						os.Exit(1)
-					}
-
-					filteredXLSURL := filterOutputResource.Downloads.XLS.Public
-					u, err := url.Parse(filteredXLSURL)
-					if err != nil {
-						panic(err)
-					}
-					filteredXLSFilename := u.Path
-
-					// read xls download from s3
-					filteredXLSFile, err := getS3File(region, bucket, filteredXLSFilename, false)
-					if err != nil {
-						log.ErrorC("unable to find filtered xls download in s3", err, log.Data{"filtered_xls_url": filteredXLSURL, "filtered_xls_filename": filteredXLSFilename})
-						os.Exit(1)
-					}
-
-					So(filteredXLSFile, ShouldNotBeEmpty)
-
-					filteredXLSFileSize, err := getS3FileSize(region, bucket, filteredXLSFilename, false)
-					if err != nil {
-						log.ErrorC("unable to extract size of filtered xls download in s3", err, log.Data{"filtered_xls_url": filteredXLSURL, "filtered_xls_filename": filteredXLSFilename})
-						os.Exit(1)
-					}
-
-					minExpectedXLSFileSize := int64(7465)
-					maxExpectedXLSFileSize := int64(7469)
-					So(*filteredXLSFileSize, ShouldBeBetweenOrEqual, minExpectedXLSFileSize, maxExpectedXLSFileSize)
 					filterBlueprint := &mongo.Doc{
 						Database:   cfg.MongoFiltersDB,
 						Collection: "filters",
@@ -644,9 +575,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 							hasRemovedAllResources = false
 						}
 					}
-
 				})
-
 			})
 
 			var docs []*mongo.Doc
@@ -707,7 +636,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			datastore, err := neo4j.NewDatastore(cfg.Neo4jAddr, instanceID, "")
 			if err != nil {
 				log.ErrorC("Failed to connecton to neo4j database", err, nil)
-				os.Exit(1)
+				t.FailNow()
 			}
 
 			if err = datastore.TeardownInstance(); err != nil {
@@ -725,9 +654,133 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		}
 
 		if !hasRemovedAllResources {
-			os.Exit(1)
+			t.FailNow()
 		}
 	})
+}
+func testFiltering(t *testing.T, filterAPI *httpexpect.Expect, instanceID string, isPublished bool) (string, string) {
+
+	json := GetValidPOSTCreateFilterJSON(datasetName, "2017", "1")
+
+	log.Info("creating filter", log.Data{"json": json})
+
+	filterBlueprintRequest := filterAPI.POST("/filters").
+		WithQuery("submitted", "true").
+		WithBytes([]byte(json))
+
+	if !isPublished {
+		filterBlueprintRequest = filterBlueprintRequest.WithHeaders(headers)
+	}
+
+	filterBlueprintResponse := filterBlueprintRequest.
+		Expect().Status(http.StatusCreated).
+		JSON().Object()
+
+	filterBlueprintID := filterBlueprintResponse.Value("filter_id").String().Raw()
+	filterBlueprintResponse.Value("filter_id").NotNull()
+	filterBlueprintResponse.Value("instance_id").Equal(instanceID)
+	filterBlueprintResponse.Value("dimensions").Array().Element(0).Object().Value("name").Equal("geography")
+	filterBlueprintResponse.Value("dimensions").Array().Element(0).Object().Value("options").Array().Length().Equal(1)
+	filterBlueprintResponse.Value("dimensions").Array().Element(1).Object().Value("name").Equal("aggregate")
+	filterBlueprintResponse.Value("dimensions").Array().Element(1).Object().Value("options").Array().Length().Equal(38)
+	filterBlueprintResponse.Value("dimensions").Array().Element(2).Object().Value("name").Equal("time")
+	filterBlueprintResponse.Value("dimensions").Array().Element(2).Object().Value("options").Array().Length().Equal(1)
+	filterBlueprintResponse.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("/filters/" + filterBlueprintID + "/dimensions$")
+	filterBlueprintResponse.Value("links").Object().Value("self").Object().Value("href").String().Match("/filters/(.+)$")
+	filterBlueprintResponse.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetName + "/editions/2017/versions/1$")
+	filterBlueprintResponse.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+	filterBlueprintResponse.Value("links").Object().Value("filter_output").Object().Value("href").String().Match("/filter-outputs/(.+)$")
+	filterBlueprintResponse.Value("links").Object().Value("filter_output").Object().Value("id").NotNull()
+	log.Info("filter response", log.Data{"resp": filterBlueprintResponse.Raw()})
+
+	filterOutputID := filterBlueprintResponse.Value("links").Object().Value("filter_output").Object().Value("id").String().Raw()
+
+	filterOutputResource, err := mongo.GetFilter(cfg.MongoFiltersDB, "filterOutputs", "filter_id", filterOutputID)
+	if err != nil {
+		log.ErrorC("Unable to retrieve filter output document", err, log.Data{"filter_output_id": filterOutputID})
+		t.FailNow()
+	}
+	So(filterOutputResource.FilterID, ShouldEqual, filterOutputID)
+	So(filterOutputResource.InstanceID, ShouldEqual, instanceID)
+	So(filterOutputResource.State, ShouldEqual, "created")
+
+	log.Info("waiting for filter to be set to complete", nil)
+	for i := 0; i < 10; i++ {
+
+		filterOutputResource, err = mongo.GetFilter(cfg.MongoFiltersDB, "filterOutputs", "filter_id", filterOutputID)
+		if err != nil {
+			log.ErrorC("Unable to retrieve filter output document", err, log.Data{"filter_output_id": filterOutputID})
+			t.FailNow()
+		}
+		if filterOutputResource.State == "completed" {
+			break
+		}
+
+		time.Sleep(time.Millisecond * 200)
+	}
+
+	So(filterOutputResource.FilterID, ShouldEqual, filterOutputID)
+	So(filterOutputResource.InstanceID, ShouldEqual, instanceID)
+	So(filterOutputResource.State, ShouldEqual, "completed")
+	So(filterOutputResource.Downloads.CSV, ShouldNotBeNil)
+	So(filterOutputResource.Downloads.XLS, ShouldNotBeNil)
+
+	filteredCSVURL := filterOutputResource.Downloads.CSV.Public
+	if !isPublished {
+		filteredCSVURL = filterOutputResource.Downloads.CSV.Private
+	}
+
+	u, err := url.Parse(filteredCSVURL)
+	if err != nil {
+		t.Error("failed to parse filtered XLS URL", err)
+		t.FailNow()
+	}
+	filteredCSVFilename := u.Path
+
+	// read csv download from s3
+	filteredCSVFile, err := getS3File(region, bucket, filteredCSVFilename, !isPublished)
+	if err != nil {
+		log.ErrorC("unable to find filtered csv download in s3", err, log.Data{"filtered_csv_url": filteredCSVURL, "filtered_csv_filename": filteredCSVFilename})
+		t.Error()
+		t.FailNow()
+	}
+	filteredCSVReader := csv.NewReader(filteredCSVFile)
+	if err = checkFileRowCount(filteredCSVReader, 39); err != nil {
+		log.ErrorC("unable to check file row count", err, nil)
+		t.FailNow()
+	}
+
+	filteredXLSURL := filterOutputResource.Downloads.XLS.Public
+	if !isPublished {
+		filteredXLSURL = filterOutputResource.Downloads.XLS.Private
+	}
+
+	u, err = url.Parse(filteredXLSURL)
+	if err != nil {
+		t.Error("failed to parse filtered XLS URL", err)
+		t.FailNow()
+	}
+	filteredXLSFilename := u.Path
+
+	// read xls download from s3
+	filteredXLSFile, err := getS3File(region, bucket, filteredXLSFilename, !isPublished)
+	if err != nil {
+		log.ErrorC("unable to find filtered xls download in s3", err, log.Data{"filtered_xls_url": filteredXLSURL, "filtered_xls_filename": filteredXLSFilename})
+		t.FailNow()
+	}
+	So(filteredXLSFile, ShouldNotBeEmpty)
+	filteredXLSFileSize, err := getS3FileSize(region, bucket, filteredXLSFilename, !isPublished)
+	if err != nil {
+		log.ErrorC("unable to extract size of filtered xls download in s3", err, log.Data{"filtered_xls_url": filteredXLSURL, "filtered_xls_filename": filteredXLSFilename})
+		t.FailNow()
+	}
+
+	minExpectedXLSFileSize := int64(7465)
+	maxExpectedXLSFileSize := int64(7469)
+	So(*filteredXLSFileSize, ShouldBeBetweenOrEqual, minExpectedXLSFileSize, maxExpectedXLSFileSize)
+
+	return filterBlueprintID, filterOutputID
+
 }
 
 func checkFileRowCount(csvReader *csv.Reader, expectedCount int64) error {
