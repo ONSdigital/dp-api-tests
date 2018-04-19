@@ -30,7 +30,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 		Collection: "filterOutputs",
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, publishedFilterOutputID, filterBlueprintID, true),
+		Update:     GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, publishedFilterOutputID, filterBlueprintID, datasetID, edition, version, true),
 	}
 
 	unpublishedOutput := &mongo.Doc{
@@ -38,7 +38,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 		Collection: "filterOutputs",
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, unpublishedFilterOutputID, filterBlueprintID, false),
+		Update:     GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, unpublishedFilterOutputID, filterBlueprintID, datasetID, edition, version, false),
 	}
 
 	filterBlueprint := &mongo.Doc{
@@ -65,20 +65,25 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 		}
 
 		Convey("When requesting to get filter output", func() {
-			Convey("Then filter output is returned in the response body", func() {
+			Convey("Then filter output is returned in the response body without private download links", func() {
 
 				response := filterAPI.GET("/filter-outputs/{filter_output_id}", publishedFilterOutputID).
 					Expect().Status(http.StatusOK).JSON().Object()
 
+				response.Value("dataset").Object().Value("id").Equal(datasetID)
+				response.Value("dataset").Object().Value("edition").Equal(edition)
+				response.Value("dataset").Object().Value("version").Equal(version)
 				response.Value("dimensions").Array().Length().Equal(4)
 				response.Value("dimensions").Array().Element(0).Object().NotContainsKey("dimension_url") // Check dimension url is not set
 				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
 				response.Value("dimensions").Array().Element(0).Object().Value("options").Equal([]string{"27"})
-				response.Value("downloads").Object().Value("csv").Object().Value("url").Equal("s3-csv-location")
+				response.Value("downloads").Object().Value("csv").Object().Value("href").Equal("download-service-url.csv")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("12mb")
-				response.Value("downloads").Object().Value("json").Object().Value("url").Equal("s3-json-location")
-				response.Value("downloads").Object().Value("json").Object().Value("size").Equal("6mb")
-				response.Value("downloads").Object().Value("xls").Object().Value("url").Equal("s3-xls-location")
+				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("private")
+				response.Value("downloads").Object().Value("csv").Object().Value("public").Equal("public-s3-csv-location")
+				response.Value("downloads").Object().Value("xls").Object().Value("href").Equal("download-service-url.xlsx")
+				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("private")
+				response.Value("downloads").Object().Value("xls").Object().Value("public").Equal("public-s3-xls-location")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
 				response.Value("filter_id").Equal(publishedFilterOutputID)
 				response.Value("instance_id").Equal(instanceID)
@@ -87,6 +92,17 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filter-outputs/" + publishedFilterOutputID + "$")
 				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+				response.Value("state").Equal("completed")
+			})
+		})
+
+		Convey("When making an authenticated requesting to get filter output", func() {
+			Convey("Then filter output is returned in the response body without private download links", func() {
+				response := filterAPI.GET("/filter-outputs/{filter_output_id}", publishedFilterOutputID).
+					WithHeader(serviceAuthTokenName, serviceAuthToken).Expect().Status(http.StatusOK).JSON().Object()
+
+				response.Value("downloads").Object().Value("csv").Object().Value("private").Equal("private-s3-csv-location")
+				response.Value("downloads").Object().Value("xls").Object().Value("private").Equal("private-s3-xls-location")
 			})
 		})
 
@@ -110,15 +126,20 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 					WithHeader(serviceAuthTokenName, serviceAuthToken).Expect().
 					Status(http.StatusOK).JSON().Object()
 
+				response.Value("dataset").Object().Value("id").Equal(datasetID)
+				response.Value("dataset").Object().Value("edition").Equal(edition)
+				response.Value("dataset").Object().Value("version").Equal(version)
 				response.Value("dimensions").Array().Length().Equal(4)
 				response.Value("dimensions").Array().Element(0).Object().NotContainsKey("dimension_url") // Check dimension url is not set
 				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
 				response.Value("dimensions").Array().Element(0).Object().Value("options").Equal([]string{"27"})
-				response.Value("downloads").Object().Value("csv").Object().Value("url").Equal("s3-csv-location")
+				response.Value("downloads").Object().Value("csv").Object().Value("href").Equal("download-service-url.csv")
+				response.Value("downloads").Object().Value("csv").Object().Value("private").Equal("private-s3-csv-location")
+				response.Value("downloads").Object().Value("csv").Object().Value("public").Equal("public-s3-csv-location")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("12mb")
-				response.Value("downloads").Object().Value("json").Object().Value("url").Equal("s3-json-location")
-				response.Value("downloads").Object().Value("json").Object().Value("size").Equal("6mb")
-				response.Value("downloads").Object().Value("xls").Object().Value("url").Equal("s3-xls-location")
+				response.Value("downloads").Object().Value("xls").Object().Value("href").Equal("download-service-url.xlsx")
+				response.Value("downloads").Object().Value("xls").Object().Value("private").Equal("private-s3-xls-location")
+				response.Value("downloads").Object().Value("xls").Object().Value("public").Equal("public-s3-xls-location")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
 				response.Value("filter_id").Equal(unpublishedFilterOutputID)
 				response.Value("instance_id").Equal(instanceID)
@@ -127,10 +148,11 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filter-outputs/" + unpublishedFilterOutputID + "$")
 				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+				response.Value("state").Equal("completed")
 			})
 		})
 
-		Convey("When the instance has been published and a request is made with no authentication", func() {
+		Convey("When the instance has been published and a request is made with no authentication to get filter output", func() {
 
 			instance.Update = GetValidPublishedInstanceDataBSON(instanceID, datasetID, edition, version)
 
@@ -144,15 +166,20 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 				response := filterAPI.GET("/filter-outputs/{filter_output_id}", unpublishedFilterOutputID).
 					Expect().Status(http.StatusOK).JSON().Object()
 
+				response.Value("dataset").Object().Value("id").Equal(datasetID)
+				response.Value("dataset").Object().Value("edition").Equal(edition)
+				response.Value("dataset").Object().Value("version").Equal(version)
 				response.Value("dimensions").Array().Length().Equal(4)
 				response.Value("dimensions").Array().Element(0).Object().NotContainsKey("dimension_url") // Check dimension url is not set
 				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
 				response.Value("dimensions").Array().Element(0).Object().Value("options").Equal([]string{"27"})
-				response.Value("downloads").Object().Value("csv").Object().Value("url").Equal("s3-csv-location")
+				response.Value("downloads").Object().Value("csv").Object().Value("href").Equal("download-service-url.csv")
+				response.Value("downloads").Object().Value("csv").Object().Value("public").Equal("public-s3-csv-location")
+				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("private")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("12mb")
-				response.Value("downloads").Object().Value("json").Object().Value("url").Equal("s3-json-location")
-				response.Value("downloads").Object().Value("json").Object().Value("size").Equal("6mb")
-				response.Value("downloads").Object().Value("xls").Object().Value("url").Equal("s3-xls-location")
+				response.Value("downloads").Object().Value("xls").Object().Value("href").Equal("download-service-url.xlsx")
+				response.Value("downloads").Object().Value("xls").Object().Value("public").Equal("public-s3-xls-location")
+				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("private")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
 				response.Value("filter_id").Equal(unpublishedFilterOutputID)
 				response.Value("instance_id").Equal(instanceID)
@@ -161,6 +188,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filter-outputs/" + unpublishedFilterOutputID + "$")
 				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+				response.Value("state").Equal("completed")
 			})
 		})
 
@@ -179,13 +207,16 @@ func TestFailureToGetFilterOutput(t *testing.T) {
 	filterBlueprintID := uuid.NewV4().String()
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
+	datasetID := "test-cpih01"
+	edition := "2017"
+	version := 1
 
 	unpublishedOutput := &mongo.Doc{
 		Database:   cfg.MongoFiltersDB,
 		Collection: "filterOutputs",
 		Key:        "_id",
 		Value:      filterID,
-		Update:     GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, false),
+		Update:     GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, version, false),
 	}
 
 	Convey("Given filter output does not exist", t, func() {

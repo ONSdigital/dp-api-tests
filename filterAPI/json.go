@@ -15,9 +15,9 @@ func GetValidPublishedInstanceDataBSON(instanceID, datasetID, edition string, ve
 			"dataset.id":            datasetID,
 			"dataset.edition":       edition,
 			"dataset.version":       version,
-			"downloads.csv.url":     "http://localhost:8080/aws/census-2017-1-csv",
+			"downloads.csv.href":    "http://localhost:8080/aws/census-2017-1-csv",
 			"downloads.csv.size":    "10mb",
-			"downloads.xls.url":     "http://localhost:8080/aws/census-2017-1-xls",
+			"downloads.xls.href":    "http://localhost:8080/aws/census-2017-1-xls",
 			"downloads.xls.size":    "24mb",
 			"edition":               "2017",
 			"headers":               []string{"time", "geography"},
@@ -52,9 +52,9 @@ func GetUnpublishedInstanceDataBSON(instanceID string, datasetID, edition string
 			"dataset.id":            datasetID,
 			"dataset.edition":       edition,
 			"dataset.version":       version,
-			"downloads.csv.url":     "http://localhost:8080/aws/census-2017-1-csv",
+			"downloads.csv.href":    "http://localhost:8080/aws/census-2017-1-csv",
 			"downloads.csv.size":    "10mb",
-			"downloads.xls.url":     "http://localhost:8080/aws/census-2017-1-xls",
+			"downloads.xls.href":    "http://localhost:8080/aws/census-2017-1-xls",
 			"downloads.xls.size":    "24mb",
 			"edition":               "2017",
 			"headers":               []string{"time", "geography"},
@@ -194,16 +194,21 @@ func GetValidFilterWithMultipleDimensionsBSON(host, filterID, instanceID, datase
 	}
 }
 
-func GetValidFilterOutputWithMultipleDimensionsBSON(host, filterID, instanceID, filterOutputID, filterBlueprintID string, published bool) bson.M {
+func GetValidFilterOutputWithMultipleDimensionsBSON(host, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition string, version int, published bool) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"_id":                         filterID,
+			"dataset.id":                  datasetID,
+			"dataset.edition":             edition,
+			"dataset.version":             version,
 			"dimensions":                  []Dimension{ageDimension(host, ""), sexDimension(host, ""), goodsAndServicesDimension(host, ""), timeDimension(host, "")},
-			"downloads.csv.url":           "s3-csv-location",
+			"downloads.csv.href":          "download-service-url.csv",
+			"downloads.csv.private":       "private-s3-csv-location",
+			"downloads.csv.public":        "public-s3-csv-location",
 			"downloads.csv.size":          "12mb",
-			"downloads.json.url":          "s3-json-location",
-			"downloads.json.size":         "6mb",
-			"downloads.xls.url":           "s3-xls-location",
+			"downloads.xls.href":          "download-service-url.xlsx",
+			"downloads.xls.private":       "private-s3-xls-location",
+			"downloads.xls.public":        "public-s3-xls-location",
 			"downloads.xls.size":          "24mb",
 			"instance_id":                 instanceID,
 			"filter_id":                   filterOutputID,
@@ -219,26 +224,31 @@ func GetValidFilterOutputWithMultipleDimensionsBSON(host, filterID, instanceID, 
 	}
 }
 
-func GetValidFilterOutputBSON(host, filterID, instanceID, filterOutputID, filterBlueprintID string, dimension Dimension) bson.M {
+func GetValidFilterOutputBSON(host, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, csvPublicLink, xlsPublicLink string, version int, dimension Dimension) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"_id":                         filterID,
+			"dataset.id":                  datasetID,
+			"dataset.edition":             edition,
+			"dataset.version":             version,
 			"dimensions":                  []Dimension{dimension},
-			"downloads.csv.url":           "s3-csv-location",
+			"downloads.csv.href":          "download-service-url.csv",
+			"downloads.csv.private":       "private-s3-csv-location",
+			"downloads.csv.public":        csvPublicLink,
 			"downloads.csv.size":          "12mb",
-			"downloads.json.url":          "s3-json-location",
-			"downloads.json.size":         "6mb",
-			"downloads.xls.url":           "s3-xls-location",
+			"downloads.xls.href":          "download-service-url.xlsx",
+			"downloads.xls.private":       "private-s3-xls-location",
+			"downloads.xls.public":        xlsPublicLink,
 			"downloads.xls.size":          "24mb",
-			"instance_id":                 instanceID,
 			"filter_id":                   filterOutputID,
+			"instance_id":                 instanceID,
 			"links.filter_blueprint.href": host + "/filters/" + filterBlueprintID,
 			"links.filter_blueprint.id":   filterBlueprintID,
 			"links.self.href":             host + "/filter-outputs/" + filterOutputID,
 			"links.version.id":            "1",
 			"links.version.href":          "http://localhost:8080/datasets/123/editions/2017/versions/1",
-			"state":                       "completed",
 			"published":                   true,
+			"state":                       "completed",
 			"test_data":                   "true",
 		},
 	}
@@ -248,11 +258,10 @@ func GetValidFilterOutputNoDimensionsBSON(host, filterID, instanceID, filterOutp
 	return bson.M{
 		"$set": bson.M{
 			"_id":                         filterID,
-			"downloads.csv.url":           "s3-csv-location",
+			"downloads.csv.href":          "download-service-url.csv",
 			"downloads.csv.size":          "12mb",
-			"downloads.json.url":          "s3-json-location",
 			"downloads.json.size":         "6mb",
-			"downloads.xls.url":           "s3-xls-location",
+			"downloads.xls.href":          "download-service-url.xlsx",
 			"downloads.xls.size":          "24mb",
 			"instance_id":                 instanceID,
 			"filter_id":                   filterOutputID,
@@ -566,22 +575,44 @@ func GetValidPUTFilterOutputWithCSVDownloadJSON() string {
 	return `{
 	  "downloads": {
 			"csv": {
-			  "url": "s3-csv-location",
+			  "href": "download-service-url.csv",
+				"private": "private-s3-csv-location",
 				"size": "12mb"
 		  }
 		}
   }`
 }
 
+func GetValidPUTFilterOutputWithCSVPublicLinkJSON() string {
+	return `{
+		"downloads": {
+			"csv" : {
+			  "public": "public-s3-csv-location"
+		  }
+	  }
+	}`
+}
+
 func GetValidPUTFilterOutputWithXLSDownloadJSON() string {
 	return `{
 	  "downloads": {
 			"xls": {
-			  "url": "s3-xls-location",
+			  "href": "download-service-url.xlsx",
+				"private": "private-s3-xls-location",
 				"size": "24mb"
 		  }
 		}
   }`
+}
+
+func GetValidPUTFilterOutputWithXLSPublicLinkJSON() string {
+	return `{
+		"downloads": {
+			"xls" : {
+			  "public": "public-s3-xls-location"
+		  }
+	  }
+	}`
 }
 
 func GetValidPUTFilterOutputWithDimensionsJSON() string {

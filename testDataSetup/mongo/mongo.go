@@ -440,6 +440,13 @@ func CountDimensionOptions(database, collection, key, value string) (int, error)
 	return s.DB(database).C(collection).Find(bson.M{key: value}).Count()
 }
 
+// Possible values for flagging whether a filter resource (output or blueprint)
+// is a filter against a published or unpublished version
+var (
+	Published   = true
+	Unpublished = false
+)
+
 // Filter represents a structure for a filter blueprint or output
 type Filter struct {
 	InstanceID string      `bson:"instance_id"          json:"instance_id"`
@@ -449,6 +456,7 @@ type Filter struct {
 	FilterID   string      `bson:"filter_id"            json:"filter_id,omitempty"`
 	State      string      `bson:"state,omitempty"      json:"state,omitempty"`
 	Links      LinkMap     `bson:"links"                json:"links,omitempty"`
+	Published  *bool       `bson:"published,omitempty"  json:"published,omitempty"`
 }
 
 // LinkMap contains a named LinkObject for each link to other resources
@@ -468,15 +476,16 @@ type Dimension struct {
 
 // Downloads represents a list of file types possible to download
 type Downloads struct {
-	CSV  *DownloadItem `bson:"csv,omitempty"  json:"csv,omitempty"`
-	JSON *DownloadItem `bson:"json,omitempty" json:"json,omitempty"`
-	XLS  *DownloadItem `bson:"xls,omitempty"  json:"xls,omitempty"`
+	CSV *DownloadItem `bson:"csv,omitempty"  json:"csv,omitempty"`
+	XLS *DownloadItem `bson:"xls,omitempty"  json:"xls,omitempty"`
 }
 
 // DownloadItem represents an object containing information for the download item
 type DownloadItem struct {
-	Size string `bson:"size" json:"size"`
-	URL  string `bson:"url"  json:"url"`
+	HRef    string `bson:"href,omitempty"    json:"href,omitempty"`
+	Private string `bson:"private,omitempty" json:"private,omitempty"`
+	Public  string `bson:"public,omitempty"  json:"public,omitempty"`
+	Size    string `bson:"size,omitempty"    json:"size,omitempty"`
 }
 
 // Events represents a list of array objects containing event information against the filter blueprint or output

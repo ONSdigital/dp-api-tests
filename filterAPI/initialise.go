@@ -13,8 +13,9 @@ var cfg *config.Config
 const (
 	collection = "filters"
 
-	serviceAuthTokenName = "Authorization"
-	serviceAuthToken     = "939616dc-7599-4ded-9a86-a9c66fbf98e0"
+	serviceAuthTokenName    = "Authorization"
+	serviceAuthToken        = "939616dc-7599-4ded-9a86-a9c66fbf98e0"
+	invalidServiceAuthToken = "invalid-auth-token"
 )
 
 func init() {

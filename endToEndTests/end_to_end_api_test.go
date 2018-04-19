@@ -7,13 +7,12 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"testing"
 	"time"
 
-	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
@@ -21,6 +20,7 @@ import (
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
+	"net/url"
 )
 
 var timeout = time.Duration(15 * time.Second)
@@ -59,7 +59,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 		Convey("When a job is imported and the version of the dataset is published", func() {
 
-			// STEP 1 - Create job with state created
+			log.Info("Create job with state created", nil)
 			postJobResponse := importAPI.POST("/jobs").WithBytes([]byte(createValidJobJSON(recipe, location))).
 				WithHeaders(headers).Expect().Status(http.StatusCreated).JSON().Object()
 
@@ -92,14 +92,14 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(instanceResource.Links.Self.HRef, ShouldEqual, cfg.DatasetAPIURL+"/instances/"+instanceID)
 			So(instanceResource.State, ShouldEqual, "created")
 
-			// STEP 2 - Create dataset with dataset id from previous response
+			log.Info("Create dataset with dataset id from previous response", nil)
 			postDatasetResponse := datasetAPI.POST("/datasets/{id}", datasetName).WithHeaders(headers).WithBytes([]byte(validPOSTCreateDatasetJSON)).
 				Expect().Status(http.StatusCreated).JSON().Object()
 
 			postDatasetResponse.Value("next").Object().Value("links").Object().Value("self").Object().Value("href").String().Match(cfg.DatasetAPIURL + "/datasets/" + datasetName + "$")
 			postDatasetResponse.Value("next").Object().Value("state").Equal("created")
 
-			// STEP 3 - Update job state to submitted
+			log.Info("Update job state to submitted", nil)
 			importAPI.PUT("/jobs/{id}", jobID).WithHeaders(headers).WithBytes([]byte(`{"state":"submitted"}`)).
 				Expect().Status(http.StatusOK)
 
@@ -293,7 +293,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(instanceResource.State, ShouldEqual, "completed")
 			So(instanceResource.ImportTasks.SearchTasks[0].DimensionName, ShouldEqual, "aggregate")
 
-			// STEP 4 - Update instance with meta data and change state to `edition-confirmed`
+			log.Info("Update instance with meta data and change state to `edition-confirmed`", nil)
 			datasetAPI.PUT("/instances/{instance_id}", instanceID).WithHeaders(headers).
 				WithBytes([]byte(validPUTInstanceMetadataJSON)).Expect().Status(http.StatusOK)
 
@@ -334,7 +334,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(editionResource.Next.Links.Versions.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetName+"/editions/2017/versions")
 			So(editionResource.Next.State, ShouldEqual, "edition-confirmed")
 
-			// STEP 5 - Update version with collection_id and change state to associated
+			log.Info("Update version with collection_id and change state to associated", nil)
 			datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetName, "2017", "1").WithHeaders(headers).
 				WithBytes([]byte(validPUTUpdateVersionToAssociatedJSON)).Expect().Status(http.StatusOK)
 
@@ -382,16 +382,17 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 						log.ErrorC("Unable to retrieve instance document", err, log.Data{"instance_id": instanceID})
 						os.Exit(1)
 					}
+
 					if instanceResource.Downloads != nil {
 						if instanceResource.Downloads.XLS != nil {
-							if instanceResource.Downloads.XLS.URL != "" {
+							if instanceResource.Downloads.XLS.Private != "" {
 								XLSSize, err = strconv.Atoi(instanceResource.Downloads.XLS.Size)
 								if err != nil {
 									log.ErrorC("cannot convert xls size of type string to integer", err, log.Data{"xls_size": instanceResource.Downloads.XLS.Size})
 									os.Exit(1)
 								}
 								So(XLSSize, ShouldBeBetweenOrEqual, 19000, 20000)
-								So(instanceResource.Downloads.XLS.URL, ShouldNotBeEmpty)
+								So(instanceResource.Downloads.XLS.Private, ShouldNotBeEmpty)
 								CSVSize, err := strconv.Atoi(instanceResource.Downloads.CSV.Size)
 								if err != nil {
 									log.ErrorC("cannot convert csv size of type string to integer", err, log.Data{"csv_size": instanceResource.Downloads.CSV.Size})
@@ -405,6 +406,8 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					} else {
 						So(instanceResource.State, ShouldEqual, "associated")
 					}
+
+					time.Sleep(time.Millisecond * 200)
 				}
 			}
 
@@ -414,7 +417,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				os.Exit(1)
 			}
 
-			// STEP 6 -  Update version to a state of published
+			log.Info("STEP 6 - Update version to a state of published", nil)
 			datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetName, "2017", "1").WithHeaders(headers).
 				WithBytes([]byte(`{"state":"published"}`)).Expect().Status(http.StatusOK)
 
@@ -426,7 +429,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 			So(versionResource.State, ShouldEqual, "published")
 
-			// Check edition has updated
+			log.Info("Check edition has updated", nil)
 			editionResource, err = mongo.GetEdition(cfg.MongoDB, "editions", "current.links.self.href", instanceResource.Links.Edition.HRef)
 			if err != nil {
 				log.ErrorC("Unable to retrieve dataset resource", err, log.Data{"dataset_id": datasetName})
@@ -437,7 +440,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(editionResource.Current, ShouldNotBeNil)
 			So(editionResource.Current.State, ShouldEqual, "published")
 
-			// Check dataset has updated
+			log.Info("Check dataset has updated", nil)
 			datasetResource, err = mongo.GetDataset(cfg.MongoDB, "datasets", "_id", datasetName)
 			if err != nil {
 				log.ErrorC("Unable to retrieve dataset resource", err, log.Data{"dataset_id": datasetName})
@@ -448,7 +451,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			So(datasetResource.Current.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetName+"/editions/2017/versions/1")
 			So(datasetResource.Current.State, ShouldEqual, "published")
 
-			// Check data exists in elaticsearch by calling search API to find dimension option
+			log.Info("Check data exists in elaticsearch by calling search API to find dimension option", nil)
 			getSearchResponse := searchAPI.GET("/search/datasets/{id}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetName, versionResource.Edition, strconv.Itoa(versionResource.Version), "aggregate").
 				WithQuery("q", "Overall Index").Expect().Status(http.StatusOK).JSON().Object()
 
@@ -469,7 +472,8 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			getSearchResponse.Value("offset").Equal(0)
 
 			Convey("Then an api customer should be able to get a csv and xls download link", func() {
-				// Get downloads link from version document
+
+				log.Info("Get downloads link from version document", nil)
 				csvURL := versionResource.Downloads.CSV.URL
 				logData := log.Data{"csv_url": csvURL}
 
@@ -492,7 +496,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 				So(len(headerRow), ShouldEqual, 7)
 
-				// check the number of rows and anything else (e.g. meta data)
+				log.Info("check the number of rows and anything else (e.g. meta data)", nil)
 				numberOfCSVRows := 0
 				for {
 					_, err = csvReader.Read()
@@ -523,6 +527,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				expectedXLSFileSize := XLSSize
 				So(xlsFileSize, ShouldResemble, expectedXLSFileSize)
 
+				log.Info("Then an api customer should be able to filter a dataset and be able to download", nil)
 				Convey("Then an api customer should be able to filter a dataset and be able to download a csv and xlsx download of the data", func() {
 					json := GetValidPOSTCreateFilterJSON(datasetName, "2017", "1")
 					log.Info("ajhgjlabfjlarebvjkrbvqlj", log.Data{"json": json})
@@ -560,16 +565,19 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					So(filterOutputResource.InstanceID, ShouldEqual, instanceID)
 					So(filterOutputResource.State, ShouldEqual, "created")
 
-					filterOutputResourceCompleted := true
-					for filterOutputResourceCompleted {
+					for i := 0; i < 10; i++ {
+
 						filterOutputResource, err = mongo.GetFilter(cfg.MongoFiltersDB, "filterOutputs", "filter_id", filterOutputID)
 						if err != nil {
 							log.ErrorC("Unable to retrieve filter output document", err, log.Data{"filter_output_id": filterOutputID})
 							os.Exit(1)
 						}
 						if filterOutputResource.State == "completed" {
-							filterOutputResourceCompleted = false
+							break
 						}
+
+						log.Info("waiting for filter to be complete", log.Data{"state": filterOutputResource.State})
+						time.Sleep(time.Millisecond * 200)
 					}
 
 					So(filterOutputResource.FilterID, ShouldEqual, filterOutputID)
@@ -578,7 +586,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 					So(filterOutputResource.Downloads.CSV, ShouldNotBeNil)
 					So(filterOutputResource.Downloads.XLS, ShouldNotBeNil)
 
-					filteredCSVURL := filterOutputResource.Downloads.CSV.URL
+					filteredCSVURL := filterOutputResource.Downloads.CSV.Public
 					filteredCSVFilename := strings.TrimPrefix(filteredCSVURL, "https://"+bucket+".s3."+region+".amazonaws.com/")
 
 					// read csv download from s3
@@ -595,8 +603,13 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 						os.Exit(1)
 					}
 
-					filteredXLSURL := filterOutputResource.Downloads.XLS.URL
-					filteredXLSFilename := filepath.Base(filteredXLSURL)
+					filteredXLSURL := filterOutputResource.Downloads.XLS.Public
+					u, err := url.Parse(filteredXLSURL)
+					if err != nil {
+						panic(err)
+					}
+					filteredXLSFilename := u.Path
+
 					// read xls download from s3
 					filteredXLSFile, err := getS3File(region, bucket, filteredXLSFilename, false)
 					if err != nil {

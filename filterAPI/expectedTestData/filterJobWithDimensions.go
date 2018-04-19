@@ -103,6 +103,7 @@ func ExpectedFilterBlueprint(host, instanceID, filterBlueprintID string) mongo.F
 				HRef: "http://localhost:8080/datasets/123/editions/2017/versions/1",
 			},
 		},
+		Published: &mongo.Published,
 	}
 }
 
@@ -119,16 +120,16 @@ func ExpectedFilterOutput(host, instanceID, filterOutputID, filterBlueprintID st
 		},
 		Downloads: &mongo.Downloads{
 			CSV: &mongo.DownloadItem{
-				Size: "",
-				URL:  "",
-			},
-			JSON: &mongo.DownloadItem{
-				Size: "",
-				URL:  "",
+				HRef:    "",
+				Private: "",
+				Public:  "",
+				Size:    "",
 			},
 			XLS: &mongo.DownloadItem{
-				Size: "",
-				URL:  "",
+				HRef:    "",
+				Private: "",
+				Public:  "",
+				Size:    "",
 			},
 		},
 		Links: mongo.LinkMap{
@@ -144,7 +145,8 @@ func ExpectedFilterOutput(host, instanceID, filterOutputID, filterBlueprintID st
 				HRef: "http://localhost:8080/datasets/123/editions/2017/versions/1",
 			},
 		},
-		State: "created",
+		Published: &mongo.Published,
+		State:     "created",
 	}
 }
 
@@ -158,16 +160,16 @@ func ExpectedFilterOutputOnPost(host, datasetID, edition, instanceID, filterOutp
 		},
 		Downloads: &mongo.Downloads{
 			CSV: &mongo.DownloadItem{
-				Size: "",
-				URL:  "",
-			},
-			JSON: &mongo.DownloadItem{
-				Size: "",
-				URL:  "",
+				HRef:    "",
+				Private: "",
+				Public:  "",
+				Size:    "",
 			},
 			XLS: &mongo.DownloadItem{
-				Size: "",
-				URL:  "",
+				HRef:    "",
+				Private: "",
+				Public:  "",
+				Size:    "",
 			},
 		},
 		Links: mongo.LinkMap{
@@ -183,7 +185,8 @@ func ExpectedFilterOutputOnPost(host, datasetID, edition, instanceID, filterOutp
 				HRef: "http://localhost:8080/datasets/" + datasetID + "/editions/" + edition + "/versions/" + strconv.Itoa(version),
 			},
 		},
-		State: "created",
+		Published: &mongo.Published,
+		State:     "created",
 	}
 }
 
@@ -247,5 +250,6 @@ func ExpectedFilterBlueprintUpdated(host, instanceID, filterBlueprintID string) 
 				HRef: "http://localhost:8080/datasets/123/editions/2017/versions/1",
 			},
 		},
+		Published: &mongo.Published,
 	}
 }

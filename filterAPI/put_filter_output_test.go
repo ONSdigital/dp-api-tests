@@ -31,14 +31,14 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 		Update:     GetValidFilterOutputWithoutDownloadsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, datasetID, edition, version),
 	}
 
+	if err := mongo.Setup(output); err != nil {
+		log.ErrorC("Unable to setup test data", err, nil)
+		os.Exit(1)
+	}
+
 	Convey("Given an existing filter output", t, func() {
 
-		if err := mongo.Setup(output); err != nil {
-			log.ErrorC("Unable to setup test data", err, nil)
-			os.Exit(1)
-		}
-
-		Convey("When an authorised request to update the filter output with csv download", func() {
+		Convey("When an authorised request to update the filter output with csv download without a public link", func() {
 
 			filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
 				WithHeader(serviceAuthTokenName, serviceAuthToken).
@@ -53,24 +53,58 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 					log.ErrorC("Unable to retrieve updated document", err, nil)
 				}
 
-				So(filterOutput.Downloads.CSV.URL, ShouldEqual, "s3-csv-location")
+				So(filterOutput.Downloads.CSV, ShouldNotBeNil)
+				So(filterOutput.Downloads.CSV.HRef, ShouldEqual, "download-service-url.csv")
+				So(filterOutput.Downloads.CSV.Private, ShouldEqual, "private-s3-csv-location")
+				So(filterOutput.Downloads.CSV.Public, ShouldBeEmpty)
 				So(filterOutput.Downloads.CSV.Size, ShouldEqual, "12mb")
-				So(filterOutput.Downloads.XLS.URL, ShouldEqual, "")
-				So(filterOutput.Downloads.XLS.Size, ShouldEqual, "")
+				So(filterOutput.Downloads.XLS, ShouldBeNil)
 				So(filterOutput.State, ShouldEqual, "created")
+				So(*filterOutput.Published, ShouldEqual, true)
 			})
 		})
 
-		Convey("When an authorised request to update the filter output with csv download and xls download", func() {
-
-			filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
-				WithHeader(serviceAuthTokenName, serviceAuthToken).
-				WithBytes([]byte(GetValidPUTFilterOutputWithCSVDownloadJSON())).
-				Expect().Status(http.StatusOK)
+		Convey("When an authorised request to update the filter output with xls download without a public link", func() {
 
 			filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
 				WithHeader(serviceAuthTokenName, serviceAuthToken).
 				WithBytes([]byte(GetValidPUTFilterOutputWithXLSDownloadJSON())).
+				Expect().Status(http.StatusOK)
+
+			Convey("Then the filter output resource contains a non empty xls download object", func() {
+
+				// Check data has been updated as expected
+				filterOutput, err := mongo.GetFilter(cfg.MongoFiltersDB, "filterOutputs", "filter_id", filterOutputID)
+				if err != nil {
+					log.ErrorC("Unable to retrieve updated document", err, nil)
+				}
+
+				So(filterOutput.Downloads.CSV, ShouldNotBeNil)
+				So(filterOutput.Downloads.CSV.HRef, ShouldEqual, "download-service-url.csv")
+				So(filterOutput.Downloads.CSV.Private, ShouldEqual, "private-s3-csv-location")
+				So(filterOutput.Downloads.CSV.Public, ShouldBeEmpty)
+				So(filterOutput.Downloads.CSV.Size, ShouldEqual, "12mb")
+				So(filterOutput.Downloads.XLS, ShouldNotBeNil)
+				So(filterOutput.Downloads.XLS.HRef, ShouldEqual, "download-service-url.xlsx")
+				So(filterOutput.Downloads.XLS.Private, ShouldEqual, "private-s3-xls-location")
+				So(filterOutput.Downloads.XLS.Public, ShouldBeEmpty)
+				So(filterOutput.Downloads.XLS.Size, ShouldEqual, "24mb")
+				So(filterOutput.State, ShouldEqual, "completed")
+				So(*filterOutput.Published, ShouldEqual, true)
+			})
+		})
+
+		Convey("When an authorised request to update the filter output with csv public download link and"+
+			"a second authorised request to update the filter output with xls public download link", func() {
+
+			filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
+				WithHeader(serviceAuthTokenName, serviceAuthToken).
+				WithBytes([]byte(GetValidPUTFilterOutputWithCSVPublicLinkJSON())).
+				Expect().Status(http.StatusOK)
+
+			filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
+				WithHeader(serviceAuthTokenName, serviceAuthToken).
+				WithBytes([]byte(GetValidPUTFilterOutputWithXLSPublicLinkJSON())).
 				Expect().Status(http.StatusOK)
 
 			Convey("Then the filter output resource contains a non empty csv and xls download objects and the state is set to `completed`", func() {
@@ -80,26 +114,35 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated document", err, nil)
 				}
+				log.Debug("filter output", log.Data{"filter_output": filterOutput.Downloads})
 
-				So(filterOutput.Downloads.CSV.URL, ShouldEqual, "s3-csv-location")
+				So(filterOutput.Downloads.CSV, ShouldNotBeNil)
+				So(filterOutput.Downloads.CSV.HRef, ShouldEqual, "download-service-url.csv")
+				So(filterOutput.Downloads.CSV.Private, ShouldEqual, "private-s3-csv-location")
+				So(filterOutput.Downloads.CSV.Public, ShouldEqual, "public-s3-csv-location")
 				So(filterOutput.Downloads.CSV.Size, ShouldEqual, "12mb")
-				So(filterOutput.Downloads.XLS.URL, ShouldEqual, "s3-xls-location")
+				So(filterOutput.Downloads.XLS, ShouldNotBeNil)
+				So(filterOutput.Downloads.XLS.HRef, ShouldEqual, "download-service-url.xlsx")
+				So(filterOutput.Downloads.XLS.Private, ShouldEqual, "private-s3-xls-location")
+				So(filterOutput.Downloads.XLS.Public, ShouldEqual, "public-s3-xls-location")
 				So(filterOutput.Downloads.XLS.Size, ShouldEqual, "24mb")
 				So(filterOutput.State, ShouldEqual, "completed")
+				So(*filterOutput.Published, ShouldEqual, true)
 			})
 		})
-
-		if err := mongo.Teardown(output); err != nil {
-			log.ErrorC("Unable to remove test data from mongo db", err, nil)
-			os.Exit(1)
-		}
 	})
+
+	if err := mongo.Teardown(output); err != nil {
+		log.ErrorC("Unable to remove test data from mongo db", err, nil)
+		os.Exit(1)
+	}
 }
 
 func TestFailureToPutFilterOutput(t *testing.T) {
 
 	filterID := uuid.NewV4().String()
 	filterOutputID := uuid.NewV4().String()
+	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
 	datasetID := uuid.NewV4().String()
 	edition := "2017"
@@ -107,12 +150,32 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 
 	filterAPI := httpexpect.New(t, cfg.FilterAPIURL)
 
-	output := &mongo.Doc{
+	filterOutput := &mongo.Doc{
 		Database:   cfg.MongoFiltersDB,
 		Collection: "filterOutputs",
 		Key:        "_id",
 		Value:      filterID,
 		Update:     GetValidFilterOutputWithoutDownloadsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, datasetID, edition, version),
+	}
+
+	dimensions := goodsAndServicesDimension(cfg.FilterAPIURL, filterBlueprintID)
+	csvPublicLink := "public-s3-csv-location"
+	xlsPublicLink := "public-s3-xls-location"
+
+	publishedFilterOutputWithPublicLinks := &mongo.Doc{
+		Database:   cfg.MongoFiltersDB,
+		Collection: "filterOutputs",
+		Key:        "_id",
+		Value:      filterID,
+		Update:     GetValidFilterOutputBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, csvPublicLink, xlsPublicLink, version, dimensions),
+	}
+
+	publishedFilterOutputWithoutPublicLinks := &mongo.Doc{
+		Database:   cfg.MongoFiltersDB,
+		Collection: "filterOutputs",
+		Key:        "_id",
+		Value:      filterID,
+		Update:     GetValidFilterOutputBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, "", "", version, dimensions),
 	}
 
 	Convey("Given a filter output does not exist", t, func() {
@@ -127,9 +190,9 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 		})
 	})
 
-	Convey("Given an existing filter output", t, func() {
+	Convey("Given an existing filter output without downloads object", t, func() {
 
-		if err := mongo.Setup(output); err != nil {
+		if err := mongo.Setup(filterOutput); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -153,6 +216,16 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 			})
 		})
 
+		Convey("When an invalid authorization header is set on request to update filter output", func() {
+			Convey("Then fail to update filter output and return status unauthorized (401)", func() {
+
+				filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
+					WithHeader(serviceAuthTokenName, invalidServiceAuthToken).
+					WithBytes([]byte(GetValidPUTFilterOutputWithCSVDownloadJSON())).
+					Expect().Status(http.StatusUnauthorized)
+			})
+		})
+
 		Convey("When an authorised request is made to update filter output and json body contains dimensions or an instance id", func() {
 			Convey("Then fail to update filter output and return status forbidden (403)", func() {
 
@@ -167,10 +240,66 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 					Expect().Status(http.StatusForbidden).Body().Contains("Forbidden from updating the following fields: [instance_id]")
 			})
 		})
+
+		if err := mongo.Teardown(filterOutput); err != nil {
+			log.ErrorC("Unable to remove test data from mongo db", err, nil)
+			os.Exit(1)
+		}
 	})
 
-	if err := mongo.Teardown(output); err != nil {
-		log.ErrorC("Unable to remove test data from mongo db", err, nil)
-		os.Exit(1)
-	}
+	Convey("Given an existing filter output and the version is published", t, func() {
+		Convey("But the downloads object is missing csv and xls public links", func() {
+			if err := mongo.Setup(publishedFilterOutputWithoutPublicLinks); err != nil {
+				log.ErrorC("Unable to setup test data", err, nil)
+				os.Exit(1)
+			}
+
+			Convey("When an authorised request is made to update a filter output downloads", func() {
+				Convey("Then fail to update filter output and return status forbidden (403)", func() {
+
+					filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
+						WithHeader(serviceAuthTokenName, serviceAuthToken).
+						WithBytes([]byte(`{"downloads":{"csv":{"private":"private-s3-csv-link"}}}`)).
+						Expect().Status(http.StatusForbidden).Body().Contains("Forbidden from updating the following fields: [downloads.csv.private]\n")
+
+					filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
+						WithHeader(serviceAuthTokenName, serviceAuthToken).
+						WithBytes([]byte(`{"downloads":{"xls":{"private":"private-s3-xls-link"}}}`)).
+						Expect().Status(http.StatusForbidden).Body().Contains("Forbidden from updating the following fields: [downloads.xls.private]\n")
+				})
+			})
+
+			if err := mongo.Teardown(publishedFilterOutputWithoutPublicLinks); err != nil {
+				log.ErrorC("Unable to remove test data from mongo db", err, nil)
+				os.Exit(1)
+			}
+		})
+
+		Convey("But downloads object contains public csv and xls download links", func() {
+			if err := mongo.Setup(publishedFilterOutputWithPublicLinks); err != nil {
+				log.ErrorC("Unable to setup test data", err, nil)
+				os.Exit(1)
+			}
+
+			Convey("When an authorised request is made to update a filter output downloads", func() {
+				Convey("Then fail to update filter output and return status forbidden (403)", func() {
+
+					filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
+						WithHeader(serviceAuthTokenName, serviceAuthToken).
+						WithBytes([]byte(`{"downloads":{"csv":{"private":"private-s3-csv-link"}}}`)).
+						Expect().Status(http.StatusForbidden).Body().Contains("Forbidden from updating the following fields: [downloads.csv]\n")
+
+					filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
+						WithHeader(serviceAuthTokenName, serviceAuthToken).
+						WithBytes([]byte(`{"downloads":{"xls":{"private":"private-s3-xls-link"}}}`)).
+						Expect().Status(http.StatusForbidden).Body().Contains("Forbidden from updating the following fields: [downloads.xls]\n")
+				})
+			})
+
+			if err := mongo.Teardown(publishedFilterOutputWithPublicLinks); err != nil {
+				log.ErrorC("Unable to remove test data from mongo db", err, nil)
+				os.Exit(1)
+			}
+		})
+	})
 }
