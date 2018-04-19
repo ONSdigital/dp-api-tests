@@ -9,6 +9,7 @@ import (
 
 	mgo "gopkg.in/mgo.v2"
 
+	"github.com/ONSdigital/dp-api-tests/datasetAPI"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
@@ -17,7 +18,11 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-const timeout = 5 * time.Second
+const (
+	timeout               = 5 * time.Second
+	retryPause            = 750 * time.Millisecond
+	dimensionKeyAggregate = "aggregate"
+)
 
 func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 	datasetID := uuid.NewV4().String()
@@ -38,7 +43,7 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
-		Update:     validPublishedEditionData(datasetID, editionID, edition),
+		Update:     datasetAPI.ValidPublishedEditionData(datasetID, editionID, edition),
 	}
 
 	versionDoc := &mongo.Doc{
@@ -56,49 +61,51 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 
 	searchAPI := httpexpect.New(t, cfg.SearchAPIURL)
 
-	if err := createSearchIndex(cfg.ElasticSearchAPIURL, instanceID, "aggregate"); err != nil {
+	if err := createSearchIndex(cfg.ElasticSearchAPIURL, instanceID, dimensionKeyAggregate); err != nil {
 		log.ErrorC("Unable to setup elasticsearch index with test data", err, nil)
 		os.Exit(1)
 	}
 
-	Convey("Given a version for an edition of  a dataset is published", t, func() {
+	Convey("Given an existing version for an edition of a dataset is published", t, func() {
 		Convey("When a GET request is made with a query term matching a dimension code", func() {
 			Convey("Then the response returns a json document containing a list of results with a status ok (200)", func() {
 
-				tryAgain := true
-
 				exitSearchCompleteLoop := make(chan bool)
-
 				go func() {
 					time.Sleep(timeout)
 					close(exitSearchCompleteLoop)
 				}()
 
+				foundCount := false
 			searchCompleteLoop:
-				for tryAgain {
+				for {
 					select {
 					case <-exitSearchCompleteLoop:
 						break searchCompleteLoop
 					default:
-						response := searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", "aggregate").
-							WithQuery("q", "cpih1dim1S10201").Expect().Status(http.StatusOK).JSON().Object()
+						response := searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
+							WithQuery("q", "cpih1dim1S10201").
+							Expect().Status(http.StatusOK).
+							JSON().Object()
 
 						if count, ok := response.Value("count").Raw().(float64); ok {
 							if count != 0 {
-								tryAgain = false
+								foundCount = true
+								break searchCompleteLoop
 							}
 						}
-						time.Sleep(100 * time.Millisecond) // Don't want to batter the api
+						log.DebugC("searchCompleteLoop", "got empty search results", log.Data{"resp": response.Raw()})
+						time.Sleep(retryPause) // Don't want to batter the api
 					}
 				}
 
-				if tryAgain != false {
+				if !foundCount && false {
 					err := errors.New("timed out")
 					log.ErrorC("Timed out - failed to get list of search results", err, log.Data{"timeout": timeout})
 					os.Exit(1)
 				}
 
-				response := searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", "aggregate").
+				response := searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
 					WithQuery("q", "cpih1dim1S10201").Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("count").Equal(1)
@@ -120,7 +127,7 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 		Convey("When a GET request is made with a query term matching a dimension label", func() {
 			Convey("Then the response returns a json document cotaining a list of results with a status ok (200)", func() {
 
-				response := searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", "aggregate").
+				response := searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
 					WithQuery("q", "Overall Index").Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("count").Equal(1)
@@ -143,7 +150,7 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 
 		Convey("When a GET request is made with a query term matching multiple dimensions by label", func() {
 			Convey("Then the response returns a json document cotaining a list of results with a status ok (200)", func() {
-				response := searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", "aggregate").
+				response := searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
 					WithQuery("q", "Furniture and furnishings").Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("count").Equal(7)
@@ -179,7 +186,7 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 
 		Convey("When a GET request is made with a query term matching multiple dimensions by label but has an offset of 2 and a limit of 2", func() {
 			Convey("Then the response returns a json document cotaining a list of results with a status ok (200)", func() {
-				response := searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", "aggregate").
+				response := searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
 					WithQuery("q", "Furniture and furnishings").WithQuery("offset", 2).WithQuery("limit", 2).Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("count").Equal(2)
@@ -208,6 +215,10 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 		})
 	})
 
+	if skipTeardown {
+		return
+	}
+
 	// delete mongo test data
 	if err := mongo.Teardown(datasetDoc, editionDoc, versionDoc); err != nil {
 		if err != mgo.ErrNotFound {
@@ -216,8 +227,9 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 		}
 	}
 
-	path := cfg.ElasticSearchAPIURL + "/" + instanceID + "_aggregate"
+	path := cfg.ElasticSearchAPIURL + "/" + instanceID + "_" + dimensionKeyAggregate
 	// delete search index
+	log.Debug("deleteIndex", log.Data{"path": path})
 	status, err := elasticsearch.DeleteIndex(path)
 	if err != nil {
 		log.ErrorC("failed to remove elastic search index", err, log.Data{"status_code": status})
@@ -244,7 +256,7 @@ func TestFailureToGetDimensionViaSearch(t *testing.T) {
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
-		Update:     validPublishedEditionData(datasetID, editionID, edition),
+		Update:     datasetAPI.ValidPublishedEditionData(datasetID, editionID, edition),
 	}
 
 	versionDoc := &mongo.Doc{
@@ -261,8 +273,10 @@ func TestFailureToGetDimensionViaSearch(t *testing.T) {
 		Convey("When a GET request is made to search API", func() {
 			Convey("Then the response returns Not found (404)", func() {
 
-				searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", "aggregate").
-					WithQuery("q", "Overall Index").Expect().Status(http.StatusNotFound).Body().Contains("Resource not found")
+				searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
+					WithQuery("q", "Overall Index").
+					Expect().Status(http.StatusNotFound).
+					Body().Contains(resourceNotFound)
 			})
 		})
 	})
@@ -275,7 +289,7 @@ func TestFailureToGetDimensionViaSearch(t *testing.T) {
 		Convey("When a GET request is made to search API without the query parameter 'q'", func() {
 			Convey("Then the response returns Bad request (400)", func() {
 
-				searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", "aggregate").
+				searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
 					WithQuery("limit", 10).Expect().Status(http.StatusBadRequest).Body().Contains("search term empty\n")
 			})
 		})
@@ -283,10 +297,14 @@ func TestFailureToGetDimensionViaSearch(t *testing.T) {
 		Convey("When a GET request is made to search API with query parameter 'q' and an offset of 1000", func() {
 			Convey("Then the response returns Bad request (400)", func() {
 
-				searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", "aggregate").
+				searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
 					WithQuery("q", "Overall Index").WithQuery("offset", 1000).Expect().Status(http.StatusBadRequest).Body().Contains("the maximum offset has been reached, the offset cannot be more than 1000\n")
 			})
 		})
+
+		if skipTeardown {
+			return
+		}
 
 		if err := mongo.Teardown(datasetDoc, editionDoc, versionDoc); err != nil {
 			log.ErrorC("was unable to remove test data", err, nil)

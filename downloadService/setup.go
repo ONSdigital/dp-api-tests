@@ -28,7 +28,11 @@ func sendV4FileToAWS(region, bucket, filename string) error {
 		return err
 	}
 	log.Info("successfully retrieved file", nil)
-	defer v4File.Close()
+	defer func() {
+		if err := v4File.Close(); err != nil {
+			log.ErrorC("sendV4FileToAWS", err, nil)
+		}
+	}()
 
 	putObject := &s3.PutObjectInput{
 		Key:    &filename,

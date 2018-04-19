@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
+	"github.com/ONSdigital/go-ns/common"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
@@ -13,14 +14,14 @@ import (
 
 func TestSuccessfullyCreateSearchIndex(t *testing.T) {
 	searchAPI := httpexpect.New(t, cfg.SearchAPIURL)
-	dimension := "aggregate"
+	dimension := dimensionKeyAggregate
 
 	Convey("Given an elasticsearch index does not exists for an instance dimension", t, func() {
 		Convey("When a PUT request is made to search API with valid authentication header", func() {
 			Convey("Then a message is sent to kafka to create an index and the response returns status ok (200)", func() {
 
-				searchAPI.PUT("/search/instances/{instanceID}/dimensions/{dimension}", instanceID, "aggregate").
-					WithHeader(internalTokenHeader, internalTokenID).Expect().Status(http.StatusOK)
+				searchAPI.PUT("/search/instances/{instanceID}/dimensions/{dimension}", instanceID, dimensionKeyAggregate).
+					WithHeader(common.AuthHeaderKey, internalTokenID).Expect().Status(http.StatusOK)
 			})
 		})
 	})
@@ -33,7 +34,7 @@ func TestSuccessfullyCreateSearchIndex(t *testing.T) {
 
 func TestFailToCreateSearchIndex(t *testing.T) {
 	searchAPI := httpexpect.New(t, cfg.SearchAPIURL)
-	dimension := "aggregate"
+	dimension := dimensionKeyAggregate
 
 	Convey("Given an elasticsearch index does not exists for an instance dimension", t, func() {
 		deleteIndex(instanceID, dimension)
@@ -41,16 +42,17 @@ func TestFailToCreateSearchIndex(t *testing.T) {
 		Convey("When a PUT request is made to search API without an authentication header", func() {
 			Convey("Then the response returns status not found (404)", func() {
 
-				searchAPI.PUT("/search/instances/{instanceID}/dimensions/{dimension}", instanceID, "aggregate").
-					Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
+				searchAPI.PUT("/search/instances/{instanceID}/dimensions/{dimension}", instanceID, dimensionKeyAggregate).
+					Expect().Status(http.StatusNotFound).Body().Contains(resourceNotFound)
 			})
 		})
 
 		Convey("When a PUT request is made to search API with Invalid authentication header", func() {
 			Convey("Then the response returns status not found (404)", func() {
 
-				searchAPI.PUT("/search/instances/{instanceID}/dimensions/{dimension}", instanceID, "aggregate").
-					WithHeader(internalTokenHeader, "grey").Expect().Status(http.StatusNotFound).Body().Contains("Resource not found\n")
+				searchAPI.PUT("/search/instances/{instanceID}/dimensions/{dimension}", instanceID, dimensionKeyAggregate).
+					WithHeader(common.AuthHeaderKey, "grey").
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 	})

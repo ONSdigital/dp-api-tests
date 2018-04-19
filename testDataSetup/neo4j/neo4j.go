@@ -59,7 +59,11 @@ func DropDatabases(uri string) error {
 	if err != nil {
 		return err
 	}
-	defer conn.Close()
+	defer func() {
+		if err := conn.Close(); err != nil {
+			log.ErrorC("DropDatabases", err, nil)
+		}
+	}()
 
 	if _, err := conn.ExecNeo("MATCH(n) DETACH DELETE n", nil); err != nil {
 		return err
@@ -110,7 +114,11 @@ func (ds *Datastore) CreateGenericHierarchy(hierarchyCode string) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.ErrorC("CreateGenericHierarchy", err, nil)
+		}
+	}()
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
