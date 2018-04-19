@@ -119,6 +119,11 @@ func sendV4FileToAWS(region, bucket, filename string, encrypt bool) error {
 func getS3File(region, bucket, filename string, decrypt bool) (io.ReadCloser, error) {
 	config := aws.NewConfig().WithRegion(region)
 
+	log.Debug("attempting to get file from s3",
+		log.Data{"bucket": bucket,
+			"filename": filename,
+			"decrypt": decrypt})
+
 	store := &Store{
 		config: config,
 		bucket: bucket,
@@ -143,6 +148,11 @@ func getS3File(region, bucket, filename string, decrypt bool) (io.ReadCloser, er
 
 	var output *s3.GetObjectOutput
 	if decrypt {
+
+		log.Debug("reading key from vault",
+			log.Data{"vault_path": cfg.VaultPath,
+				"filename": filename})
+
 		pskStr, err := vaultClient.ReadKey(cfg.VaultPath, filename)
 		if err != nil {
 			return nil, err
@@ -151,6 +161,11 @@ func getS3File(region, bucket, filename string, decrypt bool) (io.ReadCloser, er
 		if err != nil {
 			return nil, err
 		}
+
+		log.Debug("reading file with psk",
+			log.Data{"vault_path": cfg.VaultPath,
+				"filename": filename,
+				"psk": psk})
 
 		output, err = client.GetObjectWithPSK(input, psk)
 		if err != nil {

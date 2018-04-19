@@ -8,7 +8,7 @@ TOKEN_INFO:="$(shell vault token create -address=$(VAULT_ADDR) -policy=write-psk
 APP_TOKEN:="$(shell echo $(TOKEN_INFO) | awk '{print $$6}')"
 
 test:
-	ENCRYPTION_DISABLED=false HUMAN_LOG=1 VAULT_TOKEN=$(APP_TOKEN) VAULT_ADDR=$(VAULT_ADDR) go test ./... -v
+	ENCRYPTION_DISABLED=false HUMAN_LOG=1 VAULT_TOKEN=$(APP_TOKEN) VAULT_ADDR=$(VAULT_ADDR) go test -v
 
 vault:
 	@echo "$(VAULT_POLICY)"
