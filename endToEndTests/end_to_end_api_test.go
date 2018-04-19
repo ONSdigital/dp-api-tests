@@ -16,10 +16,9 @@ import (
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
-	"net/url"
-	"strings"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
+	"path/filepath"
 )
 
 var timeout = time.Duration(15 * time.Second)
@@ -427,12 +426,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		}
 		log.Debug("Pre publish full downloads have been generated", logData)
 
-		u, err := url.Parse(instanceResource.Downloads.CSV.Private)
-		if err != nil {
-			t.Error("failed to parse filtered XLS URL", err)
-			t.FailNow()
-		}
-		privateCSVFilename := strings.TrimLeft(u.Path, "/")
+		privateCSVFilename := filepath.Base(instanceResource.Downloads.CSV.Private)
 
 		// read csv download from s3
 		privateCSVFile, err := getS3File(region, bucket, privateCSVFilename, true)
@@ -815,12 +809,7 @@ func testFiltering(t *testing.T, filterAPI *httpexpect.Expect, instanceID string
 		filteredCSVURL = filterOutputResource.Downloads.CSV.Private
 	}
 
-	u, err := url.Parse(filteredCSVURL)
-	if err != nil {
-		t.Error("failed to parse filtered XLS URL", err)
-		t.FailNow()
-	}
-	filteredCSVFilename := strings.TrimLeft(u.Path, "/")
+	filteredCSVFilename := filepath.Base(filteredCSVURL)
 
 	// read csv download from s3
 	filteredCSVFile, err := getS3File(region, bucket, filteredCSVFilename, !isPublished)
@@ -846,13 +835,7 @@ func testFiltering(t *testing.T, filterAPI *httpexpect.Expect, instanceID string
 	if !isPublished {
 		filteredXLSURL = filterOutputResource.Downloads.XLS.Private
 	}
-
-	u, err = url.Parse(filteredXLSURL)
-	if err != nil {
-		t.Error("failed to parse filtered XLS URL", err)
-		t.FailNow()
-	}
-	filteredXLSFilename := strings.TrimLeft(u.Path, "/")
+	filteredXLSFilename := filepath.Base(filteredXLSURL)
 
 	// read xls download from s3
 	filteredXLSFile, err := getS3File(region, bucket, filteredXLSFilename, !isPublished)
