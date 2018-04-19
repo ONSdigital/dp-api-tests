@@ -536,7 +536,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		log.Info("Get downloads link from version document", nil)
 		csvURL := versionResource.Downloads.CSV.URL
 
-		log.Debug("getting downloads from the version",
+		log.Debug("getting downloads from the versheaderRow, err := csvReader.Read()ion",
 			log.Data{
 				"csv_link": versionResource.Downloads.CSV.URL,
 				"xls_link": versionResource.Downloads.XLS.URL,
@@ -549,7 +549,11 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		log.Info("get csv response", log.Data{
 			"response_status": response.StatusCode,
 		})
-		defer response.Body.Close()
+		defer func() {
+			if err := response.Body.Close(); err != nil {
+				log.ErrorC("get downloads link body", err, logData)
+			}
+		}()
 
 		csvReader := csv.NewReader(response.Body)
 
