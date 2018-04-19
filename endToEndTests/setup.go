@@ -3,10 +3,8 @@ package generateFiles
 import (
 	"bytes"
 	"context"
-	"crypto/rsa"
-	"crypto/x509"
-	"encoding/pem"
-	"errors"
+	"crypto/rand"
+	"encoding/hex"
 	"io"
 	"net/http"
 	"os"
@@ -14,12 +12,33 @@ import (
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/ONSdigital/s3crypto"
 	"github.com/aws/aws-sdk-go/aws"
+	reqst "github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3iface"
 )
 
 var client = http.Client{}
+
+type Client interface {
+	SDKClient
+	CryptoClient
+}
+
+type ClientImpl struct {
+	SDKClient
+	CryptoClient
+}
+
+type SDKClient interface {
+	GetObject(*s3.GetObjectInput) (*s3.GetObjectOutput, error)
+	PutObject(*s3.PutObjectInput) (*s3.PutObjectOutput, error)
+	GetObjectWithContext(aws.Context, *s3.GetObjectInput, ...reqst.Option) (*s3.GetObjectOutput, error)
+}
+
+type CryptoClient interface {
+	GetObjectWithPSK(*s3.GetObjectInput, []byte) (*s3.GetObjectOutput, error)
+	PutObjectWithPSK(*s3.PutObjectInput, []byte) (*s3.PutObjectOutput, error)
+}
 
 type request struct {
 	Body    []byte
@@ -37,7 +56,7 @@ type Store struct {
 
 // TODO Once export services have been updated with encryption and decryption
 // remove decrypt boolean flag
-func sendV4FileToAWS(region, bucket, filename string, decrypt bool) error {
+func sendV4FileToAWS(region, bucket, filename string, encrypt bool) error {
 	config := aws.NewConfig().WithRegion(region)
 
 	store := &Store{
@@ -58,7 +77,7 @@ func sendV4FileToAWS(region, bucket, filename string, decrypt bool) error {
 	}
 	log.Info("successfully retrieved file", nil)
 
-	client, err := getClient(sess, decrypt)
+	client, err := getClient(sess, encrypt)
 	if err != nil {
 		log.ErrorC("failed to create client", err, nil)
 		return err
@@ -70,11 +89,30 @@ func sendV4FileToAWS(region, bucket, filename string, decrypt bool) error {
 		Body:   v4File,
 	}
 
-	_, err = client.PutObject(putObject)
-	if err != nil {
-		log.ErrorC("failed to upload file", err, nil)
-		return err
+	if encrypt {
+		psk := createPSK()
+		pskStr := hex.EncodeToString(psk)
+
+		err := vaultClient.WriteKey(cfg.VaultPath, filename, pskStr)
+		if err != nil {
+			log.ErrorC("failed to write to vault", err, nil)
+			return err
+		}
+
+		_, err = client.PutObjectWithPSK(putObject, psk)
+		if err != nil {
+			log.ErrorC("failed to upload file", err, nil)
+			return err
+		}
+
+	} else {
+		_, err = client.PutObject(putObject)
+		if err != nil {
+			log.ErrorC("failed to upload file", err, nil)
+			return err
+		}
 	}
+
 	return nil
 }
 
@@ -103,10 +141,28 @@ func getS3File(region, bucket, filename string, decrypt bool) (io.ReadCloser, er
 		Bucket: aws.String(bucket),
 	}
 
-	output, err := client.GetObject(input)
-	if err != nil {
-		log.ErrorC("encountered error retrieving csv file", err, nil)
-		return nil, err
+	var output *s3.GetObjectOutput
+	if decrypt {
+		pskStr, err := vaultClient.ReadKey(cfg.VaultPath, filename)
+		if err != nil {
+			return nil, err
+		}
+		psk, err := hex.DecodeString(pskStr)
+		if err != nil {
+			return nil, err
+		}
+
+		output, err = client.GetObjectWithPSK(input, psk)
+		if err != nil {
+			log.ErrorC("encountered error retrieving csv file", err, nil)
+			return nil, err
+		}
+	} else {
+		output, err = client.GetObject(input)
+		if err != nil {
+			log.ErrorC("encountered error retrieving csv file", err, nil)
+			return nil, err
+		}
 	}
 
 	return output.Body, nil
@@ -143,7 +199,11 @@ func getS3FileSize(region, bucket, filename string, decrypt bool) (*int64, error
 		log.ErrorC("failed to find file", err, nil)
 		return nil, err
 	}
-	defer result.Body.Close()
+	defer func() {
+		if err := result.Body.Close(); err != nil {
+			log.ErrorC("getS3FileSize", err, nil)
+		}
+	}()
 
 	size := result.ContentLength
 
@@ -206,7 +266,11 @@ func makeRequest(req *http.Request) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.ErrorC("makeRequest", err, nil)
+		}
+	}()
 
 	return resp, nil
 }
@@ -226,31 +290,27 @@ func (req request) createRequest() *http.Request {
 	return r
 }
 
-func getClient(sess *session.Session, decrypt bool) (client s3iface.S3API, err error) {
+func getClient(sess *session.Session, decrypt bool) (client Client, err error) {
 	logData := log.Data{"encryption_disabled_flag": cfg.EncryptionDisabled, "decrpyt_flag": decrypt}
 
-	// Encrypt v4 file with PrivateKey
-	if !cfg.EncryptionDisabled && decrypt {
-		log.Debug("accessing encryption/decryption client", logData)
-		privateKey, err := getPrivateKey([]byte(cfg.PrivateKey))
-		if err != nil {
-			return nil, err
-		}
-		cryptoConfig := &s3crypto.Config{PrivateKey: privateKey}
-		client = s3crypto.New(sess, cryptoConfig)
-	} else {
-		log.Debug("regular client", logData)
-		client = s3.New(sess)
+	cryptoConfig := &s3crypto.Config{HasUserDefinedPSK: true}
+
+	log.Debug("setting up s3 client", logData)
+
+	c := ClientImpl{
+		SDKClient: s3.New(sess),
 	}
 
-	return client, nil
+	if decrypt {
+		c.CryptoClient = s3crypto.New(sess, cryptoConfig)
+	}
+
+	return c, nil
 }
 
-func getPrivateKey(keyBytes []byte) (*rsa.PrivateKey, error) {
-	block, _ := pem.Decode(keyBytes)
-	if block == nil || block.Type != "RSA PRIVATE KEY" {
-		return nil, errors.New("invalid RSA PRIVATE KEY provided")
-	}
+func createPSK() []byte {
+	key := make([]byte, 16)
+	rand.Read(key)
 
-	return x509.ParsePKCS1PrivateKey(block.Bytes)
+	return key
 }

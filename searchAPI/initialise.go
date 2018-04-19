@@ -14,9 +14,9 @@ const (
 	collection = "datasets"
 
 	instanceID             = "123789"
-	internalTokenHeader    = "Internal-Token"
-	internalTokenID        = "SD0108EA-825D-411C-45J3-41EF7727F123"
+	internalTokenID        = "Bearer a507f722-f25a-4889-9653-23a2655b925c"
 	invalidInternalTokenID = "SD0108EA-825D-411C-45J3-41EF7727F123A"
+	skipTeardown           = false
 )
 
 func init() {
@@ -44,10 +44,11 @@ func init() {
 		docs = append(docs, t)
 	}
 
-	if err = mongo.Teardown(docs...); err != nil {
-		log.ErrorC("Unable to remove all test data from mongo db", err, nil)
-		os.Exit(1)
+	if !skipTeardown {
+		if err = mongo.Teardown(docs...); err != nil {
+			log.ErrorC("Unable to remove all test data from mongo db", err, nil)
+			os.Exit(1)
+		}
 	}
-
 	log.Debug("config is:", log.Data{"config": cfg})
 }

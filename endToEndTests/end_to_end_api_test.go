@@ -475,18 +475,23 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 				log.Info("Get downloads link from version document", nil)
 				csvURL := versionResource.Downloads.CSV.URL
+				logData := log.Data{"csv_url": csvURL}
 
 				response, err := http.Get(csvURL)
 				if err != nil {
 					log.Error(err, nil)
 				}
-				defer response.Body.Close()
+				defer func() {
+					if err := response.Body.Close(); err != nil {
+						log.ErrorC("get downloads link body", err, logData)
+					}
+				}()
 
 				csvReader := csv.NewReader(response.Body)
 
 				headerRow, err := csvReader.Read()
 				if err != nil {
-					log.ErrorC("unable to read header row", err, log.Data{"csv_url": csvURL})
+					log.ErrorC("unable to read header row", err, logData)
 				}
 
 				So(len(headerRow), ShouldEqual, 7)
@@ -499,7 +504,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 						if err == io.EOF {
 							break
 						}
-						log.ErrorC("unable to read row", err, log.Data{"csv_url": csvURL})
+						log.ErrorC("unable to read row", err, logData)
 						os.Exit(1)
 					}
 					numberOfCSVRows++
