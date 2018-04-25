@@ -19,6 +19,8 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
 	"path/filepath"
+	"github.com/ONSdigital/go-ns/rchttp"
+	"context"
 )
 
 var timeout = time.Duration(15 * time.Second)
@@ -365,7 +367,8 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 		// Waiting for version to have downloads before updating state to published
 		hasDownloads := false
-		var XLSSize int
+		var csvSize int
+		var xlsSize int
 	hasDownloadsLoop:
 		for !hasDownloads {
 			select {
@@ -382,19 +385,19 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				if instanceResource.Downloads != nil {
 					if instanceResource.Downloads.XLS != nil {
 						if instanceResource.Downloads.XLS.Private != "" {
-							XLSSize, err = strconv.Atoi(instanceResource.Downloads.XLS.Size)
+							xlsSize, err = strconv.Atoi(instanceResource.Downloads.XLS.Size)
 							if err != nil {
 								log.ErrorC("cannot convert xls size of type string to integer", err, log.Data{"xls_size": instanceResource.Downloads.XLS.Size})
 								t.FailNow()
 							}
-							So(XLSSize, ShouldBeBetweenOrEqual, 19000, 20000)
+							So(xlsSize, ShouldBeBetweenOrEqual, 19000, 20000)
 							So(instanceResource.Downloads.XLS.Private, ShouldNotBeEmpty)
-							CSVSize, err := strconv.Atoi(instanceResource.Downloads.CSV.Size)
+							csvSize, err = strconv.Atoi(instanceResource.Downloads.CSV.Size)
 							if err != nil {
 								log.ErrorC("cannot convert csv size of type string to integer", err, log.Data{"csv_size": instanceResource.Downloads.CSV.Size})
 								t.FailNow()
 							}
-							So(CSVSize, ShouldBeBetweenOrEqual, 137000, 139000)
+							So(csvSize, ShouldBeBetweenOrEqual, 137000, 139000)
 							So(instanceResource.Downloads.CSV.URL, ShouldNotBeEmpty)
 							hasDownloads = true
 						}
@@ -422,7 +425,9 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 		logData := log.Data{
 			"private_csv_link": instanceResource.Downloads.CSV.Private,
+			"private_csv_size": instanceResource.Downloads.CSV.Size,
 			"private_xls_link": instanceResource.Downloads.XLS.Private,
+			"private_xls_size": instanceResource.Downloads.XLS.Size,
 		}
 		log.Debug("Pre publish full downloads have been generated", logData)
 
@@ -440,6 +445,12 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			log.ErrorC("unable to check file row count", err, nil)
 			t.FailNow()
 		}
+
+		log.Debug("Pre publish - attempting to download full CSV file from the download service", logData)
+		testFileDownload(instanceResource.Downloads.CSV.URL, csvSize, false)
+
+		log.Debug("Pre publish - attempting to download full XLS file from the download service", logData)
+		testFileDownload(instanceResource.Downloads.XLS.URL, xlsSize, false)
 
 		log.Info("Then an authenticated user should be able to filter a dataset", nil)
 
@@ -579,21 +590,8 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		}
 		So(numberOfCSVRows, ShouldEqual, 1510)
 
-		xlsURL := versionResource.Downloads.XLS.URL
-
-		xlsResponse, err := http.Get(xlsURL)
-		if err != nil {
-			log.Error(err, nil)
-		}
-		xlsFile := xlsResponse.Body
-
-		So(xlsFile, ShouldNotBeEmpty)
-
-		b, _ := ioutil.ReadAll(xlsFile)
-		xlsFileSize := len(b)
-
-		expectedXLSFileSize := XLSSize
-		So(xlsFileSize, ShouldResemble, expectedXLSFileSize)
+		testFileDownload(versionResource.Downloads.CSV.URL, csvSize, true)
+		testFileDownload(versionResource.Downloads.XLS.URL, xlsSize, true)
 
 		exitHasPublicDownloadsLoop := make(chan bool)
 
@@ -734,6 +732,45 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		}
 	})
 }
+
+func testFileDownload(url string, expectedSize int, isPublished bool) {
+
+	log.Info("attempting to download file from the download service", log.Data{
+		"url":           url,
+		"expected_size": expectedSize,
+		"is_published": isPublished,
+	})
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		log.Error(err, nil)
+	}
+
+	if !isPublished {
+		log.Info("not published - adding auth headers to download service request", nil)
+		req.Header.Add(authorizationTokenHeader, authorizationToken)
+	}
+
+	response, err := rchttp.DefaultClient.Do(context.Background(), req)
+	if err != nil {
+		log.Error(err, nil)
+	}
+
+	So(response.StatusCode, ShouldEqual, http.StatusOK)
+
+	log.Info("got response from the download service", log.Data{
+		"response_status": response.StatusCode,
+	})
+
+	file := response.Body
+	So(file, ShouldNotBeEmpty)
+
+	b, _ := ioutil.ReadAll(file)
+
+	actualFileSize := len(b)
+	So(actualFileSize, ShouldEqual, expectedSize)
+}
+
 func testFiltering(t *testing.T, filterAPI *httpexpect.Expect, instanceID string, isPublished bool) (string, string) {
 
 	json := GetValidPOSTCreateFilterJSON(datasetName, "2017", "1")
@@ -857,6 +894,12 @@ func testFiltering(t *testing.T, filterAPI *httpexpect.Expect, instanceID string
 	minExpectedXLSFileSize := int64(7465)
 	maxExpectedXLSFileSize := int64(7469)
 	So(*filteredXLSFileSize, ShouldBeBetweenOrEqual, minExpectedXLSFileSize, maxExpectedXLSFileSize)
+
+	expectedCSVSize, _ := strconv.Atoi(filterOutputResource.Downloads.CSV.Size)
+	testFileDownload(filterOutputResource.Downloads.CSV.HRef, expectedCSVSize, isPublished)
+
+	expectedXLSSize, _ := strconv.Atoi(filterOutputResource.Downloads.XLS.Size)
+	testFileDownload(filterOutputResource.Downloads.XLS.HRef, expectedXLSSize, isPublished)
 
 	return filterBlueprintID, filterOutputID
 

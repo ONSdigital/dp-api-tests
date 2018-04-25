@@ -26,7 +26,7 @@ const (
 	florenceTokenHeader      = "X-Florence-Token"
 	florenceToken            = "85c718c3-9ba4-4f31-99bb-3e4eaabb2cc1"
 	authorizationTokenHeader = "Authorization"
-	authorizationToken       = "939616dc-7599-4ded-9a86-a9c66fbf98e0"
+	authorizationToken       = "Bearer FD0108EA-825D-411C-9B1D-41EF7727F465"
 	bucket                   = "csv-exported"
 
 	invalidToken = "FD0108EA-825D-411C-9B1D-41EF7727F465A"

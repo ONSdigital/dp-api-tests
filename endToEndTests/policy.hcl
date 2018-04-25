@@ -1,3 +1,3 @@
-path "secret/shared/psk" {
-  capabilities = ["read", "create", "update", "list"]
+path "secret/shared/psk/*" {
+  capabilities = ["read", "create", "update"]
 }
