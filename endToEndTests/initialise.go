@@ -15,8 +15,6 @@ import (
 var cfg *config.Config
 
 const (
-	importTracker = "dp-import-tracker"
-
 	region     = "eu-west-1"
 	bucketName = "ons-dp-cmd-test"
 
@@ -28,8 +26,6 @@ const (
 	authorizationTokenHeader = "Authorization"
 	authorizationToken       = "Bearer FD0108EA-825D-411C-9B1D-41EF7727F465"
 	bucket                   = "csv-exported"
-
-	invalidToken = "FD0108EA-825D-411C-9B1D-41EF7727F465A"
 )
 
 var (
