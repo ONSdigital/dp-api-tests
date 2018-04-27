@@ -13,7 +13,10 @@ import (
 )
 
 // this is to cover "Resource" and "resource" not found
-const resourceNotFound = "esource not found"
+const (
+	resourceNotFound = "esource not found"
+	unauthorizedReq  = "unauthorized request"
+)
 
 func TestSuccessfullyDeleteSearchIndex(t *testing.T) {
 	searchAPI := httpexpect.New(t, cfg.SearchAPIURL)
@@ -28,7 +31,7 @@ func TestSuccessfullyDeleteSearchIndex(t *testing.T) {
 			Convey("Then the index is removed and response returns status ok (200)", func() {
 
 				searchAPI.DELETE("/search/instances/{instanceID}/dimensions/{dimension}", instanceID, dimensionKeyAggregate).
-					WithHeader(common.AuthHeaderKey, internalTokenID).Expect().Status(http.StatusOK)
+					WithHeader(common.AuthHeaderKey, serviceToken).Expect().Status(http.StatusOK)
 			})
 		})
 	})
@@ -51,7 +54,7 @@ func TestFailToDeleteSearchIndex(t *testing.T) {
 			Convey("Then the response returns status not found (404)", func() {
 
 				searchAPI.DELETE("/search/instances/{instanceID}/dimensions/{dimension}", instanceID, dimensionKeyAggregate).
-					WithHeader(common.AuthHeaderKey, internalTokenID).Expect().Status(http.StatusNotFound).Body().Contains(resourceNotFound)
+					WithHeader(common.AuthHeaderKey, serviceToken).Expect().Status(http.StatusNotFound).Body().Contains(resourceNotFound)
 			})
 		})
 	})
@@ -62,18 +65,20 @@ func TestFailToDeleteSearchIndex(t *testing.T) {
 			os.Exit(1)
 		}
 		Convey("When a DELETE request is made to search API without an authentication header", func() {
-			Convey("Then the response returns status not found (404)", func() {
+			Convey("Then the response returns status unauthorized (401)", func() {
 
 				searchAPI.DELETE("/search/instances/{instanceID}/dimensions/{dimension}", instanceID, dimensionKeyAggregate).
-					Expect().Status(http.StatusNotFound).Body().Contains(resourceNotFound)
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 
 		Convey("When a DELETE request is made to search API with Invalid authentication header", func() {
-			Convey("Then the response returns status not found (404)", func() {
+			Convey("Then the response returns status unauthorized (401)", func() {
 
 				searchAPI.DELETE("/search/instances/{instanceID}/dimensions/{dimension}", instanceID, dimensionKeyAggregate).
-					WithHeader(common.AuthHeaderKey, "grey").Expect().Status(http.StatusUnauthorized)
+					WithHeader(common.AuthHeaderKey, "grey").
+					Expect().
+					Status(http.StatusUnauthorized)
 			})
 		})
 	})

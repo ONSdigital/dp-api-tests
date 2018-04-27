@@ -21,7 +21,7 @@ func TestSuccessfullyCreateSearchIndex(t *testing.T) {
 			Convey("Then a message is sent to kafka to create an index and the response returns status ok (200)", func() {
 
 				searchAPI.PUT("/search/instances/{instanceID}/dimensions/{dimension}", instanceID, dimensionKeyAggregate).
-					WithHeader(common.AuthHeaderKey, internalTokenID).Expect().Status(http.StatusOK)
+					WithHeader(common.AuthHeaderKey, serviceToken).Expect().Status(http.StatusOK)
 			})
 		})
 	})
@@ -40,19 +40,21 @@ func TestFailToCreateSearchIndex(t *testing.T) {
 		deleteIndex(instanceID, dimension)
 
 		Convey("When a PUT request is made to search API without an authentication header", func() {
-			Convey("Then the response returns status not found (404)", func() {
+			Convey("Then the response returns status unauthorized (401)", func() {
 
 				searchAPI.PUT("/search/instances/{instanceID}/dimensions/{dimension}", instanceID, dimensionKeyAggregate).
-					Expect().Status(http.StatusNotFound).Body().Contains(resourceNotFound)
+					Expect().
+					Status(http.StatusUnauthorized)
 			})
 		})
 
 		Convey("When a PUT request is made to search API with Invalid authentication header", func() {
-			Convey("Then the response returns status not found (404)", func() {
+			Convey("Then the response returns status unauthorized (401)", func() {
 
 				searchAPI.PUT("/search/instances/{instanceID}/dimensions/{dimension}", instanceID, dimensionKeyAggregate).
 					WithHeader(common.AuthHeaderKey, "grey").
-					Expect().Status(http.StatusUnauthorized)
+					Expect().
+					Status(http.StatusUnauthorized)
 			})
 		})
 	})

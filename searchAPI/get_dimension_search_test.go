@@ -7,14 +7,15 @@ import (
 	"testing"
 	"time"
 
-	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2"
 
 	"github.com/ONSdigital/dp-api-tests/datasetAPI"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/go-ns/common"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -85,6 +86,7 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 					default:
 						response := searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
 							WithQuery("q", "cpih1dim1S10201").
+							WithHeader(common.AuthHeaderKey, serviceToken).
 							Expect().Status(http.StatusOK).
 							JSON().Object()
 
@@ -106,7 +108,9 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 				}
 
 				response := searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
-					WithQuery("q", "cpih1dim1S10201").Expect().Status(http.StatusOK).JSON().Object()
+					WithQuery("q", "cpih1dim1S10201").
+					WithHeader(common.AuthHeaderKey, serviceToken).
+					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("count").Equal(1)
 				response.Value("items").Array().Length().Equal(1)
@@ -128,7 +132,9 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 			Convey("Then the response returns a json document cotaining a list of results with a status ok (200)", func() {
 
 				response := searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
-					WithQuery("q", "Overall Index").Expect().Status(http.StatusOK).JSON().Object()
+					WithQuery("q", "Overall Index").
+					WithHeader(common.AuthHeaderKey, serviceToken).
+					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("count").Equal(1)
 				response.Value("items").Array().Length().Equal(1)
@@ -151,7 +157,9 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 		Convey("When a GET request is made with a query term matching multiple dimensions by label", func() {
 			Convey("Then the response returns a json document cotaining a list of results with a status ok (200)", func() {
 				response := searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
-					WithQuery("q", "Furniture and furnishings").Expect().Status(http.StatusOK).JSON().Object()
+					WithQuery("q", "Furniture and furnishings").
+					WithHeader(common.AuthHeaderKey, serviceToken).
+					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("count").Equal(7)
 				response.Value("items").Array().Length().Equal(7)
@@ -187,7 +195,11 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 		Convey("When a GET request is made with a query term matching multiple dimensions by label but has an offset of 2 and a limit of 2", func() {
 			Convey("Then the response returns a json document cotaining a list of results with a status ok (200)", func() {
 				response := searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
-					WithQuery("q", "Furniture and furnishings").WithQuery("offset", 2).WithQuery("limit", 2).Expect().Status(http.StatusOK).JSON().Object()
+					WithQuery("q", "Furniture and furnishings").
+					WithQuery("offset", 2).
+					WithQuery("limit", 2).
+					WithHeader(common.AuthHeaderKey, serviceToken).
+					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("count").Equal(2)
 				response.Value("items").Array().Length().Equal(2)
@@ -271,12 +283,11 @@ func TestFailureToGetDimensionViaSearch(t *testing.T) {
 
 	Convey("Given a version for an edition of a dataset is not published", t, func() {
 		Convey("When a GET request is made to search API", func() {
-			Convey("Then the response returns Not found (404)", func() {
+			Convey("Then the response returns unauthorized (401)", func() {
 
 				searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
 					WithQuery("q", "Overall Index").
-					Expect().Status(http.StatusNotFound).
-					Body().Contains(resourceNotFound)
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 	})
@@ -290,7 +301,9 @@ func TestFailureToGetDimensionViaSearch(t *testing.T) {
 			Convey("Then the response returns Bad request (400)", func() {
 
 				searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
-					WithQuery("limit", 10).Expect().Status(http.StatusBadRequest).Body().Contains("search term empty\n")
+					WithHeader(common.AuthHeaderKey, serviceToken).
+					WithQuery("limit", 10).
+					Expect().Status(http.StatusBadRequest).Body().Contains("search term empty\n")
 			})
 		})
 
@@ -298,7 +311,11 @@ func TestFailureToGetDimensionViaSearch(t *testing.T) {
 			Convey("Then the response returns Bad request (400)", func() {
 
 				searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
-					WithQuery("q", "Overall Index").WithQuery("offset", 1000).Expect().Status(http.StatusBadRequest).Body().Contains("the maximum offset has been reached, the offset cannot be more than 1000\n")
+					WithQuery("q", "Overall Index").
+					WithQuery("offset", 1000).
+					WithHeader(common.AuthHeaderKey, serviceToken).
+					Expect().Status(http.StatusBadRequest).
+					Body().Contains("the maximum offset has been reached, the offset cannot be more than 1000\n")
 			})
 		})
 
