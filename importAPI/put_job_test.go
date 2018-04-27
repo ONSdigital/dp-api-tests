@@ -87,7 +87,7 @@ func TestUpdateImportJobStateUnauthorised(t *testing.T) {
 			Convey("Then the response returns status 404 not found", func() {
 				importAPI.PUT("/jobs/{id}", jobID).
 					WithBytes([]byte(validPUTJobJSON)).
-					Expect().Status(http.StatusNotFound)
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 	})
