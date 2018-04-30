@@ -13,10 +13,9 @@ var cfg *config.Config
 const (
 	collection = "datasets"
 
-	instanceID             = "123789"
-	internalTokenID        = "Bearer a507f722-f25a-4889-9653-23a2655b925c"
-	invalidInternalTokenID = "SD0108EA-825D-411C-45J3-41EF7727F123A"
-	skipTeardown           = false
+	instanceID   = "123789"
+	serviceToken = "Bearer a507f722-f25a-4889-9653-23a2655b925c"
+	skipTeardown = false
 )
 
 func init() {
