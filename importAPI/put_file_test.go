@@ -138,7 +138,7 @@ func TestAddFileToImportJobUnauthorised(t *testing.T) {
 
 				importAPI.PUT("/jobs/{id}/files", jobID).
 					WithBytes([]byte(validPUTAddFilesJSON)).
-					Expect().Status(http.StatusNotFound)
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 	})
