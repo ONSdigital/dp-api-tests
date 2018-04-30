@@ -88,7 +88,7 @@ func TestPostImportJobWithNoAuthentication(t *testing.T) {
 
 				importAPI.POST("/jobs").
 					WithBytes([]byte(validPOSTCreateJobJSON)).
-					Expect().Status(http.StatusNotFound)
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 	})

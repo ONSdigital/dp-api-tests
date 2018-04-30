@@ -83,9 +83,9 @@ func TestGetListOfImportJobsUnauthorised(t *testing.T) {
 
 	Convey("Given an import job exists", t, func() {
 		Convey("When get jobs is called with no Authorization header", func() {
-			Convey("Then the response returns status Not Found (404)", func() {
+			Convey("Then the response returns status Unauthorized (401)", func() {
 				importAPI.GET("/jobs").
-					Expect().Status(http.StatusNotFound)
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 	})
