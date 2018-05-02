@@ -75,6 +75,7 @@ func TestSuccessfullyGetObservationForVersion(t *testing.T) {
 				response.Value("links").Object().Value("self").Object().Value("href").String().Match(".+/datasets/" + datasetID + "/editions/" + edition + "/versions/2/observations\\?aggregate=cpi1dim1S40403&geography=K02000001&time=Aug-16$") // ?aggregate=cpi1dim1S40403&geography=K02000001&time=Aug-16")
 				response.Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/2$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("2")
+				response.Value("unit_of_measure").Equal("Pounds Sterling")
 			})
 		})
 
@@ -97,6 +98,7 @@ func TestSuccessfullyGetObservationForVersion(t *testing.T) {
 				response.Value("links").Object().Value("self").Object().Value("href").String().Match(".+/datasets/" + datasetID + "/editions/" + edition + "/versions/1/observations\\?aggregate=cpi1dim1G50100&geography=K02000001&time=Aug-16$") // ?aggregate=cpi1dim1S40403&geography=K02000001&time=Aug-16")
 				response.Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+				response.Value("unit_of_measure").Equal("Pounds Sterling")
 			})
 		})
 
