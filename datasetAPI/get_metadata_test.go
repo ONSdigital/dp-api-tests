@@ -33,7 +33,7 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 
 		Convey("When an authenticated request is made to get the unpublished version", func() {
 			Convey("Then the response body contains the expected metadata", func() {
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/metadata", datasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/metadata", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("contacts").Array().Element(0).Object().Value("email").Equal("cpi@onstest.gov.uk")
@@ -47,9 +47,13 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 				response.Value("distribution").Array().Element(0).Equal("json")
 				response.Value("distribution").Array().Element(1).Equal("csv")
 				response.Value("distribution").Array().Element(2).Equal("xls")
-				response.Value("downloads").Object().Value("csv").Object().Value("url").String().Match("(.+)/aws/census-2017-2-csv$")
+				response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("(.+)/aws/census-2017-2-csv$")
+				response.Value("downloads").Object().Value("csv").Object().Value("private").String().Match("(.+)/csv-exported/myfile.csv$")
+				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Match("(.+)/csv-exported/myfile.csv$")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
-				response.Value("downloads").Object().Value("xls").Object().Value("url").String().Match("(.+)/aws/census-2017-2-xls$")
+				response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("(.+)/aws/census-2017-2-xls$")
+				response.Value("downloads").Object().Value("xls").Object().Value("private").String().Match("(.+)/csv-exported/myfile.xls$")
+				response.Value("downloads").Object().Value("xls").Object().Value("public").String().Match("(.+)/csv-exported/myfile.xls$")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24")
 				response.Value("keywords").Array().Element(0).Equal("cpi")
 				response.Value("keywords").Array().Element(1).Equal("boy")
@@ -106,9 +110,13 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 				response.Value("distribution").Array().Element(0).Equal("json")
 				response.Value("distribution").Array().Element(1).Equal("csv")
 				response.Value("distribution").Array().Element(2).Equal("xls")
-				response.Value("downloads").Object().Value("csv").Object().Value("url").String().Match("(.+)/aws/census-2017-1-csv$")
+				response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("(.+)/aws/census-2017-1-csv$")
+				response.Value("downloads").Object().Value("csv").Object().Value("private").String().Match("(.+)/csv-exported/myfile.csv$")
+				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Match("(.+)/csv-exported/myfile.csv$")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
-				response.Value("downloads").Object().Value("xls").Object().Value("url").String().Match("(.+)/aws/census-2017-1-xls$")
+				response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("(.+)/aws/census-2017-1-xls$")
+				response.Value("downloads").Object().Value("xls").Object().Value("private").String().Match("(.+)/csv-exported/myfile.xls$")
+				response.Value("downloads").Object().Value("xls").Object().Value("public").String().Match("(.+)/csv-exported/myfile.xls$")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24")
 				response.Value("keywords").Array().Element(0).Equal("cpi")
 				response.Value("keywords").Array().Element(1).Equal("boy")
@@ -188,7 +196,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 	Convey("Given the dataset, edition and version do not exist", t, func() {
 		Convey("When an authorised request to get the metadata relevant to a version", func() {
 			Convey("Then return status not found (404) with message `Dataset not found`", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
 			})
 		})
@@ -203,7 +211,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 		Convey("but an edition and version do not exist", func() {
 			Convey("When a request to get the metadata relevant to a version", func() {
 				Convey("Then return status not found (404) with message `Edition not found`", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(florenceTokenName, florenceToken).
 						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
 				})
 			})
@@ -218,7 +226,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 			Convey("but a version does not exist", func() {
 				Convey("When a request to get the metadata relevant to a version", func() {
 					Convey("Then return status bad request (404) with message `Version not found`", func() {
-						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(florenceTokenName, florenceToken).
 							Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
 					})
 				})

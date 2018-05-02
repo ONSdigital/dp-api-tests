@@ -61,7 +61,7 @@ func TestSuccessfullyGetListOfDatasetEditions(t *testing.T) {
 		Convey("When a user is authenticated", func() {
 			Convey("Then the response contains both dataset editions", func() {
 
-				response := datasetAPI.GET("/datasets/{id}/editions", datasetID).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				response := datasetAPI.GET("/datasets/{id}/editions", datasetID).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("items").Array().Length().Equal(2)
@@ -135,7 +135,7 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 			Convey("When a request to get editions for a dataset is made", func() {
 				Convey("Then return a status not found (404)", func() {
 
-					datasetAPI.GET("/datasets/{id}/editions", datasetID).WithHeader(serviceAuthTokenName, serviceAuthToken).
+					datasetAPI.GET("/datasets/{id}/editions", datasetID).WithHeader(florenceTokenName, florenceToken).
 						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
 				})
 			})

@@ -37,7 +37,7 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 		Convey("When the user is authenticated", func() {
 			Convey("Then response includes the expected current and next sub documents and returns a status ok (200)", func() {
 
-				response := datasetAPI.GET("/datasets/{id}", datasetID).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				response := datasetAPI.GET("/datasets/{id}", datasetID).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("id").Equal(datasetID)
@@ -78,7 +78,7 @@ func TestFailureToGetADataset(t *testing.T) {
 	Convey("Given the dataset document does not exist", t, func() {
 		Convey("When requesting for document", func() {
 			Convey("Then return a status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}", datasetID).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				datasetAPI.GET("/datasets/{id}", datasetID).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
 			})
 		})

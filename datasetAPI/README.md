@@ -12,6 +12,7 @@ pass:
 
 ```text
 mongo db
+neo4j
 zookeeper
 kafka
 dp-dataset-api

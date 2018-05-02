@@ -80,7 +80,7 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 		Convey("When an authenticated user sends a GET request for a list of dimensions for instance", func() {
 			Convey("Then a list of dimensions is returned with a status of OK (200)", func() {
 
-				response := datasetAPI.GET("/instances/{instance_id}/dimensions", instanceID).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				response := datasetAPI.GET("/instances/{instance_id}/dimensions", instanceID).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("items").Array().Length().Equal(2)
@@ -114,7 +114,7 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 		Convey("When an authenticated user sends a GET request for a list of dimensions for instance", func() {
 			Convey("Then return status OK (200) with an empty items array", func() {
 
-				dimensionsResource := datasetAPI.GET("/instances/{id}/dimensions", instanceID).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				dimensionsResource := datasetAPI.GET("/instances/{id}/dimensions", instanceID).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				dimensionsResource.Value("items").Null()
@@ -150,7 +150,7 @@ func TestFailureToGetInstanceDimensions(t *testing.T) {
 		Convey("When a user sends a GET request of a list of dimensions for instance with an invalid token", func() {
 			Convey("Then return status unauthorized (401)", func() {
 
-				datasetAPI.GET("/instances/{id}/dimensions", instanceID).WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
+				datasetAPI.GET("/instances/{id}/dimensions", instanceID).WithHeader(florenceTokenName, unauthorisedAuthToken).
 					Expect().Status(http.StatusUnauthorized)
 			})
 		})
@@ -158,7 +158,7 @@ func TestFailureToGetInstanceDimensions(t *testing.T) {
 		Convey("When an authenticated user sends a GET request of a list of dimensions for instance", func() {
 			Convey("Then return status not found (404) with a message `Instance not found`", func() {
 
-				datasetAPI.GET("/instances/{id}/dimensions", instanceID).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				datasetAPI.GET("/instances/{id}/dimensions", instanceID).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("Instance not found\n")
 			})
 		})
@@ -190,7 +190,7 @@ func TestFailureToGetInstanceDimensions(t *testing.T) {
 		Convey("When a user sends a GET request for a list of dimensions for instance with an invalid token", func() {
 			Convey("Then return status unauthorized (401)", func() {
 
-				datasetAPI.GET("/instances/{id}/dimensions", instanceID).WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
+				datasetAPI.GET("/instances/{id}/dimensions", instanceID).WithHeader(florenceTokenName, unauthorisedAuthToken).
 					Expect().Status(http.StatusUnauthorized)
 			})
 		})

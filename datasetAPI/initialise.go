@@ -13,12 +13,16 @@ var cfg *config.Config
 const (
 	collection = "datasets"
 
-	downloadServiceAuthToken   = "X-Download-Service-Token"
-	downloadServiceAuthTokenID = "QB0108EZ-825D-412C-9B1D-41EF7747F462"
+	downloadServiceAuthTokenName = "X-Download-Service-Token"
+	downloadServiceAuthToken     = "QB0108EZ-825D-412C-9B1D-41EF7747F462"
 
-	serviceAuthTokenName         = "Authorization"
-	serviceAuthToken             = "939616dc-7599-4ded-9a86-a9c66fbf98e0"
-	unauthorisedServiceAuthToken = "0dd023bd-9cc0-4c18-9b4f-e030a1f2b71c"
+	downloadServiceTokenName = "Authorization"
+	downloadServiceToken     = "Bearer c60198e9-1864-4b68-ad0b-1e858e5b46a4"
+
+	florenceTokenName = "X-Florence-Token"
+	florenceToken     = "85c718c3-9ba4-4f31-99bb-3e4eaabb2cc1"
+
+	unauthorisedAuthToken = "0dd023bd-9cc0-4c18-9b4f-e030a1f2b71c"
 )
 
 func init() {

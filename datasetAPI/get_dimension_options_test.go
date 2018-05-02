@@ -112,7 +112,7 @@ func TestGetDimensionOptions_ReturnsAllDimensionOptionsFromADataset(t *testing.T
 		Convey("When an authenticated request is made to get a list of time dimension options", func() {
 			Convey("Then return with status OK and response body containing dimension ", func() {
 				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/time/options", datasetID, edition, 2).
-					WithHeader(serviceAuthTokenName, serviceAuthToken).
+					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				checkTimeDimensionResponse(secondInstanceID, response)
@@ -137,7 +137,7 @@ func TestGetDimensionOptions_ReturnsAllDimensionOptionsFromADataset(t *testing.T
 		Convey("When an authenticated request is made to get a list of aggregate dimension options", func() {
 			Convey("Then return with status OK and response body containing dimension ", func() {
 				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/aggregate/options", datasetID, edition, 2).
-					WithHeader(serviceAuthTokenName, serviceAuthToken).
+					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("items").Array().Length().Equal(1)
@@ -226,7 +226,7 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 		Convey("When an authenticated request is made to get a list of aggregate dimension options", func() {
 			Convey("Then return status not found (404)", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/dimensions/time/options", datasetID, edition).
-					WithHeader(serviceAuthTokenName, serviceAuthToken).
+					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("Dimension not found")
 			})
 		})

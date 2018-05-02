@@ -41,7 +41,7 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 
 		Convey("When an authenticated request to get instance", func() {
 			Convey("Then response contains the expected json object and a status ok (200)", func() {
-				response := datasetAPI.GET("/instances/{id}", publishedInstanceID).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				response := datasetAPI.GET("/instances/{id}", publishedInstanceID).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("alerts").Array().Element(0).Object().Value("date").String().Equal("2017-12-10")
@@ -77,7 +77,7 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 
 		Convey("When an authenticated request to get instance", func() {
 			Convey("Then response contains the expected json object and a status ok (200)", func() {
-				response := datasetAPI.GET("/instances/{id}", unpublishedInstanceID).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				response := datasetAPI.GET("/instances/{id}", unpublishedInstanceID).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				checkResponse(datasetID, edition, unpublishedInstanceID, "2", response)
@@ -106,7 +106,7 @@ func TestFailureToGetInstance(t *testing.T) {
 	Convey("Given an instance resource does not exist", t, func() {
 		Convey("When an authorised request is made to get instance", func() {
 			Convey("Then return a status not found (404) with message `Instance not found`", func() {
-				datasetAPI.GET("/instances/{id}", instanceID).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				datasetAPI.GET("/instances/{id}", instanceID).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("Instance not found")
 			})
 		})
@@ -136,7 +136,7 @@ func TestFailureToGetInstance(t *testing.T) {
 		Convey("When an unauthorised request is made to get resource", func() {
 			Convey("Then return a status of unauthorized (401)", func() {
 
-				datasetAPI.GET("/instances/{id}", instanceID).WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
+				datasetAPI.GET("/instances/{id}", instanceID).WithHeader(florenceTokenName, unauthorisedAuthToken).
 					Expect().Status(http.StatusUnauthorized)
 			})
 		})
@@ -161,14 +161,23 @@ func checkResponse(datasetID, edition, instanceID, version string, response *htt
 	response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("(.+)/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
 	response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
 	response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
-	response.Value("downloads").Object().Value("csv").Object().Value("url").String().Match("(.+)/aws/census-2017-" + version + "-csv$")
-	response.Value("downloads").Object().Value("csv").Object().Value("url").String().Match("(.+)/aws/census-2017-" + version + "-csv$")
+	response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("(.+)/aws/census-2017-" + version + "-csv$")
+	response.Value("downloads").Object().Value("csv").Object().Value("private").String().Match("(.+)/csv-exported/myfile.csv$")
+	response.Value("downloads").Object().Value("csv").Object().Value("public").String().Match("(.+)/csv-exported/myfile.csv$")
 	response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
-	response.Value("downloads").Object().Value("xls").Object().Value("url").String().Match("(.+)/aws/census-2017-" + version + "-xls$")
+	response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("(.+)/aws/census-2017-" + version + "-xls$")
+	response.Value("downloads").Object().Value("xls").Object().Value("private").String().Match("(.+)/csv-exported/myfile.xls$")
+	response.Value("downloads").Object().Value("xls").Object().Value("public").String().Match("(.+)/csv-exported/myfile.xls$")
 	response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24")
 	response.Value("edition").Equal(edition)
-	response.Value("headers").Array().Element(0).String().Equal("time")
-	response.Value("headers").Array().Element(1).String().Equal("geography")
+	response.Value("headers").Array().Length().Equal(7)
+	response.Value("headers").Array().Element(0).String().Equal("v4_0")
+	response.Value("headers").Array().Element(1).String().Equal("time")
+	response.Value("headers").Array().Element(2).String().Equal("time")
+	response.Value("headers").Array().Element(3).String().Equal("uk-only")
+	response.Value("headers").Array().Element(4).String().Equal("geography")
+	response.Value("headers").Array().Element(5).String().Equal("cpi1dim1aggid")
+	response.Value("headers").Array().Element(6).String().Equal("aggregate")
 	response.Value("latest_changes").Array().Element(0).Object().Value("description").String().Equal("The border of Southampton changed after the south east cliff face fell into the sea.")
 	response.Value("latest_changes").Array().Element(0).Object().Value("name").String().Equal("Changes in Classification")
 	response.Value("latest_changes").Array().Element(0).Object().Value("type").String().Equal("Summary of Changes")

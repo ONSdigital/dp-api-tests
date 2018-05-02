@@ -73,7 +73,7 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 		})
 
 		Convey("when the user is authorised", func() {
-			response := datasetAPI.GET("/datasets").WithHeader(serviceAuthTokenName, serviceAuthToken).
+			response := datasetAPI.GET("/datasets").WithHeader(florenceTokenName, florenceToken).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("items").Array().Element(0).Object().Value("id").NotNull()

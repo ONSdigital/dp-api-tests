@@ -56,9 +56,16 @@ var dimensionTwo = mongo.CodeList{
 
 var dimensionThree = mongo.CodeList{
 	Description: "The time in which this dataset spans",
-	HRef:        "http://localhost:8080/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD",
+	HRef:        "http://localhost:8080/codelists/608064B3-A808-449B-9041-EA3A2F72CFAE",
 	ID:          "508064B3-A808-449B-9041-EA3A2F72CFAD",
 	Name:        "time",
+}
+
+var dimensionFour = mongo.CodeList{
+	Description: "The locations in which this dataset spans",
+	HRef:        "http://localhost:8080/codelists/708064B3-A808-449B-9041-EA3A2F72CFAF",
+	ID:          "708064B3-A808-449B-9041-EA3A2F72CFAF",
+	Name:        "geography",
 }
 
 var temporal = mongo.TemporalFrequency{
@@ -379,17 +386,17 @@ func validPublishedInstanceData(datasetID, edition, instanceID string) bson.M {
 		"$set": bson.M{
 			"alerts":                                                       []mongo.Alert{alert},
 			"collection_id":                                                "108064B3-A808-449B-9041-EA3A2F72CFAA",
-			"dimensions":                                                   []mongo.CodeList{dimension, dimensionTwo, dimensionThree},
-			"downloads.csv.url":                                            cfg.DatasetAPIURL + "/aws/census-2017-1-csv",
+			"dimensions":                                                   []mongo.CodeList{dimension, dimensionTwo, dimensionThree, dimensionFour},
+			"downloads.csv.href":                                           cfg.DatasetAPIURL + "/aws/census-2017-1-csv",
 			"downloads.csv.size":                                           "10",
 			"downloads.csv.public":                                         "https://s3-eu-west-1.amazon.com/csv-exported/myfile.csv",
 			"downloads.csv.private":                                        "s3://csv-exported/myfile.csv",
-			"downloads.xls.url":                                            cfg.DatasetAPIURL + "/aws/census-2017-1-xls",
+			"downloads.xls.href":                                           cfg.DatasetAPIURL + "/aws/census-2017-1-xls",
 			"downloads.xls.size":                                           "24",
 			"downloads.xls.public":                                         "https://s3-eu-west-1.amazon.com/csv-exported/myfile.xls",
 			"downloads.xls.private":                                        "s3://csv-exported/myfile.xls",
 			"edition":                                                      edition,
-			"headers":                                                      []string{"time", "geography"},
+			"headers":                                                      []string{"v4_0", "time", "time", "uk-only", "geography", "cpi1dim1aggid", "aggregate"},
 			"id":                                                           instanceID,
 			"latest_changes":                                               []mongo.LatestChange{latestChanges},
 			"last_updated":                                                 "2017-09-08", // TODO Should be isodate
@@ -422,17 +429,17 @@ func validAssociatedInstanceData(datasetID, edition, instanceID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"collection_id":         "208064B3-A808-449B-9041-EA3A2F72CFAB",
-			"dimensions":            []mongo.CodeList{dimension},
-			"downloads.csv.url":     cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
+			"dimensions":            []mongo.CodeList{dimension, dimensionTwo, dimensionThree, dimensionFour},
+			"downloads.csv.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
 			"downloads.csv.size":    "10",
 			"downloads.csv.public":  "https://s3-eu-west-1.amazon.com/csv-exported/myfile.csv",
 			"downloads.csv.private": "s3://csv-exported/myfile.csv",
-			"downloads.xls.url":     cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
+			"downloads.xls.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
 			"downloads.xls.size":    "24",
 			"downloads.xls.public":  "https://s3-eu-west-1.amazon.com/csv-exported/myfile.xls",
 			"downloads.xls.private": "s3://csv-exported/myfile.xls",
 			"edition":               edition,
-			"headers":               []string{"time", "geography"},
+			"headers":               []string{"v4_0", "time", "time", "uk-only", "geography", "cpi1dim1aggid", "aggregate"},
 			"id":                    instanceID,
 			"last_updated":          "2017-09-08", // TODO Should be isodate
 			"latest_changes":        []mongo.LatestChange{latestChanges},
@@ -464,9 +471,11 @@ func validEditionConfirmedInstanceData(datasetID, edition, instanceID string) bs
 	return bson.M{
 		"$set": bson.M{
 			"dimensions":            []mongo.CodeList{dimension},
-			"downloads.csv.url":     cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
+			"downloads.csv.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
+			"downloads.csv.private": "s3://csv-exported/myfile.csv",
 			"downloads.csv.size":    "10",
-			"downloads.xls.url":     cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
+			"downloads.xls.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
+			"downloads.xls.private": "s3://csv-exported/myfile.xls",
 			"downloads.xls.size":    "24",
 			"edition":               edition,
 			"headers":               []string{"time", "geography"},
@@ -500,9 +509,11 @@ func validCompletedInstanceData(datasetID, edition, instanceID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"collection_id":         "208064B3-A808-449B-9041-EA3A2F72CFAB",
-			"downloads.csv.url":     cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
+			"downloads.csv.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
+			"downloads.csv.private": "s3://csv-exported/myfile.csv",
 			"downloads.csv.size":    "10",
-			"downloads.xls.url":     cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
+			"downloads.xls.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
+			"downloads.xls.private": "s3://csv-exported/myfile.xls",
 			"downloads.xls.size":    "24",
 			"edition":               edition,
 			"headers":               []string{"time", "geography"},
