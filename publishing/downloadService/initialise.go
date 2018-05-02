@@ -18,8 +18,8 @@ const (
 	bucketName  = "csv-exported"
 	fileName    = "v4TestFile.csv"
 
-	internalToken   = "Internal-Token"
-	internalTokenID = "AL0108EA-825D-411C-9B1D-41EF7727F465"
+	authHeader   = "Authorization"
+	serviceToken = "Bearer c60198e9-1864-4b68-ad0b-1e858e5b46a4"
 )
 
 func init() {
