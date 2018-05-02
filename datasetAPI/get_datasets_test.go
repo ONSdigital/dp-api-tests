@@ -103,7 +103,6 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 }
 
 func checkDatasetResponse(datasetID string, response *httpexpect.Object) {
-	response.Value("collection_id").Equal("108064B3-A808-449B-9041-EA3A2F72CFAA")
 	response.Value("contacts").Array().Element(0).Object().Value("email").Equal("cpi@onstest.gov.uk")
 	response.Value("contacts").Array().Element(0).Object().Value("name").Equal("Automation Tester")
 	response.Value("contacts").Array().Element(0).Object().Value("telephone").Equal("+44 (0)1633 123456")

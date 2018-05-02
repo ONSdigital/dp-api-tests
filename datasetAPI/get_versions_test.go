@@ -311,7 +311,6 @@ func checkVersionResponse(datasetID, editionID, instanceID, edition string, resp
 	response.Value("alerts").Array().Element(0).Object().Value("date").String().Equal("2017-12-10")
 	response.Value("alerts").Array().Element(0).Object().Value("description").String().Equal("A correction to an observation for males of age 25, previously 11 now changed to 12")
 	response.Value("alerts").Array().Element(0).Object().Value("type").String().Equal("Correction")
-	response.Value("collection_id").Equal("108064B3-A808-449B-9041-EA3A2F72CFAA")
 	response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
 	response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("(.+)/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
 	response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")

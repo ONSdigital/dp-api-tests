@@ -243,12 +243,11 @@ func expectedCurrentSubDoc(datasetID, edition string) *mongo.Dataset {
 	}
 
 	currentSubDoc := &mongo.Dataset{
-		CollectionID: "108064B3-A808-449B-9041-EA3A2F72CFAA",
-		Contacts:     []mongo.ContactDetails{contactDetails},
-		Description:  "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
-		Keywords:     []string{"cpi", "boy"},
-		ID:           "",
-		License:      "ONS license",
+		Contacts:    []mongo.ContactDetails{contactDetails},
+		Description: "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
+		Keywords:    []string{"cpi", "boy"},
+		ID:          "",
+		License:     "ONS license",
 		Links: &mongo.DatasetLinks{
 			AccessRights: &mongo.LinkObject{
 				HRef: "http://ons.gov.uk/accessrights",
@@ -292,7 +291,6 @@ func expectedCurrentSubDoc(datasetID, edition string) *mongo.Dataset {
 
 func expectedPublishedSubDoc(datasetID, edition string) *mongo.Dataset {
 	base := expectedCurrentSubDoc(datasetID, edition)
-	base.CollectionID = "208064B3-A808-449B-9041-EA3A2F72CFAB"
 	base.NextRelease = "2018-10-10"
 	base.State = "published"
 

@@ -129,9 +129,9 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 					os.Exit(1)
 				}
 
-				// Check version has been updated
+				// Check version has been updated, and CollectionID removed
 				So(updatedVersion.ID, ShouldEqual, instanceID)
-				So(updatedVersion.CollectionID, ShouldEqual, "33333333")
+				So(updatedVersion.CollectionID, ShouldBeEmpty)
 				So(updatedVersion.State, ShouldEqual, "published")
 
 				log.Debug("edition id", log.Data{"edition_id": editionID})
@@ -154,9 +154,9 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 					os.Exit(1)
 				}
 
-				// Check dataset has been updated
+				// Check dataset has been updated, and CollectionID removed
 				So(updatedDataset.ID, ShouldEqual, datasetID)
-				So(updatedDataset.Current.CollectionID, ShouldEqual, "33333333")
+				So(updatedDataset.Current.CollectionID, ShouldBeEmpty)
 				So(updatedDataset.Current.State, ShouldEqual, "published")
 			})
 		})
@@ -446,17 +446,6 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			})
 		})
 
-		// test for bad request when publishing version (Missing mandatory fields)
-		Convey("When an authorised PUT request is made to update version resource to a state of published", func() {
-			Convey("Then fail to update resource and return a status of bad request (400) with a message `Missing collection_id for association between version and a collection`", func() {
-
-				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
-					WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(`{"state": "published"}`)).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Missing collection_id for association between version and a collection")
-
-			})
-		})
-
 		// test for unauthorised request to update version
 		Convey("When an unauthorised PUT request is made to update version resource", func() {
 			Convey("Then fail to update resource and return a status unauthorized (401)", func() {
@@ -629,10 +618,9 @@ func expectedDatasetResource(datasetID string, resource int) mongo.DatasetUpdate
 	nationalStatistic := true
 
 	doc := mongo.Dataset{
-		CollectionID: "208064B3-A808-449B-9041-EA3A2F72CFAB",
-		Contacts:     []mongo.ContactDetails{contact},
-		Description:  "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
-		Keywords:     []string{"cpi", "boy"},
+		Contacts:    []mongo.ContactDetails{contact},
+		Description: "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
+		Keywords:    []string{"cpi", "boy"},
 		Links: &mongo.DatasetLinks{
 			AccessRights: &mongo.LinkObject{
 				HRef: "http://ons.gov.uk/accessrights",
