@@ -23,6 +23,10 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
+	authHeaders := make(map[string]string)
+	authHeaders[downloadServiceAuthTokenName] = downloadServiceAuthToken
+	authHeaders[florenceTokenName] = florenceToken
+
 	Convey("Given a published and unpublished version for a dataset edition exists", t, func() {
 		docs, err := setupPublishedAndUnpublishedVersions(datasetID, editionID, edition, instanceID, unpublishedInstanceID)
 		if err != nil {
@@ -65,10 +69,7 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 			})
 
 			Convey("When an authenticated request including a valid download service token is made to get the published version", func() {
-				headers := make(map[string]string)
-				headers[downloadServiceAuthTokenName] = downloadServiceAuthToken
-				headers[florenceTokenName] = florenceToken
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2", datasetID, edition).WithHeaders(headers).
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2", datasetID, edition).WithHeaders(authHeaders).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/public/myfile.csv")
@@ -116,10 +117,7 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 			})
 
 			Convey("When a request including a valid download service token is made to get the published version", func() {
-				headers := make(map[string]string)
-				headers[downloadServiceAuthTokenName] = downloadServiceAuthToken
-				headers[downloadServiceTokenName] = downloadServiceToken
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeaders(headers).
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeaders(authHeaders).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/public/myfile.csv")

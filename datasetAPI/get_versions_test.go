@@ -44,13 +44,13 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 						// check the published test version document has the expected returned fields and values
 						response.Value("items").Array().Element(i).Object().Value("id").Equal(instanceID)
 						checkVersionResponse(datasetID, editionID, instanceID, edition, response.Value("items").Array().Element(i).Object())
-						checkPublicOrPrivateLinksDoNotExistInResponse(response.Value("items").Array().Element(i).Object().Value("downloads").Object())
+						checkNeitherPublicOrPrivateLinksExistInResponse(response.Value("items").Array().Element(i).Object().Value("downloads").Object())
 					}
 
 					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == unpublishedInstanceID {
 						response.Value("items").Array().Element(i).Object().Value("id").Equal(unpublishedInstanceID)
 						response.Value("items").Array().Element(i).Object().Value("state").Equal("associated")
-						checkPublicOrPrivateLinksDoNotExistInResponse(response.Value("items").Array().Element(i).Object().Value("downloads").Object())
+						checkNeitherPublicOrPrivateLinksExistInResponse(response.Value("items").Array().Element(i).Object().Value("downloads").Object())
 					}
 				}
 			})
@@ -63,7 +63,7 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 			Convey("Then response contains a list of only published versions of the dataset edition", func() {
 				response.Value("items").Array().Length().Equal(1)
 				checkVersionResponse(datasetID, editionID, instanceID, edition, response.Value("items").Array().Element(0).Object())
-				checkPublicOrPrivateLinksDoNotExistInResponse(response.Value("items").Array().Element(0).Object().Value("downloads").Object())
+				checkNeitherPublicOrPrivateLinksExistInResponse(response.Value("items").Array().Element(0).Object().Value("downloads").Object())
 			})
 		})
 
@@ -339,7 +339,7 @@ func checkVersionResponse(datasetID, editionID, instanceID, edition string, resp
 	response.Value("version").Equal(1)
 }
 
-func checkPublicOrPrivateLinksDoNotExistInResponse(response *httpexpect.Object) {
+func checkNeitherPublicOrPrivateLinksExistInResponse(response *httpexpect.Object) {
 	response.Value("csv").Object().NotContainsKey("public")
 	response.Value("csv").Object().NotContainsKey("private")
 	response.Value("xls").Object().NotContainsKey("public")
