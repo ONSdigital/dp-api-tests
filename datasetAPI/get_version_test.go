@@ -71,10 +71,10 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2", datasetID, edition).WithHeaders(headers).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/csv-exported/myfile.csv")
-				response.Value("downloads").Object().Value("csv").Object().Value("private").String().Equal("s3://csv-exported/myfile.csv")
-				response.Value("downloads").Object().Value("xls").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/csv-exported/myfile.xls")
-				response.Value("downloads").Object().Value("xls").Object().Value("private").String().Equal("s3://csv-exported/myfile.xls")
+				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/public/myfile.csv")
+				response.Value("downloads").Object().Value("csv").Object().Value("private").String().Equal("s3://private/myfile.csv")
+				response.Value("downloads").Object().Value("xls").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/public/myfile.xls")
+				response.Value("downloads").Object().Value("xls").Object().Value("private").String().Equal("s3://private/myfile.xls")
 			})
 		})
 
@@ -122,10 +122,10 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeaders(headers).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/csv-exported/myfile.csv")
-				response.Value("downloads").Object().Value("csv").Object().Value("private").String().Equal("s3://csv-exported/myfile.csv")
-				response.Value("downloads").Object().Value("xls").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/csv-exported/myfile.xls")
-				response.Value("downloads").Object().Value("xls").Object().Value("private").String().Equal("s3://csv-exported/myfile.xls")
+				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/public/myfile.csv")
+				response.Value("downloads").Object().Value("csv").Object().Value("private").String().Equal("s3://private/myfile.csv")
+				response.Value("downloads").Object().Value("xls").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/public/myfile.xls")
+				response.Value("downloads").Object().Value("xls").Object().Value("private").String().Equal("s3://private/myfile.xls")
 			})
 		})
 
