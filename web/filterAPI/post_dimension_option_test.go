@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ONSdigital/dp-api-tests/filterAPI/expectedTestData"
+	"github.com/ONSdigital/dp-api-tests/web/filterAPI/expectedTestData"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"

@@ -65,9 +65,17 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 		}
 
 		Convey("When requesting to get filter output", func() {
-			Convey("Then filter output is returned in the response body without private download links", func() {
+			Convey("Then the response is 401 not authorized", func() {
 
+				filterAPI.GET("/filter-outputs/{filter_output_id}", publishedFilterOutputID).
+					Expect().Status(http.StatusUnauthorized)
+			})
+		})
+
+		Convey("When making an authenticated requesting to get filter output", func() {
+			Convey("Then filter output is returned in the response body without private download links", func() {
 				response := filterAPI.GET("/filter-outputs/{filter_output_id}", publishedFilterOutputID).
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("dataset").Object().Value("id").Equal(datasetID)
@@ -79,10 +87,10 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 				response.Value("dimensions").Array().Element(0).Object().Value("options").Equal([]string{"27"})
 				response.Value("downloads").Object().Value("csv").Object().Value("href").Equal("download-service-url.csv")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("12mb")
-				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("private")
+				response.Value("downloads").Object().Value("csv").Object().Value("private").Equal("private-s3-csv-location")
 				response.Value("downloads").Object().Value("csv").Object().Value("public").Equal("public-s3-csv-location")
 				response.Value("downloads").Object().Value("xls").Object().Value("href").Equal("download-service-url.xlsx")
-				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("private")
+				response.Value("downloads").Object().Value("xls").Object().Value("private").Equal("private-s3-xls-location")
 				response.Value("downloads").Object().Value("xls").Object().Value("public").Equal("public-s3-xls-location")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
 				response.Value("filter_id").Equal(publishedFilterOutputID)
@@ -93,16 +101,6 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
 				response.Value("state").Equal("completed")
-			})
-		})
-
-		Convey("When making an authenticated requesting to get filter output", func() {
-			Convey("Then filter output is returned in the response body without private download links", func() {
-				response := filterAPI.GET("/filter-outputs/{filter_output_id}", publishedFilterOutputID).
-					WithHeader(serviceAuthTokenName, serviceAuthToken).Expect().Status(http.StatusOK).JSON().Object()
-
-				response.Value("downloads").Object().Value("csv").Object().Value("private").Equal("private-s3-csv-location")
-				response.Value("downloads").Object().Value("xls").Object().Value("private").Equal("private-s3-xls-location")
 			})
 		})
 
@@ -152,46 +150,6 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 			})
 		})
 
-		Convey("When the instance has been published and a request is made with no authentication to get filter output", func() {
-
-			instance.Update = GetValidPublishedInstanceDataBSON(instanceID, datasetID, edition, version)
-
-			if err := mongo.Setup(instance); err != nil {
-				log.ErrorC("Unable to setup test data", err, nil)
-				os.Exit(1)
-			}
-
-			Convey("Then filter output is returned in the response body", func() {
-
-				response := filterAPI.GET("/filter-outputs/{filter_output_id}", unpublishedFilterOutputID).
-					Expect().Status(http.StatusOK).JSON().Object()
-
-				response.Value("dataset").Object().Value("id").Equal(datasetID)
-				response.Value("dataset").Object().Value("edition").Equal(edition)
-				response.Value("dataset").Object().Value("version").Equal(version)
-				response.Value("dimensions").Array().Length().Equal(4)
-				response.Value("dimensions").Array().Element(0).Object().NotContainsKey("dimension_url") // Check dimension url is not set
-				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
-				response.Value("dimensions").Array().Element(0).Object().Value("options").Equal([]string{"27"})
-				response.Value("downloads").Object().Value("csv").Object().Value("href").Equal("download-service-url.csv")
-				response.Value("downloads").Object().Value("csv").Object().Value("public").Equal("public-s3-csv-location")
-				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("private")
-				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("12mb")
-				response.Value("downloads").Object().Value("xls").Object().Value("href").Equal("download-service-url.xlsx")
-				response.Value("downloads").Object().Value("xls").Object().Value("public").Equal("public-s3-xls-location")
-				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("private")
-				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
-				response.Value("filter_id").Equal(unpublishedFilterOutputID)
-				response.Value("instance_id").Equal(instanceID)
-				response.Value("links").Object().Value("filter_blueprint").Object().Value("href").String().Match("/filters/" + filterBlueprintID + "$")
-				response.Value("links").Object().Value("filter_blueprint").Object().Value("id").Equal(filterBlueprintID)
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filter-outputs/" + unpublishedFilterOutputID + "$")
-				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
-				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
-				response.Value("state").Equal("completed")
-			})
-		})
-
 		if err := mongo.Teardown(instance, filterBlueprint, unpublishedOutput); err != nil {
 			log.ErrorC("Unable to remove test data from mongo db", err, nil)
 			os.Exit(1)
@@ -224,6 +182,7 @@ func TestFailureToGetFilterOutput(t *testing.T) {
 			Convey("Then the response returns status not found (404)", func() {
 
 				filterAPI.GET("/filter-outputs/{filter_output_id}", filterID).
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("Filter output not found\n")
 			})
 		})
@@ -237,10 +196,10 @@ func TestFailureToGetFilterOutput(t *testing.T) {
 		}
 
 		Convey("When making an unauthenticated request to get filter output", func() {
-			Convey("Then the response returns status not found (404)", func() {
+			Convey("Then the response returns status unauthorized (401)", func() {
 
 				filterAPI.GET("/filter-outputs/{filter_output_id}", filterOutputID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter output not found\n")
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 
