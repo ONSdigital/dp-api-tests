@@ -1,0 +1,1511 @@
+V4_0,time,time,uk-only,geography,cpih1dim1aggid,aggregate
+39.9,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G100000,10.0 Education
+77.7,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G110200,11.2 Accommodation services
+106.7,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G120600,12.6 Financial services (nec)
+121.4,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G30200,03.2 Footwear including repairs
+46.8,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G40500,"04.5 Electricity , gas and other fuels"
+82,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G40900,04.9.0 Council Tax and rates
+102.8,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G50200,05.2 Household textiles
+73.2,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G50600,05.6 Goods and services for routine maintenance
+252.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G90100,09.1 Audio-visual equipment and related products
+71.6,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G90500,"09.5 Books, newspapers and stationery"
+39.9,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S100000,10.0.0 Education
+64.6,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S10105,01.1.5 Oils and fats
+68.7,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S10106,01.1.6 Fruit
+75.5,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+64.6,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+71.4,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G10200,01.2 Non-alcoholic beverages
+67.8,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G120400,12.4 Social protection
+73.5,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G120700,12.7 Other services (nec)
+122.1,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G30100,03.1 Clothing
+77.1,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G40100,04.1 Actual rentals for housing
+85.2,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G40200,04.2.0 Owner Occupied Housing Costs
+76.8,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+67.9,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G40400,04.4 Water supply and misc. services for the dwelling
+81.7,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G50100,"05.1 Furniture, furnishings and carpets"
+84.6,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G50400,"05.4 Glassware, tableware and household utensils"
+74.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G50500,05.5 Tools and equipment for house and garden
+59,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G60300,06.3 Hospital services
+73.2,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G70200,07.2 Operation of personal transport equipment
+51.5,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G70300,07.3 Transport services
+44.7,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G80100,08.1 Postal services
+90.9,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G80200,08.2/3 Telephone and telefax equip
+79.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G90200,9.2 Other major durables for recreation and culture
+69.5,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G90400,09.4 Recreational and cultural services
+76.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S10104,"01.1.4 Milk, cheese and eggs"
+73.1,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+77.4,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S110102,11.1.2 Canteens
+89.6,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S120102,12.1.2/3 Appliances and products for personal care
+79.1,Month,Apr-05,K02000001,United Kingdom,cpih1dim1A0,Overall Index
+71.4,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G10100,01.1 Food
+99.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S120502,12.5.2 House contents insurance
+99.8,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S30103,03.1.3 Other clothing and clothing accessories
+73.2,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G110100,11.1 Catering services
+86.5,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G120100,12.1 Personal care
+77.1,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S40100,04.1.0 Actual rentals for housing
+85.2,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S40200,04.2.0 Owner Occupied Housing Costs
+75,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G120300,12.3 Personal effects (nec)
+72.1,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S40301,04.3.1 Materials for maintenance and repair
+83.4,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S40302,04.3.2 Services for maintenance and repair
+61.9,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G120500,12.5 Insurance
+80.2,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G20100,02.1 Alcoholic beverages
+40.9,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S40502,04.5.2 Gas
+82,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S40900,04.9.0 Council Tax and rates
+52.8,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G20200,02.2 Tobacco
+92.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G50300,"05.3 Household appliances, fitting and repairs"
+82.5,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S50101,05.1.1 Furniture and furnishings
+90.5,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G60100,"06.1 Medical products, appliances and equipment"
+77.4,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G60200,06.2 Out-patient services
+99.1,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G70100,07.1 Purchase of vehicles
+102.5,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G90300,"09.3 Other recreational items, gardens and pets"
+78.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1G90600,09.6 Package holidays
+71.9,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S10101,01.1.1 Bread and cereals
+72.7,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S10102,01.1.2 Meat
+63.4,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S10103,01.1.3 Fish
+80.5,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S10109,01.1.9 Food products (nec)
+66.5,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+91.5,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S50303,05.3.3 Repair of household appliances
+74.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S50500,05.5.0 Tools and equipment for House and Garden
+74.5,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S50602,05.6.2 Domestic services and household services
+72.8,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S110101,"11.1.1 Restaurants, cafes"
+78,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+77.7,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S110200,11.2.0 Accommodation Services
+87.9,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S60101,06.1.1 Pharmaceutical products
+66.7,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+67.8,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S120400,12.4.0 Social Protection
+95.4,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S120302,12.3.2 Other personal effects
+59,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S60300,06.3.0 Hospital Services
+51.1,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S120504,12.5.4 Transport insurance
+52.6,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S120503,12.5.3 Health insurance
+73.5,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+82.2,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S70102,07.1.2/3 Motorcycles and bicycles
+75.8,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S20101,02.1.1 Spirits
+106.7,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S120602,12.6.2 Other financial services (nec)
+125,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S30102,03.1.2 Garments
+86.2,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S70181,07.1.1 New Cars
+121.4,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S30200,03.2.0 Footwear including repairs
+77.8,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S20102,02.1.2 Wine
+66.1,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S40403,04.4.3 Sewerage collection
+70.5,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S70302,07.3.2 Passenger transport by road
+75,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S40503,04.5.3 Liquid fuels
+92.1,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S20103,02.1.3 Beer
+102.8,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S50200,05.2.0 Household Textiles
+50.7,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S70303,07.3.3 Passenger transport by air
+52.8,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S20200,02.2.0 Tobacco
+74.9,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+44.7,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S80100,08.1.0 Postal Services
+69.5,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S40401,04.4.1 Water supply
+49.7,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S40501,04.5.1 Electricity
+53.9,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S40504,04.5.4 Solid fuels
+80.4,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S50102,05.1.2 Carpets and other floor coverings
+92.8,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S50301,05.3.1/2 Major appliances and small electric goods
+969.8,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+128.1,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S90104,09.1.4 Recording media
+81.6,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+82.1,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S60201,"06.2.1/3 Medical services, paramedical services"
+84.6,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+72.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S60202,06.2.2 Dental services
+82.6,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S70201,07.2.1 Spare parts and accessories
+75.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S50601,05.6.1 Non-durable household goods
+94.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+76.9,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S70202,07.2.2 Fuels and lubricants
+69.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S70203,07.2.3 Maintenance and repairs
+127.5,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S70191,07.1.1b Second Hand Cars
+52.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+75.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S70204,07.2.4 Other services
+62.2,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S70301,07.3.1 Passenger transport by railway
+90.9,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+260.7,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+391.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S90103,09.1.3 Data processing equipment
+79.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S90201,09.2.1/2 Major durables for in/outdoor recreation
+89.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S90303,"09.3.3 Gardens, plants and flowers"
+67.2,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S90401,09.4.1 Recreational and sporting services
+72.2,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S90304,"09.3.4/5 Pets, related products and services"
+119.7,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S90301,"09.3.1 Games, toys and hobbies"
+102.2,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+70.6,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S90402,09.4.2 Cultural services
+79.7,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+82.6,Month,Apr-05,K02000001,United Kingdom,cpih1dim1T120000,12 Miscellaneous goods and services
+73.6,Month,Apr-05,K02000001,United Kingdom,cpih1dim1T70000,07 Transport
+87.6,Month,Apr-05,K02000001,United Kingdom,cpih1dim1T80000,08 Communication
+98.5,Month,Apr-05,K02000001,United Kingdom,cpih1dim1T90000,09 Recreation and culture
+73.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G10200,01.2 Non-alcoholic beverages
+81.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G110200,11.2 Accommodation services
+75.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G120300,12.3 Personal effects (nec)
+80.8,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G20100,02.1 Alcoholic beverages
+54.7,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G20200,02.2 Tobacco
+87.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G40200,04.2.0 Owner Occupied Housing Costs
+77.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+71.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G40400,04.4 Water supply and misc. services for the dwelling
+56.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G40500,"04.5 Electricity , gas and other fuels"
+81.8,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G50100,"05.1 Furniture, furnishings and carpets"
+89.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G60100,"06.1 Medical products, appliances and equipment"
+63.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G60300,06.3 Hospital services
+98.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G70100,07.1 Purchase of vehicles
+47.8,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G80100,08.1 Postal services
+90.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G80200,08.2/3 Telephone and telefax equip
+79.7,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G90200,9.2 Other major durables for recreation and culture
+74.1,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G90500,"09.5 Books, newspapers and stationery"
+77.9,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S90501,09.5.1 Books
+78.3,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S90600,09.6.0 Package Holidays
+71.4,Month,Apr-05,K02000001,United Kingdom,cpih1dim1T10000,01 Food and non-alcoholic beverages
+122,Month,Apr-05,K02000001,United Kingdom,cpih1dim1T30000,03 Clothing and footwear
+77.4,Month,Apr-05,K02000001,United Kingdom,cpih1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+82.4,Month,Apr-05,K02000001,United Kingdom,cpih1dim1T50000,"05 Furniture, household equipment and maintenance"
+80.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1A0,Overall Index
+62.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G120500,12.5 Insurance
+85.8,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G40900,04.9.0 Council Tax and rates
+87.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G50300,"05.3 Household appliances, fitting and repairs"
+83.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G50400,"05.4 Glassware, tableware and household utensils"
+78.5,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G70200,07.2 Operation of personal transport equipment
+73.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G90400,09.4 Recreational and cultural services
+77,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G90600,09.6 Package holidays
+62.8,Month,Apr-05,K02000001,United Kingdom,cpih1dim1S90502,09.5.2 Newspapers and periodicals
+39.9,Month,Apr-05,K02000001,United Kingdom,cpih1dim1T100000,10 Education
+73.8,Month,Apr-05,K02000001,United Kingdom,cpih1dim1T110000,11 Restaurants and hotels
+62.8,Month,Apr-05,K02000001,United Kingdom,cpih1dim1T20000,02 Alcoholic beverages and tobacco
+75.4,Month,Apr-05,K02000001,United Kingdom,cpih1dim1T60000,06 Health
+41.8,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G100000,10.0 Education
+71.4,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G10100,01.1 Food
+75.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G110100,11.1 Catering services
+88.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G120100,12.1 Personal care
+71.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G120400,12.4 Social protection
+112.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G120600,12.6 Financial services (nec)
+78.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G120700,12.7 Other services (nec)
+116.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G30100,03.1 Clothing
+115.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G30200,03.2 Footwear including repairs
+79.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G40100,04.1 Actual rentals for housing
+97.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G50200,05.2 Household textiles
+74.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G50500,05.5 Tools and equipment for house and garden
+76.5,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G50600,05.6 Goods and services for routine maintenance
+81,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G60200,06.2 Out-patient services
+55.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G70300,07.3 Transport services
+220.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G90100,09.1 Audio-visual equipment and related products
+100.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1G90300,"09.3 Other recreational items, gardens and pets"
+41.8,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S100000,10.0.0 Education
+75.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S10104,"01.1.4 Milk, cheese and eggs"
+79,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S10109,01.1.9 Food products (nec)
+75,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+79.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S110102,11.1.2 Canteens
+80.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+71.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S120400,12.4.0 Social Protection
+56.4,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S120503,12.5.3 Health insurance
+112.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S120602,12.6.2 Other financial services (nec)
+66.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S10105,01.1.5 Oils and fats
+68.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+81.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S110200,11.2.0 Accommodation Services
+68.1,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+93.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S120302,12.3.2 Other personal effects
+98.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S120502,12.5.2 House contents insurance
+99.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S30103,03.1.3 Other clothing and clothing accessories
+115.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S30200,03.2.0 Footwear including repairs
+69.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S40403,04.4.3 Sewerage collection
+73.1,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S10101,01.1.1 Bread and cereals
+58.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S40501,04.5.1 Electricity
+73,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S10102,01.1.2 Meat
+57.7,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S40504,04.5.4 Solid fuels
+66.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S10103,01.1.3 Fish
+82.8,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S50101,05.1.1 Furniture and furnishings
+67.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S10106,01.1.6 Fruit
+81.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S50102,05.1.2 Carpets and other floor coverings
+71.5,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+67.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+74.8,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S110101,"11.1.1 Restaurants, cafes"
+91,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S120102,12.1.2/3 Appliances and products for personal care
+51.8,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S120504,12.5.4 Transport insurance
+78.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+74.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S20101,02.1.1 Spirits
+79.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S20102,02.1.2 Wine
+91.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S20103,02.1.3 Beer
+77.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+79.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S40100,04.1.0 Actual rentals for housing
+54.7,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S20200,02.2.0 Tobacco
+97.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S50200,05.2.0 Household Textiles
+87.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S40200,04.2.0 Owner Occupied Housing Costs
+119.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S30102,03.1.2 Garments
+93.1,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S50303,05.3.3 Repair of household appliances
+71.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S40301,04.3.1 Materials for maintenance and repair
+73.4,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S40401,04.4.1 Water supply
+87.4,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S40302,04.3.2 Services for maintenance and repair
+83.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+51,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S40502,04.5.2 Gas
+93.7,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S40503,04.5.3 Liquid fuels
+74.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S50500,05.5.0 Tools and equipment for House and Garden
+85.8,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S40900,04.9.0 Council Tax and rates
+87.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S60101,06.1.1 Pharmaceutical products
+93.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+121.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S70191,07.1.1b Second Hand Cars
+84.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S70201,07.2.1 Spare parts and accessories
+83.7,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S70202,07.2.2 Fuels and lubricants
+80,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S70204,07.2.4 Other services
+65.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S70301,07.3.1 Passenger transport by railway
+72.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S70302,07.3.2 Passenger transport by road
+47.8,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S80100,08.1.0 Postal Services
+222.4,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+86.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S50301,05.3.1/2 Major appliances and small electric goods
+77.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S50602,05.6.2 Domestic services and household services
+121.8,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S90104,09.1.4 Recording media
+115.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S90301,"09.3.1 Games, toys and hobbies"
+85.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S60201,"06.2.1/3 Medical services, paramedical services"
+80.4,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S70102,07.1.2/3 Motorcycles and bicycles
+98.1,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+88.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S90303,"09.3.3 Gardens, plants and flowers"
+73.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S70203,07.2.3 Maintenance and repairs
+78.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S50601,05.6.1 Non-durable household goods
+76,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S60202,06.2.2 Dental services
+63.2,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S60300,06.3.0 Hospital Services
+86.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S70181,07.1.1 New Cars
+57.4,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S70303,07.3.3 Passenger transport by air
+90.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+338,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S90103,09.1.3 Data processing equipment
+84.1,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+79.7,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S90201,09.2.1/2 Major durables for in/outdoor recreation
+74.1,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S90304,"09.3.4/5 Pets, related products and services"
+71.1,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S90401,09.4.1 Recreational and sporting services
+77,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S90600,09.6.0 Package Holidays
+41.8,Month,Apr-06,K02000001,United Kingdom,cpih1dim1T100000,10 Education
+76,Month,Apr-06,K02000001,United Kingdom,cpih1dim1T110000,11 Restaurants and hotels
+66.7,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S90502,09.5.2 Newspapers and periodicals
+58.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+80.7,Month,Apr-06,K02000001,United Kingdom,cpih1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+64.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1T20000,02 Alcoholic beverages and tobacco
+690,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+77.4,Month,Apr-06,K02000001,United Kingdom,cpih1dim1T60000,06 Health
+74.3,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S90402,09.4.2 Cultural services
+116.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1T30000,03 Clothing and footwear
+79.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S90501,09.5.1 Books
+81.6,Month,Apr-06,K02000001,United Kingdom,cpih1dim1T50000,"05 Furniture, household equipment and maintenance"
+80.1,Month,Apr-06,K02000001,United Kingdom,cpih1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+71.5,Month,Apr-06,K02000001,United Kingdom,cpih1dim1T10000,01 Food and non-alcoholic beverages
+85.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1T120000,12 Miscellaneous goods and services
+76.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1T70000,07 Transport
+87.9,Month,Apr-06,K02000001,United Kingdom,cpih1dim1T80000,08 Communication
+75.6,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G10100,01.1 Food
+78.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G120300,12.3 Personal effects (nec)
+97,Month,Apr-06,K02000001,United Kingdom,cpih1dim1T90000,09 Recreation and culture
+83.1,Month,Apr-07,K02000001,United Kingdom,cpih1dim1A0,Overall Index
+75.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G120400,12.4 Social protection
+47.6,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G100000,10.0 Education
+77.4,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G10200,01.2 Non-alcoholic beverages
+78.1,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G110100,11.1 Catering services
+84.4,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G110200,11.2 Accommodation services
+91,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G120100,12.1 Personal care
+82.2,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G20100,02.1 Alcoholic beverages
+114.1,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G30200,03.2 Footwear including repairs
+81.8,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G40100,04.1 Actual rentals for housing
+113.3,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G30100,03.1 Clothing
+65,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G120500,12.5 Insurance
+80.8,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+89.6,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G40200,04.2.0 Owner Occupied Housing Costs
+111.2,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G120600,12.6 Financial services (nec)
+94.9,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G50200,05.2 Household textiles
+76.3,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G40400,04.4 Water supply and misc. services for the dwelling
+80.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G120700,12.7 Other services (nec)
+83.5,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G50100,"05.1 Furniture, furnishings and carpets"
+58.3,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G20200,02.2 Tobacco
+79.8,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G50600,05.6 Goods and services for routine maintenance
+66.3,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G40500,"04.5 Electricity , gas and other fuels"
+89.3,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G40900,04.9.0 Council Tax and rates
+85.1,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G50400,"05.4 Glassware, tableware and household utensils"
+75.9,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G50500,05.5 Tools and equipment for house and garden
+90.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G60100,"06.1 Medical products, appliances and equipment"
+66.6,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G60300,06.3 Hospital services
+53.8,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G80100,08.1 Postal services
+89.5,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G50300,"05.3 Household appliances, fitting and repairs"
+56.2,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G70300,07.3 Transport services
+84,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G60200,06.2 Out-patient services
+201.3,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G90100,09.1 Audio-visual equipment and related products
+98.5,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G70100,07.1 Purchase of vehicles
+99.4,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G90300,"09.3 Other recreational items, gardens and pets"
+79.9,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G70200,07.2 Operation of personal transport equipment
+75.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G90500,"09.5 Books, newspapers and stationery"
+47.6,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S100000,10.0.0 Education
+87,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G80200,08.2/3 Telephone and telefax equip
+69.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+75.9,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G90400,09.4 Recreational and cultural services
+68.6,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S10105,01.1.5 Oils and fats
+82.4,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+80.2,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G90200,9.2 Other major durables for recreation and culture
+77.4,Month,Apr-07,K02000001,United Kingdom,cpih1dim1G90600,09.6 Package holidays
+76.1,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S10101,01.1.1 Bread and cereals
+76.2,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S10102,01.1.2 Meat
+74.1,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S10103,01.1.3 Fish
+80.1,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S10104,"01.1.4 Milk, cheese and eggs"
+68.8,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S10106,01.1.6 Fruit
+73.9,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+83.3,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S110102,11.1.2 Canteens
+93.6,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S120102,12.1.2/3 Appliances and products for personal care
+84.4,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S110200,11.2.0 Accommodation Services
+80.3,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S10109,01.1.9 Food products (nec)
+96.1,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S120302,12.3.2 Other personal effects
+71.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+103.2,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S120502,12.5.2 House contents insurance
+78.6,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+60.2,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S120503,12.5.3 Health insurance
+77.6,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S110101,"11.1.1 Restaurants, cafes"
+83.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+75.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S120400,12.4.0 Social Protection
+52.8,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S120504,12.5.4 Transport insurance
+111.2,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S120602,12.6.2 Other financial services (nec)
+76.8,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S20101,02.1.1 Spirits
+58.3,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S20200,02.2.0 Tobacco
+100.2,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S30103,03.1.3 Other clothing and clothing accessories
+93.5,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S20103,02.1.3 Beer
+80.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+89.6,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S40200,04.2.0 Owner Occupied Housing Costs
+114.1,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S30200,03.2.0 Footwear including repairs
+80.5,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S20102,02.1.2 Wine
+115.1,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S30102,03.1.2 Garments
+80.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+81.8,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S40100,04.1.0 Actual rentals for housing
+74.4,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S40403,04.4.3 Sewerage collection
+62.2,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S40502,04.5.2 Gas
+94.9,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S50200,05.2.0 Household Textiles
+73.6,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S40301,04.3.1 Materials for maintenance and repair
+84.8,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S40503,04.5.3 Liquid fuels
+91.6,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S40302,04.3.2 Services for maintenance and repair
+94.3,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S50303,05.3.3 Repair of household appliances
+84.9,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S50101,05.1.1 Furniture and furnishings
+77.9,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S40401,04.4.1 Water supply
+80,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S50102,05.1.2 Carpets and other floor coverings
+67.8,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S40501,04.5.1 Electricity
+62.3,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S40504,04.5.4 Solid fuels
+89.3,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S40900,04.9.0 Council Tax and rates
+89.1,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S50301,05.3.1/2 Major appliances and small electric goods
+85.1,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+75.9,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S50500,05.5.0 Tools and equipment for House and Garden
+82.1,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S50602,05.6.2 Domestic services and household services
+66.6,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S60300,06.3.0 Hospital Services
+81.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S70102,07.1.2/3 Motorcycles and bicycles
+81.1,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S50601,05.6.1 Non-durable household goods
+94.4,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+88.2,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S70181,07.1.1 New Cars
+88.4,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S60101,06.1.1 Pharmaceutical products
+84.2,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S70204,07.2.4 Other services
+80.8,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S60202,06.2.2 Dental services
+86.9,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S60201,"06.2.1/3 Medical services, paramedical services"
+68.1,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S70301,07.3.1 Passenger transport by railway
+119.5,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S70191,07.1.1b Second Hand Cars
+82.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S70202,07.2.2 Fuels and lubricants
+77.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S70203,07.2.3 Maintenance and repairs
+76,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S70302,07.3.2 Passenger transport by road
+84.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S70201,07.2.1 Spare parts and accessories
+51.3,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S70303,07.3.3 Passenger transport by air
+53.8,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S80100,08.1.0 Postal Services
+65.9,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+87,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+198.3,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+277.9,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S90103,09.1.3 Data processing equipment
+574.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+121.3,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S90104,09.1.4 Recording media
+87.8,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+111.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S90301,"09.3.1 Games, toys and hobbies"
+98.9,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+90.2,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S90303,"09.3.3 Gardens, plants and flowers"
+77,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S90402,09.4.2 Cultural services
+80.2,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S90201,09.2.1/2 Major durables for in/outdoor recreation
+81.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S90501,09.5.1 Books
+77.4,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S90600,09.6.0 Package Holidays
+76.6,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S90304,"09.3.4/5 Pets, related products and services"
+73.7,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S90401,09.4.1 Recreational and sporting services
+69.2,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S90502,09.5.2 Newspapers and periodicals
+79.4,Month,Apr-07,K02000001,United Kingdom,cpih1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+75.8,Month,Apr-07,K02000001,United Kingdom,cpih1dim1T10000,01 Food and non-alcoholic beverages
+47.6,Month,Apr-07,K02000001,United Kingdom,cpih1dim1T100000,10 Education
+78.8,Month,Apr-07,K02000001,United Kingdom,cpih1dim1T110000,11 Restaurants and hotels
+67.2,Month,Apr-07,K02000001,United Kingdom,cpih1dim1T20000,02 Alcoholic beverages and tobacco
+84.1,Month,Apr-07,K02000001,United Kingdom,cpih1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+83.4,Month,Apr-07,K02000001,United Kingdom,cpih1dim1T50000,"05 Furniture, household equipment and maintenance"
+96.2,Month,Apr-07,K02000001,United Kingdom,cpih1dim1T90000,09 Recreation and culture
+79.2,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G10200,01.2 Non-alcoholic beverages
+79.8,Month,Apr-07,K02000001,United Kingdom,cpih1dim1T60000,06 Health
+84.8,Month,Apr-07,K02000001,United Kingdom,cpih1dim1T80000,08 Communication
+81.3,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G110100,11.1 Catering services
+67.3,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G120500,12.5 Insurance
+53.8,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G100000,10.0 Education
+81.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G10100,01.1 Food
+86.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G110200,11.2 Accommodation services
+81.9,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G120300,12.3 Personal effects (nec)
+110.2,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G30200,03.2 Footwear including repairs
+84.6,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G40100,04.1 Actual rentals for housing
+92.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G40200,04.2.0 Owner Occupied Housing Costs
+72.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G40500,"04.5 Electricity , gas and other fuels"
+87.2,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G60200,06.2 Out-patient services
+87.9,Month,Apr-07,K02000001,United Kingdom,cpih1dim1T120000,12 Miscellaneous goods and services
+92.6,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G40900,04.9.0 Council Tax and rates
+70.5,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G60300,06.3 Hospital services
+113.3,Month,Apr-07,K02000001,United Kingdom,cpih1dim1T30000,03 Clothing and footwear
+97.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G70100,07.1 Purchase of vehicles
+85.8,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G50100,"05.1 Furniture, furnishings and carpets"
+89.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G70200,07.2 Operation of personal transport equipment
+77.9,Month,Apr-07,K02000001,United Kingdom,cpih1dim1T70000,07 Transport
+59.5,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G70300,07.3 Transport services
+89.5,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G50300,"05.3 Household appliances, fitting and repairs"
+84.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G80200,08.2/3 Telephone and telefax equip
+85.6,Month,Apr-08,K02000001,United Kingdom,cpih1dim1A0,Overall Index
+174.5,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G90100,09.1 Audio-visual equipment and related products
+86.7,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G50400,"05.4 Glassware, tableware and household utensils"
+81.7,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G90200,9.2 Other major durables for recreation and culture
+92,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G120100,12.1 Personal care
+79.3,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S10102,01.1.2 Meat
+79.3,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G90600,09.6 Package holidays
+79.4,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G120400,12.4 Social protection
+111.2,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G120600,12.6 Financial services (nec)
+53.8,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S100000,10.0.0 Education
+85.8,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G120700,12.7 Other services (nec)
+85.3,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G20100,02.1 Alcoholic beverages
+61,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G20200,02.2 Tobacco
+105.7,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G30100,03.1 Clothing
+79.4,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S10105,01.1.5 Oils and fats
+74,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+82.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S10109,01.1.9 Food products (nec)
+84.7,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+77.5,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S10103,01.1.3 Fish
+81.3,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G40400,04.4 Water supply and misc. services for the dwelling
+74.9,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+75.7,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+93.3,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G50200,05.2 Household textiles
+86.4,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S110102,11.1.2 Canteens
+97.9,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S120302,12.3.2 Other personal effects
+76.2,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G50500,05.5 Tools and equipment for house and garden
+86.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S110200,11.2.0 Accommodation Services
+79.4,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S120400,12.4.0 Social Protection
+80.8,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G50600,05.6 Goods and services for routine maintenance
+93.8,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S120102,12.1.2/3 Appliances and products for personal care
+61,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S20200,02.2.0 Tobacco
+91.4,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G60100,"06.1 Medical products, appliances and equipment"
+109.8,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S120502,12.5.2 House contents insurance
+97.3,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S30103,03.1.3 Other clothing and clothing accessories
+57.4,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G80100,08.1 Postal services
+92.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S40200,04.2.0 Owner Occupied Housing Costs
+111.2,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S120602,12.6.2 Other financial services (nec)
+98.9,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G90300,"09.3 Other recreational items, gardens and pets"
+77.8,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S40301,04.3.1 Materials for maintenance and repair
+85.8,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+77.9,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G90400,09.4 Recreational and cultural services
+95.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S40302,04.3.2 Services for maintenance and repair
+81.6,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S20101,02.1.1 Spirits
+79.7,Month,Apr-08,K02000001,United Kingdom,cpih1dim1G90500,"09.5 Books, newspapers and stationery"
+73.5,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S40501,04.5.1 Electricity
+83.4,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S20102,02.1.2 Wine
+82.6,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S10101,01.1.1 Bread and cereals
+143.4,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S40503,04.5.3 Liquid fuels
+92.7,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S10104,"01.1.4 Milk, cheese and eggs"
+106.9,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S30102,03.1.2 Garments
+68.3,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S40504,04.5.4 Solid fuels
+73.9,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S10106,01.1.6 Fruit
+83.5,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+86.9,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S50101,05.1.1 Furniture and furnishings
+85.5,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+83.6,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S50102,05.1.2 Carpets and other floor coverings
+98.3,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S50303,05.3.3 Repair of household appliances
+80.6,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+80.8,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S110101,"11.1.1 Restaurants, cafes"
+76.2,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S50500,05.5.0 Tools and equipment for House and Garden
+86.7,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+80.4,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S50601,05.6.1 Non-durable household goods
+82.4,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S40401,04.4.1 Water supply
+64.4,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S120503,12.5.3 Health insurance
+89.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S60101,06.1.1 Pharmaceutical products
+86.7,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+53.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S120504,12.5.4 Transport insurance
+83.8,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S60202,06.2.2 Dental services
+94.5,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S20103,02.1.3 Beer
+95.2,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+78.8,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S70102,07.1.2/3 Motorcycles and bicycles
+110.2,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S30200,03.2.0 Footwear including repairs
+70.5,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S60300,06.3.0 Hospital Services
+113.9,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S70191,07.1.1b Second Hand Cars
+89.2,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S70181,07.1.1 New Cars
+84.6,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S40100,04.1.0 Actual rentals for housing
+98.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S70202,07.2.2 Fuels and lubricants
+87.4,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S70201,07.2.1 Spare parts and accessories
+81.4,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S70203,07.2.3 Maintenance and repairs
+79.8,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S40403,04.4.3 Sewerage collection
+79.4,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S70302,07.3.2 Passenger transport by road
+86.5,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S70204,07.2.4 Other services
+54.7,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S70303,07.3.3 Passenger transport by air
+64.5,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S40502,04.5.2 Gas
+57.4,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S80100,08.1.0 Postal Services
+71.4,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S70301,07.3.1 Passenger transport by railway
+169.9,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+92.6,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S40900,04.9.0 Council Tax and rates
+109.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S90301,"09.3.1 Games, toys and hobbies"
+66.9,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+98.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+93.3,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S50200,05.2.0 Household Textiles
+79.3,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S90600,09.6.0 Package Holidays
+413.8,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+88.5,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S50301,05.3.1/2 Major appliances and small electric goods
+208.2,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S90103,09.1.3 Data processing equipment
+90,Month,Apr-08,K02000001,United Kingdom,cpih1dim1T120000,12 Miscellaneous goods and services
+84.9,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S50602,05.6.2 Domestic services and household services
+78.9,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S90304,"09.3.4/5 Pets, related products and services"
+90.3,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S60201,"06.2.1/3 Medical services, paramedical services"
+77.7,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S90401,09.4.1 Recreational and sporting services
+84.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+116.4,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S90104,09.1.4 Recording media
+78,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S90402,09.4.2 Cultural services
+72.3,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S90502,09.5.2 Newspapers and periodicals
+90.9,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+81.7,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S90201,09.2.1/2 Major durables for in/outdoor recreation
+92.6,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S90303,"09.3.3 Gardens, plants and flowers"
+89.9,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S90501,09.5.1 Books
+80.5,Month,Apr-08,K02000001,United Kingdom,cpih1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+80.8,Month,Apr-08,K02000001,United Kingdom,cpih1dim1T10000,01 Food and non-alcoholic beverages
+53.8,Month,Apr-08,K02000001,United Kingdom,cpih1dim1T100000,10 Education
+81.9,Month,Apr-08,K02000001,United Kingdom,cpih1dim1T110000,11 Restaurants and hotels
+70.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1T20000,02 Alcoholic beverages and tobacco
+106.1,Month,Apr-08,K02000001,United Kingdom,cpih1dim1T30000,03 Clothing and footwear
+87.3,Month,Apr-08,K02000001,United Kingdom,cpih1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+84.7,Month,Apr-08,K02000001,United Kingdom,cpih1dim1T50000,"05 Furniture, household equipment and maintenance"
+82.5,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G10200,01.2 Non-alcoholic beverages
+83.7,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G110100,11.1 Catering services
+86.2,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G110200,11.2 Accommodation services
+85.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G120700,12.7 Other services (nec)
+87.7,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G20100,02.1 Alcoholic beverages
+96,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G30100,03.1 Clothing
+105,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G30200,03.2 Footwear including repairs
+86.2,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G40100,04.1 Actual rentals for housing
+93.8,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G40200,04.2.0 Owner Occupied Housing Costs
+88.8,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+88.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G50100,"05.1 Furniture, furnishings and carpets"
+86.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G50400,"05.4 Glassware, tableware and household utensils"
+87.5,Month,Apr-09,K02000001,United Kingdom,cpih1dim1A0,Overall Index
+84.4,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G120300,12.3 Personal effects (nec)
+71.7,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G120500,12.5 Insurance
+111.6,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G120600,12.6 Financial services (nec)
+62.5,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G20200,02.2 Tobacco
+80.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G40500,"04.5 Electricity , gas and other fuels"
+92.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G50200,05.2 Household textiles
+94.1,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G50300,"05.3 Household appliances, fitting and repairs"
+77.8,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G50500,05.5 Tools and equipment for house and garden
+86.6,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G50600,05.6 Goods and services for routine maintenance
+89.4,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G60200,06.2 Out-patient services
+82.5,Month,Apr-08,K02000001,United Kingdom,cpih1dim1T60000,06 Health
+82.7,Month,Apr-08,K02000001,United Kingdom,cpih1dim1T70000,07 Transport
+82.5,Month,Apr-08,K02000001,United Kingdom,cpih1dim1T80000,08 Communication
+95.3,Month,Apr-08,K02000001,United Kingdom,cpih1dim1T90000,09 Recreation and culture
+58.4,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G100000,10.0 Education
+88.5,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G10100,01.1 Food
+94.4,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G120100,12.1 Personal care
+83.3,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G120400,12.4 Social protection
+85.1,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G40400,04.4 Water supply and misc. services for the dwelling
+95.1,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G40900,04.9.0 Council Tax and rates
+92.6,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G60100,"06.1 Medical products, appliances and equipment"
+73.5,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G60300,06.3 Hospital services
+94.8,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G70100,07.1 Purchase of vehicles
+99.2,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G90300,"09.3 Other recreational items, gardens and pets"
+81.1,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G90400,09.4 Recreational and cultural services
+84.8,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G80200,08.2/3 Telephone and telefax equip
+82.2,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G90500,"09.5 Books, newspapers and stationery"
+84.6,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G70200,07.2 Operation of personal transport equipment
+83.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G90200,9.2 Other major durables for recreation and culture
+58.4,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S100000,10.0.0 Education
+65.6,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G70300,07.3 Transport services
+89.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S10101,01.1.1 Bread and cereals
+84.7,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G90600,09.6 Package holidays
+63,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G80100,08.1 Postal services
+78.4,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S10106,01.1.6 Fruit
+84.6,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S10105,01.1.5 Oils and fats
+152.3,Month,Apr-09,K02000001,United Kingdom,cpih1dim1G90100,09.1 Audio-visual equipment and related products
+79.2,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+89.1,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S10102,01.1.2 Meat
+91.6,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S10109,01.1.9 Food products (nec)
+81.4,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S10103,01.1.3 Fish
+99.7,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S10104,"01.1.4 Milk, cheese and eggs"
+95.2,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+84.3,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+97.3,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S120302,12.3.2 Other personal effects
+110.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S120502,12.5.2 House contents insurance
+58.6,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S120504,12.5.4 Transport insurance
+83.2,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S110101,"11.1.1 Restaurants, cafes"
+82.2,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+88.4,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+87.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S110102,11.1.2 Canteens
+86.2,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S110200,11.2.0 Accommodation Services
+96.5,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S120102,12.1.2/3 Appliances and products for personal care
+83.3,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S120400,12.4.0 Social Protection
+82.3,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S20101,02.1.1 Spirits
+79.4,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+67.3,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S120503,12.5.3 Health insurance
+111.6,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S120602,12.6.2 Other financial services (nec)
+85.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+87.2,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S20102,02.1.2 Wine
+95.7,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S20103,02.1.3 Beer
+62.5,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S20200,02.2.0 Tobacco
+96.3,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S30102,03.1.2 Garments
+96.3,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S30103,03.1.3 Other clothing and clothing accessories
+86.1,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+105,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S30200,03.2.0 Footwear including repairs
+86.2,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S40100,04.1.0 Actual rentals for housing
+93.8,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S40200,04.2.0 Owner Occupied Housing Costs
+83.5,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S40301,04.3.1 Materials for maintenance and repair
+96.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S40302,04.3.2 Services for maintenance and repair
+86,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S40401,04.4.1 Water supply
+83.7,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S40403,04.4.3 Sewerage collection
+87.5,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S40503,04.5.3 Liquid fuels
+89,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S40504,04.5.4 Solid fuels
+80.2,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S40501,04.5.1 Electricity
+79.7,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S40502,04.5.2 Gas
+90,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S50101,05.1.1 Furniture and furnishings
+95.1,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S40900,04.9.0 Council Tax and rates
+87.7,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S50602,05.6.2 Domestic services and household services
+92.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S50200,05.2.0 Household Textiles
+93.2,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S50301,05.3.1/2 Major appliances and small electric goods
+86.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+86.6,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S50102,05.1.2 Carpets and other floor coverings
+100.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S50303,05.3.3 Repair of household appliances
+77.8,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S50500,05.5.0 Tools and equipment for House and Garden
+89,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S50601,05.6.1 Non-durable household goods
+90.8,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S60101,06.1.1 Pharmaceutical products
+91.6,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S60201,"06.2.1/3 Medical services, paramedical services"
+95.7,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+87.1,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S60202,06.2.2 Dental services
+91.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S70102,07.1.2/3 Motorcycles and bicycles
+89.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S70181,07.1.1 New Cars
+88.3,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S70204,07.2.4 Other services
+73.5,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S60300,06.3.0 Hospital Services
+102.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S70191,07.1.1b Second Hand Cars
+82.7,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S70302,07.3.2 Passenger transport by road
+90.1,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S70201,07.2.1 Spare parts and accessories
+85.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S70202,07.2.2 Fuels and lubricants
+75.2,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S70301,07.3.1 Passenger transport by railway
+58.3,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S70303,07.3.3 Passenger transport by air
+84.6,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S70203,07.2.3 Maintenance and repairs
+78.8,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+63,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S80100,08.1.0 Postal Services
+154.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+314.5,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+98,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S90104,09.1.4 Recording media
+84.8,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+92,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+106.4,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S90301,"09.3.1 Games, toys and hobbies"
+179.1,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S90103,09.1.3 Data processing equipment
+99.6,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+83.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S90201,09.2.1/2 Major durables for in/outdoor recreation
+93,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S90303,"09.3.3 Gardens, plants and flowers"
+85,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S90304,"09.3.4/5 Pets, related products and services"
+80.8,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S90401,09.4.1 Recreational and sporting services
+88.3,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S90501,09.5.1 Books
+84.7,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S90600,09.6.0 Package Holidays
+83.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1T110000,11 Restaurants and hotels
+97.1,Month,Apr-09,K02000001,United Kingdom,cpih1dim1T30000,03 Clothing and footwear
+87.8,Month,Apr-09,K02000001,United Kingdom,cpih1dim1T50000,"05 Furniture, household equipment and maintenance"
+84.7,Month,Apr-09,K02000001,United Kingdom,cpih1dim1T60000,06 Health
+81.3,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S90402,09.4.2 Cultural services
+87.8,Month,Apr-09,K02000001,United Kingdom,cpih1dim1T10000,01 Food and non-alcoholic beverages
+58.4,Month,Apr-09,K02000001,United Kingdom,cpih1dim1T100000,10 Education
+76.3,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S90502,09.5.2 Newspapers and periodicals
+95.9,Month,Apr-09,K02000001,United Kingdom,cpih1dim1T90000,09 Recreation and culture
+84.4,Month,Apr-09,K02000001,United Kingdom,cpih1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+92,Month,Apr-09,K02000001,United Kingdom,cpih1dim1T120000,12 Miscellaneous goods and services
+72,Month,Apr-09,K02000001,United Kingdom,cpih1dim1T20000,02 Alcoholic beverages and tobacco
+61.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G100000,10.0 Education
+90.2,Month,Apr-09,K02000001,United Kingdom,cpih1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+82.2,Month,Apr-09,K02000001,United Kingdom,cpih1dim1T70000,07 Transport
+86.9,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G10200,01.2 Non-alcoholic beverages
+86.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G110200,11.2 Accommodation services
+83.6,Month,Apr-09,K02000001,United Kingdom,cpih1dim1T80000,08 Communication
+90.8,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G10100,01.1 Food
+96.9,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G120100,12.1 Personal care
+87.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G120300,12.3 Personal effects (nec)
+86.4,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G110100,11.1 Catering services
+81.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G120500,12.5 Insurance
+108.3,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G120600,12.6 Financial services (nec)
+89.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G120700,12.7 Other services (nec)
+91.8,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G20100,02.1 Alcoholic beverages
+89.9,Month,Apr-10,K02000001,United Kingdom,cpih1dim1A0,Overall Index
+86.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G120400,12.4 Social protection
+92.9,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+96.7,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G40900,04.9.0 Council Tax and rates
+93.6,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G50200,05.2 Household textiles
+68.2,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G20200,02.2 Tobacco
+105.8,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G30200,03.2 Footwear including repairs
+87.4,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G40100,04.1 Actual rentals for housing
+85,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G40400,04.4 Water supply and misc. services for the dwelling
+98.3,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G50300,"05.3 Household appliances, fitting and repairs"
+91,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G50400,"05.4 Glassware, tableware and household utensils"
+80,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G50500,05.5 Tools and equipment for house and garden
+101.9,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G70100,07.1 Purchase of vehicles
+101.3,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G90300,"09.3 Other recreational items, gardens and pets"
+89.7,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G90600,09.6 Package holidays
+61.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S100000,10.0.0 Education
+89.9,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S10101,01.1.1 Bread and cereals
+87.8,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S10105,01.1.5 Oils and fats
+86.2,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S10106,01.1.6 Fruit
+84.2,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+92.4,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S10109,01.1.9 Food products (nec)
+91.6,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+99.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S120102,12.1.2/3 Appliances and products for personal care
+86.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S120400,12.4.0 Social Protection
+73.9,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S120504,12.5.4 Transport insurance
+108.3,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S120602,12.6.2 Other financial services (nec)
+89.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+87.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S20101,02.1.1 Spirits
+78.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G40500,"04.5 Electricity , gas and other fuels"
+91.2,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G50100,"05.1 Furniture, furnishings and carpets"
+92.8,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G60100,"06.1 Medical products, appliances and equipment"
+70.4,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G70300,07.3 Transport services
+89.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G80200,08.2/3 Telephone and telefax equip
+145.8,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G90100,09.1 Audio-visual equipment and related products
+84,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G90400,09.4 Recreational and cultural services
+84.8,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G90500,"09.5 Books, newspapers and stationery"
+96.4,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+85.6,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+86,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S110101,"11.1.1 Restaurants, cafes"
+86.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S110200,11.2.0 Accommodation Services
+91.2,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S20102,02.1.2 Wine
+68.2,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S20200,02.2.0 Tobacco
+95.2,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S30102,03.1.2 Garments
+88,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+105.8,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S30200,03.2.0 Footwear including repairs
+87.4,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S40100,04.1.0 Actual rentals for housing
+74.8,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S40502,04.5.2 Gas
+95.2,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G30100,03.1 Clothing
+92.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G40200,04.2.0 Owner Occupied Housing Costs
+122.4,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S40503,04.5.3 Liquid fuels
+96.7,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S40900,04.9.0 Council Tax and rates
+86.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G50600,05.6 Goods and services for routine maintenance
+90.8,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G60200,06.2 Out-patient services
+90.2,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S50102,05.1.2 Carpets and other floor coverings
+78,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G60300,06.3 Hospital services
+96.9,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G70200,07.2 Operation of personal transport equipment
+66,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G80100,08.1 Postal services
+88.3,Month,Apr-10,K02000001,United Kingdom,cpih1dim1G90200,9.2 Other major durables for recreation and culture
+90.3,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S10102,01.1.2 Meat
+85.4,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S10103,01.1.3 Fish
+99.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S10104,"01.1.4 Milk, cheese and eggs"
+90.3,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S110102,11.1.2 Canteens
+90.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+84,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+95.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S120302,12.3.2 Other personal effects
+110.9,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S120502,12.5.2 House contents insurance
+73,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S120503,12.5.3 Health insurance
+98.9,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S20103,02.1.3 Beer
+97.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S30103,03.1.3 Other clothing and clothing accessories
+103.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S50303,05.3.3 Repair of household appliances
+90,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S40301,04.3.1 Materials for maintenance and repair
+97.8,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S40302,04.3.2 Services for maintenance and repair
+92.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S40200,04.2.0 Owner Occupied Housing Costs
+87.8,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S40401,04.4.1 Water supply
+91.6,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S50101,05.1.1 Furniture and furnishings
+82.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S40403,04.4.3 Sewerage collection
+78,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S40501,04.5.1 Electricity
+89.4,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S40504,04.5.4 Solid fuels
+93.6,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S50200,05.2.0 Household Textiles
+97.6,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S50301,05.3.1/2 Major appliances and small electric goods
+91,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+90.4,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S60101,06.1.1 Pharmaceutical products
+80,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S50500,05.5.0 Tools and equipment for House and Garden
+96.7,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+87.3,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S50601,05.6.1 Non-durable household goods
+92.9,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S60201,"06.2.1/3 Medical services, paramedical services"
+78,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S60300,06.3.0 Hospital Services
+89.6,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S50602,05.6.2 Domestic services and household services
+88.4,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S60202,06.2.2 Dental services
+94.2,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S70201,07.2.1 Spare parts and accessories
+64.7,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S70303,07.3.3 Passenger transport by air
+89.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+90.8,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S70204,07.2.4 Other services
+93.8,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S70102,07.1.2/3 Motorcycles and bicycles
+93.9,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S70181,07.1.1 New Cars
+115.9,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S70191,07.1.1b Second Hand Cars
+107.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S70202,07.2.2 Fuels and lubricants
+88.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S70203,07.2.3 Maintenance and repairs
+173.6,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S90103,09.1.3 Data processing equipment
+99.2,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S90104,09.1.4 Recording media
+101.7,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+66,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S80100,08.1.0 Postal Services
+81.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S70301,07.3.1 Passenger transport by railway
+85.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S70302,07.3.2 Passenger transport by road
+77.8,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+145.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+88.3,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S90201,09.2.1/2 Major durables for in/outdoor recreation
+267.9,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+94.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+107.4,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S90301,"09.3.1 Games, toys and hobbies"
+98.9,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S90303,"09.3.3 Gardens, plants and flowers"
+84.6,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S90402,09.4.2 Cultural services
+89.4,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+87.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S90304,"09.3.4/5 Pets, related products and services"
+89.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S90501,09.5.1 Books
+61.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1T100000,10 Education
+82.9,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S90401,09.4.1 Recreational and sporting services
+78,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S90502,09.5.2 Newspapers and periodicals
+89.7,Month,Apr-10,K02000001,United Kingdom,cpih1dim1S90600,09.6.0 Package Holidays
+86.3,Month,Apr-10,K02000001,United Kingdom,cpih1dim1T110000,11 Restaurants and hotels
+90.4,Month,Apr-10,K02000001,United Kingdom,cpih1dim1T10000,01 Food and non-alcoholic beverages
+94.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1T120000,12 Miscellaneous goods and services
+90.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1T50000,"05 Furniture, household equipment and maintenance"
+88.2,Month,Apr-10,K02000001,United Kingdom,cpih1dim1T80000,08 Communication
+89.4,Month,Apr-10,K02000001,United Kingdom,cpih1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+77.1,Month,Apr-10,K02000001,United Kingdom,cpih1dim1T20000,02 Alcoholic beverages and tobacco
+86.9,Month,Apr-10,K02000001,United Kingdom,cpih1dim1T60000,06 Health
+93.3,Month,Apr-11,K02000001,United Kingdom,cpih1dim1A0,Overall Index
+96.5,Month,Apr-10,K02000001,United Kingdom,cpih1dim1T30000,03 Clothing and footwear
+98.2,Month,Apr-10,K02000001,United Kingdom,cpih1dim1T90000,09 Recreation and culture
+91.2,Month,Apr-10,K02000001,United Kingdom,cpih1dim1T70000,07 Transport
+64.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G100000,10.0 Education
+90.2,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G110100,11.1 Catering services
+89.4,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G110200,11.2 Accommodation services
+88.8,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G120400,12.4 Social protection
+94.3,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G10100,01.1 Food
+94.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G10200,01.2 Non-alcoholic beverages
+93.5,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G120500,12.5 Insurance
+99,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G120100,12.1 Personal care
+97.3,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G20100,02.1 Alcoholic beverages
+92.5,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G120700,12.7 Other services (nec)
+91.2,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G120300,12.3 Personal effects (nec)
+102.2,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G30200,03.2 Footwear including repairs
+75.8,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G20200,02.2 Tobacco
+103.6,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G120600,12.6 Financial services (nec)
+88.8,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G40400,04.4 Water supply and misc. services for the dwelling
+83,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G40500,"04.5 Electricity , gas and other fuels"
+97.1,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G30100,03.1 Clothing
+97.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G50200,05.2 Household textiles
+100.4,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G50300,"05.3 Household appliances, fitting and repairs"
+89.4,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G40100,04.1 Actual rentals for housing
+93.5,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G40200,04.2.0 Owner Occupied Housing Costs
+92.3,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G50600,05.6 Goods and services for routine maintenance
+98,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+96.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G40900,04.9.0 Council Tax and rates
+83.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G60300,06.3 Hospital services
+104,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G70100,07.1 Purchase of vehicles
+95,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G50100,"05.1 Furniture, furnishings and carpets"
+105.4,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G70200,07.2 Operation of personal transport equipment
+96.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G50400,"05.4 Glassware, tableware and household utensils"
+88.1,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G50500,05.5 Tools and equipment for house and garden
+72.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G80100,08.1 Postal services
+135.3,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G90100,09.1 Audio-visual equipment and related products
+94.5,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G60100,"06.1 Medical products, appliances and equipment"
+93.2,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G60200,06.2 Out-patient services
+91.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G90600,09.6 Package holidays
+88.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G90500,"09.5 Books, newspapers and stationery"
+84.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G70300,07.3 Transport services
+64.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S100000,10.0.0 Education
+91.2,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G80200,08.2/3 Telephone and telefax equip
+96.1,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S10101,01.1.1 Bread and cereals
+91.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G90200,9.2 Other major durables for recreation and culture
+100.2,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S10104,"01.1.4 Milk, cheese and eggs"
+100.6,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G90300,"09.3 Other recreational items, gardens and pets"
+99.2,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+88.5,Month,Apr-11,K02000001,United Kingdom,cpih1dim1G90400,09.4 Recreational and cultural services
+93.4,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S10102,01.1.2 Meat
+91.2,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S10103,01.1.3 Fish
+95.4,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S10105,01.1.5 Oils and fats
+86.4,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S10106,01.1.6 Fruit
+91.8,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S10109,01.1.9 Food products (nec)
+90.5,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+98.8,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+93.4,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S110102,11.1.2 Canteens
+89.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S110101,"11.1.1 Restaurants, cafes"
+93.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+94,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+89.4,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S110200,11.2.0 Accommodation Services
+100.8,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S120102,12.1.2/3 Appliances and products for personal care
+89.8,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+88.8,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S120400,12.4.0 Social Protection
+113,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S120502,12.5.2 House contents insurance
+79.8,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S120503,12.5.3 Health insurance
+95.1,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S120302,12.3.2 Other personal effects
+103.6,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S120602,12.6.2 Other financial services (nec)
+93.3,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S120504,12.5.4 Transport insurance
+92.5,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+96.4,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S20102,02.1.2 Wine
+96.5,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S20101,02.1.1 Spirits
+100.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S20103,02.1.3 Beer
+91.8,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+75.8,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S20200,02.2.0 Tobacco
+89.4,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S40100,04.1.0 Actual rentals for housing
+97.2,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S40301,04.3.1 Materials for maintenance and repair
+99.8,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S40302,04.3.2 Services for maintenance and repair
+91.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S40401,04.4.1 Water supply
+79.6,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S40502,04.5.2 Gas
+91.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S40504,04.5.4 Solid fuels
+96.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S40900,04.9.0 Council Tax and rates
+85.8,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S40403,04.4.3 Sewerage collection
+97.2,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S30102,03.1.2 Garments
+95.5,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S50101,05.1.1 Furniture and furnishings
+97.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S30103,03.1.3 Other clothing and clothing accessories
+81.2,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S40501,04.5.1 Electricity
+102.2,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S30200,03.2.0 Footwear including repairs
+93.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S50102,05.1.2 Carpets and other floor coverings
+97.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S50200,05.2.0 Household Textiles
+93.5,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S40200,04.2.0 Owner Occupied Housing Costs
+165.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S40503,04.5.3 Liquid fuels
+99.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S50301,05.3.1/2 Major appliances and small electric goods
+105.8,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S50303,05.3.3 Repair of household appliances
+96.5,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S50601,05.6.1 Non-durable household goods
+91.2,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S60202,06.2.2 Dental services
+92.1,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S70203,07.2.3 Maintenance and repairs
+87.4,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S70301,07.3.1 Passenger transport by railway
+89.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S70302,07.3.2 Passenger transport by road
+87.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S70303,07.3.3 Passenger transport by air
+226.8,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+155.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S90103,09.1.3 Data processing equipment
+100,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S90104,09.1.4 Recording media
+96.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+88.1,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S50500,05.5.0 Tools and equipment for House and Garden
+90.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S50602,05.6.2 Domestic services and household services
+92.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S60101,06.1.1 Pharmaceutical products
+97.3,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+117.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S70191,07.1.1b Second Hand Cars
+97.5,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S70201,07.2.1 Spare parts and accessories
+95,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S60201,"06.2.1/3 Medical services, paramedical services"
+83.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S60300,06.3.0 Hospital Services
+94.8,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S70204,07.2.4 Other services
+97.4,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S70102,07.1.2/3 Motorcycles and bicycles
+96.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S70181,07.1.1 New Cars
+121.1,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S70202,07.2.2 Fuels and lubricants
+97.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+72.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S80100,08.1.0 Postal Services
+91.2,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+131.2,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+100.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+104.1,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S90303,"09.3.3 Gardens, plants and flowers"
+91.5,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S90304,"09.3.4/5 Pets, related products and services"
+95.6,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+91.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S90201,09.2.1/2 Major durables for in/outdoor recreation
+89,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S90402,09.4.2 Cultural services
+103.5,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S90301,"09.3.1 Games, toys and hobbies"
+87.1,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S90401,09.4.1 Recreational and sporting services
+97.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S90501,09.5.1 Books
+80.1,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S90502,09.5.2 Newspapers and periodicals
+91.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S90600,09.6.0 Package Holidays
+92.4,Month,Apr-11,K02000001,United Kingdom,cpih1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+94.3,Month,Apr-11,K02000001,United Kingdom,cpih1dim1T10000,01 Food and non-alcoholic beverages
+64.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1T100000,10 Education
+96,Month,Apr-11,K02000001,United Kingdom,cpih1dim1T120000,12 Miscellaneous goods and services
+90,Month,Apr-11,K02000001,United Kingdom,cpih1dim1T110000,11 Restaurants and hotels
+94.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1T50000,"05 Furniture, household equipment and maintenance"
+99,Month,Apr-11,K02000001,United Kingdom,cpih1dim1T90000,09 Recreation and culture
+95.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1A0,Overall Index
+91.4,Month,Apr-11,K02000001,United Kingdom,cpih1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+98.2,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G10100,01.1 Food
+100,Month,Apr-11,K02000001,United Kingdom,cpih1dim1T70000,07 Transport
+68,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G100000,10.0 Education
+83.9,Month,Apr-11,K02000001,United Kingdom,cpih1dim1T20000,02 Alcoholic beverages and tobacco
+97.7,Month,Apr-11,K02000001,United Kingdom,cpih1dim1T30000,03 Clothing and footwear
+90.4,Month,Apr-11,K02000001,United Kingdom,cpih1dim1T60000,06 Health
+90.3,Month,Apr-11,K02000001,United Kingdom,cpih1dim1T80000,08 Communication
+93.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G110100,11.1 Catering services
+99.5,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G10200,01.2 Non-alcoholic beverages
+97.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G120500,12.5 Insurance
+91.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G120400,12.4 Social protection
+92.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G110200,11.2 Accommodation services
+99.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G20100,02.1 Alcoholic beverages
+94.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G120700,12.7 Other services (nec)
+81.7,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G20200,02.2 Tobacco
+101,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G120100,12.1 Personal care
+92.4,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G40100,04.1 Actual rentals for housing
+104.3,Month,Dec-14,K02000001,United Kingdom,cpih1dim1S10106,01.1.6 Fruit
+93.3,Month,Dec-13,K02000001,United Kingdom,cpih1dim1S70303,07.3.3 Passenger transport by air
+101.6,Month,Dec-14,K02000001,United Kingdom,cpih1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+102.1,Month,Dec-15,K02000001,United Kingdom,cpih1dim1S20200,02.2.0 Tobacco
+100.5,Month,Dec-14,K02000001,United Kingdom,cpih1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+98.3,Month,Dec-13,K02000001,United Kingdom,cpih1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+100.5,Month,Dec-14,K02000001,United Kingdom,cpih1dim1S110102,11.1.2 Canteens
+102.4,Month,Dec-15,K02000001,United Kingdom,cpih1dim1S30103,03.1.3 Other clothing and clothing accessories
+99,Month,Dec-14,K02000001,United Kingdom,cpih1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+98.4,Month,Dec-13,K02000001,United Kingdom,cpih1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+100.4,Month,Dec-14,K02000001,United Kingdom,cpih1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+99.5,Month,Dec-15,K02000001,United Kingdom,cpih1dim1S30200,03.2.0 Footwear including repairs
+101.1,Month,Dec-13,K02000001,United Kingdom,cpih1dim1S90301,"09.3.1 Games, toys and hobbies"
+99.6,Month,Dec-14,K02000001,United Kingdom,cpih1dim1S120302,12.3.2 Other personal effects
+99.9,Month,Dec-15,K02000001,United Kingdom,cpih1dim1S40501,04.5.1 Electricity
+100.6,Month,Dec-14,K02000001,United Kingdom,cpih1dim1S120502,12.5.2 House contents insurance
+102.1,Month,Dec-13,K02000001,United Kingdom,cpih1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+100.3,Month,Dec-15,K02000001,United Kingdom,cpih1dim1S40900,04.9.0 Council Tax and rates
+99.4,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G30100,03.1 Clothing
+96.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G120300,12.3 Personal effects (nec)
+95.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G40200,04.2.0 Owner Occupied Housing Costs
+94,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G40400,04.4 Water supply and misc. services for the dwelling
+104.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G120600,12.6 Financial services (nec)
+101.4,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+102.2,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G30200,03.2 Footwear including repairs
+92.2,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G40500,"04.5 Electricity , gas and other fuels"
+97.6,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G50400,"05.4 Glassware, tableware and household utensils"
+97.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G40900,04.9.0 Council Tax and rates
+95.7,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G50600,05.6 Goods and services for routine maintenance
+97.5,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G50100,"05.1 Furniture, furnishings and carpets"
+96.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G60100,"06.1 Medical products, appliances and equipment"
+109,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G70200,07.2 Operation of personal transport equipment
+100.8,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G50200,05.2 Household textiles
+94.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G60200,06.2 Out-patient services
+121.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G90100,09.1 Audio-visual equipment and related products
+102.4,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G50300,"05.3 Household appliances, fitting and repairs"
+88.6,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G60300,06.3 Hospital services
+101,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G90300,"09.3 Other recreational items, gardens and pets"
+72.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G80100,08.1 Postal services
+97.8,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G50500,05.5 Tools and equipment for house and garden
+90.7,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G90400,09.4 Recreational and cultural services
+95.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G80200,08.2/3 Telephone and telefax equip
+101.7,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G70100,07.1 Purchase of vehicles
+89.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G90500,"09.5 Books, newspapers and stationery"
+68,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S100000,10.0.0 Education
+86.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G70300,07.3 Transport services
+98,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S10103,01.1.3 Fish
+98.2,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S10102,01.1.2 Meat
+95.2,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G90200,9.2 Other major durables for recreation and culture
+103.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S10104,"01.1.4 Milk, cheese and eggs"
+94.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1G90600,09.6 Package holidays
+89.7,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S10106,01.1.6 Fruit
+102.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S10105,01.1.5 Oils and fats
+98.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S10101,01.1.1 Bread and cereals
+95.2,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+98.4,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S10109,01.1.9 Food products (nec)
+101,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+95.4,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+93,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S110101,"11.1.1 Restaurants, cafes"
+103.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+95.7,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S110102,11.1.2 Canteens
+103,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S120102,12.1.2/3 Appliances and products for personal care
+98.8,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+86.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S120503,12.5.3 Health insurance
+96.8,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+92.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S110200,11.2.0 Accommodation Services
+104.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S120602,12.6.2 Other financial services (nec)
+97.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S120302,12.3.2 Other personal effects
+110.6,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S120502,12.5.2 House contents insurance
+91.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S120400,12.4.0 Social Protection
+105.5,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S20103,02.1.3 Beer
+94.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+99,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S120504,12.5.4 Transport insurance
+99.7,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S30102,03.1.2 Garments
+97.5,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S20102,02.1.2 Wine
+99.2,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S20101,02.1.1 Spirits
+98.2,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S30103,03.1.3 Other clothing and clothing accessories
+81.7,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S20200,02.2.0 Tobacco
+87.8,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S40501,04.5.1 Electricity
+102.2,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S30200,03.2.0 Footwear including repairs
+93.6,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+100.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S50102,05.1.2 Carpets and other floor coverings
+92.4,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S40100,04.1.0 Actual rentals for housing
+95.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S40200,04.2.0 Owner Occupied Housing Costs
+100.8,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S50200,05.2.0 Household Textiles
+103,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S40301,04.3.1 Materials for maintenance and repair
+99.7,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S40302,04.3.2 Services for maintenance and repair
+101.8,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S50301,05.3.1/2 Major appliances and small electric goods
+91.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S40403,04.4.3 Sewerage collection
+96.7,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S40401,04.4.1 Water supply
+101.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S50601,05.6.1 Non-durable household goods
+164.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S40503,04.5.3 Liquid fuels
+91.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S40502,04.5.2 Gas
+95.4,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S70204,07.2.4 Other services
+97.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S40900,04.9.0 Council Tax and rates
+96.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S40504,04.5.4 Solid fuels
+91.5,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S70301,07.3.1 Passenger transport by railway
+106.6,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S50303,05.3.3 Repair of household appliances
+97,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S50101,05.1.1 Furniture and furnishings
+95.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+92.2,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S50602,05.6.2 Domestic services and household services
+97.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+97.6,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+97.5,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+97.8,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S50500,05.5.0 Tools and equipment for House and Garden
+95.2,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S90201,09.2.1/2 Major durables for in/outdoor recreation
+88.6,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S60300,06.3.0 Hospital Services
+95.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S60101,06.1.1 Pharmaceutical products
+89.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S90401,09.4.1 Recreational and sporting services
+96.2,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S60201,"06.2.1/3 Medical services, paramedical services"
+110.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S70191,07.1.1b Second Hand Cars
+93.4,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S60202,06.2.2 Dental services
+91,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S90402,09.4.2 Cultural services
+95.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S70102,07.1.2/3 Motorcycles and bicycles
+127.6,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S70202,07.2.2 Fuels and lubricants
+93,Month,Apr-12,K02000001,United Kingdom,cpih1dim1T110000,11 Restaurants and hotels
+94.5,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S70302,07.3.2 Passenger transport by road
+96.8,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S70181,07.1.1 New Cars
+98.5,Month,Apr-12,K02000001,United Kingdom,cpih1dim1T120000,12 Miscellaneous goods and services
+79,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S70303,07.3.3 Passenger transport by air
+98.7,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S70201,07.2.1 Spare parts and accessories
+88.6,Month,Apr-12,K02000001,United Kingdom,cpih1dim1T20000,02 Alcoholic beverages and tobacco
+72.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S80100,08.1.0 Postal Services
+98.6,Month,Apr-12,K02000001,United Kingdom,cpih1dim1T90000,09 Recreation and culture
+93.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S70203,07.2.3 Maintenance and repairs
+81.4,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G100000,10.0 Education
+148,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+100.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G10200,01.2 Non-alcoholic beverages
+84.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+93.4,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G110200,11.2 Accommodation services
+104.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S90104,09.1.4 Recording media
+93.2,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G120400,12.4 Social protection
+122.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+105,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G120600,12.6 Financial services (nec)
+103.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S90301,"09.3.1 Games, toys and hobbies"
+135.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S90103,09.1.3 Data processing equipment
+100.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+87.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G20200,02.2 Tobacco
+94.7,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S90304,"09.3.4/5 Pets, related products and services"
+104.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S90303,"09.3.3 Gardens, plants and flowers"
+91.9,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S90501,09.5.1 Books
+99.1,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G30100,03.1 Clothing
+82.7,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S90502,09.5.2 Newspapers and periodicals
+94.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S90600,09.6.0 Package Holidays
+94.2,Month,Apr-12,K02000001,United Kingdom,cpih1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+98.1,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G40400,04.4 Water supply and misc. services for the dwelling
+68,Month,Apr-12,K02000001,United Kingdom,cpih1dim1T100000,10 Education
+98.4,Month,Apr-12,K02000001,United Kingdom,cpih1dim1T10000,01 Food and non-alcoholic beverages
+94.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+98.2,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G40900,04.9.0 Council Tax and rates
+98.2,Month,Apr-12,K02000001,United Kingdom,cpih1dim1T50000,"05 Furniture, household equipment and maintenance"
+99.8,Month,Apr-12,K02000001,United Kingdom,cpih1dim1T30000,03 Clothing and footwear
+101.8,Month,Apr-12,K02000001,United Kingdom,cpih1dim1T70000,07 Transport
+98.5,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G50100,"05.1 Furniture, furnishings and carpets"
+98,Month,Apr-13,K02000001,United Kingdom,cpih1dim1A0,Overall Index
+93.3,Month,Apr-12,K02000001,United Kingdom,cpih1dim1T60000,06 Health
+103.1,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G10100,01.1 Food
+100.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G50200,05.2 Household textiles
+95.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G110100,11.1 Catering services
+94.1,Month,Apr-12,K02000001,United Kingdom,cpih1dim1T80000,08 Communication
+97.9,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G120700,12.7 Other services (nec)
+99.5,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G50400,"05.4 Glassware, tableware and household utensils"
+99.9,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G30200,03.2 Footwear including repairs
+100.9,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G120100,12.1 Personal care
+94.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G40100,04.1 Actual rentals for housing
+94.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G50500,05.5 Tools and equipment for house and garden
+100.7,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+100.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G120300,12.3 Personal effects (nec)
+99.1,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G40500,"04.5 Electricity , gas and other fuels"
+89.5,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G70300,07.3 Transport services
+95.6,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G80100,08.1 Postal services
+97.1,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G120500,12.5 Insurance
+93.1,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G90500,"09.5 Books, newspapers and stationery"
+102.4,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G20100,02.1 Alcoholic beverages
+97.2,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G80200,08.2/3 Telephone and telefax equip
+103.4,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S10101,01.1.1 Bread and cereals
+96.5,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G40200,04.2.0 Owner Occupied Housing Costs
+96.1,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G90200,9.2 Other major durables for recreation and culture
+107.2,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S10105,01.1.5 Oils and fats
+101.4,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G90300,"09.3 Other recreational items, gardens and pets"
+100.6,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G50300,"05.3 Household appliances, fitting and repairs"
+100.7,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S10106,01.1.6 Fruit
+94.2,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G90400,09.4 Recreational and cultural services
+93.4,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S110200,11.2.0 Accommodation Services
+96.2,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G50600,05.6 Goods and services for routine maintenance
+94.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S120504,12.5.4 Transport insurance
+98.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G90600,09.6 Package holidays
+96.1,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G60100,"06.1 Medical products, appliances and equipment"
+101.4,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S10102,01.1.2 Meat
+105,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S120602,12.6.2 Other financial services (nec)
+96.9,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G60200,06.2 Out-patient services
+103.6,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S10104,"01.1.4 Milk, cheese and eggs"
+97.9,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+93.3,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G60300,06.3 Hospital services
+100.3,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+101,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S20102,02.1.2 Wine
+100.7,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G70100,07.1 Purchase of vehicles
+101.7,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S10109,01.1.9 Food products (nec)
+99.2,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S30102,03.1.2 Garments
+104.1,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+107.7,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G70200,07.2 Operation of personal transport equipment
+95.6,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S110101,"11.1.1 Restaurants, cafes"
+95,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+98.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S110102,11.1.2 Canteens
+115.7,Month,Apr-13,K02000001,United Kingdom,cpih1dim1G90100,09.1 Audio-visual equipment and related products
+96.5,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S40200,04.2.0 Owner Occupied Housing Costs
+81.4,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S100000,10.0.0 Education
+101.4,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+102,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S40301,04.3.1 Materials for maintenance and repair
+98.2,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S10103,01.1.3 Fish
+99.9,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S120302,12.3.2 Other personal effects
+99.3,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S40302,04.3.2 Services for maintenance and repair
+111,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+92.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S120503,12.5.3 Health insurance
+99.7,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S40401,04.4.1 Water supply
+100.1,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+102.2,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S20101,02.1.1 Spirits
+163.7,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S40503,04.5.3 Liquid fuels
+96.6,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+87.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S20200,02.2.0 Tobacco
+96.2,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S40504,04.5.4 Solid fuels
+102.4,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S120102,12.1.2/3 Appliances and products for personal care
+94.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S50500,05.5.0 Tools and equipment for House and Garden
+93.2,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S120400,12.4.0 Social Protection
+98.2,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S40900,04.9.0 Council Tax and rates
+100.3,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S50601,05.6.1 Non-durable household goods
+105.7,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S120502,12.5.2 House contents insurance
+102.3,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S50102,05.1.2 Carpets and other floor coverings
+96,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S60202,06.2.2 Dental services
+104.6,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S20103,02.1.3 Beer
+99.9,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S70201,07.2.1 Spare parts and accessories
+102.9,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S50303,05.3.3 Repair of household appliances
+122.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S70202,07.2.2 Fuels and lubricants
+98.9,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S30103,03.1.3 Other clothing and clothing accessories
+79.6,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S70303,07.3.3 Passenger transport by air
+99.5,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+90.1,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+99.9,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S30200,03.2.0 Footwear including repairs
+93.6,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S50602,05.6.2 Domestic services and household services
+94.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S40100,04.1.0 Actual rentals for housing
+95.6,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S80100,08.1.0 Postal Services
+96,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S60101,06.1.1 Pharmaceutical products
+96.6,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S40403,04.4.3 Sewerage collection
+116.2,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+94.5,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S40501,04.5.1 Electricity
+96.2,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+98.6,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+99.5,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S40502,04.5.2 Gas
+93.3,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S60300,06.3.0 Hospital Services
+94,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S90401,09.4.1 Recreational and sporting services
+97.7,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S50101,05.1.1 Furniture and furnishings
+96,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S70102,07.1.2/3 Motorcycles and bicycles
+97.6,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+100.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S50200,05.2.0 Household Textiles
+96.9,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S70181,07.1.1 New Cars
+100.4,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S50301,05.3.1/2 Major appliances and small electric goods
+98.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S90600,09.6.0 Package Holidays
+123.1,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S90103,09.1.3 Data processing equipment
+99.2,Month,Apr-13,K02000001,United Kingdom,cpih1dim1T30000,03 Clothing and footwear
+97.9,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S60201,"06.2.1/3 Medical services, paramedical services"
+108,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S90104,09.1.4 Recording media
+101.6,Month,Apr-13,K02000001,United Kingdom,cpih1dim1T70000,07 Transport
+107.5,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S70191,07.1.1b Second Hand Cars
+98.9,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+95.6,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S70203,07.2.3 Maintenance and repairs
+100,Month,Apr-13,K02000001,United Kingdom,cpih1dim1T90000,09 Recreation and culture
+96.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S70204,07.2.4 Other services
+99.9,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S90303,"09.3.3 Gardens, plants and flowers"
+94.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S70301,07.3.1 Passenger transport by railway
+98.1,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G110100,11.1 Catering services
+95.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S70302,07.3.2 Passenger transport by road
+96.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S90304,"09.3.4/5 Pets, related products and services"
+101.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G120100,12.1 Personal care
+102.9,Month,Apr-13,K02000001,United Kingdom,cpih1dim1T10000,01 Food and non-alcoholic beverages
+97.2,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+99.3,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G120500,12.5 Insurance
+93.7,Month,Apr-13,K02000001,United Kingdom,cpih1dim1T20000,02 Alcoholic beverages and tobacco
+123.8,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+97.7,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G40200,04.2.0 Owner Occupied Housing Costs
+98.3,Month,Apr-13,K02000001,United Kingdom,cpih1dim1T50000,"05 Furniture, household equipment and maintenance"
+96.1,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S90201,09.2.1/2 Major durables for in/outdoor recreation
+100.4,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G40400,04.4 Water supply and misc. services for the dwelling
+95.5,Month,Apr-13,K02000001,United Kingdom,cpih1dim1T60000,06 Health
+103.9,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S90301,"09.3.1 Games, toys and hobbies"
+97.2,Month,Apr-13,K02000001,United Kingdom,cpih1dim1T80000,08 Communication
+103.7,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G40500,"04.5 Electricity , gas and other fuels"
+94.3,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S90402,09.4.2 Cultural services
+95.1,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G110200,11.2 Accommodation services
+99.1,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G40900,04.9.0 Council Tax and rates
+92.9,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S90501,09.5.1 Books
+95.7,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G120400,12.4 Social protection
+99.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G50100,"05.1 Furniture, furnishings and carpets"
+102.5,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G120600,12.6 Financial services (nec)
+89.4,Month,Apr-13,K02000001,United Kingdom,cpih1dim1S90502,09.5.2 Newspapers and periodicals
+96.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G40100,04.1 Actual rentals for housing
+100.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G50300,"05.3 Household appliances, fitting and repairs"
+81.4,Month,Apr-13,K02000001,United Kingdom,cpih1dim1T100000,10 Education
+99.7,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+101.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G50400,"05.4 Glassware, tableware and household utensils"
+95.4,Month,Apr-13,K02000001,United Kingdom,cpih1dim1T110000,11 Restaurants and hotels
+100.3,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G50200,05.2 Household textiles
+98.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G50500,05.5 Tools and equipment for house and garden
+99.6,Month,Apr-13,K02000001,United Kingdom,cpih1dim1T120000,12 Miscellaneous goods and services
+98.5,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G60200,06.2 Out-patient services
+98.3,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G60100,"06.1 Medical products, appliances and equipment"
+96.6,Month,Apr-13,K02000001,United Kingdom,cpih1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+106.1,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G70200,07.2 Operation of personal transport equipment
+99.6,Month,Apr-14,K02000001,United Kingdom,cpih1dim1A0,Overall Index
+97.7,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G60300,06.3 Hospital services
+89.8,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G100000,10.0 Education
+98.1,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G90200,9.2 Other major durables for recreation and culture
+103.6,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G10100,01.1 Food
+101.5,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G70100,07.1 Purchase of vehicles
+100.4,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G90300,"09.3 Other recreational items, gardens and pets"
+99.1,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G80100,08.1 Postal services
+102.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G10200,01.2 Non-alcoholic beverages
+102.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+100.3,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G120300,12.3 Personal effects (nec)
+99,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G80200,08.2/3 Telephone and telefax equip
+98.6,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G120700,12.7 Other services (nec)
+97.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S110101,"11.1.1 Restaurants, cafes"
+111.5,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G90100,09.1 Audio-visual equipment and related products
+101.5,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G20100,02.1 Alcoholic beverages
+102.4,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S120102,12.1.2/3 Appliances and products for personal care
+93.7,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G20200,02.2 Tobacco
+96.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G90400,09.4 Recreational and cultural services
+95.7,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S120400,12.4.0 Social Protection
+100.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G30100,03.1 Clothing
+97.8,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S120504,12.5.4 Transport insurance
+98.3,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G90500,"09.5 Books, newspapers and stationery"
+101.6,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G30200,03.2 Footwear including repairs
+100.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S20101,02.1.1 Spirits
+89.8,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S100000,10.0.0 Education
+99.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G50600,05.6 Goods and services for routine maintenance
+100.3,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S30102,03.1.2 Garments
+104,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S10101,01.1.1 Bread and cereals
+98.6,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G70300,07.3 Transport services
+99.6,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S30103,03.1.3 Other clothing and clothing accessories
+104,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S10102,01.1.2 Meat
+98.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1G90600,09.6 Package holidays
+97.4,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+104.5,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S10104,"01.1.4 Milk, cheese and eggs"
+100.7,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S10103,01.1.3 Fish
+101.6,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S30200,03.2.0 Footwear including repairs
+106.7,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S10105,01.1.5 Oils and fats
+101.3,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S10106,01.1.6 Fruit
+105.4,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S10109,01.1.9 Food products (nec)
+96.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S40100,04.1.0 Actual rentals for housing
+102.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+105.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+101.3,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S40401,04.4.1 Water supply
+101.5,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+100.6,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S110102,11.1.2 Canteens
+99.1,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S40900,04.9.0 Council Tax and rates
+97.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+95.1,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S110200,11.2.0 Accommodation Services
+101.1,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S50102,05.1.2 Carpets and other floor coverings
+102.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S120502,12.5.2 House contents insurance
+100.4,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+100,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S50301,05.3.1/2 Major appliances and small electric goods
+97.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S120503,12.5.3 Health insurance
+101.3,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S50303,05.3.3 Repair of household appliances
+100.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S120302,12.3.2 Other personal effects
+102.5,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S120602,12.6.2 Other financial services (nec)
+96.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S50602,05.6.2 Domestic services and household services
+98.6,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S120700,12.7.0 Other Services Not Elsewhere covered
+101,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S20102,02.1.2 Wine
+98.7,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S60102,06.1.2/3 Other medical and therapeutic equipment
+93.7,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S20200,02.2.0 Tobacco
+101.5,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S70201,07.2.1 Spare parts and accessories
+103.8,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S20103,02.1.3 Beer
+146.3,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S40503,04.5.3 Liquid fuels
+116.7,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S70202,07.2.2 Fuels and lubricants
+97.7,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S40200,04.2.0 Owner Occupied Housing Costs
+99.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S40504,04.5.4 Solid fuels
+98.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S70204,07.2.4 Other services
+98.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S50500,05.5.0 Tools and equipment for House and Garden
+99.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S40301,04.3.1 Materials for maintenance and repair
+99.1,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S80100,08.1.0 Postal Services
+99.5,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S40302,04.3.2 Services for maintenance and repair
+103.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S50601,05.6.1 Non-durable household goods
+99,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S80200,08.2.0 Telephone and Telefax Equipment & Services
+99.7,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S40403,04.4.3 Sewerage collection
+99.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S60201,"06.2.1/3 Medical services, paramedical services"
+111.5,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S90101,09.1.1 Reception and reproduction of sound and pictures
+97.8,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S60202,06.2.2 Dental services
+100.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S40501,04.5.1 Electricity
+100.1,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S70102,07.1.2/3 Motorcycles and bicycles
+110.5,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S90102,"09.1.2 Photographic, cinematographic and optical equipment"
+104.6,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S40502,04.5.2 Gas
+97.7,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S70181,07.1.1 New Cars
+98.6,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S90105,"09.1.5 Repair of audio-visual equipment , related products"
+99.5,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S50101,05.1.1 Furniture and furnishings
+107.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S70191,07.1.1b Second Hand Cars
+100.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S90302,09.3.2 Equipment for sport and open-air recreation
+100.3,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S50200,05.2.0 Household Textiles
+94.4,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S70303,07.3.3 Passenger transport by air
+96.5,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S90502,09.5.2 Newspapers and periodicals
+101.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S90104,09.1.4 Recording media
+101.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+97.6,Month,Apr-14,K02000001,United Kingdom,cpih1dim1T110000,11 Restaurants and hotels
+100.4,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S90301,"09.3.1 Games, toys and hobbies"
+98,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S60101,06.1.1 Pharmaceutical products
+100,Month,Apr-14,K02000001,United Kingdom,cpih1dim1T120000,12 Miscellaneous goods and services
+102.6,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S90303,"09.3.3 Gardens, plants and flowers"
+97.7,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S60300,06.3.0 Hospital Services
+98.5,Month,Apr-14,K02000001,United Kingdom,cpih1dim1T40000,"04 Housing, water, electricity, gas and other fuels"
+98.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S90304,"09.3.4/5 Pets, related products and services"
+97.3,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S70203,07.2.3 Maintenance and repairs
+103.4,Month,Apr-14,K02000001,United Kingdom,cpih1dim1T10000,01 Food and non-alcoholic beverages
+99.8,Month,Apr-14,K02000001,United Kingdom,cpih1dim1T50000,"05 Furniture, household equipment and maintenance"
+98.3,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S70301,07.3.1 Passenger transport by railway
+103.1,Month,Apr-14,K02000001,United Kingdom,cpih1dim1T70000,07 Transport
+100.4,Month,Apr-14,K02000001,United Kingdom,cpih1dim1T30000,03 Clothing and footwear
+99.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S70302,07.3.2 Passenger transport by road
+99,Month,Apr-14,K02000001,United Kingdom,cpih1dim1T80000,08 Communication
+100.5,Month,Apr-14,K02000001,United Kingdom,cpih1dim1T90000,09 Recreation and culture
+104.8,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S70304,07.3.4 Passenger transport by sea and inland waterway
+98.7,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G100000,10.0 Education
+100.5,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G10100,01.1 Food
+122.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S90103,09.1.3 Data processing equipment
+100.3,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G10200,01.2 Non-alcoholic beverages
+98.1,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S90201,09.2.1/2 Major durables for in/outdoor recreation
+99.7,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G110100,11.1 Catering services
+96.4,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S90401,09.4.1 Recreational and sporting services
+98.7,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G110200,11.2 Accommodation services
+97.1,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S90402,09.4.2 Cultural services
+100.6,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G120100,12.1 Personal care
+99.5,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G120400,12.4 Social protection
+100.4,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S90501,09.5.1 Books
+99.5,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G120500,12.5 Insurance
+99.5,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G120600,12.6 Financial services (nec)
+98.9,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G120700,12.7 Other services (nec)
+99,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S90503,"09.5.3/4 Misc. printed matter, stationery, drawing materials"
+99.9,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G20100,02.1 Alcoholic beverages
+99.8,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G30100,03.1 Clothing
+98.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1S90600,09.6.0 Package Holidays
+100.6,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G30200,03.2 Footwear including repairs
+99,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G50200,05.2 Household textiles
+89.8,Month,Apr-14,K02000001,United Kingdom,cpih1dim1T100000,10 Education
+99.5,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G40100,04.1 Actual rentals for housing
+99.1,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G50600,05.6 Goods and services for routine maintenance
+96.9,Month,Apr-14,K02000001,United Kingdom,cpih1dim1T20000,02 Alcoholic beverages and tobacco
+99.8,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G90300,"09.3 Other recreational items, gardens and pets"
+100.5,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G40500,"04.5 Electricity , gas and other fuels"
+98.2,Month,Apr-14,K02000001,United Kingdom,cpih1dim1T60000,06 Health
+98.8,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G50100,"05.1 Furniture, furnishings and carpets"
+99.7,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G90600,09.6 Package holidays
+99.9,Month,Apr-15,K02000001,United Kingdom,cpih1dim1A0,Overall Index
+100.2,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G50400,"05.4 Glassware, tableware and household utensils"
+100.1,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S10101,01.1.1 Bread and cereals
+99.8,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G120300,12.3 Personal effects (nec)
+99.9,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G60100,"06.1 Medical products, appliances and equipment"
+101.1,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S10102,01.1.2 Meat
+99.7,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G20200,02.2 Tobacco
+100.1,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G60200,06.2 Out-patient services
+98.4,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S10105,01.1.5 Oils and fats
+99.6,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G40200,04.2.0 Owner Occupied Housing Costs
+100.7,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G60300,06.3 Hospital services
+100.5,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S10107,01.1.7 Vegetables including potatoes and tubers
+99.7,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G90200,9.2 Other major durables for recreation and culture
+100,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G40300,04.3 Regular maintenance and repair of the dwelling
+99.7,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S110101,"11.1.1 Restaurants, cafes"
+99.9,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G40400,04.4 Water supply and misc. services for the dwelling
+99.7,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G90400,09.4 Recreational and cultural services
+99.9,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S110102,11.1.2 Canteens
+100.3,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G40900,04.9.0 Council Tax and rates
+98.7,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S100000,10.0.0 Education
+99.8,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G50300,"05.3 Household appliances, fitting and repairs"
+98.7,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S110200,11.2.0 Accommodation Services
+101,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S10104,"01.1.4 Milk, cheese and eggs"
+100.4,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G50500,05.5 Tools and equipment for house and garden
+100.6,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S120302,12.3.2 Other personal effects
+100.4,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S10106,01.1.6 Fruit
+101,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G70100,07.1 Purchase of vehicles
+100,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S10109,01.1.9 Food products (nec)
+101.9,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S120503,12.5.3 Health insurance
+100.9,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S10201,"01.2.1 Coffee, tea and cocoa"
+100.9,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G70200,07.2 Operation of personal transport equipment
+99.5,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S120602,12.6.2 Other financial services (nec)
+100.2,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S10202,"01.2.2 Mineral waters, soft drinks and juices"
+98.3,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G70300,07.3 Transport services
+100.8,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S120102,12.1.2/3 Appliances and products for personal care
+100,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S20103,02.1.3 Beer
+99.3,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S120301,"12.3.1 Jewellery, clocks and watches"
+100.4,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G80100,08.1 Postal services
+99.7,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S20200,02.2.0 Tobacco
+99.5,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S120400,12.4.0 Social Protection
+99.9,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G80200,08.2/3 Telephone and telefax equip
+101.1,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S30103,03.1.3 Other clothing and clothing accessories
+97.8,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S120504,12.5.4 Transport insurance
+99.5,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S40100,04.1.0 Actual rentals for housing
+102.2,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G90100,09.1 Audio-visual equipment and related products
+99.6,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S40200,04.2.0 Owner Occupied Housing Costs
+99.6,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S20101,02.1.1 Spirits
+100.1,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S40301,04.3.1 Materials for maintenance and repair
+100.1,Month,Apr-15,K02000001,United Kingdom,cpih1dim1G90500,"09.5 Books, newspapers and stationery"
+99.7,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S30102,03.1.2 Garments
+98.8,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S10103,01.1.3 Fish
+99.6,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S40401,04.4.1 Water supply
+99.8,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S30104,"03.1.4 Cleaning, repair and hire of clothing"
+100.5,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S10108,"01.1.8 Sugar, jam, syrups, chocolate and confectionery"
+99.3,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S50101,05.1.1 Furniture and furnishings
+100.6,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S30200,03.2.0 Footwear including repairs
+99.7,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S120101,12.1.1 Hairdressing and personal grooming establishments
+99.7,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S50301,05.3.1/2 Major appliances and small electric goods
+100.1,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S40403,04.4.3 Sewerage collection
+100.7,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S120502,12.5.2 House contents insurance
+100.2,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S50400,"05.4.0 Glassware, Tableware and Household Utensils"
+100,Month,Apr-15,K02000001,United Kingdom,cpih1dim1S40501,04.5.1 Electricity
