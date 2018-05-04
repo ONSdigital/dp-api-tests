@@ -87,17 +87,8 @@ func TestSuccessfullyGetFilterBlueprint(t *testing.T) {
 		Convey("When requesting to get filter blueprint with authentication", func() {
 			Convey("Then filter blueprint is returned in the response body", func() {
 
-				response := filterAPI.GET("/filters/{filter_blueprint_id}", unpublishedFilterBlueprintID).
-					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusOK).JSON().Object()
-
-				response.Value("filter_id").Equal(unpublishedFilterBlueprintID)
-				response.Value("instance_id").Equal(instanceID)
-				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("/filters/" + unpublishedFilterBlueprintID + "/dimensions$")
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filters/(.+)$")
-				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
-				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
-				response.Value("published").Equal(false)
+				filterAPI.GET("/filters/{filter_blueprint_id}", unpublishedFilterBlueprintID).
+					Expect().Status(http.StatusNotFound)
 			})
 		})
 
@@ -111,16 +102,8 @@ func TestSuccessfullyGetFilterBlueprint(t *testing.T) {
 
 			Convey("Then filter blueprint is returned in the response body", func() {
 
-				response := filterAPI.GET("/filters/{filter_blueprint_id}", unpublishedFilterBlueprintID).
-					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusOK).JSON().Object()
-
-				response.Value("filter_id").Equal(unpublishedFilterBlueprintID)
-				response.Value("instance_id").Equal(instanceID)
-				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("/filters/" + unpublishedFilterBlueprintID + "/dimensions$")
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filters/(.+)$")
-				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
-				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+				filterAPI.GET("/filters/{filter_blueprint_id}", unpublishedFilterBlueprintID).
+					Expect().Status(http.StatusNotFound)
 			})
 		})
 
