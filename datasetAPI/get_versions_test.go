@@ -44,13 +44,13 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 						// check the published test version document has the expected returned fields and values
 						response.Value("items").Array().Element(i).Object().Value("id").Equal(instanceID)
 						checkVersionResponse(datasetID, editionID, instanceID, edition, response.Value("items").Array().Element(i).Object())
-						checkPublicOrPrivateLinksDoNotExistInResponse(response.Value("items").Array().Element(i).Object().Value("downloads").Object())
+						checkNeitherPublicOrPrivateLinksExistInResponse(response.Value("items").Array().Element(i).Object().Value("downloads").Object())
 					}
 
 					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == unpublishedInstanceID {
 						response.Value("items").Array().Element(i).Object().Value("id").Equal(unpublishedInstanceID)
 						response.Value("items").Array().Element(i).Object().Value("state").Equal("associated")
-						checkPublicOrPrivateLinksDoNotExistInResponse(response.Value("items").Array().Element(i).Object().Value("downloads").Object())
+						checkNeitherPublicOrPrivateLinksExistInResponse(response.Value("items").Array().Element(i).Object().Value("downloads").Object())
 					}
 				}
 			})
@@ -63,7 +63,7 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 			Convey("Then response contains a list of only published versions of the dataset edition", func() {
 				response.Value("items").Array().Length().Equal(1)
 				checkVersionResponse(datasetID, editionID, instanceID, edition, response.Value("items").Array().Element(0).Object())
-				checkPublicOrPrivateLinksDoNotExistInResponse(response.Value("items").Array().Element(0).Object().Value("downloads").Object())
+				checkNeitherPublicOrPrivateLinksExistInResponse(response.Value("items").Array().Element(0).Object().Value("downloads").Object())
 			})
 		})
 
@@ -82,19 +82,19 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 						// check the published test version document has the expected returned fields and values
 						response.Value("items").Array().Element(i).Object().Value("id").Equal(instanceID)
 						checkVersionResponse(datasetID, editionID, instanceID, edition, response.Value("items").Array().Element(i).Object())
-						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("private").String().Match("(.+)csv-exported/myfile.csv")
-						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("public").String().Match("(.+)csv-exported/myfile.csv")
-						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("private").String().Match("(.+)csv-exported/myfile.xls")
-						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("public").String().Match("(.+)csv-exported/myfile.xls")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("private").String().Match("private/myfile.csv")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("public").String().Match("public/myfile.csv")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("private").String().Match("private/myfile.xls")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("public").String().Match("public/myfile.xls")
 					}
 
 					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == unpublishedInstanceID {
 						response.Value("items").Array().Element(i).Object().Value("id").Equal(unpublishedInstanceID)
 						response.Value("items").Array().Element(i).Object().Value("state").Equal("associated")
-						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("private").String().Match("(.+)csv-exported/myfile.csv")
-						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("public").String().Match("(.+)csv-exported/myfile.csv")
-						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("private").String().Match("(.+)csv-exported/myfile.xls")
-						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("public").String().Match("(.+)csv-exported/myfile.xls")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("private").String().Match("private/myfile.csv")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("public").String().Match("public/myfile.csv")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("private").String().Match("private/myfile.xls")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("public").String().Match("public/myfile.xls")
 					}
 				}
 			})
@@ -312,23 +312,23 @@ func checkVersionResponse(datasetID, editionID, instanceID, edition string, resp
 	response.Value("alerts").Array().Element(0).Object().Value("description").String().Equal("A correction to an observation for males of age 25, previously 11 now changed to 12")
 	response.Value("alerts").Array().Element(0).Object().Value("type").String().Equal("Correction")
 	response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
-	response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("(.+)/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
+	response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
 	response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
 	response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
-	response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("(.+)/aws/census-2017-1-csv$")
+	response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("/aws/census-2017-1-csv$")
 	response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
-	response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("(.+)/aws/census-2017-1-xls$")
+	response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("/aws/census-2017-1-xls$")
 	response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24")
 	response.Value("edition").Equal("2017")
 	response.Value("latest_changes").Array().Element(0).Object().Value("description").String().Equal("The border of Southampton changed after the south east cliff face fell into the sea.")
 	response.Value("latest_changes").Array().Element(0).Object().Value("name").String().Equal("Changes in Classification")
 	response.Value("latest_changes").Array().Element(0).Object().Value("type").String().Equal("Summary of Changes")
 	response.Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
-	response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
-	response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions$")
+	response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("/datasets/" + datasetID + "$")
+	response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions$")
 	response.Value("links").Object().Value("edition").Object().Value("id").Equal(edition)
-	response.Value("links").Object().Value("edition").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
-	response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
+	response.Value("links").Object().Value("edition").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "$")
+	response.Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
 	response.Value("links").Object().Value("spatial").Object().Value("href").Equal("http://ons.gov.uk/geographylist")
 	response.Value("release_date").Equal("2017-12-12") // TODO Should be isodate
 	response.Value("state").Equal("published")
@@ -338,7 +338,7 @@ func checkVersionResponse(datasetID, editionID, instanceID, edition string, resp
 	response.Value("version").Equal(1)
 }
 
-func checkPublicOrPrivateLinksDoNotExistInResponse(response *httpexpect.Object) {
+func checkNeitherPublicOrPrivateLinksExistInResponse(response *httpexpect.Object) {
 	response.Value("csv").Object().NotContainsKey("public")
 	response.Value("csv").Object().NotContainsKey("private")
 	response.Value("xls").Object().NotContainsKey("public")

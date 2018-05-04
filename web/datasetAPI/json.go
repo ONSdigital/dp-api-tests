@@ -78,7 +78,8 @@ var temporal = mongo.TemporalFrequency{
 func ValidPublishedWithUpdatesDatasetData(datasetID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"id":                                datasetID,
+			"id": datasetID,
+			"current.collection_id":             "108064B3-A808-449B-9041-EA3A2F72CFAA",
 			"current.contacts":                  []mongo.ContactDetails{contact},
 			"current.description":               "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
 			"current.id":                        datasetID,
@@ -107,6 +108,7 @@ func ValidPublishedWithUpdatesDatasetData(datasetID string) bson.M {
 			"current.title":                     "CPI",
 			"current.unit_of_measure":           "Pounds Sterling",
 			"current.uri":                       "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation",
+			"next.collection_id":                "208064B3-A808-449B-9041-EA3A2F72CFAB",
 			"next.contacts":                     []mongo.ContactDetails{contact},
 			"next.description":                  "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
 			"next.id":                           datasetID,
@@ -143,7 +145,8 @@ func ValidPublishedWithUpdatesDatasetData(datasetID string) bson.M {
 func validPublishedDatasetData(datasetID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"id":                                datasetID,
+			"id": datasetID,
+			"current.collection_id":             "108064B3-A808-449B-9041-EA3A2F72CFAA",
 			"current.contacts":                  []mongo.ContactDetails{contact},
 			"current.description":               "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
 			"current.id":                        datasetID,
@@ -172,6 +175,7 @@ func validPublishedDatasetData(datasetID string) bson.M {
 			"current.title":                     "CPI",
 			"current.unit_of_measure":           "Pounds Sterling",
 			"current.uri":                       "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation",
+			"next.collection_id":                "208064B3-A808-449B-9041-EA3A2F72CFAB",
 			"next.contacts":                     []mongo.ContactDetails{contact},
 			"next.description":                  "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
 			"next.id":                           datasetID,
@@ -331,7 +335,7 @@ func validAggregateDimensionsData(dimensionID, instanceID string) bson.M {
 	}
 }
 
-// ValidPublishedEditionData returns an example bson object for a published edition resource
+// ValidPublishedEditionData returns an example bson object fo a published edition resource
 func ValidPublishedEditionData(datasetID, editionID, edition string) bson.M {
 	return bson.M{
 		"$set": bson.M{
@@ -381,6 +385,7 @@ func validPublishedInstanceData(datasetID, edition, instanceID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"alerts":                                                       []mongo.Alert{alert},
+			"collection_id":                                                "108064B3-A808-449B-9041-EA3A2F72CFAA",
 			"dimensions":                                                   []mongo.CodeList{dimension, dimensionTwo, dimensionThree, dimensionFour},
 			"downloads.csv.href":                                           cfg.DatasetAPIURL + "/aws/census-2017-1-csv",
 			"downloads.csv.size":                                           "10",

@@ -169,24 +169,24 @@ func checkEditionsResponse(datasetID, editionID, edition string, authenticated b
 	if !authenticated {
 		response.Value("items").Array().Element(0).Object().Value("edition").Equal(edition)
 		response.Value("items").Array().Element(0).Object().Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
-		response.Value("items").Array().Element(0).Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
-		response.Value("items").Array().Element(0).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
-		response.Value("items").Array().Element(0).Object().Value("links").Object().Value("versions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions$")
+		response.Value("items").Array().Element(0).Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("/datasets/" + datasetID + "$")
+		response.Value("items").Array().Element(0).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "$")
+		response.Value("items").Array().Element(0).Object().Value("links").Object().Value("versions").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions$")
 		response.Value("items").Array().Element(0).Object().Value("state").Equal("published")
 		return
 	}
 
 	response.Value("items").Array().Element(0).Object().Value("current").Object().Value("edition").Equal(edition)
 	response.Value("items").Array().Element(0).Object().Value("current").Object().Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
-	response.Value("items").Array().Element(0).Object().Value("current").Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
-	response.Value("items").Array().Element(0).Object().Value("current").Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
-	response.Value("items").Array().Element(0).Object().Value("current").Object().Value("links").Object().Value("versions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions$")
+	response.Value("items").Array().Element(0).Object().Value("current").Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("/datasets/" + datasetID + "$")
+	response.Value("items").Array().Element(0).Object().Value("current").Object().Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "$")
+	response.Value("items").Array().Element(0).Object().Value("current").Object().Value("links").Object().Value("versions").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions$")
 	response.Value("items").Array().Element(0).Object().Value("current").Object().Value("state").Equal("published")
 
 	response.Value("items").Array().Element(1).Object().Value("next").Object().Value("edition").Equal(edition)
 	response.Value("items").Array().Element(1).Object().Value("next").Object().Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
-	response.Value("items").Array().Element(1).Object().Value("next").Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
-	response.Value("items").Array().Element(1).Object().Value("next").Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
-	response.Value("items").Array().Element(1).Object().Value("next").Object().Value("links").Object().Value("versions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions$")
+	response.Value("items").Array().Element(1).Object().Value("next").Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("/datasets/" + datasetID + "$")
+	response.Value("items").Array().Element(1).Object().Value("next").Object().Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "$")
+	response.Value("items").Array().Element(1).Object().Value("next").Object().Value("links").Object().Value("versions").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions$")
 	response.Value("items").Array().Element(1).Object().Value("next").Object().Value("state").Equal("edition-confirmed")
 }

@@ -23,6 +23,10 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
+	authHeaders := make(map[string]string)
+	authHeaders[downloadServiceAuthTokenName] = downloadServiceAuthToken
+	authHeaders[florenceTokenName] = florenceToken
+
 	Convey("Given a published and unpublished version for a dataset edition exists", t, func() {
 		docs, err := setupPublishedAndUnpublishedVersions(datasetID, editionID, edition, instanceID, unpublishedInstanceID)
 		if err != nil {
@@ -38,23 +42,23 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 				response.Value("id").Equal(unpublishedInstanceID)
 				response.Value("collection_id").Equal("208064B3-A808-449B-9041-EA3A2F72CFAB")
 				response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
-				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("(.+)/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
+				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
 				response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
 				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
-				response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("(.+)/aws/census-2017-2-csv$")
+				response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("/aws/census-2017-2-csv$")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
-				response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("(.+)/aws/census-2017-2-xls$")
+				response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("/aws/census-2017-2-xls$")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24")
 				response.Value("edition").Equal(edition)
 				response.Value("latest_changes").Array().Element(0).Object().Value("description").String().Equal("The border of Southampton changed after the south east cliff face fell into the sea.")
 				response.Value("latest_changes").Array().Element(0).Object().Value("name").String().Equal("Changes in Classification")
 				response.Value("latest_changes").Array().Element(0).Object().Value("type").String().Equal("Summary of Changes")
-				response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
+				response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("/datasets/" + datasetID + "$")
 				response.Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
-				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/2/dimensions$")
-				response.Value("links").Object().Value("edition").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
+				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/2/dimensions$")
+				response.Value("links").Object().Value("edition").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "$")
 				response.Value("links").Object().Value("edition").Object().Value("id").Equal(edition)
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/2$")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/2$")
 				response.Value("links").Object().Value("spatial").Object().Value("href").Equal("http://ons.gov.uk/geographylist")
 				response.Value("release_date").Equal("2017-12-12")
 				response.Value("state").Equal("associated")
@@ -65,16 +69,13 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 			})
 
 			Convey("When an authenticated request including a valid download service token is made to get the published version", func() {
-				headers := make(map[string]string)
-				headers[downloadServiceAuthTokenName] = downloadServiceAuthToken
-				headers[florenceTokenName] = florenceToken
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2", datasetID, edition).WithHeaders(headers).
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2", datasetID, edition).WithHeaders(authHeaders).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/csv-exported/myfile.csv")
-				response.Value("downloads").Object().Value("csv").Object().Value("private").String().Equal("s3://csv-exported/myfile.csv")
-				response.Value("downloads").Object().Value("xls").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/csv-exported/myfile.xls")
-				response.Value("downloads").Object().Value("xls").Object().Value("private").String().Equal("s3://csv-exported/myfile.xls")
+				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/public/myfile.csv")
+				response.Value("downloads").Object().Value("csv").Object().Value("private").String().Equal("s3://private/myfile.csv")
+				response.Value("downloads").Object().Value("xls").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/public/myfile.xls")
+				response.Value("downloads").Object().Value("xls").Object().Value("private").String().Equal("s3://private/myfile.xls")
 			})
 		})
 
@@ -88,23 +89,23 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 				response.Value("alerts").Array().Element(0).Object().Value("type").String().Equal("Correction")
 				response.Value("id").Equal(instanceID)
 				response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
-				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("(.+)/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
+				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
 				response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
 				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
-				response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("(.+)/aws/census-2017-1-csv$")
+				response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("/aws/census-2017-1-csv$")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
-				response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("(.+)/aws/census-2017-1-xls$")
+				response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("/aws/census-2017-1-xls$")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24")
 				response.Value("edition").Equal(edition)
 				response.Value("latest_changes").Array().Element(0).Object().Value("description").String().Equal("The border of Southampton changed after the south east cliff face fell into the sea.")
 				response.Value("latest_changes").Array().Element(0).Object().Value("name").String().Equal("Changes in Classification")
 				response.Value("latest_changes").Array().Element(0).Object().Value("type").String().Equal("Summary of Changes")
-				response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
+				response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("/datasets/" + datasetID + "$")
 				response.Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
-				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions$")
-				response.Value("links").Object().Value("edition").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
+				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions$")
+				response.Value("links").Object().Value("edition").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "$")
 				response.Value("links").Object().Value("edition").Object().Value("id").Equal(edition)
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
 				response.Value("links").Object().Value("spatial").Object().Value("href").Equal("http://ons.gov.uk/geographylist")
 				response.Value("release_date").Equal("2017-12-12")
 				response.Value("state").Equal("published")
@@ -115,16 +116,13 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 			})
 
 			Convey("When a request including a valid download service token is made to get the published version", func() {
-				headers := make(map[string]string)
-				headers[downloadServiceAuthTokenName] = downloadServiceAuthToken
-				headers[downloadServiceTokenName] = downloadServiceToken
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeaders(headers).
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeaders(authHeaders).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/csv-exported/myfile.csv")
-				response.Value("downloads").Object().Value("csv").Object().Value("private").String().Equal("s3://csv-exported/myfile.csv")
-				response.Value("downloads").Object().Value("xls").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/csv-exported/myfile.xls")
-				response.Value("downloads").Object().Value("xls").Object().Value("private").String().Equal("s3://csv-exported/myfile.xls")
+				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/public/myfile.csv")
+				response.Value("downloads").Object().Value("csv").Object().Value("private").String().Equal("s3://private/myfile.csv")
+				response.Value("downloads").Object().Value("xls").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/public/myfile.xls")
+				response.Value("downloads").Object().Value("xls").Object().Value("private").String().Equal("s3://private/myfile.xls")
 			})
 		})
 
