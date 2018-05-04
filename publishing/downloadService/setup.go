@@ -52,7 +52,7 @@ func sendV4FileToAWS(region, bucket, filename string) error {
 	psk := createPSK()
 	pskStr := hex.EncodeToString(psk)
 
-	if err := vc.WriteKey("secret/shared/psk", filename, pskStr); err != nil {
+	if err := vc.WriteKey("secret/shared/psk/" + filename, "key", pskStr); err != nil {
 		return err
 	}
 
