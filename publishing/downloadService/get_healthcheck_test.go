@@ -14,7 +14,7 @@ func TestHealthcheck(t *testing.T) {
 
 	Convey("Given a request with no authentication headers", t, func() {
 		Convey("When get healthcheck is called", func() {
-			Convey("Then the response returns status OK (200)", func() {
+			Convey("Then the response returns a status of either 200 or 429", func() {
 
 				response := downloadService.
 					GET("/healthcheck").
