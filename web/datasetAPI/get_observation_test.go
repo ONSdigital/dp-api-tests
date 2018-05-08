@@ -44,26 +44,78 @@ func TestSuccessfullyGetObservationForVersion(t *testing.T) {
 			os.Exit(1)
 		}
 
-		Convey("When a request is made to get an observation resource for a published version", func() {
-			Convey("Then the response body contains the expected observation data", func() {
+		Convey("When a request is made to get an observations resource containing a single observation for a published version", func() {
+			Convey("Then the response body contains the expected observations data", func() {
 				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/observations", datasetID, edition).
 					WithQueryString("time=Aug-16&geography=K02000001&aggregate=cpi1dim1G50100").
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				response.Value("dimensions").Object().Value("aggregate").Object().Value("options").Array().Length().Equal(1)
-				response.Value("dimensions").Object().Value("aggregate").Object().Value("options").Array().Element(0).Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD/codes/cpi1dim1G50100$")
-				response.Value("dimensions").Object().Value("aggregate").Object().Value("options").Array().Element(0).Object().Value("id").Equal("cpi1dim1G50100")
-				response.Value("dimensions").Object().Value("geography").Object().Value("options").Array().Length().Equal(1)
-				response.Value("dimensions").Object().Value("geography").Object().Value("options").Array().Element(0).Object().Value("href").String().Match("/codelists/708064B3-A808-449B-9041-EA3A2F72CFAF/codes/K02000001$")
-				response.Value("dimensions").Object().Value("geography").Object().Value("options").Array().Element(0).Object().Value("id").Equal("K02000001")
-				response.Value("dimensions").Object().Value("time").Object().Value("options").Array().Length().Equal(1)
-				response.Value("dimensions").Object().Value("time").Object().Value("options").Array().Element(0).Object().Value("href").String().Match("/codelists/608064B3-A808-449B-9041-EA3A2F72CFAE/codes/Aug-16$")
-				response.Value("dimensions").Object().Value("time").Object().Value("options").Array().Element(0).Object().Value("id").Equal("Aug-16")
-				response.Value("observation").Equal("117.9")
+				response.Value("dimensions").Object().Value("aggregate").Object().Value("option").Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD/codes/cpi1dim1G50100$")
+				response.Value("dimensions").Object().Value("aggregate").Object().Value("option").Object().Value("id").Equal("cpi1dim1G50100")
+				response.Value("dimensions").Object().Value("geography").Object().Value("option").Object().Value("href").String().Match("/codelists/708064B3-A808-449B-9041-EA3A2F72CFAF/codes/K02000001$")
+				response.Value("dimensions").Object().Value("geography").Object().Value("option").Object().Value("id").Equal("K02000001")
+				response.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("href").String().Match("/codelists/608064B3-A808-449B-9041-EA3A2F72CFAE/codes/Aug-16$")
+				response.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("id").Equal("Aug-16")
+				response.Value("limit").Equal(10000)
 				response.Value("links").Object().Value("dataset_metadata").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1/metadata$")
 				response.Value("links").Object().Value("self").Object().Value("href").String().Match(".+/datasets/" + datasetID + "/editions/" + edition + "/versions/1/observations\\?aggregate=cpi1dim1G50100&geography=K02000001&time=Aug-16$")
 				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+				response.Value("observations").Array().Length().Equal(1)
+				response.Value("observations").Array().Element(0).Object().Value("observation").Equal("117.9")
+				response.Value("offset").Equal(0)
+				response.Value("total_observations").Equal(1)
+				response.Value("unit_of_measure").Equal("Pounds Sterling")
+			})
+		})
+
+		Convey("When a request is made to get an observations resource containing more than one observation for a published version", func() {
+			Convey("Then the response body contains the expected observations data", func() {
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/observations", datasetID, edition).
+					WithQueryString("time=Aug-16&geography=K02000001&aggregate=*").
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				response.Value("dimensions").Object().Value("geography").Object().Value("option").Object().Value("href").String().Match("/codelists/708064B3-A808-449B-9041-EA3A2F72CFAF/codes/K02000001$")
+				response.Value("dimensions").Object().Value("geography").Object().Value("option").Object().Value("id").Equal("K02000001")
+				response.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("href").String().Match("/codelists/608064B3-A808-449B-9041-EA3A2F72CFAE/codes/Aug-16$")
+				response.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("id").Equal("Aug-16")
+				response.Value("limit").Equal(10000)
+				response.Value("links").Object().Value("dataset_metadata").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1/metadata$")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match(".+/datasets/" + datasetID + "/editions/" + edition + "/versions/1/observations\\?aggregate=\\%2A&geography=K02000001&time=Aug-16$")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
+				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+				response.Value("observations").Array().Length().Equal(137)
+
+				// check two observations in observations array
+				for i := 0; i < len(response.Value("observations").Array().Iter()); i++ {
+					count := 0
+					if response.Value("observations").Array().Element(i).Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").String().Raw() == "cpi1dim1S50400" {
+						observation := response.Value("observations").Array().Element(i).Object()
+						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD/codes/cpi1dim1S50400")
+						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("id").Equal("cpi1dim1S50400")
+						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("label").Equal("05.4.0 Glassware, Tableware and Household Utensils")
+						observation.Value("dimensions").Object().NotContainsKey("geography")
+						observation.Value("observation").Equal("114.7")
+						count++
+					}
+
+					if response.Value("observations").Array().Element(i).Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").String().Raw() == "cpi1dim1S10108" {
+						observation := response.Value("observations").Array().Element(i).Object()
+						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD/codes/cpi1dim1S10108")
+						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("id").Equal("cpi1dim1S10108")
+						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("label").Equal("01.1.8 Sugar, jam, syrups, chocolate and confectionery")
+						observation.Value("dimensions").Object().NotContainsKey("geography")
+						observation.Value("observation").Equal("152.4")
+						count++
+					}
+
+					if count == 2 {
+						break
+					}
+				}
+
+				response.Value("offset").Equal(0)
+				response.Value("total_observations").Equal(137)
 				response.Value("unit_of_measure").Equal("Pounds Sterling")
 			})
 		})
@@ -113,9 +165,8 @@ func TestFailureToGetObservationForVersion(t *testing.T) {
 	Convey("Given the dataset, edition and version do not exist", t, func() {
 		Convey("When an authorised request to get an observation for a version of a dataset", func() {
 			Convey("Then return status not found (404) with message `Dataset not found`", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/observations", datasetID, edition).
 					WithQueryString("time=Aug-16&geography=K02000001&aggregate=cpi1dim1S40403").
-					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
 					Body().Contains("Dataset not found")
 			})
@@ -138,12 +189,12 @@ func TestFailureToGetObservationForVersion(t *testing.T) {
 		Update:     ValidPublishedEditionData(datasetID, editionID, edition),
 	}
 
-	unpublishedVersionDoc := &mongo.Doc{
+	publishedVersionDoc := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
-		Value:      unpublishedInstanceID,
-		Update:     validAssociatedInstanceData(datasetID, edition, unpublishedInstanceID),
+		Value:      instanceID,
+		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
 	}
 
 	Convey("Given a published dataset exist", t, func() {
@@ -155,9 +206,8 @@ func TestFailureToGetObservationForVersion(t *testing.T) {
 		Convey("but edition and version do not exist", func() {
 			Convey("When a request to get an observation for a version of a dataset", func() {
 				Convey("Then return status not found (404) with message `Edition not found`", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/observations", datasetID, edition).
 						WithQueryString("time=Aug-16&geography=K02000001&aggregate=cpi1dim1S40403").
-						WithHeader(florenceTokenName, florenceToken).
 						Expect().Status(http.StatusNotFound).
 						Body().Contains("Edition not found")
 				})
@@ -174,16 +224,65 @@ func TestFailureToGetObservationForVersion(t *testing.T) {
 			Convey("but a version does not exist", func() {
 				Convey("When a request to get an observation for a version of a dataset", func() {
 					Convey("Then return status not found (404) with message `Version not found`", func() {
-						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/observations", datasetID, edition).
 							WithQueryString("time=Aug-16&geography=K02000001&aggregate=cpi1dim1S40403").
-							WithHeader(florenceTokenName, florenceToken).
 							Expect().Status(http.StatusNotFound).
 							Body().Contains("Version not found")
 					})
 				})
 			})
 
+			Convey("and a published version does exist", func() {
+				if err := mongo.Setup(publishedVersionDoc); err != nil {
+					log.ErrorC("Was unable to run test", err, nil)
+					os.Exit(1)
+				}
+
+				Convey("When a request to get an observation for a version of a dataset with incorrect query parameters", func() {
+					Convey("Then return status bad request (400) with a message", func() {
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/observations", datasetID, edition).
+							WithQueryString("age=24&gender=male&time=Aug-16&geography=K02000001&aggregate=cpi1dim1S40403").
+							Expect().Status(http.StatusBadRequest).
+							Body().Match(`Incorrect selection of query parameters: \[(age gender|gender age)\], these dimensions do not exist for this version of the dataset`)
+					})
+				})
+
+				Convey("When a request to get an observation for a version of a dataset with missing query parameters", func() {
+					Convey("Then return status bad request (400) with a message", func() {
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/observations", datasetID, edition).
+							WithQueryString("geography=K02000001").
+							Expect().Status(http.StatusBadRequest).
+							Body().Match(`Missing query parameters for the following dimensions: \[(time aggregate|aggregate time)\]`)
+					})
+				})
+
+				Convey("When a request to get an observation for a version of a dataset with more than one wildcard used", func() {
+					Convey("Then return status bad request (400) with a message", func() {
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/observations", datasetID, edition).
+							WithQueryString("time=*&geography=*&aggregate=cpi1dim1S40403").
+							Expect().Status(http.StatusBadRequest).
+							Body().Contains("only one wildcard (*) is allowed as a value in selected query parameters")
+					})
+				})
+
+				Convey("When a request to get an observation for a version of a dataset with the correct query parameters but the values don't exist", func() {
+					Convey("Then return status not found (404) with message `Observation not found`", func() {
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/observations", datasetID, edition).
+							WithQueryString("time=Aug-17&geography=K02000001&aggregate=cpi1dim1S40403").
+							Expect().Status(http.StatusNotFound).
+							Body().Contains("Observation not found")
+					})
+				})
+			})
+
 			Convey("and an unpublished version exist", func() {
+				unpublishedVersionDoc := &mongo.Doc{
+					Database:   cfg.MongoDB,
+					Collection: "instances",
+					Key:        "_id",
+					Value:      unpublishedInstanceID,
+					Update:     validAssociatedInstanceData(datasetID, edition, unpublishedInstanceID),
+				}
 
 				if err := mongo.Setup(unpublishedVersionDoc); err != nil {
 					log.ErrorC("Was unable to run test", err, nil)
@@ -198,40 +297,15 @@ func TestFailureToGetObservationForVersion(t *testing.T) {
 					})
 				})
 
-				Convey("When a request to get an observation for a version of a dataset with incorrect query parameters", func() {
-					Convey("Then return status bad request (400) with a message", func() {
-						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
-							WithHeader(florenceTokenName, florenceToken).
-							WithQueryString("age=24&gender=male&time=Aug-16&geography=K02000001&aggregate=cpi1dim1S40403").
-							Expect().Status(http.StatusBadRequest).
-							Body().Match(`Incorrect selection of query parameters: \[(age gender|gender age)\], these dimensions do not exist for this version of the dataset`)
-					})
-				})
-
-				Convey("When a request to get an observation for a version of a dataset with missing query parameters", func() {
-					Convey("Then return status bad request (400) with a message", func() {
-						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
-							WithHeader(florenceTokenName, florenceToken).
-							WithQueryString("geography=K02000001").
-							Expect().Status(http.StatusBadRequest).
-							Body().Match(`Missing query parameters for the following dimensions: \[(time aggregate|aggregate time)\]`)
-					})
-				})
-
-				Convey("When a request to get an observation for a version of a dataset with the correct query parameters but the values don't exist", func() {
-					Convey("Then return status not found (404) with message `Observation not found`", func() {
-						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
-							WithHeader(florenceTokenName, florenceToken).
-							WithQueryString("time=Aug-17&geography=K02000001&aggregate=cpi1dim1S40403").
-							Expect().Status(http.StatusNotFound).
-							Body().Contains("Observation not found")
-					})
-				})
+				if err := mongo.Teardown(unpublishedVersionDoc); err != nil {
+					log.ErrorC("Unable to teardown unpublished version doc", err, nil)
+					os.Exit(1)
+				}
 			})
 		})
 
-		if err := mongo.Teardown(datasetDoc, publishedEditionDoc, unpublishedVersionDoc); err != nil {
-			log.ErrorC("Was unable to run test", err, nil)
+		if err := mongo.Teardown(datasetDoc, publishedEditionDoc, publishedVersionDoc); err != nil {
+			log.ErrorC("Unable to teardown docs: datasetDoc, publishedEditionDoc, publishedVersionDoc", err, nil)
 			os.Exit(1)
 		}
 	})
