@@ -54,7 +54,7 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 				}
 
 				So(filterOutput.Downloads.CSV, ShouldNotBeNil)
-				So(filterOutput.Downloads.CSV.HRef, ShouldEqual, "download-service-url.csv")
+				So(filterOutput.Downloads.CSV.HRef, ShouldEqual, "http://localhost:23600/downloads/filter-outputs/" + filterOutputID + ".csv")
 				So(filterOutput.Downloads.CSV.Private, ShouldEqual, "private-s3-csv-location")
 				So(filterOutput.Downloads.CSV.Public, ShouldBeEmpty)
 				So(filterOutput.Downloads.CSV.Size, ShouldEqual, "12mb")
@@ -80,15 +80,17 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 				}
 
 				So(filterOutput.Downloads.CSV, ShouldNotBeNil)
-				So(filterOutput.Downloads.CSV.HRef, ShouldEqual, "download-service-url.csv")
+				So(filterOutput.Downloads.CSV.HRef, ShouldEqual, "http://localhost:23600/downloads/filter-outputs/" + filterOutputID + ".csv")
 				So(filterOutput.Downloads.CSV.Private, ShouldEqual, "private-s3-csv-location")
 				So(filterOutput.Downloads.CSV.Public, ShouldBeEmpty)
 				So(filterOutput.Downloads.CSV.Size, ShouldEqual, "12mb")
+
 				So(filterOutput.Downloads.XLS, ShouldNotBeNil)
-				So(filterOutput.Downloads.XLS.HRef, ShouldEqual, "download-service-url.xlsx")
+				So(filterOutput.Downloads.XLS.HRef, ShouldEqual, "http://localhost:23600/downloads/filter-outputs/" + filterOutputID + ".xlsx")
 				So(filterOutput.Downloads.XLS.Private, ShouldEqual, "private-s3-xls-location")
 				So(filterOutput.Downloads.XLS.Public, ShouldBeEmpty)
 				So(filterOutput.Downloads.XLS.Size, ShouldEqual, "24mb")
+
 				So(filterOutput.State, ShouldEqual, "completed")
 				So(*filterOutput.Published, ShouldEqual, true)
 			})
@@ -117,12 +119,12 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 				log.Debug("filter output", log.Data{"filter_output": filterOutput.Downloads})
 
 				So(filterOutput.Downloads.CSV, ShouldNotBeNil)
-				So(filterOutput.Downloads.CSV.HRef, ShouldEqual, "download-service-url.csv")
+				So(filterOutput.Downloads.CSV.HRef, ShouldEqual, "http://localhost:23600/downloads/filter-outputs/" + filterOutputID + ".csv")
 				So(filterOutput.Downloads.CSV.Private, ShouldEqual, "private-s3-csv-location")
 				So(filterOutput.Downloads.CSV.Public, ShouldEqual, "public-s3-csv-location")
 				So(filterOutput.Downloads.CSV.Size, ShouldEqual, "12mb")
 				So(filterOutput.Downloads.XLS, ShouldNotBeNil)
-				So(filterOutput.Downloads.XLS.HRef, ShouldEqual, "download-service-url.xlsx")
+				So(filterOutput.Downloads.XLS.HRef, ShouldEqual, "http://localhost:23600/downloads/filter-outputs/" + filterOutputID + ".xlsx")
 				So(filterOutput.Downloads.XLS.Private, ShouldEqual, "private-s3-xls-location")
 				So(filterOutput.Downloads.XLS.Public, ShouldEqual, "public-s3-xls-location")
 				So(filterOutput.Downloads.XLS.Size, ShouldEqual, "24mb")
@@ -208,11 +210,11 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 		})
 
 		Convey("When an unauthorised request is made to update filter output", func() {
-			Convey("Then fail to update filter output and return status not found (404)", func() {
+			Convey("Then fail to update filter output and return status unauthorized (401)", func() {
 
 				filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
 					WithBytes([]byte(GetValidPUTFilterOutputWithCSVDownloadJSON())).
-					Expect().Status(http.StatusNotFound).Body().Contains("resource not found\n")
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 
