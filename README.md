@@ -22,18 +22,18 @@ dp-import-api
 If you're running applications using websysd ensure `InheritEnvironment`
 is set to true in the `websysd.json` file.
 
-The acceptance tests are split between running in publishing or web and result
+The acceptance tests are split between running in *publishing* or *web* and result
 in different results/responses; by default you should be running the services in
 publishing.
 
 To test services in publishing run the following command:
 
-`cd publishing; go test ./...`
+`cd publishing && go test ./...`
 
 To run the web tests, make sure all instances of your API services are running
 in web and then run the following command:
 
-`cd web; go test ./...`
+`cd web && go test ./...`
 
 ### Testing standards
 
