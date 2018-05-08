@@ -128,30 +128,22 @@ func TestSuccessfullyGetObservationForVersion(t *testing.T) {
 				response.Value("observations").Array().Length().Equal(137)
 
 				// check two observations in observations array
-				for i := 0; i < len(response.Value("observations").Array().Iter()); i++ {
-					count := 0
-					if response.Value("observations").Array().Element(i).Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").String().Raw() == "cpi1dim1S10107" {
-						observation := response.Value("observations").Array().Element(i).Object()
-						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD/codes/cpi1dim1S10107")
-						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("id").Equal("cpi1dim1S10107")
-						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("label").Equal("01.1.7 Vegetables including potatoes and tubers")
-						observation.Value("dimensions").Object().NotContainsKey("geography")
-						observation.Value("observation").Equal("136.8")
-						count++
+				for _, observation := range response.Value("observations").Array().Iter() {
+
+					if observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").String().Raw() == "cpi1dim1S10107" {
+						observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD/codes/cpi1dim1S10107")
+						observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").Equal("cpi1dim1S10107")
+						observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("label").Equal("01.1.7 Vegetables including potatoes and tubers")
+						observation.Object().Value("dimensions").Object().NotContainsKey("geography")
+						observation.Object().Value("observation").Equal("136.8")
 					}
 
-					if response.Value("observations").Array().Element(i).Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").String().Raw() == "cpi1dim1G100000" {
-						observation := response.Value("observations").Array().Element(i).Object()
-						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD/codes/cpi1dim1G100000")
-						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("id").Equal("cpi1dim1G100000")
-						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("label").Equal("10.0 Education")
-						observation.Value("dimensions").Object().NotContainsKey("geography")
-						observation.Value("observation").Equal("244.3")
-						count++
-					}
-
-					if count == 2 {
-						break
+					if observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").String().Raw() == "cpi1dim1G100000" {
+						observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD/codes/cpi1dim1G100000")
+						observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").Equal("cpi1dim1G100000")
+						observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("label").Equal("10.0 Education")
+						observation.Object().Value("dimensions").Object().NotContainsKey("geography")
+						observation.Object().Value("observation").Equal("244.3")
 					}
 				}
 

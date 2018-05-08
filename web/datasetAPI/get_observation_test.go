@@ -87,30 +87,21 @@ func TestSuccessfullyGetObservationForVersion(t *testing.T) {
 				response.Value("observations").Array().Length().Equal(137)
 
 				// check two observations in observations array
-				for i := 0; i < len(response.Value("observations").Array().Iter()); i++ {
-					count := 0
-					if response.Value("observations").Array().Element(i).Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").String().Raw() == "cpi1dim1S50400" {
-						observation := response.Value("observations").Array().Element(i).Object()
-						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD/codes/cpi1dim1S50400")
-						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("id").Equal("cpi1dim1S50400")
-						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("label").Equal("05.4.0 Glassware, Tableware and Household Utensils")
-						observation.Value("dimensions").Object().NotContainsKey("geography")
-						observation.Value("observation").Equal("114.7")
-						count++
+				for _, observation := range response.Value("observations").Array().Iter() {
+					if observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").String().Raw() == "cpi1dim1S50400" {
+						observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD/codes/cpi1dim1S50400")
+						observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").Equal("cpi1dim1S50400")
+						observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("label").Equal("05.4.0 Glassware, Tableware and Household Utensils")
+						observation.Object().Value("dimensions").Object().NotContainsKey("geography")
+						observation.Object().Value("observation").Equal("114.7")
 					}
 
-					if response.Value("observations").Array().Element(i).Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").String().Raw() == "cpi1dim1S10108" {
-						observation := response.Value("observations").Array().Element(i).Object()
-						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD/codes/cpi1dim1S10108")
-						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("id").Equal("cpi1dim1S10108")
-						observation.Value("dimensions").Object().Value("Aggregate").Object().Value("label").Equal("01.1.8 Sugar, jam, syrups, chocolate and confectionery")
-						observation.Value("dimensions").Object().NotContainsKey("geography")
-						observation.Value("observation").Equal("152.4")
-						count++
-					}
-
-					if count == 2 {
-						break
+					if observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").String().Raw() == "cpi1dim1S10108" {
+						observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD/codes/cpi1dim1S10108")
+						observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").Equal("cpi1dim1S10108")
+						observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("label").Equal("01.1.8 Sugar, jam, syrups, chocolate and confectionery")
+						observation.Object().Value("dimensions").Object().NotContainsKey("geography")
+						observation.Object().Value("observation").Equal("152.4")
 					}
 				}
 
@@ -199,7 +190,7 @@ func TestFailureToGetObservationForVersion(t *testing.T) {
 
 	Convey("Given a published dataset exist", t, func() {
 		if err := mongo.Setup(datasetDoc); err != nil {
-			log.ErrorC("Was unable to run test", err, nil)
+			log.ErrorC("Unable to set up published dataset doc", err, nil)
 			os.Exit(1)
 		}
 
@@ -217,7 +208,7 @@ func TestFailureToGetObservationForVersion(t *testing.T) {
 		Convey("and a published edition exist", func() {
 
 			if err := mongo.Setup(publishedEditionDoc); err != nil {
-				log.ErrorC("Was unable to run test", err, nil)
+				log.ErrorC("Unable to set up published edition doc", err, nil)
 				os.Exit(1)
 			}
 
@@ -234,7 +225,7 @@ func TestFailureToGetObservationForVersion(t *testing.T) {
 
 			Convey("and a published version does exist", func() {
 				if err := mongo.Setup(publishedVersionDoc); err != nil {
-					log.ErrorC("Was unable to run test", err, nil)
+					log.ErrorC("Unable to set up published version doc", err, nil)
 					os.Exit(1)
 				}
 
@@ -285,7 +276,7 @@ func TestFailureToGetObservationForVersion(t *testing.T) {
 				}
 
 				if err := mongo.Setup(unpublishedVersionDoc); err != nil {
-					log.ErrorC("Was unable to run test", err, nil)
+					log.ErrorC("Unable to set up unpublished version doc", err, nil)
 					os.Exit(1)
 				}
 
