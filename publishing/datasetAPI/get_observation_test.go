@@ -128,6 +128,7 @@ func TestSuccessfullyGetObservationForVersion(t *testing.T) {
 				response.Value("observations").Array().Length().Equal(137)
 
 				// check two observations in observations array
+				var firstObservation, secondObservation bool
 				for _, observation := range response.Value("observations").Array().Iter() {
 
 					if observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").String().Raw() == "cpi1dim1S10107" {
@@ -136,6 +137,7 @@ func TestSuccessfullyGetObservationForVersion(t *testing.T) {
 						observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("label").Equal("01.1.7 Vegetables including potatoes and tubers")
 						observation.Object().Value("dimensions").Object().NotContainsKey("geography")
 						observation.Object().Value("observation").Equal("136.8")
+						firstObservation = true
 					}
 
 					if observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").String().Raw() == "cpi1dim1G100000" {
@@ -144,7 +146,13 @@ func TestSuccessfullyGetObservationForVersion(t *testing.T) {
 						observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("label").Equal("10.0 Education")
 						observation.Object().Value("dimensions").Object().NotContainsKey("geography")
 						observation.Object().Value("observation").Equal("244.3")
+						secondObservation = true
 					}
+				}
+
+				if !firstObservation || !secondObservation {
+					t.Errorf("failed to find observations, \nfirst observation: [%v]\nsecond observation: [%v]\n", firstObservation, secondObservation)
+					t.Fail()
 				}
 
 				response.Value("offset").Equal(0)

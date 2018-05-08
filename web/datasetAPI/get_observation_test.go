@@ -87,6 +87,7 @@ func TestSuccessfullyGetObservationForVersion(t *testing.T) {
 				response.Value("observations").Array().Length().Equal(137)
 
 				// check two observations in observations array
+				var firstObservation, secondObservation bool
 				for _, observation := range response.Value("observations").Array().Iter() {
 					if observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").String().Raw() == "cpi1dim1S50400" {
 						observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD/codes/cpi1dim1S50400")
@@ -94,6 +95,7 @@ func TestSuccessfullyGetObservationForVersion(t *testing.T) {
 						observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("label").Equal("05.4.0 Glassware, Tableware and Household Utensils")
 						observation.Object().Value("dimensions").Object().NotContainsKey("geography")
 						observation.Object().Value("observation").Equal("114.7")
+						firstObservation = true
 					}
 
 					if observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").String().Raw() == "cpi1dim1S10108" {
@@ -102,7 +104,13 @@ func TestSuccessfullyGetObservationForVersion(t *testing.T) {
 						observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("label").Equal("01.1.8 Sugar, jam, syrups, chocolate and confectionery")
 						observation.Object().Value("dimensions").Object().NotContainsKey("geography")
 						observation.Object().Value("observation").Equal("152.4")
+						secondObservation = true
 					}
+				}
+
+				if !firstObservation || !secondObservation {
+					t.Errorf("failed to find observations, \nfirst observation: [%v]\nsecond observation: [%v]\n", firstObservation, secondObservation)
+					t.Fail()
 				}
 
 				response.Value("offset").Equal(0)
