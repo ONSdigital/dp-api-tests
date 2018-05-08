@@ -15,7 +15,10 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-const observationTestData = "../../testDataSetup/neo4j/instance.cypher"
+const (
+	observationTestData          = "../../testDataSetup/neo4j/instance.cypher"
+	expectedNumberOfObservations = 137
+)
 
 func TestSuccessfullyGetObservationForVersion(t *testing.T) {
 
@@ -125,10 +128,11 @@ func TestSuccessfullyGetObservationForVersion(t *testing.T) {
 				response.Value("links").Object().Value("self").Object().Value("href").String().Match(".+/datasets/" + datasetID + "/editions/" + edition + "/versions/2/observations\\?aggregate=\\%2A&geography=K02000001&time=Aug-16$")
 				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/2$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("2")
-				response.Value("observations").Array().Length().Equal(137)
+				response.Value("observations").Array().Length().Equal(expectedNumberOfObservations)
 
 				// check two observations in observations array
 				var firstObservation, secondObservation bool
+				count := make(map[string]int)
 				for _, observation := range response.Value("observations").Array().Iter() {
 
 					if observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").String().Raw() == "cpi1dim1S10107" {
@@ -148,10 +152,17 @@ func TestSuccessfullyGetObservationForVersion(t *testing.T) {
 						observation.Object().Value("observation").Equal("244.3")
 						secondObservation = true
 					}
+
+					count[observation.Object().Value("dimensions").Object().Value("Aggregate").Object().Value("id").String().Raw()] = 1
 				}
 
 				if !firstObservation || !secondObservation {
 					t.Errorf("failed to find observations, \nfirst observation: [%v]\nsecond observation: [%v]\n", firstObservation, secondObservation)
+					t.Fail()
+				}
+
+				if len(count) != expectedNumberOfObservations {
+					t.Errorf("failed to find [%d] unique observations via unique codes, found: [%d]", expectedNumberOfObservations, len(count))
 					t.Fail()
 				}
 
