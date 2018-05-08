@@ -28,7 +28,7 @@ func TestSuccessfullyPostDataset(t *testing.T) {
 
 		Convey("When an authorised POST request is made to create a dataset resource", func() {
 			Convey("Then return a status ok and the expected response body", func() {
-				response := datasetAPI.POST("/datasets/{id}", datasetID).WithHeader(serviceAuthTokenName, serviceAuthToken).WithBytes([]byte(validPOSTCreateDatasetJSON)).
+				response := datasetAPI.POST("/datasets/{id}", datasetID).WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(validPOSTCreateDatasetJSON)).
 					Expect().Status(http.StatusCreated).JSON().Object()
 
 				response.Value("id").Equal(datasetID)
@@ -41,8 +41,8 @@ func TestSuccessfullyPostDataset(t *testing.T) {
 				response.Value("next").Object().Value("id").Equal(datasetID)
 				response.Value("next").Object().Value("license").Equal("ONS license")
 				response.Value("next").Object().Value("links").Object().Value("access_rights").Object().Value("href").Equal("http://ons.gov.uk/accessrights")
-				response.Value("next").Object().Value("links").Object().Value("editions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions$")
-				response.Value("next").Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
+				response.Value("next").Object().Value("links").Object().Value("editions").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions$")
+				response.Value("next").Object().Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + datasetID + "$")
 				response.Value("next").Object().Value("methodologies").Array().Element(0).Object().Value("description").Equal("Consumer price inflation is the rate at which the prices of the goods and services bought by households rise or fall, and is estimated by using consumer price indices.")
 				response.Value("next").Object().Value("methodologies").Array().Element(0).Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi")
 				response.Value("next").Object().Value("methodologies").Array().Element(0).Object().Value("title").Equal("Consumer Price Inflation (includes all 3 indices – CPIH, CPI and RPI)")
@@ -86,7 +86,7 @@ func TestFailureToPostDataset(t *testing.T) {
 
 			Convey("Then return a status of bad request with a message `Failed to parse json body`", func() {
 
-				datasetAPI.POST("/datasets/{id}", datasetID).WithHeader(serviceAuthTokenName, serviceAuthToken).WithBytes([]byte("{")).
+				datasetAPI.POST("/datasets/{id}", datasetID).WithHeader(florenceTokenName, florenceToken).WithBytes([]byte("{")).
 					Expect().Status(http.StatusBadRequest).Body().Contains("Failed to parse json body")
 			})
 		})
@@ -94,7 +94,7 @@ func TestFailureToPostDataset(t *testing.T) {
 		Convey("When an unauthorised POST request is made to create a dataset resource with an invalid authentication header", func() {
 			Convey("Then return a status unauthorized (401)", func() {
 
-				datasetAPI.POST("/datasets/{id}", datasetID).WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).WithBytes([]byte(validPOSTCreateDatasetJSON)).
+				datasetAPI.POST("/datasets/{id}", datasetID).WithHeader(florenceTokenName, unauthorisedAuthToken).WithBytes([]byte(validPOSTCreateDatasetJSON)).
 					Expect().Status(http.StatusUnauthorized)
 			})
 		})
@@ -125,7 +125,7 @@ func TestFailureToPostDataset(t *testing.T) {
 		Convey("When an authorised POST request to create the same dataset resource is made", func() {
 			Convey("Then return a status of forbidden with a message `forbidden - dataset already exists`", func() {
 
-				datasetAPI.POST("/datasets/{id}", datasetID).WithBytes([]byte(validPOSTCreateDatasetJSON)).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				datasetAPI.POST("/datasets/{id}", datasetID).WithBytes([]byte(validPOSTCreateDatasetJSON)).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusForbidden).Body().Contains("forbidden - dataset already exists")
 			})
 		})

@@ -112,7 +112,7 @@ func TestGetDimensionOptions_ReturnsAllDimensionOptionsFromADataset(t *testing.T
 		Convey("When an authenticated request is made to get a list of time dimension options", func() {
 			Convey("Then return with status OK and response body containing dimension ", func() {
 				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/time/options", datasetID, edition, 2).
-					WithHeader(serviceAuthTokenName, serviceAuthToken).
+					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				checkTimeDimensionResponse(secondInstanceID, response)
@@ -137,7 +137,7 @@ func TestGetDimensionOptions_ReturnsAllDimensionOptionsFromADataset(t *testing.T
 		Convey("When an authenticated request is made to get a list of aggregate dimension options", func() {
 			Convey("Then return with status OK and response body containing dimension ", func() {
 				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions/aggregate/options", datasetID, edition, 2).
-					WithHeader(serviceAuthTokenName, serviceAuthToken).
+					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("items").Array().Length().Equal(1)
@@ -226,7 +226,7 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 		Convey("When an authenticated request is made to get a list of aggregate dimension options", func() {
 			Convey("Then return status not found (404)", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/dimensions/time/options", datasetID, edition).
-					WithHeader(serviceAuthTokenName, serviceAuthToken).
+					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("Dimension not found")
 			})
 		})
@@ -247,12 +247,12 @@ func checkTimeDimensionResponse(instanceID string, response *httpexpect.Object) 
 	response.Value("items").Array().Element(0).Object().Value("label").Equal("")
 
 	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("id").Equal("202.45")
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/202.45$")
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("href").String().Match("/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/202.45$")
 
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/instances/" + instanceID + "$")
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("/instances/" + instanceID + "$")
 
 	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("id").Equal("64d384f1-ea3b-445c-8fb8-aa453f96e58a")
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")
 
 	response.Value("items").Array().Element(0).Object().Value("option").Equal("202.45")
 
@@ -265,12 +265,12 @@ func checkAggregateDimensionResponse(instanceID string, response *httpexpect.Obj
 	response.Value("items").Array().Element(0).Object().Value("label").Equal("CPI (Overall Index)")
 
 	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("id").Equal("cpi1dimA19")
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/cpi1dimA19$")
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code").Object().Value("href").String().Match("/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/cpi1dimA19$")
 
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/instances/" + instanceID + "$")
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("/instances/" + instanceID + "$")
 
 	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("id").Equal("64d384f1-ea3b-445c-8fb8-aa453f96e58a")
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")
 
 	response.Value("items").Array().Element(0).Object().Value("option").Equal("cpi1dimA19")
 

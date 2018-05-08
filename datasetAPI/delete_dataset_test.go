@@ -37,7 +37,7 @@ func TestSuccessfullyDeleteDataset(t *testing.T) {
 		Convey("When an authorised DELETE request is made to delete a dataset resource", func() {
 
 			request := datasetAPI.DELETE("/datasets/{id}", datasetID).
-				WithHeader(serviceAuthTokenName, serviceAuthToken)
+				WithHeader(florenceTokenName, florenceToken)
 
 			Convey("Then the expected response is returned", func() {
 				request.Expect().Status(http.StatusNoContent)
@@ -57,7 +57,7 @@ func TestSuccessfullyDeleteDataset(t *testing.T) {
 		Convey("When an authorised DELETE request is made to delete a dataset resource", func() {
 
 			request := datasetAPI.DELETE("/datasets/{id}", datasetID).
-				WithHeader(serviceAuthTokenName, serviceAuthToken)
+				WithHeader(florenceTokenName, florenceToken)
 
 			Convey("Then the expected response is returned", func() {
 				request.Expect().Status(http.StatusNoContent)
@@ -89,7 +89,7 @@ func TestFailureToDeleteDataset(t *testing.T) {
 		Convey("When an authorised DELETE request is made to delete a dataset resource", func() {
 
 			request := datasetAPI.DELETE("/datasets/{id}", datasetID).
-				WithHeader(serviceAuthTokenName, serviceAuthToken)
+				WithHeader(florenceTokenName, florenceToken)
 
 			Convey("Then the expected response is returned", func() {
 				request.Expect().Status(http.StatusForbidden).Body().Contains("forbidden - a published dataset cannot be deleted")
@@ -121,7 +121,7 @@ func TestFailureToDeleteDataset(t *testing.T) {
 		Convey("When an unauthorised DELETE request is made to delete a dataset resource", func() {
 
 			request := datasetAPI.DELETE("/datasets/{id}", datasetID).
-				WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken)
+				WithHeader(florenceTokenName, unauthorisedAuthToken)
 
 			Convey("Then the expected response is returned", func() {
 				request.Expect().Status(http.StatusUnauthorized)

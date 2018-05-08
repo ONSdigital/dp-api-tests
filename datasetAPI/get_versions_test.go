@@ -34,7 +34,7 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 
 		Convey("When user is authenticated", func() {
 			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
-				WithHeader(serviceAuthTokenName, serviceAuthToken).Expect().Status(http.StatusOK).JSON().Object()
+				WithHeader(florenceTokenName, florenceToken).Expect().Status(http.StatusOK).JSON().Object()
 
 			Convey("Then response contains a list of all versions of the dataset edition", func() {
 				response.Value("items").Array().Length().Equal(2)
@@ -44,11 +44,13 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 						// check the published test version document has the expected returned fields and values
 						response.Value("items").Array().Element(i).Object().Value("id").Equal(instanceID)
 						checkVersionResponse(datasetID, editionID, instanceID, edition, response.Value("items").Array().Element(i).Object())
+						checkNeitherPublicOrPrivateLinksExistInResponse(response.Value("items").Array().Element(i).Object().Value("downloads").Object())
 					}
 
 					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == unpublishedInstanceID {
 						response.Value("items").Array().Element(i).Object().Value("id").Equal(unpublishedInstanceID)
 						response.Value("items").Array().Element(i).Object().Value("state").Equal("associated")
+						checkNeitherPublicOrPrivateLinksExistInResponse(response.Value("items").Array().Element(i).Object().Value("downloads").Object())
 					}
 				}
 			})
@@ -61,6 +63,40 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 			Convey("Then response contains a list of only published versions of the dataset edition", func() {
 				response.Value("items").Array().Length().Equal(1)
 				checkVersionResponse(datasetID, editionID, instanceID, edition, response.Value("items").Array().Element(0).Object())
+				checkNeitherPublicOrPrivateLinksExistInResponse(response.Value("items").Array().Element(0).Object().Value("downloads").Object())
+			})
+		})
+
+		Convey("When the caller of the request is the download service", func() {
+			headers := make(map[string]string)
+			headers[downloadServiceTokenName] = downloadServiceToken
+			headers[downloadServiceAuthTokenName] = downloadServiceAuthToken
+			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
+				WithHeaders(headers).Expect().Status(http.StatusOK).JSON().Object()
+
+			Convey("Then response contains a list of all versions of the dataset edition with there respective public and private download links", func() {
+				response.Value("items").Array().Length().Equal(2)
+				for i := 0; i < len(response.Value("items").Array().Iter()); i++ {
+
+					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == instanceID {
+						// check the published test version document has the expected returned fields and values
+						response.Value("items").Array().Element(i).Object().Value("id").Equal(instanceID)
+						checkVersionResponse(datasetID, editionID, instanceID, edition, response.Value("items").Array().Element(i).Object())
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("private").String().Match("private/myfile.csv")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("public").String().Match("public/myfile.csv")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("private").String().Match("private/myfile.xls")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("public").String().Match("public/myfile.xls")
+					}
+
+					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == unpublishedInstanceID {
+						response.Value("items").Array().Element(i).Object().Value("id").Equal(unpublishedInstanceID)
+						response.Value("items").Array().Element(i).Object().Value("state").Equal("associated")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("private").String().Match("private/myfile.csv")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("public").String().Match("public/myfile.csv")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("private").String().Match("private/myfile.xls")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("public").String().Match("public/myfile.xls")
+					}
+				}
 			})
 		})
 
@@ -120,7 +156,7 @@ func TestGetVersions_Failed(t *testing.T) {
 	Convey("Given the dataset and subsequently the edition does not exist", t, func() {
 		Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
 			Convey("Then return status not found (404) with message `Dataset not found`", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
 			})
 		})
@@ -135,7 +171,7 @@ func TestGetVersions_Failed(t *testing.T) {
 		Convey("but the edition does not", func() {
 			Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
 				Convey("Then return status not found (404) with message `EDition not found`", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
 						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
 				})
 			})
@@ -149,7 +185,7 @@ func TestGetVersions_Failed(t *testing.T) {
 
 			Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
 				Convey("Then return status not found (404) with message `Version not found`", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
 						Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
 				})
 			})
@@ -256,7 +292,7 @@ func TestGetVersions_Failed(t *testing.T) {
 
 				Convey("When an unauthenticated request is made to get a list of versions of the dataset edition", func() {
 					Convey("Then return status unauthorized (401)", func() {
-						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(florenceTokenName, unauthorisedAuthToken).
 							Expect().Status(http.StatusUnauthorized)
 					})
 				})
@@ -277,23 +313,23 @@ func checkVersionResponse(datasetID, editionID, instanceID, edition string, resp
 	response.Value("alerts").Array().Element(0).Object().Value("type").String().Equal("Correction")
 	response.Value("collection_id").Equal("108064B3-A808-449B-9041-EA3A2F72CFAA")
 	response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
-	response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("(.+)/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
+	response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
 	response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
 	response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
-	response.Value("downloads").Object().Value("csv").Object().Value("url").String().Match("(.+)/aws/census-2017-1-csv$")
+	response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("/aws/census-2017-1-csv$")
 	response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
-	response.Value("downloads").Object().Value("xls").Object().Value("url").String().Match("(.+)/aws/census-2017-1-xls$")
+	response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("/aws/census-2017-1-xls$")
 	response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24")
 	response.Value("edition").Equal("2017")
 	response.Value("latest_changes").Array().Element(0).Object().Value("description").String().Equal("The border of Southampton changed after the south east cliff face fell into the sea.")
 	response.Value("latest_changes").Array().Element(0).Object().Value("name").String().Equal("Changes in Classification")
 	response.Value("latest_changes").Array().Element(0).Object().Value("type").String().Equal("Summary of Changes")
 	response.Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
-	response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
-	response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions$")
+	response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("/datasets/" + datasetID + "$")
+	response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions$")
 	response.Value("links").Object().Value("edition").Object().Value("id").Equal(edition)
-	response.Value("links").Object().Value("edition").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
-	response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
+	response.Value("links").Object().Value("edition").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "$")
+	response.Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
 	response.Value("links").Object().Value("spatial").Object().Value("href").Equal("http://ons.gov.uk/geographylist")
 	response.Value("release_date").Equal("2017-12-12") // TODO Should be isodate
 	response.Value("state").Equal("published")
@@ -301,6 +337,13 @@ func checkVersionResponse(datasetID, editionID, instanceID, edition string, resp
 	response.Value("temporal").Array().Element(0).Object().Value("end_date").Equal("2017-09-09")
 	response.Value("temporal").Array().Element(0).Object().Value("frequency").Equal("monthly")
 	response.Value("version").Equal(1)
+}
+
+func checkNeitherPublicOrPrivateLinksExistInResponse(response *httpexpect.Object) {
+	response.Value("csv").Object().NotContainsKey("public")
+	response.Value("csv").Object().NotContainsKey("private")
+	response.Value("xls").Object().NotContainsKey("public")
+	response.Value("xls").Object().NotContainsKey("private")
 }
 
 func setUpDatasetEditionVersions(datasetID, editionID, edition, instanceID, unpublishedInstanceID string) ([]*mongo.Doc, error) {
