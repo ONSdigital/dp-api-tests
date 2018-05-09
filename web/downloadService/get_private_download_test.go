@@ -12,13 +12,13 @@ import (
 	"github.com/gavv/httpexpect"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
-	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2"
 )
 
 func TestPrivateDownloadDecryptedAndStreamed(t *testing.T) {
 	if len(os.Getenv("VAULT_ADDR")) == 0 || len(os.Getenv("VAULT_TOKEN")) == 0 {
-		log.Info("skipping private download tests, as no vault token or address set - use make test", nil)
-		t.Skip()
+		log.Info("failing test as no vault token or address set - use make test", nil)
+		t.FailNow()
 	}
 
 	datasetID := uuid.NewV4().String()
@@ -95,8 +95,8 @@ func TestPrivateDownloadDecryptedAndStreamed(t *testing.T) {
 
 func TestPrivateDownloadDecryptedAndStreamedWithAuthentication(t *testing.T) {
 	if len(os.Getenv("VAULT_ADDR")) == 0 || len(os.Getenv("VAULT_TOKEN")) == 0 {
-		log.Info("skipping private download tests, as no vault token or address set - use make test", nil)
-		t.Skip()
+		log.Info("failing test as no vault token or address set - use make test", nil)
+		t.FailNow()
 	}
 
 	datasetID := uuid.NewV4().String()
@@ -127,12 +127,6 @@ func TestPrivateDownloadDecryptedAndStreamedWithAuthentication(t *testing.T) {
 		Update:     validVersionWithPrivateLink(datasetID, editionID, versionID, "associated"),
 	}
 
-	f, err := ioutil.ReadFile(fileName)
-	if err != nil {
-		log.ErrorC("Was unable to run test", err, nil)
-		os.Exit(1)
-	}
-
 	if err := sendV4FileToAWS(region, bucketName, fileName); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
@@ -157,18 +151,6 @@ func TestPrivateDownloadDecryptedAndStreamedWithAuthentication(t *testing.T) {
 		})
 	})
 
-	Convey("Given an associated version exists with a private link", t, func() {
-		Convey("When a request is made for the private document with authentication", func() {
-			Convey("Then the response streams the decrypted private file", func() {
-
-				response := downloadService.GET("/downloads/datasets/{datasetID}/editions/{edition}/versions/{version}.csv", datasetID, editionID, versionID).WithHeader(internalToken, internalTokenID).
-					Expect().Status(http.StatusOK)
-
-				response.Body().Equal(string(f))
-			})
-		})
-	})
-
 	if err := mongo.Teardown(dataset, edition, version); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
@@ -184,8 +166,8 @@ func TestPrivateDownloadDecryptedAndStreamedWithAuthentication(t *testing.T) {
 
 func TestPrivateDownloadDecryptedAndStreamedFailure(t *testing.T) {
 	if len(os.Getenv("VAULT_ADDR")) == 0 || len(os.Getenv("VAULT_TOKEN")) == 0 {
-		log.Info("skipping private download tests, as no vault token or address set - use make test", nil)
-		t.Skip()
+		log.Info("failing test as no vault token or address set - use make test", nil)
+		t.FailNow()
 	}
 
 	datasetID := uuid.NewV4().String()

@@ -1,4 +1,4 @@
-package downloadService
+package filterAPI
 
 import (
 	"os"
@@ -11,15 +11,10 @@ import (
 var cfg *config.Config
 
 const (
-	collection  = "datasets"
-	publicLink  = "https://s3-eu-west-1.amazonaws.com/dp-frontend-florence-file-uploads/2470609-cpicoicoptestcsv"
-	privateLink = "s3://csv-exported/v4TestFile.csv"
-	region      = "eu-west-1"
-	bucketName  = "csv-exported"
-	fileName    = "v4TestFile.csv"
+	collection = "filters"
 
-	internalToken   = "Internal-Token"
-	internalTokenID = "AL0108EA-825D-411C-9B1D-41EF7727F465"
+	serviceAuthTokenName    = "Authorization"
+	serviceAuthToken        = "Bearer FD0108EA-825D-411C-9B1D-41EF7727F465"
 )
 
 func init() {
@@ -36,7 +31,7 @@ func init() {
 	}
 
 	var docs []*mongo.Doc
-	for _, c := range []string{collection, "editions", "instances"} {
+	for _, c := range []string{collection, "filterOutputs", "instances", "dimension.options"} {
 		t := &mongo.Doc{
 			Database:   cfg.MongoDB,
 			Collection: c,

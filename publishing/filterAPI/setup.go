@@ -2,7 +2,7 @@ package filterAPI
 
 import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 	"gopkg.in/mgo.v2/bson"
 )
 

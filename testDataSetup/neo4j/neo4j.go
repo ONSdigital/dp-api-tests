@@ -11,8 +11,8 @@ import (
 	bolt "github.com/johnnadratowski/golang-neo4j-bolt-driver"
 )
 
-const ObservationTestData = "../testDataSetup/neo4j/instance.cypher"
-const HierarchyTestData = "../testDataSetup/neo4j/hierarchy.cypher"
+const ObservationTestData = "../../testDataSetup/neo4j/instance.cypher"
+const HierarchyTestData = "../../testDataSetup/neo4j/hierarchy.cypher"
 const GenericHierarchyCPIHTestData = "../testDataSetup/neo4j/genericHierarchyCPIH.cypher"
 
 // Datastore used to setup data within neo4j

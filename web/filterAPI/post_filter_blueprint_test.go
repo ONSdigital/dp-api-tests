@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	datasetJSON "github.com/ONSdigital/dp-api-tests/datasetAPI"
-	"github.com/ONSdigital/dp-api-tests/filterAPI/expectedTestData"
+	"github.com/ONSdigital/dp-api-tests/web/filterAPI/expectedTestData"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
@@ -270,39 +270,6 @@ func TestPostFilterBlueprintForUnpublishedInstance(t *testing.T) {
 			Convey("Then the response returns a status of not found (404)", func() {
 				filterAPI.POST("/filters").WithBytes([]byte(GetValidPOSTCreateFilterJSON(datasetID, edition, version))).
 					Expect().Status(http.StatusNotFound)
-			})
-		})
-
-		Convey("When invalid authentication is provided on the POST request", func() {
-			Convey("Then the response returns a status of not found (404)", func() {
-				filterAPI.POST("/filters").WithBytes([]byte(GetValidPOSTCreateFilterJSON(datasetID, edition, version))).
-					WithHeader(serviceAuthTokenName, "failure").Expect().Status(http.StatusUnauthorized)
-			})
-		})
-
-		Convey("When valid authentication is provided on the POST request", func() {
-			Convey("Then the response returns a status of created (201)", func() {
-
-				response := filterAPI.POST("/filters").
-					WithBytes([]byte(GetValidPOSTCreateFilterJSON(datasetID, edition, version))).
-					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusCreated).
-					JSON().Object()
-
-				response.Value("filter_id").NotNull()
-				response.Value("instance_id").Equal(instanceID)
-				response.Value("links").Object().Value("dimensions").Object().Value("href").String().Match("/filters/(.+)/dimensions$")
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filters/(.+)$")
-				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
-				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
-
-				//enable teardown of resources created during test
-				docs = append(docs, &mongo.Doc{
-					Database:   cfg.MongoFiltersDB,
-					Collection: collection,
-					Key:        "filter_id",
-					Value:      response.Value("filter_id").String().Raw(),
-				})
 			})
 		})
 	})
