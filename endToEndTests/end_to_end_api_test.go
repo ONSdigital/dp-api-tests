@@ -12,15 +12,16 @@ import (
 
 	"gopkg.in/mgo.v2"
 
+	"context"
+	"path/filepath"
+
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
 	"github.com/ONSdigital/go-ns/log"
+	"github.com/ONSdigital/go-ns/rchttp"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
-	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
-	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
-	"path/filepath"
-	"github.com/ONSdigital/go-ns/rchttp"
-	"context"
 )
 
 var timeout = time.Duration(15 * time.Second)
@@ -332,6 +333,29 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		So(editionResource.Next.Links.Versions.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetName+"/editions/2017/versions")
 		So(editionResource.Next.State, ShouldEqual, "edition-confirmed")
 
+		log.Info("Get single observation from pre-published version", nil)
+		observationsResource := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/observations", datasetName, "2017", "1").
+			WithQueryString("time=Apr-05&geography=K02000001&aggregate=cpih1dim1G50100").
+			WithHeaders(headers).
+			Expect().Status(http.StatusOK).JSON().Object()
+
+		observationsResource.Value("dimensions").Object().Value("aggregate").Object().Value("option").Object().Value("href").String().Match("/code-lists/cpih1dim1aggid/codes/cpih1dim1G50100$")
+		observationsResource.Value("dimensions").Object().Value("aggregate").Object().Value("option").Object().Value("id").Equal("cpih1dim1G50100")
+		observationsResource.Value("dimensions").Object().Value("geography").Object().Value("option").Object().Value("href").String().Match("/code-lists/uk-only/codes/K02000001$")
+		observationsResource.Value("dimensions").Object().Value("geography").Object().Value("option").Object().Value("id").Equal("K02000001")
+		observationsResource.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("href").String().Match("/code-lists/time/codes/Apr-05$")
+		observationsResource.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("id").Equal("Apr-05")
+		observationsResource.Value("limit").Equal(10000)
+		observationsResource.Value("links").Object().Value("dataset_metadata").Object().Value("href").String().Match("/datasets/" + datasetName + "/editions/2017/versions/1/metadata$")
+		observationsResource.Value("links").Object().Value("self").Object().Value("href").String().Match(".+/datasets/" + datasetName + "/editions/2017/versions/1/observations\\?aggregate=cpih1dim1G50100&geography=K02000001&time=Apr-05$")
+		observationsResource.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetName + "/editions/2017/versions/1$")
+		observationsResource.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+		observationsResource.Value("observations").Array().Length().Equal(1)
+		observationsResource.Value("observations").Array().Element(0).Object().Value("observation").Equal("81.7")
+		observationsResource.Value("offset").Equal(0)
+		observationsResource.Value("total_observations").Equal(1)
+		observationsResource.Value("unit_of_measure").Equal("Pounds Sterling")
+
 		log.Info("Update version with collection_id and change state to associated", nil)
 		datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetName, "2017", "1").WithHeaders(headers).
 			WithBytes([]byte(validPUTUpdateVersionToAssociatedJSON)).Expect().Status(http.StatusOK)
@@ -535,13 +559,35 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		getSearchResponse.Value("limit").Equal(20)
 		getSearchResponse.Value("offset").Equal(0)
 
+		log.Info("Get single observation post-published version", nil)
+		postObservationsResource := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/observations", datasetName, "2017", "1").
+			WithQueryString("time=Apr-05&geography=K02000001&aggregate=cpih1dim1G50100").
+			Expect().Status(http.StatusOK).JSON().Object()
+
+		postObservationsResource.Value("dimensions").Object().Value("aggregate").Object().Value("option").Object().Value("href").String().Match("/code-lists/cpih1dim1aggid/codes/cpih1dim1G50100$")
+		postObservationsResource.Value("dimensions").Object().Value("aggregate").Object().Value("option").Object().Value("id").Equal("cpih1dim1G50100")
+		postObservationsResource.Value("dimensions").Object().Value("geography").Object().Value("option").Object().Value("href").String().Match("/code-lists/uk-only/codes/K02000001$")
+		postObservationsResource.Value("dimensions").Object().Value("geography").Object().Value("option").Object().Value("id").Equal("K02000001")
+		postObservationsResource.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("href").String().Match("/code-lists/time/codes/Apr-05$")
+		postObservationsResource.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("id").Equal("Apr-05")
+		postObservationsResource.Value("limit").Equal(10000)
+		postObservationsResource.Value("links").Object().Value("dataset_metadata").Object().Value("href").String().Match("/datasets/" + datasetName + "/editions/2017/versions/1/metadata$")
+		postObservationsResource.Value("links").Object().Value("self").Object().Value("href").String().Match(".+/datasets/" + datasetName + "/editions/2017/versions/1/observations\\?aggregate=cpih1dim1G50100&geography=K02000001&time=Apr-05$")
+		postObservationsResource.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetName + "/editions/2017/versions/1$")
+		postObservationsResource.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+		postObservationsResource.Value("observations").Array().Length().Equal(1)
+		postObservationsResource.Value("observations").Array().Element(0).Object().Value("observation").Equal("81.7")
+		postObservationsResource.Value("offset").Equal(0)
+		postObservationsResource.Value("total_observations").Equal(1)
+		postObservationsResource.Value("unit_of_measure").Equal("Pounds Sterling")
+
 		versionResourcePostPublish, err := mongo.GetVersion(cfg.MongoDB, "instances", "id", instanceID)
 		if err != nil {
 			log.ErrorC("Unable to retrieve version resource", err, log.Data{"instance_id": instanceID})
 			t.FailNow()
 		}
-		logData ["after_loop_public_csv_link"] = versionResourcePostPublish.Downloads.CSV.Public
-		logData ["after_loop_public_xls_link"] = versionResourcePostPublish.Downloads.CSV.Public
+		logData["after_loop_public_csv_link"] = versionResourcePostPublish.Downloads.CSV.Public
+		logData["after_loop_public_xls_link"] = versionResourcePostPublish.Downloads.CSV.Public
 		log.Debug("Pre publish full downloads have been generated", logData)
 
 		log.Info("Get downloads link from version document", nil)
@@ -738,7 +784,7 @@ func testFileDownload(url string, expectedSize int, isPublished bool) {
 	log.Info("attempting to download file from the download service", log.Data{
 		"url":           url,
 		"expected_size": expectedSize,
-		"is_published": isPublished,
+		"is_published":  isPublished,
 	})
 
 	req, err := http.NewRequest("GET", url, nil)
