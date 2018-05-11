@@ -21,8 +21,6 @@ const (
 
 	florenceTokenName = "X-Florence-Token"
 	florenceToken     = "85c718c3-9ba4-4f31-99bb-3e4eaabb2cc1"
-
-	unauthorisedAuthToken = "0dd023bd-9cc0-4c18-9b4f-e030a1f2b71c"
 )
 
 func init() {
