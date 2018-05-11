@@ -79,7 +79,49 @@ func TestPublishingEndpointsAreHiddenForWeb(t *testing.T) {
 			})
 		})
 
+		// VERSION
+
+		// PUT request to /datasets/{id}/editions/{edition}/versions/{version}
+		Convey("When a PUT request to update meta data against the version resource in web", func() {
+			Convey("Then response returns a status not found (404)", func() {
+
+				log.Debug("PUT request on Version resource", log.Data{"endpoint": "/datasets/{id}/editions/{edition}/versions/{version}", "method": "PUT"})
+
+				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTUpdateVersionMetaDataJSON)).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("")
+			})
+		})
+
 		// INSTANCE
+
+		// GET request to /instance
+		Convey("When a GET request to retrieve an instance resource in web", func() {
+			Convey("Then response returns a status not found (404)", func() {
+
+				log.Debug("GET request on Instance resource", log.Data{"endpoint": "/instance", "method": "GET"})
+
+				datasetAPI.GET("/instance").
+					WithHeader(florenceTokenName, florenceToken).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("")
+			})
+		})
+
+		// GET request to /instances
+		Convey("When a GET request is made to retrieve all instance resources in web", func() {
+			Convey("Then response returns a status not found (404)", func() {
+
+				log.Debug("GET request on Instance resources", log.Data{"endpoint": "/instances", "method": "GET"})
+
+				datasetAPI.GET("/instances").
+					WithHeader(florenceTokenName, florenceToken).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("")
+			})
+		})
 
 		// POST request to /instances
 		Convey("When a POST request to create a new instance resource in web", func() {
@@ -109,17 +151,31 @@ func TestPublishingEndpointsAreHiddenForWeb(t *testing.T) {
 			})
 		})
 
-		// VERSION
+		// INSTANCE DIMENSION
 
-		// PUT request to /datasets/{id}/editions/{edition}/versions/{version}
-		Convey("When a PUT request to update meta data against the version resource in web", func() {
+		// GET request to /instances/{instance_id}/dimensions
+		Convey("When a GET request to retrieve a list of dimension resources for an instance in web", func() {
 			Convey("Then response returns a status not found (404)", func() {
 
-				log.Debug("PUT request on Version resource", log.Data{"endpoint": "/datasets/{id}/editions/{edition}/versions/{version}", "method": "PUT"})
+				log.Debug("GET request on Dimension resources for an instance", log.Data{"endpoint": "/instances/{instance_id}/dimensions", "method": "GET"})
 
-				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+				datasetAPI.GET("/instances/{instance_id}/dimensions", instanceID).
 					WithHeader(florenceTokenName, florenceToken).
-					WithBytes([]byte(validPUTUpdateVersionMetaDataJSON)).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("")
+			})
+		})
+
+		// INSTANCE DIMENSION OPTION
+
+		// GET request to /instances/{instance_id}/dimensions/{name}/options
+		Convey("When a GET request to retrieve a list of dimension option resources for an instance in web", func() {
+			Convey("Then response returns a status not found (404)", func() {
+
+				log.Debug("GET request on Dimension Option resources for an instance", log.Data{"endpoint": "/instances/{instance_id}/dimensions/{name}/options", "method": "GET"})
+
+				datasetAPI.GET("/instances/{instance_id}/dimensions/time/options", instanceID).
+					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
 					Body().Contains("")
 			})
@@ -161,7 +217,15 @@ func setupResources(datasetID, editionID, edition, instanceID string) ([]*mongo.
 		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
 	}
 
-	docs = append(docs, publishedDatasetDoc, publishedEditionDoc, publishedInstanceDoc)
+	dimensionDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "dimension.options",
+		Key:        "_id",
+		Value:      "9811",
+		Update:     validTimeDimensionsData("9811", instanceID),
+	}
+
+	docs = append(docs, publishedDatasetDoc, publishedEditionDoc, publishedInstanceDoc, dimensionDoc)
 
 	if err := mongo.Setup(docs...); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
