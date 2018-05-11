@@ -20,7 +20,7 @@ dp-dataset-api
 dp-auth-api-stub (mimics zebedee authentication)
 ```
 
-`dp-dataset-api` should be run with `make acceptance`
+`dp-dataset-api` should be run with `make acceptance-publishing`
 
 #### Note
 
