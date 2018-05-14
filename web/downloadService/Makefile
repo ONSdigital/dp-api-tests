@@ -13,6 +13,6 @@ vault:
 	@echo "$(APP_TOKEN)"
 
 test:
-	HUMAN_LOG=1 VAULT_TOKEN=$(APP_TOKEN) VAULT_ADDR=$(VAULT_ADDR) go test
+	HUMAN_LOG=1 VAULT_TOKEN=$(APP_TOKEN) VAULT_ADDR=$(VAULT_ADDR) go test ./...
 
 .PHONY: vault test
