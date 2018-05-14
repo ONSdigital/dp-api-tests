@@ -136,7 +136,7 @@ func TestFailureToDeleteDataset(t *testing.T) {
 			request := datasetAPI.DELETE("/datasets/{id}", datasetID)
 
 			Convey("Then the expected response is returned", func() {
-				request.Expect().Status(http.StatusNotFound)
+				request.Expect().Status(http.StatusUnauthorized)
 			})
 		})
 

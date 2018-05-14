@@ -49,39 +49,6 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Get a list of datasets", t, func() {
-		Convey("when the user is unauthorised", func() {
-
-			var datasetFound bool
-
-			response := datasetAPI.GET("/datasets").
-				Expect().Status(http.StatusOK).JSON().Object()
-
-			response.Value("items").Array().Element(0).Object().Value("id").NotNull()
-
-			for i := 0; i < len(response.Value("items").Array().Iter()); i++ {
-				//Unauthorised user so should NOT have an unpublished dataset in response
-				response.Value("items").Array().Element(i).Object().Value("id").NotEqual(unpublishedDatasetID)
-
-				if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == datasetID {
-					// check the published test dataset document has the expected returned fields and values
-					response.Value("items").Array().Element(i).Object().Value("id").Equal(datasetID)
-					checkDatasetResponse(datasetID, response.Value("items").Array().Element(i).Object())
-					datasetFound = true
-				}
-
-				if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == unpublishedDatasetID {
-					// user is not authenticated to see this item, if it is returned force failure
-					t.Log("user is not authenticated to see this item, forced test failure")
-					t.Fail()
-				}
-			}
-
-			if !datasetFound {
-				t.Log(`unable to find published dataset in items array on response`)
-				t.Fail()
-			}
-		})
-
 		Convey("when the user is authorised", func() {
 
 			expectedDatasets := make(map[string]int)

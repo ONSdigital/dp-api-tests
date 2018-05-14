@@ -56,17 +56,6 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 			})
 		})
 
-		Convey("When a user is not authenticated", func() {
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
-				Expect().Status(http.StatusOK).JSON().Object()
-
-			Convey("Then response contains a list of only published versions of the dataset edition", func() {
-				response.Value("items").Array().Length().Equal(1)
-				checkVersionResponse(datasetID, editionID, instanceID, edition, response.Value("items").Array().Element(0).Object())
-				checkNeitherPublicOrPrivateLinksExistInResponse(response.Value("items").Array().Element(0).Object().Value("downloads").Object())
-			})
-		})
-
 		Convey("When the caller of the request is the download service", func() {
 			headers := make(map[string]string)
 			headers[downloadServiceTokenName] = downloadServiceToken
@@ -213,9 +202,9 @@ func TestGetVersions_Failed(t *testing.T) {
 		}
 
 		Convey("When an unauthenticated request is made to get a list of versions of the dataset edition", func() {
-			Convey("Then return status not found (404) with message `Dataset not found`", func() {
+			Convey("Then return status unauthorised (401)", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 
@@ -238,9 +227,9 @@ func TestGetVersions_Failed(t *testing.T) {
 			}
 
 			Convey("When an unauthenticated request is made to get a list of versions of the dataset edition", func() {
-				Convey("Then return status not found (404) with message `Edition not found`", func() {
+				Convey("Then return status unauthorized (401)", func() {
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
-						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
+						Expect().Status(http.StatusUnauthorized)
 				})
 			})
 
@@ -272,9 +261,9 @@ func TestGetVersions_Failed(t *testing.T) {
 				}
 
 				Convey("When an unauthenticated request is made to get a list of versions of the dataset edition", func() {
-					Convey("Then return status not found (404) with message `Version not found`", func() {
+					Convey("Then return status unauthorized (401)", func() {
 						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
-							Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
+							Expect().Status(http.StatusUnauthorized)
 					})
 				})
 

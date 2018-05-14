@@ -156,9 +156,9 @@ func TestFailureToGetAListOfInstances(t *testing.T) {
 		}
 
 		Convey("When no authentication header is provided in request to get list of resources", func() {
-			Convey("Then return a status of not found (404) with message `requested resource not found`", func() {
-				datasetAPI.GET("/instances").Expect().Status(http.StatusNotFound).
-					Body().Contains("requested resource not found")
+			Convey("Then return a status unauthorized (401)", func() {
+				datasetAPI.GET("/instances").
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 

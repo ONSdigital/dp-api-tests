@@ -550,12 +550,11 @@ func TestFailureToUpdateVersion(t *testing.T) {
 
 		// test for missing auth header when making a request to update version
 		Convey("When a PUT request is made to update version resource without an authentication header", func() {
-			Convey("Then fail to update resource and return a status not found (404) with a message `requested resource not found`", func() {
+			Convey("Then fail to update resource and return a status unauthorized (401)", func() {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
 					WithBytes([]byte(validPUTUpdateVersionMetaDataJSON)).
-					Expect().Status(http.StatusNotFound).
-					Body().Contains("requested resource not found")
+					Expect().Status(http.StatusUnauthorized)
 
 			})
 		})

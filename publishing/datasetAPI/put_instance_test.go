@@ -192,12 +192,11 @@ func TestFailureToPutInstance(t *testing.T) {
 		})
 
 		Convey("When no authentication header is provided in PUT request to update an instance resource", func() {
-			Convey("Then fail to update resource and return a status not found (404) with a message `requested resource not found`", func() {
+			Convey("Then fail to update resource and return a status unauthorized (401)", func() {
 
 				datasetAPI.PUT("/instances/{instance_id}", instanceID).
 					WithBytes([]byte(validPUTFullInstanceJSON)).
-					Expect().Status(http.StatusNotFound).
-					Body().Contains("requested resource not found")
+					Expect().Status(http.StatusUnauthorized)
 
 			})
 		})

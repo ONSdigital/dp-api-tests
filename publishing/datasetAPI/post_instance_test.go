@@ -129,11 +129,10 @@ func TestFailureToPostInstance(t *testing.T) {
 		})
 
 		Convey("When no authentication header is provided in POST request to create an instance resource", func() {
-			Convey("Then fail to create resource and return a status not found (404) with a message `requested resource not found`", func() {
+			Convey("Then fail to create resource and return a status unauthorized (401)", func() {
 
 				datasetAPI.POST("/instances").WithBytes([]byte(validPOSTCreateInstanceJSON)).
-					Expect().Status(http.StatusNotFound).
-					Body().Contains("requested resource not found")
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 	})

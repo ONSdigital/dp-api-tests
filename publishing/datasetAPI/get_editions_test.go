@@ -61,26 +61,16 @@ func TestSuccessfullyGetListOfDatasetEditions(t *testing.T) {
 		Convey("When a user is authenticated", func() {
 			Convey("Then the response contains both dataset editions", func() {
 
-				response := datasetAPI.GET("/datasets/{id}/editions", datasetID).WithHeader(florenceTokenName, florenceToken).
+				response := datasetAPI.GET("/datasets/{id}/editions", datasetID).
+					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("items").Array().Length().Equal(2)
-				checkEditionsResponse(datasetID, editionID, "2017", true, response)
+				checkEditionsResponse(datasetID, editionID, "2017", response)
 
 				response.Value("items").Array().Element(1).Object().Value("next").Object().Value("edition").Equal(edition)
 				response.Value("items").Array().Element(1).Object().Value("id").Equal(unpublishedEditionID)
 				response.Value("items").Array().Element(1).Object().Value("next").Object().Value("state").Equal("edition-confirmed")
-			})
-		})
-
-		Convey("When a user is unauthenticated", func() {
-			Convey("Then the response contains only the published edition", func() {
-
-				response := datasetAPI.GET("/datasets/{id}/editions", datasetID).
-					Expect().Status(http.StatusOK).JSON().Object()
-
-				response.Value("items").Array().Length().Equal(1)
-				checkEditionsResponse(datasetID, editionID, edition, false, response)
 			})
 		})
 
@@ -117,10 +107,10 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 
 	Convey("Given the dataset does not exist", t, func() {
 		Convey("When a request to get editions for a dataset is made", func() {
-			Convey("Then return a status not found (404)", func() {
+			Convey("Then return a status unauthorized (404)", func() {
 
 				datasetAPI.GET("/datasets/{id}/editions", datasetID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 	})
@@ -135,7 +125,8 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 			Convey("When a request to get editions for a dataset is made", func() {
 				Convey("Then return a status not found (404)", func() {
 
-					datasetAPI.GET("/datasets/{id}/editions", datasetID).WithHeader(florenceTokenName, florenceToken).
+					datasetAPI.GET("/datasets/{id}/editions", datasetID).
+						WithHeader(florenceTokenName, florenceToken).
 						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
 				})
 			})
@@ -149,10 +140,10 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 			}
 
 			Convey("When a request to get editions for dataset is made by an unauthenticated user", func() {
-				Convey("Then return a status not found (404)", func() {
+				Convey("Then return a status unauthorized (401)", func() {
 
 					datasetAPI.GET("/datasets/{id}/editions", datasetID).
-						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
+						Expect().Status(http.StatusUnauthorized)
 				})
 			})
 		})
@@ -165,16 +156,7 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 	})
 }
 
-func checkEditionsResponse(datasetID, editionID, edition string, authenticated bool, response *httpexpect.Object) {
-	if !authenticated {
-		response.Value("items").Array().Element(0).Object().Value("edition").Equal(edition)
-		response.Value("items").Array().Element(0).Object().Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
-		response.Value("items").Array().Element(0).Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("/datasets/" + datasetID + "$")
-		response.Value("items").Array().Element(0).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "$")
-		response.Value("items").Array().Element(0).Object().Value("links").Object().Value("versions").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions$")
-		response.Value("items").Array().Element(0).Object().Value("state").Equal("published")
-		return
-	}
+func checkEditionsResponse(datasetID, editionID, edition string, response *httpexpect.Object) {
 
 	response.Value("items").Array().Element(0).Object().Value("current").Object().Value("edition").Equal(edition)
 	response.Value("items").Array().Element(0).Object().Value("current").Object().Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
