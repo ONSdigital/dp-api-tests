@@ -23,7 +23,7 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Given a published version for a dataset edition exists", t, func() {
-		docs, err := setupPublishedAndUnpublishedVersions(datasetID, editionID, edition, instanceID)
+		docs, err := setupPublishedVersions(datasetID, editionID, edition, instanceID)
 		if err != nil {
 			log.ErrorC("Failed to setup test data", err, nil)
 			os.Exit(1)
@@ -233,7 +233,7 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 	}
 }
 
-func setupPublishedAndUnpublishedVersions(datasetID, editionID, edition, instanceID string) ([]*mongo.Doc, error) {
+func setupPublishedVersions(datasetID, editionID, edition, instanceID string) ([]*mongo.Doc, error) {
 	var docs []*mongo.Doc
 
 	datasetDoc := &mongo.Doc{

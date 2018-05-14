@@ -48,7 +48,7 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Given a published edition of a dataset", t, func() {
-		Convey("When a GET requestis made to retrieve the edition", func() {
+		Convey("When a GET request is made to retrieve the edition", func() {
 			Convey("Then user succeeds and the response returns the edition current sub document", func() {
 
 				response := datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, edition).

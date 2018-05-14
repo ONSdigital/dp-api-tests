@@ -19,6 +19,7 @@ import (
 func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
+	unpublishedDatasetID := uuid.NewV4().String()
 
 	var docs []*mongo.Doc
 
@@ -34,8 +35,8 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
-		Value:      "133",
-		Update:     validAssociatedDatasetData(datasetID),
+		Value:      unpublishedDatasetID,
+		Update:     validAssociatedDatasetData(unpublishedDatasetID),
 	}
 
 	docs = append(docs, publishedDatasetDoc, unpublishedDatasetDoc)
@@ -51,6 +52,8 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 		Convey("When a user requests a list of datasets", func() {
 			Convey("Then the response returns only published datasets", func() {
 
+				var datasetFound bool
+
 				response := datasetAPI.GET("/datasets").
 					Expect().Status(http.StatusOK).JSON().Object()
 
@@ -62,11 +65,11 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 
 					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == datasetID {
 						// check the published test dataset document has the expected returned fields and values
-						response.Value("items").Array().Element(i).Object().Value("id").Equal(datasetID)
 						checkDatasetResponse(datasetID, response.Value("items").Array().Element(i).Object())
+						datasetFound = true
 					}
 
-					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == "133" {
+					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == unpublishedDatasetID {
 						// User cannot be authenticated to see this item as request has come
 						// from the web subnet, if it is returned force failure
 						t.Log(`user is on web subnet and hence cannot be authenticated
@@ -74,11 +77,18 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 						t.Fail()
 					}
 				}
+
+				if !datasetFound {
+					t.Log(`unable to find published dataset in items array on response`)
+					t.Fail()
+				}
 			})
 		})
 
 		Convey("When a user requests a list of datasets and sets a valid auth header", func() {
 			Convey("Then the response returns only published datasets in the web subnet", func() {
+
+				var datasetFound bool
 
 				response := datasetAPI.GET("/datasets").
 					WithHeader(florenceTokenName, florenceToken).
@@ -88,21 +98,26 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 
 				for i := 0; i < len(response.Value("items").Array().Iter()); i++ {
 					// User should NOT be able to see unpublished dataset in response
-					response.Value("items").Array().Element(i).Object().Value("id").NotEqual("133")
+					response.Value("items").Array().Element(i).Object().Value("id").NotEqual(unpublishedDatasetID)
 
 					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == datasetID {
 						// check the published test dataset document has the expected returned fields and values
-						response.Value("items").Array().Element(i).Object().Value("id").Equal(datasetID)
 						checkDatasetResponse(datasetID, response.Value("items").Array().Element(i).Object())
+						datasetFound = true
 					}
 
-					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == "133" {
+					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == unpublishedDatasetID {
 						// User cannot be authenticated to see this item as request has come
 						// from the web subnet, if it is returned force failure
 						t.Log(`user is on web subnet and hence cannot be authenticated
 						 to be able to see this item, hence forcing test failure`)
 						t.Fail()
 					}
+				}
+
+				if !datasetFound {
+					t.Log(`unable to find published dataset in items array on response`)
+					t.Fail()
 				}
 			})
 		})

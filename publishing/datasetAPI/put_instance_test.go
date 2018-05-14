@@ -42,8 +42,10 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 		Convey("When a PUT request is made to update instance meta data", func() {
 			Convey("Then the instance is updated and return a status ok (200)", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}", instanceID).WithHeader(florenceTokenName, florenceToken).
-					WithBytes([]byte(validPUTFullInstanceJSON)).Expect().Status(http.StatusOK)
+				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTFullInstanceJSON)).
+					Expect().Status(http.StatusOK)
 
 				instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
 				if err != nil {
@@ -62,8 +64,10 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 
 		Convey("and is updated to a state of `completed`", func() {
 
-			datasetAPI.PUT("/instances/{instance_id}", instanceID).WithHeader(florenceTokenName, florenceToken).
-				WithBytes([]byte(validPUTCompletedInstanceJSON)).Expect().Status(http.StatusOK)
+			datasetAPI.PUT("/instances/{instance_id}", instanceID).
+				WithHeader(florenceTokenName, florenceToken).
+				WithBytes([]byte(validPUTCompletedInstanceJSON)).
+				Expect().Status(http.StatusOK)
 
 			instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
 			if err != nil {
@@ -79,8 +83,10 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 			Convey("When a PUT request is made to update instance meta data and set state to `edition-confirmed`", func() {
 				Convey("Then the instance is updated and return a status ok (200)", func() {
 
-					datasetAPI.PUT("/instances/{instance_id}", instanceID).WithHeader(florenceTokenName, florenceToken).
-						WithBytes([]byte(validPUTEditionConfirmedInstanceJSON)).Expect().Status(http.StatusOK)
+					datasetAPI.PUT("/instances/{instance_id}", instanceID).
+						WithHeader(florenceTokenName, florenceToken).
+						WithBytes([]byte(validPUTEditionConfirmedInstanceJSON)).
+						Expect().Status(http.StatusOK)
 
 					instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
 					if err != nil {
@@ -150,6 +156,7 @@ func TestFailureToPutInstance(t *testing.T) {
 					WithBytes([]byte(validPUTFullInstanceJSON)).
 					Expect().Status(http.StatusNotFound).
 					Body().Contains("Instance not found")
+
 			})
 		})
 	})
@@ -169,6 +176,7 @@ func TestFailureToPutInstance(t *testing.T) {
 					WithBytes([]byte("{")).
 					Expect().Status(http.StatusBadRequest).
 					Body().Contains("Failed to parse json body: unexpected end of JSON input")
+
 			})
 		})
 
@@ -179,6 +187,7 @@ func TestFailureToPutInstance(t *testing.T) {
 					WithBytes([]byte(validPUTFullInstanceJSON)).
 					WithHeader(florenceTokenName, unauthorisedAuthToken).
 					Expect().Status(http.StatusUnauthorized)
+
 			})
 		})
 
@@ -189,6 +198,7 @@ func TestFailureToPutInstance(t *testing.T) {
 					WithBytes([]byte(validPUTFullInstanceJSON)).
 					Expect().Status(http.StatusNotFound).
 					Body().Contains("requested resource not found")
+
 			})
 		})
 
@@ -200,6 +210,7 @@ func TestFailureToPutInstance(t *testing.T) {
 					WithBytes([]byte(`{"state": "edition-confirmed"}`)).
 					Expect().Status(http.StatusForbidden).Body().
 					Contains("Unable to update resource, expected resource to have a state of completed")
+
 			})
 		})
 
@@ -211,6 +222,7 @@ func TestFailureToPutInstance(t *testing.T) {
 					WithBytes([]byte(`{"state": "associated"}`)).
 					Expect().Status(http.StatusForbidden).
 					Body().Contains("Unable to update resource, expected resource to have a state of edition-confirmed")
+
 			})
 		})
 
@@ -222,6 +234,7 @@ func TestFailureToPutInstance(t *testing.T) {
 					WithBytes([]byte(`{"state": "published"}`)).
 					Expect().Status(http.StatusForbidden).
 					Body().Contains("Unable to update resource, expected resource to have a state of associated")
+
 			})
 		})
 
@@ -233,6 +246,7 @@ func TestFailureToPutInstance(t *testing.T) {
 					WithBytes([]byte(`{"state": "fake-state"}`)).
 					Expect().Status(http.StatusBadRequest).
 					Body().Contains("bad request - invalid filter state values: [fake-state]")
+
 			})
 		})
 
@@ -270,6 +284,7 @@ func TestUpdatingStateOnPublishedDataset(t *testing.T) {
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(`{"state": "completed"}`)).
 					Expect().Status(http.StatusForbidden)
+
 			})
 
 			if err := mongo.Teardown(instance); err != nil {

@@ -87,7 +87,7 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
-		Value:      "466",
+		Value:      unpublishedEditionID,
 		Update:     validUnpublishedEditionData(datasetID, unpublishedEditionID, "2018"),
 	}
 

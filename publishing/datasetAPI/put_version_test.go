@@ -194,6 +194,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		// 1 test skipped
 		SkipConvey("When a PUT request to update version resource to remove collection id", func() {
 			Convey("Then the dataset and version resources are updated accordingly and returns a status ok (200)", func() {
+
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTUpdateVersionFromAssociatedToEditionConfirmedJSON)).
@@ -369,6 +370,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
 					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
+
 			})
 		})
 
@@ -397,6 +399,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 					WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
 					Expect().Status(http.StatusNotFound).
 					Body().Contains("Edition not found")
+
 			})
 		})
 
@@ -425,6 +428,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 					WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
 					Expect().Status(http.StatusNotFound).
 					Body().Contains("Version not found")
+
 			})
 		})
 
@@ -436,15 +440,75 @@ func TestFailureToUpdateVersion(t *testing.T) {
 		}
 	})
 
+	// test for updating a version so it with a state of `published` but missing mandatory fields
+	Convey("Given a published dataset and edition and an unpublished version exist ...", t, func() {
+
+		Convey("... with mandatory fields missing", func() {
+			docs, err := setupResources(datasetID, editionID, edition, instanceID, 9)
+			if err != nil {
+				log.ErrorC("Was unable to setup test data", err, nil)
+				os.Exit(1)
+			}
+
+			Convey("When an authorised PUT request is made to update version resource to published", func() {
+				Convey("Then fail to update resource and return a status bad request (400) with a message `Missing collection_id for association between version and a collection`", func() {
+
+					datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+						WithHeader(florenceTokenName, florenceToken).
+						WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
+						Expect().Status(http.StatusBadRequest).
+						Body().Contains("missing mandatory fields: [release_date Downloads.XLS.HRef Downloads.XLS.Size Downloads.CSV.HRef Downloads.CSV.Size]")
+
+				})
+			})
+
+			if err := mongo.Teardown(docs...); err != nil {
+				if err != mgo.ErrNotFound {
+					log.ErrorC("Was unable to remove test data", err, nil)
+					os.Exit(1)
+				}
+			}
+		})
+
+		Convey("... with invalid fields", func() {
+			docs, err := setupResources(datasetID, editionID, edition, instanceID, 10)
+			if err != nil {
+				log.ErrorC("Was unable to setup test data", err, nil)
+				os.Exit(1)
+			}
+
+			Convey("When an authorised PUT request is made to update version resource to published", func() {
+				Convey("Then fail to update resource and return a status bad request (400) with a message `Missing collection_id for association between version and a collection`", func() {
+
+					datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+						WithHeader(florenceTokenName, florenceToken).
+						WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
+						Expect().Status(http.StatusBadRequest).
+						Body().Contains("invalid fields: [Downloads.XLS.Size not a number Downloads.CSV.Size not a number]")
+
+				})
+			})
+
+			if err := mongo.Teardown(docs...); err != nil {
+				if err != mgo.ErrNotFound {
+					log.ErrorC("Was unable to remove test data", err, nil)
+					os.Exit(1)
+				}
+			}
+		})
+	})
+
 	// test for bad request (invalid json)
 	Convey("Given a dataset, edition and version do not exist", t, func() {
 		Convey("When an authorised PUT request is made to update version resource with invalid json", func() {
 			Convey("Then fail to update resource and return a status of bad request (400) with a message ``", func() {
+
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(`{`)).
 					Expect().Status(http.StatusBadRequest).
 					Body().Contains("Failed to parse json body")
+
 			})
 		})
 	})
@@ -523,6 +587,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 					WithBytes([]byte(`{"state": "edition-confirmed"}`)).
 					Expect().Status(http.StatusForbidden).
 					Body().Contains("unable to update version as it has been published")
+
 			})
 		})
 
@@ -535,6 +600,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 					WithBytes([]byte(`{"links":{"spatial":{"href": "http://ons.gov.uk/spatial-notes"}}}`)).
 					Expect().Status(http.StatusForbidden).
 					Body().Contains("unable to update version as it has been published")
+
 			})
 		})
 
@@ -614,6 +680,22 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Update:     validEditionConfirmedInstanceData(datasetID, edition, instanceID),
 	}
 
+	editionConfirmedInstanceMissingMandatoryFieldsDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "instances",
+		Key:        "_id",
+		Value:      instanceID,
+		Update:     editionConfirmedInstanceMissingMandatoryFields(datasetID, edition, instanceID),
+	}
+
+	editionConfirmedInstanceInvalidFieldsDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "instances",
+		Key:        "_id",
+		Value:      instanceID,
+		Update:     editionConfirmedInstanceInvalidFields(datasetID, edition, instanceID),
+	}
+
 	switch setup {
 	case 1:
 		docs = append(docs, createdDatasetDoc, unpublishedEditionDoc, editionConfirmedInstanceDoc)
@@ -631,6 +713,10 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		docs = append(docs, publishedDatasetDoc, publishedEditionDoc, editionConfirmedInstanceDoc)
 	case 8:
 		docs = append(docs, publishedDatasetDoc, publishedEditionDoc, publishedInstanceDoc)
+	case 9:
+		docs = append(docs, publishedDatasetDoc, publishedEditionDoc, editionConfirmedInstanceMissingMandatoryFieldsDoc)
+	case 10:
+		docs = append(docs, publishedDatasetDoc, publishedEditionDoc, editionConfirmedInstanceInvalidFieldsDoc)
 	default:
 		errMsg := fmt.Errorf("Failed to pick a valid setup value")
 		log.Error(errMsg, log.Data{"setup": setup})
