@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strconv"
 	"testing"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
@@ -13,40 +12,48 @@ import (
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 	"gopkg.in/mgo.v2"
+	"github.com/ONSdigital/dp-api-tests/web/filterAPI"
 )
 
-func TestPrivateDownloadDecryptedAndStreamed(t *testing.T) {
+func TestPrivateFilterDownloadDecryptedAndStreamedWithoutError(t *testing.T) {
 	if len(os.Getenv("VAULT_ADDR")) == 0 || len(os.Getenv("VAULT_TOKEN")) == 0 {
 		log.Info("failing test as no vault token or address set - use make test", nil)
 		t.FailNow()
 	}
 
+	filterID := uuid.NewV4().String()
+	filterBlueprintID := uuid.NewV4().String()
+	filterOutputID := uuid.NewV4().String()
 	datasetID := uuid.NewV4().String()
 	editionID := uuid.NewV4().String()
-	versionID := 1
+	instanceID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
+	isPublished := true
 
-	dataset := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: collection,
+	log.Debug("TestPrivateFilterDownloadDecryptedAndStreamed", log.Data{
+		"filterID":          filterID,
+		"filterBlueprintID": filterBlueprintID,
+		"filterOutputID":    filterOutputID,
+		"datasetID":         datasetID,
+		"editionID":         editionID,
+		"instanceID":        instanceID,
+	})
+
+	filterBlueprintDoc := &mongo.Doc{
+		Database:   cfg.MongoFiltersDB,
+		Collection: "filters",
 		Key:        "_id",
-		Value:      datasetID,
-		Update:     validPublishedDataset(datasetID),
+		Value:      filterID,
+		Update:     filterAPI.GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, isPublished),
 	}
 
-	edition := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "editions",
+	filterDoc := &mongo.Doc{
+		Database:   cfg.MongoFiltersDB,
+		Collection: "filterOutputs",
 		Key:        "_id",
-		Value:      editionID,
-		Update:     validPublishedEdition(datasetID, editionID),
-	}
-
-	version := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "instances",
-		Key:        "_id",
-		Value:      strconv.Itoa(versionID),
-		Update:     validVersionWithPrivateLink(datasetID, editionID, versionID, "published"),
+		Value:      filterID,
+		Update:     filterAPI.GetValidFilterOutputWithPrivateDownloads(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, version, isPublished),
 	}
 
 	f, err := ioutil.ReadFile(fileName)
@@ -60,7 +67,7 @@ func TestPrivateDownloadDecryptedAndStreamed(t *testing.T) {
 		os.Exit(1)
 	}
 
-	if err := mongo.Setup(dataset, edition, version); err != nil {
+	if err := mongo.Setup(filterDoc, filterBlueprintDoc); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
@@ -71,7 +78,7 @@ func TestPrivateDownloadDecryptedAndStreamed(t *testing.T) {
 		Convey("When a request is made for the private document", func() {
 			Convey("Then the response streams the decrypted private file", func() {
 
-				response := downloadService.GET("/downloads/datasets/{datasetID}/editions/{edition}/versions/{version}.csv", datasetID, editionID, versionID).
+				response := downloadService.GET("/downloads/filter-outputs/{filterOutputID}.csv", filterOutputID).
 					Expect().Status(http.StatusOK)
 
 				response.Body().Equal(string(f))
@@ -79,7 +86,7 @@ func TestPrivateDownloadDecryptedAndStreamed(t *testing.T) {
 		})
 	})
 
-	if err := mongo.Teardown(dataset, edition, version); err != nil {
+	if err := mongo.Teardown(filterDoc, filterBlueprintDoc); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
@@ -93,38 +100,36 @@ func TestPrivateDownloadDecryptedAndStreamed(t *testing.T) {
 
 }
 
-func TestPrivateDownloadDecryptedAndStreamedWithAuthentication(t *testing.T) {
+func TestPrivateFilterDownloadDecryptedAndStreamedUnpublishedWithoutAuthentication(t *testing.T) {
 	if len(os.Getenv("VAULT_ADDR")) == 0 || len(os.Getenv("VAULT_TOKEN")) == 0 {
 		log.Info("failing test as no vault token or address set - use make test", nil)
 		t.FailNow()
 	}
 
+	filterID := uuid.NewV4().String()
+	filterBlueprintID := uuid.NewV4().String()
+	filterOutputID := uuid.NewV4().String()
 	datasetID := uuid.NewV4().String()
-	editionID := uuid.NewV4().String()
-	versionID := 1
+	instanceID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
-	dataset := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: collection,
+	isPublished := false
+
+	filterBlueprintDoc := &mongo.Doc{
+		Database:   cfg.MongoFiltersDB,
+		Collection: "filters",
 		Key:        "_id",
-		Value:      datasetID,
-		Update:     validPublishedDataset(datasetID),
+		Value:      filterID,
+		Update:     filterAPI.GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, isPublished),
 	}
 
-	edition := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "editions",
+	filterDoc := &mongo.Doc{
+		Database:   cfg.MongoFiltersDB,
+		Collection: "filterOutputs",
 		Key:        "_id",
-		Value:      editionID,
-		Update:     validPublishedEdition(datasetID, editionID),
-	}
-
-	version := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "instances",
-		Key:        "_id",
-		Value:      strconv.Itoa(versionID),
-		Update:     validVersionWithPrivateLink(datasetID, editionID, versionID, "associated"),
+		Value:      filterID,
+		Update:     filterAPI.GetValidFilterOutputWithPrivateDownloads(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, version, isPublished),
 	}
 
 	if err := sendV4FileToAWS(region, bucketName, fileName); err != nil {
@@ -132,7 +137,7 @@ func TestPrivateDownloadDecryptedAndStreamedWithAuthentication(t *testing.T) {
 		os.Exit(1)
 	}
 
-	if err := mongo.Setup(dataset, edition, version); err != nil {
+	if err := mongo.Setup(filterDoc, filterBlueprintDoc); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
@@ -143,15 +148,14 @@ func TestPrivateDownloadDecryptedAndStreamedWithAuthentication(t *testing.T) {
 		Convey("When a request is made for the private document without authentication", func() {
 			Convey("Then the response returns a not found http status", func() {
 
-				response := downloadService.GET("/downloads/datasets/{datasetID}/editions/{edition}/versions/{version}.csv", datasetID, editionID, versionID).
-					Expect().Status(http.StatusNotFound)
+				downloadService.GET("/downloads/filter-outputs/{filterOutputID}.csv", filterOutputID).
+					Expect().Status(http.StatusInternalServerError)
 
-				response.Body().Contains("resource not found")
 			})
 		})
 	})
 
-	if err := mongo.Teardown(dataset, edition, version); err != nil {
+	if err := mongo.Teardown(filterDoc, filterBlueprintDoc); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
@@ -164,41 +168,39 @@ func TestPrivateDownloadDecryptedAndStreamedWithAuthentication(t *testing.T) {
 	}
 }
 
-func TestPrivateDownloadDecryptedAndStreamedFailure(t *testing.T) {
+func TestPrivateFilterDownloadDecryptedAndStreamedFailure(t *testing.T) {
 	if len(os.Getenv("VAULT_ADDR")) == 0 || len(os.Getenv("VAULT_TOKEN")) == 0 {
 		log.Info("failing test as no vault token or address set - use make test", nil)
 		t.FailNow()
 	}
 
+	filterID := uuid.NewV4().String()
+	filterBlueprintID := uuid.NewV4().String()
+	filterOutputID := uuid.NewV4().String()
 	datasetID := uuid.NewV4().String()
-	editionID := uuid.NewV4().String()
-	versionID := 1
+	instanceID := uuid.NewV4().String()
+	edition := "2017"
+	version := 1
 
-	dataset := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: collection,
+	isPublished := false
+
+	filterBlueprintDoc := &mongo.Doc{
+		Database:   cfg.MongoFiltersDB,
+		Collection: "filters",
 		Key:        "_id",
-		Value:      datasetID,
-		Update:     validPublishedDataset(datasetID),
+		Value:      filterID,
+		Update:     filterAPI.GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, isPublished),
 	}
 
-	edition := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "editions",
+	filterDoc := &mongo.Doc{
+		Database:   cfg.MongoFiltersDB,
+		Collection: "filterOutputs",
 		Key:        "_id",
-		Value:      editionID,
-		Update:     validPublishedEdition(datasetID, editionID),
+		Value:      filterID,
+		Update:     filterAPI.GetValidFilterOutputWithPrivateDownloads(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, version, isPublished),
 	}
 
-	version := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "instances",
-		Key:        "_id",
-		Value:      strconv.Itoa(versionID),
-		Update:     validVersionWithPrivateLink(datasetID, editionID, versionID, "published"),
-	}
-
-	if err := mongo.Setup(dataset, edition, version); err != nil {
+	if err := mongo.Setup(filterDoc, filterBlueprintDoc); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
@@ -208,7 +210,7 @@ func TestPrivateDownloadDecryptedAndStreamedFailure(t *testing.T) {
 	Convey("Given a public version exists with a private link, but the file is missing from Amazon S3", t, func() {
 		Convey("When a request is made for the private document", func() {
 			Convey("Then the download service returns an internal server error status code", func() {
-				response := downloadService.GET("/downloads/datasets/{datasetID}/editions/{edition}/versions/{version}.csv", datasetID, editionID, versionID).
+				response := downloadService.GET("/downloads/filter-outputs/{filterOutputID}.csv", filterOutputID).
 					Expect().Status(http.StatusInternalServerError)
 
 				response.Body().Contains("internal server error")
@@ -216,7 +218,7 @@ func TestPrivateDownloadDecryptedAndStreamedFailure(t *testing.T) {
 		})
 	})
 
-	if err := mongo.Teardown(dataset, edition, version); err != nil {
+	if err := mongo.Teardown(filterDoc, filterBlueprintDoc); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)

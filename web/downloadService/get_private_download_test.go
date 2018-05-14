@@ -15,7 +15,7 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
-func TestPrivateDownloadDecryptedAndStreamed(t *testing.T) {
+func TestPrivateDownloadDecryptedAndStreamedSuccess(t *testing.T) {
 	if len(os.Getenv("VAULT_ADDR")) == 0 || len(os.Getenv("VAULT_TOKEN")) == 0 {
 		log.Info("failing test as no vault token or address set - use make test", nil)
 		t.FailNow()
@@ -79,12 +79,12 @@ func TestPrivateDownloadDecryptedAndStreamed(t *testing.T) {
 		})
 	})
 
-	if err := mongo.Teardown(dataset, edition, version); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Failed to tear down test data", err, nil)
-			os.Exit(1)
-		}
-	}
+	//if err := mongo.Teardown(dataset, edition, version); err != nil {
+	//	if err != mgo.ErrNotFound {
+	//		log.ErrorC("Failed to tear down test data", err, nil)
+	//		os.Exit(1)
+	//	}
+	//}
 
 	if err := deleteS3File(region, bucketName, fileName); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
@@ -93,7 +93,7 @@ func TestPrivateDownloadDecryptedAndStreamed(t *testing.T) {
 
 }
 
-func TestPrivateDownloadDecryptedAndStreamedWithAuthentication(t *testing.T) {
+func TestPrivateDownloadDecryptedAndStreamedWithoutAuthentication(t *testing.T) {
 	if len(os.Getenv("VAULT_ADDR")) == 0 || len(os.Getenv("VAULT_TOKEN")) == 0 {
 		log.Info("failing test as no vault token or address set - use make test", nil)
 		t.FailNow()
