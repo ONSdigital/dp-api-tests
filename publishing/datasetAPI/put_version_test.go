@@ -440,10 +440,10 @@ func TestFailureToUpdateVersion(t *testing.T) {
 		}
 	})
 
-	// test for updating a version so it with a state of `published` but missing mandatory fields
-	Convey("Given a published dataset and edition and an unpublished version exist ...", t, func() {
+	// test for updating a version with a state of `published` but request missing mandatory fields
+	Convey("Given a published dataset and edition and an unpublished version exist", t, func() {
 
-		Convey("... with mandatory fields missing", func() {
+		Convey("with mandatory fields missing", func() {
 			docs, err := setupResources(datasetID, editionID, edition, instanceID, 9)
 			if err != nil {
 				log.ErrorC("Was unable to setup test data", err, nil)
@@ -451,7 +451,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			}
 
 			Convey("When an authorised PUT request is made to update version resource to published", func() {
-				Convey("Then fail to update resource and return a status bad request (400) with a message `Missing collection_id for association between version and a collection`", func() {
+				Convey("Then fail to update resource and return a status bad request (400) with the correct message", func() {
 
 					datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
 						WithHeader(florenceTokenName, florenceToken).
@@ -470,7 +470,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			}
 		})
 
-		Convey("... with invalid fields", func() {
+		Convey("with invalid fields", func() {
 			docs, err := setupResources(datasetID, editionID, edition, instanceID, 10)
 			if err != nil {
 				log.ErrorC("Was unable to setup test data", err, nil)
@@ -478,7 +478,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			}
 
 			Convey("When an authorised PUT request is made to update version resource to published", func() {
-				Convey("Then fail to update resource and return a status bad request (400) with a message `Missing collection_id for association between version and a collection`", func() {
+				Convey("Then fail to update resource and return a status bad request (400) with the correct message", func() {
 
 					datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
 						WithHeader(florenceTokenName, florenceToken).

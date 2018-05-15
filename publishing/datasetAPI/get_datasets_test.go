@@ -51,8 +51,7 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 	Convey("Get a list of datasets", t, func() {
 		Convey("when the user is authorised", func() {
 
-			expectedDatasets := make(map[string]int)
-			expectedDatasets["found"] = 0
+			expectedDatasets := 0
 
 			response := datasetAPI.GET("/datasets").
 				WithHeader(florenceTokenName, florenceToken).
@@ -67,19 +66,19 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 					checkDatasetResponse(datasetID, response.Value("items").Array().Element(i).Object().Value("current").Object())
 					response.Value("items").Array().Element(i).Object().Value("next").Object().NotEmpty()
 
-					expectedDatasets["found"]++
+					expectedDatasets++
 				}
 
 				if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == unpublishedDatasetID {
 					// check the published test dataset document has the expected returned fields and values
 					response.Value("items").Array().Element(i).Object().NotContainsKey("current")
 					response.Value("items").Array().Element(i).Object().Value("next").Object().NotEmpty()
-					expectedDatasets["found"]++
+					expectedDatasets++
 				}
 			}
 
-			if expectedDatasets["found"] != 2 {
-				t.Logf("unable to find all expected datasets in items array on response \nfound: [%d]\nexpected: [%d]", expectedDatasets["found"], 2)
+			if expectedDatasets != 2 {
+				t.Logf("unable to find all expected datasets in items array on response \nfound: [%d]\nexpected: [%d]", expectedDatasets, 2)
 				t.Fail()
 			}
 		})

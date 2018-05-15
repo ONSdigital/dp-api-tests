@@ -107,7 +107,7 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 
 	Convey("Given the dataset does not exist", t, func() {
 		Convey("When a request to get editions for a dataset is made", func() {
-			Convey("Then return a status unauthorized (404)", func() {
+			Convey("Then return a status unauthorized (401)", func() {
 
 				datasetAPI.GET("/datasets/{id}/editions", datasetID).
 					Expect().Status(http.StatusUnauthorized)

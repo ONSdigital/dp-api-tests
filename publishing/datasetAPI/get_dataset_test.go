@@ -17,7 +17,7 @@ import (
 func TestSuccessfullyGetADataset(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
-	unpublishedDatasteID := uuid.NewV4().String()
+	unpublishedDatasetID := uuid.NewV4().String()
 
 	dataset := &mongo.Doc{
 		Database:   cfg.MongoDB,
@@ -31,8 +31,8 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 		Database:   cfg.MongoDB,
 		Collection: collection,
 		Key:        "_id",
-		Value:      unpublishedDatasteID,
-		Update:     validAssociatedDatasetData(unpublishedDatasteID),
+		Value:      unpublishedDatasetID,
+		Update:     validAssociatedDatasetData(unpublishedDatasetID),
 	}
 
 	if err := mongo.Setup(dataset, unpublishedDataset); err != nil {
@@ -63,11 +63,11 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 		Convey("When the user is authenticated", func() {
 			Convey("Then response includes the expected next sub document and returns a status ok (200)", func() {
 
-				response := datasetAPI.GET("/datasets/{id}", unpublishedDatasteID).
+				response := datasetAPI.GET("/datasets/{id}", unpublishedDatasetID).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				response.Value("id").Equal(unpublishedDatasteID)
+				response.Value("id").Equal(unpublishedDatasetID)
 				response.NotContainsKey("current")
 				response.Value("next").NotNull()
 				response.Value("next").Object().Value("state").Equal("associated")
