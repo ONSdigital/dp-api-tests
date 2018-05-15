@@ -143,7 +143,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 			})
 		})
 
-		Convey("When making an request to get filter output with a download service token header", func() {
+		Convey("When making a request to get filter output with a download service token header", func() {
 			Convey("Then filter output is returned in the response body", func() {
 
 				response := filterAPI.GET("/filter-outputs/{filter_output_id}", unpublishedFilterOutputID).

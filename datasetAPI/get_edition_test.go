@@ -60,15 +60,15 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 	Convey("Get an edition of a dataset", t, func() {
 		Convey("When user is authenticated and edition is not published", func() {
 
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+			response := datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).WithHeader(florenceTokenName, florenceToken).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("id").Equal(unpublishedEditionID)
 			response.Value("next").Object().Value("edition").Equal(unpublishedEdition)
 			response.Value("next").Object().Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
-			response.Value("next").Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
-			response.Value("next").Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + unpublishedEdition + "$")
-			response.Value("next").Object().Value("links").Object().Value("versions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + unpublishedEdition + "/versions$")
+			response.Value("next").Object().Value("links").Object().Value("dataset").Object().Value("href").String().Match("/datasets/" + datasetID + "$")
+			response.Value("next").Object().Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + unpublishedEdition + "$")
+			response.Value("next").Object().Value("links").Object().Value("versions").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + unpublishedEdition + "/versions$")
 			response.Value("next").Object().Value("state").Equal("edition-confirmed")
 		})
 
@@ -79,9 +79,9 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 
 			response.Value("edition").Equal(edition)
 			response.Value("links").Object().Value("dataset").Object().Value("id").Equal(datasetID)
-			response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
-			response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "$")
-			response.Value("links").Object().Value("versions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions$")
+			response.Value("links").Object().Value("dataset").Object().Value("href").String().Match("/datasets/" + datasetID + "$")
+			response.Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "$")
+			response.Value("links").Object().Value("versions").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions$")
 			response.Value("state").Equal("published")
 		})
 	})
@@ -120,7 +120,7 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 	Convey("When the dataset does not exist", t, func() {
 		Convey("Given a request to get an edition of the dataset", func() {
 			Convey("Then the response returns status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
 			})
 		})
@@ -135,7 +135,7 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 		Convey("but no editions exist against the dataset", func() {
 			Convey("Given a request to get an edition of the dataset", func() {
 				Convey("Then the response returns status not found (404)", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+					datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).WithHeader(florenceTokenName, florenceToken).
 						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
 				})
 			})

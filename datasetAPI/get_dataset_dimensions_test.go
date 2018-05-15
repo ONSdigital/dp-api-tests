@@ -72,7 +72,7 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 	Convey("Get a list of all dimensions of a dataset", t, func() {
 		Convey("When user is authenticated", func() {
 
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions", datasetID, edition, 1).WithHeader(serviceAuthTokenName, serviceAuthToken).
+			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions", datasetID, edition, 1).WithHeader(florenceTokenName, florenceToken).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			checkDimensionsResponse(datasetID, edition, instanceID, response)
@@ -144,7 +144,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 		// TODO Remove skip on test once endpoint fixed
 		SkipConvey("When user is authenticated and the dataset does not exist", func() {
 			Convey("Then return status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", "1234", "2018").WithHeader(serviceAuthTokenName, serviceAuthToken).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", "1234", "2018").WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
 			})
 		})
@@ -152,14 +152,14 @@ func TestGetDimensions_Failed(t *testing.T) {
 		// TODO Remove skip on test once endpoint fixed
 		SkipConvey("When user is authenticated and the edition does not exist", func() {
 			Convey("Then return status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, "2018").WithHeader(serviceAuthTokenName, serviceAuthToken).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, "2018").WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
 			})
 		})
 
 		Convey("When user is authenticated and there are no versions", func() {
 			Convey("Then return status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/3/dimensions", datasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/3/dimensions", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
 			})
 		})
@@ -201,7 +201,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 	Convey("Given a valid dataset id, edition and version with no dimensions", t, func() {
 		Convey("When authenticated", func() {
 			Convey("Then return status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("Dimensions not found")
 			})
 		})
@@ -225,23 +225,23 @@ func TestGetDimensions_Failed(t *testing.T) {
 func checkDimensionsResponse(datasetID, edition, instanceID string, response *httpexpect.Object) {
 
 	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("id").Equal("64d384f1-ea3b-445c-8fb8-aa453f96e58a")
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")
 
 	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("options").Object().Value("id").Equal("aggregate")
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("options").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions/aggregate/options$")
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("options").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions/aggregate/options$")
 
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/instances/" + instanceID + "$")
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("/instances/" + instanceID + "$")
 
 	response.Value("items").Array().Element(0).Object().Value("dimension").Equal("aggregate")
 	response.Value("items").Array().Element(0).Object().Value("description").Equal("An aggregate of the data")
 
 	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code_list").Object().Value("id").Equal("64d384f1-ea3b-445c-8fb8-aa453f96e58a")
-	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")
+	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a$")
 
 	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("options").Object().Value("id").Equal("time")
-	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("options").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions/time/options$")
+	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("options").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions/time/options$")
 
-	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/instances/" + instanceID + "$")
+	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("/instances/" + instanceID + "$")
 
 	response.Value("items").Array().Element(1).Object().Value("dimension").Equal("time")
 	response.Value("items").Array().Element(1).Object().Value("description").Equal("The time in which this dataset spans")

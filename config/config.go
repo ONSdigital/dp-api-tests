@@ -23,8 +23,8 @@ type Config struct {
 	ObservationConsumerGroup  string   `envconfig:"OBSERVATION_CONSUMER_GROUP"`
 	ObservationConsumerTopic  string   `envconfig:"OBSERVATION_CONSUMER_TOPIC"`
 	EncryptionDisabled        bool     `envconfig:"ENCRYPTION_DISABLED"`
-	VaultToken                string   `envconfig:"VAULT_TOKEN"`
 	VaultAddress              string   `envconfig:"VAULT_ADDR"`
+	VaultToken                string   `envconfig:"VAULT_TOKEN"`
 	VaultPath                 string   `envconfig:"VAULT_PATH"`
 }
 

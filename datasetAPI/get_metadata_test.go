@@ -33,7 +33,7 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 
 		Convey("When an authenticated request is made to get the unpublished version", func() {
 			Convey("Then the response body contains the expected metadata", func() {
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/metadata", datasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/metadata", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("contacts").Array().Element(0).Object().Value("email").Equal("cpi@onstest.gov.uk")
@@ -41,15 +41,19 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 				response.Value("contacts").Array().Element(0).Object().Value("telephone").Equal("+44 (0)1633 123456")
 				response.Value("description").Equal("Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.")
 				response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
-				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("(.+)/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
+				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
 				response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
 				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
 				response.Value("distribution").Array().Element(0).Equal("json")
 				response.Value("distribution").Array().Element(1).Equal("csv")
 				response.Value("distribution").Array().Element(2).Equal("xls")
-				response.Value("downloads").Object().Value("csv").Object().Value("url").String().Match("(.+)/aws/census-2017-2-csv$")
+				response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("/aws/census-2017-2-csv$")
+				response.Value("downloads").Object().Value("csv").Object().Value("private").String().Match("/private/myfile.csv$")
+				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Match("/public/myfile.csv$")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
-				response.Value("downloads").Object().Value("xls").Object().Value("url").String().Match("(.+)/aws/census-2017-2-xls$")
+				response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("/aws/census-2017-2-xls$")
+				response.Value("downloads").Object().Value("xls").Object().Value("private").String().Match("/private/myfile.xls$")
+				response.Value("downloads").Object().Value("xls").Object().Value("public").String().Match("/public/myfile.xls$")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24")
 				response.Value("keywords").Array().Element(0).Equal("cpi")
 				response.Value("keywords").Array().Element(1).Equal("boy")
@@ -58,9 +62,9 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 				response.Value("latest_changes").Array().Element(0).Object().Value("type").String().Equal("Summary of Changes")
 				response.Value("license").Equal("ONS license")
 				response.Value("links").Object().Value("access_rights").Object().Value("href").Equal("http://ons.gov.uk/accessrights")
-				response.Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/2$")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/2$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("2")
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/2/metadata$")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/2/metadata$")
 				response.Value("links").Object().Value("spatial").Object().Value("href").Equal("http://ons.gov.uk/geographylist")
 				response.Value("methodologies").Array().Element(0).Object().Value("description").Equal("Consumer price inflation is the rate at which the prices of the goods and services bought by households rise or fall, and is estimated by using consumer price indices.")
 				response.Value("methodologies").Array().Element(0).Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi")
@@ -100,15 +104,19 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 				response.Value("contacts").Array().Element(0).Object().Value("telephone").Equal("+44 (0)1633 123456")
 				response.Value("description").Equal("Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.")
 				response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
-				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("(.+)/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
+				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
 				response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
 				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
 				response.Value("distribution").Array().Element(0).Equal("json")
 				response.Value("distribution").Array().Element(1).Equal("csv")
 				response.Value("distribution").Array().Element(2).Equal("xls")
-				response.Value("downloads").Object().Value("csv").Object().Value("url").String().Match("(.+)/aws/census-2017-1-csv$")
+				response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("/aws/census-2017-1-csv$")
+				response.Value("downloads").Object().Value("csv").Object().Value("private").String().Match("/private/myfile.csv$")
+				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Match("/public/myfile.csv$")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
-				response.Value("downloads").Object().Value("xls").Object().Value("url").String().Match("(.+)/aws/census-2017-1-xls$")
+				response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("/aws/census-2017-1-xls$")
+				response.Value("downloads").Object().Value("xls").Object().Value("private").String().Match("/private/myfile.xls$")
+				response.Value("downloads").Object().Value("xls").Object().Value("public").String().Match("/public/myfile.xls$")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24")
 				response.Value("keywords").Array().Element(0).Equal("cpi")
 				response.Value("keywords").Array().Element(1).Equal("boy")
@@ -117,9 +125,9 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 				response.Value("latest_changes").Array().Element(0).Object().Value("type").String().Equal("Summary of Changes")
 				response.Value("license").Equal("ONS license")
 				response.Value("links").Object().Value("access_rights").Object().Value("href").Equal("http://ons.gov.uk/accessrights")
-				response.Value("links").Object().Value("version").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/" + edition + "/versions/1/metadata$")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1/metadata$")
 				response.Value("links").Object().Value("spatial").Object().Value("href").Equal("http://ons.gov.uk/geographylist")
 				response.Value("methodologies").Array().Element(0).Object().Value("description").Equal("Consumer price inflation is the rate at which the prices of the goods and services bought by households rise or fall, and is estimated by using consumer price indices.")
 				response.Value("methodologies").Array().Element(0).Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi")
@@ -188,7 +196,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 	Convey("Given the dataset, edition and version do not exist", t, func() {
 		Convey("When an authorised request to get the metadata relevant to a version", func() {
 			Convey("Then return status not found (404) with message `Dataset not found`", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
 			})
 		})
@@ -203,7 +211,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 		Convey("but an edition and version do not exist", func() {
 			Convey("When a request to get the metadata relevant to a version", func() {
 				Convey("Then return status not found (404) with message `Edition not found`", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(florenceTokenName, florenceToken).
 						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
 				})
 			})
@@ -218,7 +226,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 			Convey("but a version does not exist", func() {
 				Convey("When a request to get the metadata relevant to a version", func() {
 					Convey("Then return status bad request (404) with message `Version not found`", func() {
-						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(serviceAuthTokenName, serviceAuthToken).
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(florenceTokenName, florenceToken).
 							Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
 					})
 				})
