@@ -39,7 +39,7 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 
 		Convey("When an authorised request to get a list of instances is received", func() {
 			Convey("Then a list of instances are returned", func() {
-				response := datasetAPI.GET("/instances").WithHeader(serviceAuthTokenName, serviceAuthToken).
+				response := datasetAPI.GET("/instances").WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("items").Array().Element(0).Object().Value("id").NotNull()
@@ -81,7 +81,7 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 		Convey("When the authorised request Contains a query parameter 'state' of value completed", func() {
 			Convey("Then return only instances that contain a 'state' of value completed", func() {
 
-				response := datasetAPI.GET("/instances").WithQuery("state", "completed").WithHeader(serviceAuthTokenName, serviceAuthToken).
+				response := datasetAPI.GET("/instances").WithQuery("state", "completed").WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				var foundInstance bool
@@ -101,7 +101,7 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 		Convey("When the authorised request Contains a query parameter 'state' of value `completed` and `edition-confirmed`", func() {
 			Convey("Then return all instances that contain a 'state' of value `completed` or `edition-confirmed`", func() {
 
-				response := datasetAPI.GET("/instances").WithQuery("state", "completed,edition-confirmed").WithHeader(serviceAuthTokenName, serviceAuthToken).
+				response := datasetAPI.GET("/instances").WithQuery("state", "completed,edition-confirmed").WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				count := 0
@@ -164,14 +164,14 @@ func TestFailureToGetAListOfInstances(t *testing.T) {
 
 		Convey("When an unauthorised request is made to get resource", func() {
 			Convey("Then return a status of unauthorized (401)", func() {
-				datasetAPI.GET("/instances").WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
+				datasetAPI.GET("/instances").WithHeader(florenceTokenName, unauthorisedAuthToken).
 					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 
 		Convey("When an authorised request to get a list of resources is made with an invalid filter value for 'state'", func() {
 			Convey("Then return a status of bad request (400) with message `Bad request - invalid filter state values`", func() {
-				datasetAPI.GET("/instances").WithQuery("state", "foo").WithHeader(serviceAuthTokenName, serviceAuthToken).
+				datasetAPI.GET("/instances").WithQuery("state", "foo").WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusBadRequest).Body().Contains("bad request - invalid filter state values: [foo]")
 			})
 		})

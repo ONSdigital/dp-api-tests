@@ -73,7 +73,7 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 		})
 
 		Convey("when the user is authorised", func() {
-			response := datasetAPI.GET("/datasets").WithHeader(serviceAuthTokenName, serviceAuthToken).
+			response := datasetAPI.GET("/datasets").WithHeader(florenceTokenName, florenceToken).
 				Expect().Status(http.StatusOK).JSON().Object()
 
 			response.Value("items").Array().Element(0).Object().Value("id").NotNull()
@@ -103,7 +103,6 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 }
 
 func checkDatasetResponse(datasetID string, response *httpexpect.Object) {
-	response.Value("collection_id").Equal("108064B3-A808-449B-9041-EA3A2F72CFAA")
 	response.Value("contacts").Array().Element(0).Object().Value("email").Equal("cpi@onstest.gov.uk")
 	response.Value("contacts").Array().Element(0).Object().Value("name").Equal("Automation Tester")
 	response.Value("contacts").Array().Element(0).Object().Value("telephone").Equal("+44 (0)1633 123456")
@@ -112,10 +111,10 @@ func checkDatasetResponse(datasetID string, response *httpexpect.Object) {
 	response.Value("keywords").Array().Element(1).String().Equal("boy")
 	response.Value("license").Equal("ONS license")
 	response.Value("links").Object().Value("access_rights").Object().Value("href").Equal("http://ons.gov.uk/accessrights")
-	response.Value("links").Object().Value("editions").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions$")
+	response.Value("links").Object().Value("editions").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions$")
 	response.Value("links").Object().Value("latest_version").Object().Value("id").Equal("1")
-	response.Value("links").Object().Value("latest_version").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "/editions/2017/versions/1$")
-	response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/datasets/" + datasetID + "$")
+	response.Value("links").Object().Value("latest_version").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/2017/versions/1$")
+	response.Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + datasetID + "$")
 	response.Value("methodologies").Array().Element(0).Object().Value("description").Equal("Consumer price inflation is the rate at which the prices of the goods and services bought by households rise or fall, and is estimated by using consumer price indices.")
 	response.Value("methodologies").Array().Element(0).Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi")
 	response.Value("methodologies").Array().Element(0).Object().Value("title").Equal("Consumer Price Inflation (includes all 3 indices – CPIH, CPI and RPI)")
