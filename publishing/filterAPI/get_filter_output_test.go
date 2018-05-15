@@ -105,7 +105,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 			})
 		})
 
-		Convey("When making an authenticated requesting to get filter output with a valid download service token header", func() {
+		Convey("When making an authenticated request to get filter output with a valid download service token header", func() {
 			Convey("Then filter output is returned in the response body without private download links", func() {
 				response := filterAPI.GET("/filter-outputs/{filter_output_id}", publishedFilterOutputID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
