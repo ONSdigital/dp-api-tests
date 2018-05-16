@@ -183,7 +183,7 @@ func TestFailureToPostfilterBlueprintForPublishedInstance(t *testing.T) {
 			Convey("Then the response returns status not found (404)", func() {
 
 				filterAPI.POST("/filters").WithBytes([]byte(GetValidPOSTCreateFilterJSON(datasetID, edition, version))).
-					Expect().Status(http.StatusNotFound).Body().Contains("Version not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains(versionNotFoundResponse)
 			})
 		})
 	})
@@ -199,7 +199,7 @@ func TestFailureToPostfilterBlueprintForPublishedInstance(t *testing.T) {
 			Convey("Then the response returns status bad request (400)", func() {
 
 				filterAPI.POST("/filters").WithBytes([]byte(GetInvalidDimensionJSON(datasetID, edition, version))).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - incorrect dimensions chosen: [weight]\n")
+					Expect().Status(http.StatusBadRequest).Body().Contains("incorrect dimensions chosen: [weight]\n")
 			})
 		})
 
@@ -207,7 +207,7 @@ func TestFailureToPostfilterBlueprintForPublishedInstance(t *testing.T) {
 			Convey("Then the response returns status bad request (400)", func() {
 
 				filterAPI.POST("/filters").WithBytes([]byte(GetInvalidDimensionOptionJSON(datasetID, edition, version))).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - incorrect dimension options chosen: [33]\n")
+					Expect().Status(http.StatusBadRequest).Body().Contains("incorrect dimension options chosen: [33]\n")
 			})
 		})
 

@@ -151,7 +151,7 @@ func TestFailureToPostDimension(t *testing.T) {
 				filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/{dimension}", filterBlueprintID, "Residence Type").
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					WithBytes([]byte(GetValidPOSTDimensionToFilterBlueprintJSON())).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains(filterNotFoundResponse)
 			})
 		})
 	})
@@ -179,7 +179,7 @@ func TestFailureToPostDimension(t *testing.T) {
 				filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/{dimension}", filterBlueprintID, "Residence Type").
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					WithBytes([]byte(GetValidPOSTDimensionToFilterBlueprintJSON())).
-					Expect().Status(http.StatusUnprocessableEntity).Body().Contains("Unprocessable entity - version for filter blueprint no longer exists\n")
+					Expect().Status(http.StatusUnprocessableEntity).Body().Contains("version for filter blueprint no longer exists\n")
 			})
 		})
 
@@ -196,7 +196,7 @@ func TestFailureToPostDimension(t *testing.T) {
 					filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/{dimension}", filterBlueprintID, "foobar").
 						WithHeader(serviceAuthTokenName, serviceAuthToken).
 						WithBytes([]byte(GetValidPOSTDimensionToFilterBlueprintJSON())).
-						Expect().Status(http.StatusBadRequest).Body().Contains("Dimension not found\n")
+						Expect().Status(http.StatusBadRequest).Body().Contains(dimensionNotFoundResponse)
 				})
 			})
 
@@ -212,7 +212,7 @@ func TestFailureToPostDimension(t *testing.T) {
 					filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/{dimension}", filterBlueprintID, "age").
 						WithHeader(serviceAuthTokenName, serviceAuthToken).
 						WithBytes([]byte(GetValidPOSTDimensionToFilterBlueprintJSON())).
-						Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - incorrect dimension options chosen: [Lives in a communal establishment Lives in a household]\n")
+						Expect().Status(http.StatusBadRequest).Body().Contains("incorrect dimension options chosen: [Lives in a communal establishment Lives in a household]\n")
 				})
 			})
 		})

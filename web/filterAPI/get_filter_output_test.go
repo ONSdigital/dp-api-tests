@@ -249,7 +249,7 @@ func TestFailureToGetFilterOutput(t *testing.T) {
 			Convey("Then the response returns status not found (404)", func() {
 
 				filterAPI.GET("/filter-outputs/{filter_output_id}", filterID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter output not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains(filterOutputNotFoundResponse)
 			})
 		})
 	})
@@ -265,7 +265,7 @@ func TestFailureToGetFilterOutput(t *testing.T) {
 			Convey("Then the response returns status not found (404)", func() {
 
 				filterAPI.GET("/filter-outputs/{filter_output_id}", filterOutputID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter output not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains(filterOutputNotFoundResponse)
 			})
 		})
 

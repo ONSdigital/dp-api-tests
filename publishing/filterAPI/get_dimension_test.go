@@ -96,11 +96,11 @@ func TestFailureToGetDimension(t *testing.T) {
 
 	Convey("Given filter blueprint does not exist", t, func() {
 		Convey("When a request is made to get a dimension for filter blueprint", func() {
-			Convey("Then the response returns status not found (404)", func() {
+			Convey("Then the response returns status 400 - bad request", func() {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found")
+					Expect().Status(http.StatusBadRequest).Body().Contains(filterNotFoundResponse)
 			})
 		})
 	})
@@ -117,7 +117,7 @@ func TestFailureToGetDimension(t *testing.T) {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/wage", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dimension not found")
+					Expect().Status(http.StatusNotFound).Body().Contains(dimensionNotFoundResponse)
 			})
 		})
 
