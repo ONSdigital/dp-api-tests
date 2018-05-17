@@ -29,7 +29,7 @@ func TestRedirectToPublicFilterDownload(t *testing.T) {
 		Collection: "filters",
 		Key:        "_id",
 		Value:      filterID,
-		Update:     filterAPI.GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, true),
+		Update:     filterAPI.GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, publishedTrue),
 	}
 
 	filterDoc := &mongo.Doc{
@@ -37,7 +37,7 @@ func TestRedirectToPublicFilterDownload(t *testing.T) {
 		Collection: "filterOutputs",
 		Key:        "_id",
 		Value:      filterID,
-		Update:     filterAPI.GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, version, true),
+		Update:     filterAPI.GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, version, publishedTrue),
 	}
 
 	if err := mongo.Setup(filterBlueprintDoc, filterDoc); err != nil {

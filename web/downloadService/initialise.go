@@ -17,6 +17,8 @@ const (
 	region      = "eu-west-1"
 	bucketName  = "csv-exported"
 	fileName    = "v4TestFile.csv"
+	publishedTrue = true
+	publishedFalse = false
 )
 
 func init() {

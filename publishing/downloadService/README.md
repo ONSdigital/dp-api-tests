@@ -7,7 +7,7 @@ You should run `make test` which will setup valid vault credentials. If you run 
 
 ### Services and software
 
-dataset-api (`make acceptance`)
-filter-api (`make acceptance`)
-download-service (`make acceptance`)
-vault
+* dataset-api (`make acceptance`)
+* filter-api (`make acceptance`)
+* download-service (`make acceptance`)
+* vault (`vault server -dev`)

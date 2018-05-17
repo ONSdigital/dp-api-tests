@@ -25,27 +25,16 @@ func TestPrivateFilterDownloadDecryptedAndStreamedWithoutError(t *testing.T) {
 	filterBlueprintID := uuid.NewV4().String()
 	filterOutputID := uuid.NewV4().String()
 	datasetID := uuid.NewV4().String()
-	editionID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
 	edition := "2017"
 	version := 1
-	isPublished := true
-
-	log.Debug("TestPrivateFilterDownloadDecryptedAndStreamed", log.Data{
-		"filterID":          filterID,
-		"filterBlueprintID": filterBlueprintID,
-		"filterOutputID":    filterOutputID,
-		"datasetID":         datasetID,
-		"editionID":         editionID,
-		"instanceID":        instanceID,
-	})
 
 	filterBlueprintDoc := &mongo.Doc{
 		Database:   cfg.MongoFiltersDB,
 		Collection: "filters",
 		Key:        "_id",
 		Value:      filterID,
-		Update:     filterAPI.GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, isPublished),
+		Update:     filterAPI.GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, publishedTrue),
 	}
 
 	filterDoc := &mongo.Doc{
@@ -53,10 +42,10 @@ func TestPrivateFilterDownloadDecryptedAndStreamedWithoutError(t *testing.T) {
 		Collection: "filterOutputs",
 		Key:        "_id",
 		Value:      filterID,
-		Update:     filterAPI.GetValidFilterOutputWithPrivateDownloads(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, version, isPublished),
+		Update:     filterAPI.GetValidFilterOutputWithPrivateDownloads(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, version, publishedTrue),
 	}
 
-	f, err := ioutil.ReadFile(fileName)
+	origFileContent, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
@@ -82,7 +71,7 @@ func TestPrivateFilterDownloadDecryptedAndStreamedWithoutError(t *testing.T) {
 					WithHeader(authHeader, serviceToken).
 					Expect().Status(http.StatusOK)
 
-				response.Body().Equal(string(f))
+				response.Body().Equal(string(origFileContent))
 			})
 		})
 	})
@@ -115,14 +104,12 @@ func TestPrivateFilterDownloadDecryptedAndStreamedUnpublishedWithoutAuthenticati
 	edition := "2017"
 	version := 1
 
-	isPublished := false
-
 	filterBlueprintDoc := &mongo.Doc{
 		Database:   cfg.MongoFiltersDB,
 		Collection: "filters",
 		Key:        "_id",
 		Value:      filterID,
-		Update:     filterAPI.GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, isPublished),
+		Update:     filterAPI.GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, publishedFalse),
 	}
 
 	filterDoc := &mongo.Doc{
@@ -130,7 +117,7 @@ func TestPrivateFilterDownloadDecryptedAndStreamedUnpublishedWithoutAuthenticati
 		Collection: "filterOutputs",
 		Key:        "_id",
 		Value:      filterID,
-		Update:     filterAPI.GetValidFilterOutputWithPrivateDownloads(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, version, isPublished),
+		Update:     filterAPI.GetValidFilterOutputWithPrivateDownloads(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, version, publishedFalse),
 	}
 
 	if err := sendV4FileToAWS(region, bucketName, fileName); err != nil {
@@ -183,14 +170,12 @@ func TestPrivateFilterDownloadDecryptedAndStreamedFailure(t *testing.T) {
 	edition := "2017"
 	version := 1
 
-	isPublished := false
-
 	filterBlueprintDoc := &mongo.Doc{
 		Database:   cfg.MongoFiltersDB,
 		Collection: "filters",
 		Key:        "_id",
 		Value:      filterID,
-		Update:     filterAPI.GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, isPublished),
+		Update:     filterAPI.GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, publishedFalse),
 	}
 
 	filterDoc := &mongo.Doc{
@@ -198,7 +183,7 @@ func TestPrivateFilterDownloadDecryptedAndStreamedFailure(t *testing.T) {
 		Collection: "filterOutputs",
 		Key:        "_id",
 		Value:      filterID,
-		Update:     filterAPI.GetValidFilterOutputWithPrivateDownloads(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, version, isPublished),
+		Update:     filterAPI.GetValidFilterOutputWithPrivateDownloads(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, version, publishedFalse),
 	}
 
 	if err := mongo.Setup(filterDoc, filterBlueprintDoc); err != nil {
