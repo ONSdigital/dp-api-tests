@@ -283,7 +283,7 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 							WithQueryString("time=Aug-16&geography=K02000001&aggregate=cpi1dim1S40403").
 							WithHeader(florenceTokenName, florenceToken).
 							Expect().Status(http.StatusNotFound).
-							Body().Contains("version not found")
+							Body().Contains("Version not found")
 					})
 				})
 			})
