@@ -187,7 +187,7 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 				filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					WithBytes([]byte(GetValidPUTFilterOutputWithCSVDownloadJSON())).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter output not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains(filterOutputNotFoundResponse)
 			})
 		})
 	})

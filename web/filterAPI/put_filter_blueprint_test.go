@@ -178,7 +178,7 @@ func TestFailureToPutFilterBlueprint(t *testing.T) {
 			Convey("Then the request fails and returns status not found (404)", func() {
 
 				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetValidPUTUpdateFilterBlueprintJSON(instanceID))).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains(filterNotFoundResponse)
 			})
 		})
 	})
@@ -223,7 +223,7 @@ func TestFailureToPutFilterBlueprint(t *testing.T) {
 			Convey("Then fail to update filter blueprint and return status bad request (400)", func() {
 				newVersion := 2
 				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetValidPUTFilterBlueprintJSON(newVersion, time.Now()))).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - version not found\n")
+					Expect().Status(http.StatusBadRequest).Body().Contains(versionNotFoundResponse)
 			})
 		})
 

@@ -10,6 +10,7 @@ import (
 	"github.com/gavv/httpexpect"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
+	"github.com/ONSdigital/go-ns/common"
 )
 
 func TestSuccessfullyGetFilterOutput(t *testing.T) {
@@ -80,7 +81,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 				response.Value("downloads").Object().Value("csv").Object().Value("href").Equal("download-service-url.csv")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("12mb")
 				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("private")
-				response.Value("downloads").Object().Value("csv").Object().Value("public").Equal("public-s3-csv-location")
+				response.Value("downloads").Object().Value("csv").Object().Value("public").Equal("https://s3-eu-west-1.amazonaws.com/dp-frontend-florence-file-uploads/2470609-cpicoicoptestcsv")
 				response.Value("downloads").Object().Value("xls").Object().Value("href").Equal("download-service-url.xlsx")
 				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("private")
 				response.Value("downloads").Object().Value("xls").Object().Value("public").Equal("public-s3-xls-location")
@@ -124,10 +125,46 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
 				response.Value("dimensions").Array().Element(0).Object().Value("options").Equal([]string{"27"})
 				response.Value("downloads").Object().Value("csv").Object().Value("href").Equal("download-service-url.csv")
-				response.Value("downloads").Object().Value("csv").Object().Value("public").Equal("public-s3-csv-location")
+				response.Value("downloads").Object().Value("csv").Object().Value("public").Equal("https://s3-eu-west-1.amazonaws.com/dp-frontend-florence-file-uploads/2470609-cpicoicoptestcsv")
+				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("private")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("12mb")
 				response.Value("downloads").Object().Value("xls").Object().Value("href").Equal("download-service-url.xlsx")
 				response.Value("downloads").Object().Value("xls").Object().Value("public").Equal("public-s3-xls-location")
+				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("private")
+				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
+				response.Value("filter_id").Equal(unpublishedFilterOutputID)
+				response.Value("instance_id").Equal(instanceID)
+				response.Value("links").Object().Value("filter_blueprint").Object().Value("href").String().Match("/filters/" + filterBlueprintID + "$")
+				response.Value("links").Object().Value("filter_blueprint").Object().Value("id").Equal(filterBlueprintID)
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filter-outputs/" + unpublishedFilterOutputID + "$")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/123/editions/2017/versions/1$")
+				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
+				response.Value("state").Equal("completed")
+			})
+		})
+
+		Convey("When making a request to get filter output with a download service token header", func() {
+			Convey("Then filter output is returned in the response body", func() {
+
+				response := filterAPI.GET("/filter-outputs/{filter_output_id}", unpublishedFilterOutputID).
+					WithHeader(common.DownloadServiceHeaderKey, downloadServiceToken).
+					Expect().
+					Status(http.StatusOK).JSON().Object()
+
+				response.Value("dataset").Object().Value("id").Equal(datasetID)
+				response.Value("dataset").Object().Value("edition").Equal(edition)
+				response.Value("dataset").Object().Value("version").Equal(version)
+				response.Value("dimensions").Array().Length().Equal(4)
+				response.Value("dimensions").Array().Element(0).Object().NotContainsKey("dimension_url") // Check dimension url is not set
+				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
+				response.Value("dimensions").Array().Element(0).Object().Value("options").Equal([]string{"27"})
+				response.Value("downloads").Object().Value("csv").Object().Value("href").Equal("download-service-url.csv")
+				response.Value("downloads").Object().Value("csv").Object().Value("public").Equal("https://s3-eu-west-1.amazonaws.com/dp-frontend-florence-file-uploads/2470609-cpicoicoptestcsv")
+				response.Value("downloads").Object().Value("csv").Object().Value("private").Equal("private-s3-csv-location")
+				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("12mb")
+				response.Value("downloads").Object().Value("xls").Object().Value("href").Equal("download-service-url.xlsx")
+				response.Value("downloads").Object().Value("xls").Object().Value("public").Equal("public-s3-xls-location")
+				response.Value("downloads").Object().Value("xls").Object().Value("private").Equal("private-s3-xls-location")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
 				response.Value("filter_id").Equal(unpublishedFilterOutputID)
 				response.Value("instance_id").Equal(instanceID)
@@ -162,7 +199,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
 				response.Value("dimensions").Array().Element(0).Object().Value("options").Equal([]string{"27"})
 				response.Value("downloads").Object().Value("csv").Object().Value("href").Equal("download-service-url.csv")
-				response.Value("downloads").Object().Value("csv").Object().Value("public").Equal("public-s3-csv-location")
+				response.Value("downloads").Object().Value("csv").Object().Value("public").Equal("https://s3-eu-west-1.amazonaws.com/dp-frontend-florence-file-uploads/2470609-cpicoicoptestcsv")
 				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("private")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("12mb")
 				response.Value("downloads").Object().Value("xls").Object().Value("href").Equal("download-service-url.xlsx")
@@ -212,7 +249,7 @@ func TestFailureToGetFilterOutput(t *testing.T) {
 			Convey("Then the response returns status not found (404)", func() {
 
 				filterAPI.GET("/filter-outputs/{filter_output_id}", filterID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter output not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains(filterOutputNotFoundResponse)
 			})
 		})
 	})
@@ -228,7 +265,7 @@ func TestFailureToGetFilterOutput(t *testing.T) {
 			Convey("Then the response returns status not found (404)", func() {
 
 				filterAPI.GET("/filter-outputs/{filter_output_id}", filterOutputID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter output not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains(filterOutputNotFoundResponse)
 			})
 		})
 

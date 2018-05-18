@@ -12,9 +12,13 @@ var cfg *config.Config
 
 const (
 	collection = "filters"
+	downloadServiceToken    = "QB0108EZ-825D-412C-9B1D-41EF7747F462"
 
-	serviceAuthTokenName    = "Authorization"
-	serviceAuthToken        = "Bearer FD0108EA-825D-411C-9B1D-41EF7727F465"
+	filterNotFoundResponse = "filter blueprint not found\n"
+	filterOutputNotFoundResponse = "filter output not found\n"
+	dimensionNotFoundResponse = "dimension not found\n"
+	versionNotFoundResponse = "version not found\n"
+	optionNotFoundResponse = "option not found\n"
 )
 
 func init() {

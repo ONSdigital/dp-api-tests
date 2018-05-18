@@ -187,7 +187,7 @@ func TestFailureToPostfilterBlueprintForPublishedInstance(t *testing.T) {
 
 				filterAPI.POST("/filters").WithBytes([]byte(GetValidPOSTCreateFilterJSON(datasetID, edition, version))).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Version not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains(versionNotFoundResponse)
 			})
 		})
 	})
@@ -204,7 +204,7 @@ func TestFailureToPostfilterBlueprintForPublishedInstance(t *testing.T) {
 
 				filterAPI.POST("/filters").WithBytes([]byte(GetInvalidDimensionJSON(datasetID, edition, version))).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - incorrect dimensions chosen: [weight]\n")
+					Expect().Status(http.StatusBadRequest).Body().Contains("incorrect dimensions chosen: [weight]\n")
 			})
 		})
 
@@ -213,7 +213,7 @@ func TestFailureToPostfilterBlueprintForPublishedInstance(t *testing.T) {
 
 				filterAPI.POST("/filters").WithBytes([]byte(GetInvalidDimensionOptionJSON(datasetID, edition, version))).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - incorrect dimension options chosen: [33]\n")
+					Expect().Status(http.StatusBadRequest).Body().Contains("incorrect dimension options chosen: [33]\n")
 			})
 		})
 

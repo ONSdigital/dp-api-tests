@@ -20,6 +20,9 @@ const (
 
 	authHeader   = "Authorization"
 	serviceToken = "Bearer c60198e9-1864-4b68-ad0b-1e858e5b46a4"
+
+	publishedTrue = true
+	publishedFalse = false
 )
 
 func init() {

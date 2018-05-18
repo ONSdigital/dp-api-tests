@@ -118,11 +118,11 @@ func TestFailureToGetDimensionOption(t *testing.T) {
 
 	Convey("Given a filter blueprint does not exist", t, func() {
 		Convey("When a request to get a dimension option against filter blueprint", func() {
-			Convey("Then return a status not found (404)", func() {
+			Convey("Then return a status 400 bad request", func() {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age/options/27", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found")
+					Expect().Status(http.StatusBadRequest).Body().Contains(filterNotFoundResponse)
 			})
 		})
 	})
@@ -139,7 +139,7 @@ func TestFailureToGetDimensionOption(t *testing.T) {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/ages/options/27", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dimension not found")
+					Expect().Status(http.StatusNotFound).Body().Contains(dimensionNotFoundResponse)
 			})
 		})
 
@@ -148,7 +148,7 @@ func TestFailureToGetDimensionOption(t *testing.T) {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex/options/unknown", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Option not found")
+					Expect().Status(http.StatusNotFound).Body().Contains(optionNotFoundResponse)
 			})
 		})
 	})

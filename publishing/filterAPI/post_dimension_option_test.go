@@ -123,11 +123,11 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 		invalidfilterBlueprintID := uuid.NewV4().String()
 
 		Convey("When a post request to add an option to a dimension for that filter blueprint", func() {
-			Convey("Then return status not found (404)", func() {
+			Convey("Then return status bad request", func() {
 
 				filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/age/options/30", invalidfilterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found")
+					Expect().Status(http.StatusBadRequest).Body().Contains(filterNotFoundResponse)
 			})
 		})
 	})
@@ -145,7 +145,7 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 				filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusUnprocessableEntity).
-						Body().Contains("Unprocessable entity - version for filter blueprint no longer exists\n")
+						Body().Contains("version for filter blueprint no longer exists\n")
 			})
 		})
 
@@ -161,7 +161,7 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 					filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
 						WithHeader(serviceAuthTokenName, serviceAuthToken).
 						Expect().Status(http.StatusBadRequest).
-						Body().Contains("Bad request - incorrect dimensions chosen: [sex]\n")
+						Body().Contains("incorrect dimensions chosen: [sex]\n")
 				})
 			})
 
@@ -175,7 +175,7 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 
 					filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/age/options/75", filterBlueprintID).
 						WithHeader(serviceAuthTokenName, serviceAuthToken).
-						Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - incorrect dimension options chosen: [75]\n")
+						Expect().Status(http.StatusBadRequest).Body().Contains("incorrect dimension options chosen: [75]\n")
 				})
 			})
 		})
