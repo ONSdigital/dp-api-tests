@@ -41,7 +41,9 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 
 		Convey("When an authenticated request to get instance", func() {
 			Convey("Then response contains the expected json object and a status ok (200)", func() {
-				response := datasetAPI.GET("/instances/{id}", publishedInstanceID).WithHeader(florenceTokenName, florenceToken).
+
+				response := datasetAPI.GET("/instances/{id}", publishedInstanceID).
+					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("alerts").Array().Element(0).Object().Value("date").String().Equal("2017-12-10")
@@ -77,7 +79,9 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 
 		Convey("When an authenticated request to get instance", func() {
 			Convey("Then response contains the expected json object and a status ok (200)", func() {
-				response := datasetAPI.GET("/instances/{id}", unpublishedInstanceID).WithHeader(florenceTokenName, florenceToken).
+
+				response := datasetAPI.GET("/instances/{id}", unpublishedInstanceID).
+					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				checkResponse(datasetID, edition, unpublishedInstanceID, "2", response)
@@ -106,8 +110,12 @@ func TestFailureToGetInstance(t *testing.T) {
 	Convey("Given an instance resource does not exist", t, func() {
 		Convey("When an authorised request is made to get instance", func() {
 			Convey("Then return a status not found (404) with message `Instance not found`", func() {
-				datasetAPI.GET("/instances/{id}", instanceID).WithHeader(florenceTokenName, florenceToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Instance not found")
+
+				datasetAPI.GET("/instances/{id}", instanceID).
+					WithHeader(florenceTokenName, florenceToken).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("Instance not found")
+
 			})
 		})
 	})
@@ -126,18 +134,21 @@ func TestFailureToGetInstance(t *testing.T) {
 			os.Exit(1)
 		}
 		Convey("When no authentication header is provided in request to get resource", func() {
-			Convey("Then return a status of not found (404) with message `requested resource not found`", func() {
+			Convey("Then return a status of unauthorized (401)", func() {
 
 				datasetAPI.GET("/instances/{id}", instanceID).
-					Expect().Status(http.StatusNotFound).Body().Contains("requested resource not found")
+					Expect().Status(http.StatusUnauthorized)
+
 			})
 		})
 
 		Convey("When an unauthorised request is made to get resource", func() {
 			Convey("Then return a status of unauthorized (401)", func() {
 
-				datasetAPI.GET("/instances/{id}", instanceID).WithHeader(florenceTokenName, unauthorisedAuthToken).
+				datasetAPI.GET("/instances/{id}", instanceID).
+					WithHeader(florenceTokenName, unauthorisedAuthToken).
 					Expect().Status(http.StatusUnauthorized)
+
 			})
 		})
 
@@ -157,10 +168,10 @@ func checkResponse(datasetID, edition, instanceID, version string, response *htt
 	}
 
 	response.Value("id").Equal(instanceID)
-	response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
-	response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
-	response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
-	response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
+	response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("An aggregate of the data")
+	response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD$")
+	response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("508064B3-A808-449B-9041-EA3A2F72CFAD")
+	response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("aggregate")
 	response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("/aws/census-2017-" + version + "-csv$")
 	response.Value("downloads").Object().Value("csv").Object().Value("private").String().Match("/private/myfile.csv$")
 	response.Value("downloads").Object().Value("csv").Object().Value("public").String().Match("/public/myfile.csv$")

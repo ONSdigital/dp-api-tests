@@ -266,6 +266,7 @@ type CodeList struct {
 	Description string `json:"description"`
 	HRef        string `json:"href"`
 	ID          string `json:"id"`
+	Label       string `json:"label"`
 	Name        string `json:"name"`
 }
 

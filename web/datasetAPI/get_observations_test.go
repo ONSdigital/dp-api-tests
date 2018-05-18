@@ -20,7 +20,7 @@ const (
 	expectedNumberOfObservations = 137
 )
 
-func TestSuccessfullyGetObservationForVersion(t *testing.T) {
+func TestSuccessfullyGetObservationsForVersion(t *testing.T) {
 
 	instanceID := uuid.NewV4().String()
 	datasetID := uuid.NewV4().String()
@@ -140,7 +140,7 @@ func TestSuccessfullyGetObservationForVersion(t *testing.T) {
 	publishedGraphData.TeardownInstance()
 }
 
-func TestFailureToGetObservationForVersion(t *testing.T) {
+func TestFailureToGetObservationsForVersion(t *testing.T) {
 
 	instanceID := uuid.NewV4().String()
 	unpublishedInstanceID := uuid.NewV4().String()
@@ -275,12 +275,21 @@ func TestFailureToGetObservationForVersion(t *testing.T) {
 					})
 				})
 
+				Convey("When a request to get an observation for a version of a dataset with more than one value per query parameter", func() {
+					Convey("Then return status bad request (400) with a message", func() {
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/observations", datasetID, edition).
+							WithQueryString("time=Aug-16&time=Aug-17&geography=K02000001&geography=*&aggregate=cpi1dim1S40403").
+							Expect().Status(http.StatusBadRequest).
+							Body().Match(`Multi-valued query parameters for the following dimensions: \[(time geography|geography time)\]`)
+					})
+				})
+
 				Convey("When a request to get an observation for a version of a dataset with the correct query parameters but the values don't exist", func() {
-					Convey("Then return status not found (404) with message `Observation not found`", func() {
+					Convey("Then return status not found (404) with message `No observations found`", func() {
 						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/observations", datasetID, edition).
 							WithQueryString("time=Aug-17&geography=K02000001&aggregate=cpi1dim1S40403").
 							Expect().Status(http.StatusNotFound).
-							Body().Contains("Observation not found")
+							Body().Contains("No observations found")
 					})
 				})
 			})

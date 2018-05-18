@@ -14,6 +14,9 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+// NOTE If endpoint is only available on publishing, remember to add a test to
+// web/datasetAPI/hidden_endpoints_test.go to check request returns 404
+
 func TestSuccessfullyDeleteDataset(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
@@ -133,7 +136,7 @@ func TestFailureToDeleteDataset(t *testing.T) {
 			request := datasetAPI.DELETE("/datasets/{id}", datasetID)
 
 			Convey("Then the expected response is returned", func() {
-				request.Expect().Status(http.StatusNotFound)
+				request.Expect().Status(http.StatusUnauthorized)
 			})
 		})
 

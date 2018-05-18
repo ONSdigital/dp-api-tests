@@ -32,12 +32,12 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 
 		datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-		Convey("When user is authenticated", func() {
+		Convey("When a GET request is made to retrieve a list of versions for an edition of a dataset", func() {
 			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
-				WithHeader(florenceTokenName, florenceToken).Expect().Status(http.StatusOK).JSON().Object()
+				Expect().Status(http.StatusOK).JSON().Object()
 
-			Convey("Then response contains a list of all versions of the dataset edition", func() {
-				response.Value("items").Array().Length().Equal(2)
+			Convey("Then response contains a list of all published versions of the dataset edition", func() {
+				response.Value("items").Array().Length().Equal(1)
 				for i := 0; i < len(response.Value("items").Array().Iter()); i++ {
 
 					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == instanceID {
@@ -48,34 +48,21 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 					}
 
 					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == unpublishedInstanceID {
-						response.Value("items").Array().Element(i).Object().Value("id").Equal(unpublishedInstanceID)
-						response.Value("items").Array().Element(i).Object().Value("state").Equal("associated")
-						checkNeitherPublicOrPrivateLinksExistInResponse(response.Value("items").Array().Element(i).Object().Value("downloads").Object())
+						t.Errorf("retrieved an unpublished version, response is: [%v]", response)
+						t.Fail()
 					}
 				}
 			})
 		})
 
-		Convey("When a user is not authenticated", func() {
+		Convey("When the caller of the request is the download service", func() {
+
 			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
+				WithHeader(downloadServiceAuthTokenName, downloadServiceAuthToken).
 				Expect().Status(http.StatusOK).JSON().Object()
 
-			Convey("Then response contains a list of only published versions of the dataset edition", func() {
-				response.Value("items").Array().Length().Equal(1)
-				checkVersionResponse(datasetID, editionID, instanceID, edition, response.Value("items").Array().Element(0).Object())
-				checkNeitherPublicOrPrivateLinksExistInResponse(response.Value("items").Array().Element(0).Object().Value("downloads").Object())
-			})
-		})
-
-		Convey("When the caller of the request is the download service", func() {
-			headers := make(map[string]string)
-			headers[downloadServiceTokenName] = downloadServiceToken
-			headers[downloadServiceAuthTokenName] = downloadServiceAuthToken
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
-				WithHeaders(headers).Expect().Status(http.StatusOK).JSON().Object()
-
 			Convey("Then response contains a list of all versions of the dataset edition with there respective public and private download links", func() {
-				response.Value("items").Array().Length().Equal(2)
+				response.Value("items").Array().Length().Equal(1)
 				for i := 0; i < len(response.Value("items").Array().Iter()); i++ {
 
 					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == instanceID {
@@ -89,12 +76,8 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 					}
 
 					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == unpublishedInstanceID {
-						response.Value("items").Array().Element(i).Object().Value("id").Equal(unpublishedInstanceID)
-						response.Value("items").Array().Element(i).Object().Value("state").Equal("associated")
-						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("private").String().Match("private/myfile.csv")
-						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("public").String().Match("public/myfile.csv")
-						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("private").String().Match("private/myfile.xls")
-						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("public").String().Match("public/myfile.xls")
+						t.Errorf("retrieved an unpublished version, response is: [%v]", response)
+						t.Fail()
 					}
 				}
 			})
@@ -110,14 +93,13 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 
 func TestGetVersions_Failed(t *testing.T) {
 
-	publishedInstanceID := uuid.NewV4().String()
-	unpublishedInstanceID := uuid.NewV4().String()
 	datasetID := uuid.NewV4().String()
 	editionID := uuid.NewV4().String()
 	edition := "2018"
 
 	unpublishedDatasetID := uuid.NewV4().String()
 	unpublishedEditionID := uuid.NewV4().String()
+	unpublishedInstanceID := uuid.NewV4().String()
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
@@ -137,14 +119,6 @@ func TestGetVersions_Failed(t *testing.T) {
 		Update:     ValidPublishedEditionData(datasetID, editionID, edition),
 	}
 
-	publishedInstance := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "instances",
-		Key:        "_id",
-		Value:      publishedInstanceID,
-		Update:     validPublishedInstanceData(datasetID, edition, publishedInstanceID),
-	}
-
 	unpublishedEdition := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "editions",
@@ -154,10 +128,13 @@ func TestGetVersions_Failed(t *testing.T) {
 	}
 
 	Convey("Given the dataset and subsequently the edition does not exist", t, func() {
-		Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
+		Convey("When a request is made to get a list of versions of the dataset edition", func() {
 			Convey("Then return status not found (404) with message `Dataset not found`", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
+
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("Dataset not found")
+
 			})
 		})
 	})
@@ -169,10 +146,13 @@ func TestGetVersions_Failed(t *testing.T) {
 		}
 
 		Convey("but the edition does not", func() {
-			Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
-				Convey("Then return status not found (404) with message `EDition not found`", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
-						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
+			Convey("When a request is made to get a list of versions of the dataset edition", func() {
+				Convey("Then return status not found (404) with message `Edition not found`", func() {
+
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
+						Expect().Status(http.StatusNotFound).
+						Body().Contains("Edition not found")
+
 				})
 			})
 		})
@@ -183,10 +163,13 @@ func TestGetVersions_Failed(t *testing.T) {
 				os.Exit(1)
 			}
 
-			Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
+			Convey("When a request is made to get a list of versions of the dataset edition", func() {
 				Convey("Then return status not found (404) with message `Version not found`", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
-						Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
+
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
+						Expect().Status(http.StatusNotFound).
+						Body().Contains("Version not found")
+
 				})
 			})
 		})
@@ -197,7 +180,8 @@ func TestGetVersions_Failed(t *testing.T) {
 		}
 	})
 
-	// Make sure an unauthorised user cannot find the dataset
+	// Make sure web user cannot find an unpublished dataset
+	// (even if user has a valid authentication token)
 	Convey("Given an unpublished dataset exists", t, func() {
 		unpublishedDataset := &mongo.Doc{
 			Database:   cfg.MongoDB,
@@ -212,10 +196,24 @@ func TestGetVersions_Failed(t *testing.T) {
 			os.Exit(1)
 		}
 
-		Convey("When an unauthenticated request is made to get a list of versions of the dataset edition", func() {
+		Convey("When a request is made to get a list of versions of the dataset edition", func() {
 			Convey("Then return status not found (404) with message `Dataset not found`", func() {
+
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("Dataset not found")
+
+			})
+		})
+
+		Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
+			Convey("Then return status not found (404) with message `Dataset not found`", func() {
+
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
+					WithHeader(florenceTokenName, florenceToken).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("Dataset not found")
+
 			})
 		})
 
@@ -237,10 +235,24 @@ func TestGetVersions_Failed(t *testing.T) {
 				os.Exit(1)
 			}
 
-			Convey("When an unauthenticated request is made to get a list of versions of the dataset edition", func() {
+			Convey("When a request is made to get a list of versions of the dataset edition", func() {
 				Convey("Then return status not found (404) with message `Edition not found`", func() {
+
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
-						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
+						Expect().Status(http.StatusNotFound).
+						Body().Contains("Edition not found")
+
+				})
+			})
+
+			Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
+				Convey("Then return status not found (404) with message `Edition not found`", func() {
+
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
+						WithHeader(florenceTokenName, florenceToken).
+						Expect().Status(http.StatusNotFound).
+						Body().Contains("Edition not found")
+
 				})
 			})
 
@@ -271,33 +283,28 @@ func TestGetVersions_Failed(t *testing.T) {
 					os.Exit(1)
 				}
 
-				Convey("When an unauthenticated request is made to get a list of versions of the dataset edition", func() {
+				Convey("When a request is made to get a list of versions of the dataset edition", func() {
 					Convey("Then return status not found (404) with message `Version not found`", func() {
+
 						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
-							Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
+							Expect().Status(http.StatusNotFound).
+							Body().Contains("Version not found")
+
+					})
+				})
+
+				Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
+					Convey("Then return status not found (404) with message `Version not found`", func() {
+
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
+							WithHeader(florenceTokenName, florenceToken).
+							Expect().Status(http.StatusNotFound).
+							Body().Contains("Version not found")
+
 					})
 				})
 
 				if err := mongo.Teardown(unpublishedInstance); err != nil {
-					log.ErrorC("Unable to remove test data from mongo db", err, nil)
-					os.Exit(1)
-				}
-			})
-
-			Convey("and a published version exists", func() {
-				if err := mongo.Setup(publishedInstance); err != nil {
-					log.ErrorC("Unable to setup test data", err, nil)
-					os.Exit(1)
-				}
-
-				Convey("When an unauthenticated request is made to get a list of versions of the dataset edition", func() {
-					Convey("Then return status unauthorized (401)", func() {
-						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).WithHeader(florenceTokenName, unauthorisedAuthToken).
-							Expect().Status(http.StatusUnauthorized)
-					})
-				})
-
-				if err := mongo.Teardown(publishedInstance, publishedEdition, publishedDataset); err != nil {
 					log.ErrorC("Unable to remove test data from mongo db", err, nil)
 					os.Exit(1)
 				}
@@ -311,10 +318,10 @@ func checkVersionResponse(datasetID, editionID, instanceID, edition string, resp
 	response.Value("alerts").Array().Element(0).Object().Value("date").String().Equal("2017-12-10")
 	response.Value("alerts").Array().Element(0).Object().Value("description").String().Equal("A correction to an observation for males of age 25, previously 11 now changed to 12")
 	response.Value("alerts").Array().Element(0).Object().Value("type").String().Equal("Correction")
-	response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
-	response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
-	response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
-	response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
+	response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("An aggregate of the data")
+	response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD$")
+	response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("508064B3-A808-449B-9041-EA3A2F72CFAD")
+	response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("aggregate")
 	response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("/aws/census-2017-1-csv$")
 	response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
 	response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("/aws/census-2017-1-xls$")

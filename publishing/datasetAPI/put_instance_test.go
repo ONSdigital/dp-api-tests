@@ -14,6 +14,9 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+// NOTE If endpoint is only available on publishing, remember to add a test to
+// web/datasetAPI/hidden_endpoints_test.go to check request returns 404
+
 func TestSuccessfullyPutInstance(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
@@ -38,8 +41,10 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 
 		Convey("When a PUT request is made to update instance meta data", func() {
 			Convey("Then the instance is updated and return a status ok (200)", func() {
+
 				datasetAPI.PUT("/instances/{instance_id}", instanceID).
-					WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(validPUTFullInstanceJSON)).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTFullInstanceJSON)).
 					Expect().Status(http.StatusOK)
 
 				instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
@@ -60,7 +65,8 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 		Convey("and is updated to a state of `completed`", func() {
 
 			datasetAPI.PUT("/instances/{instance_id}", instanceID).
-				WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(validPUTCompletedInstanceJSON)).
+				WithHeader(florenceTokenName, florenceToken).
+				WithBytes([]byte(validPUTCompletedInstanceJSON)).
 				Expect().Status(http.StatusOK)
 
 			instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
@@ -76,8 +82,10 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 
 			Convey("When a PUT request is made to update instance meta data and set state to `edition-confirmed`", func() {
 				Convey("Then the instance is updated and return a status ok (200)", func() {
+
 					datasetAPI.PUT("/instances/{instance_id}", instanceID).
-						WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(validPUTEditionConfirmedInstanceJSON)).
+						WithHeader(florenceTokenName, florenceToken).
+						WithBytes([]byte(validPUTEditionConfirmedInstanceJSON)).
 						Expect().Status(http.StatusOK)
 
 					instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
@@ -144,8 +152,11 @@ func TestFailureToPutInstance(t *testing.T) {
 			Convey("Then the response return a status not found (404) with message `Instance not found`", func() {
 
 				datasetAPI.PUT("/instances/{instance_id}", instanceID).
-					WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(validPUTFullInstanceJSON)).
-					Expect().Status(http.StatusNotFound).Body().Contains("Instance not found")
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTFullInstanceJSON)).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("Instance not found")
+
 			})
 		})
 	})
@@ -161,24 +172,32 @@ func TestFailureToPutInstance(t *testing.T) {
 			Convey("Then the response return a status not found (400) with message `Failed to parse json body: unexpected end of JSON input`", func() {
 
 				datasetAPI.PUT("/instances/{instance_id}", instanceID).
-					WithHeader(florenceTokenName, florenceToken).WithBytes([]byte("{")).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Failed to parse json body: unexpected end of JSON input")
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte("{")).
+					Expect().Status(http.StatusBadRequest).
+					Body().Contains("Failed to parse json body: unexpected end of JSON input")
+
 			})
 		})
 
 		Convey("When an unauthorised PUT request is made to update an instance resource with an invalid authentication header", func() {
 			Convey("Then fail to update resource and return a status unauthorized (401)", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}", instanceID).WithBytes([]byte(validPUTFullInstanceJSON)).
-					WithHeader(florenceTokenName, unauthorisedAuthToken).Expect().Status(http.StatusUnauthorized)
+				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+					WithBytes([]byte(validPUTFullInstanceJSON)).
+					WithHeader(florenceTokenName, unauthorisedAuthToken).
+					Expect().Status(http.StatusUnauthorized)
+
 			})
 		})
 
 		Convey("When no authentication header is provided in PUT request to update an instance resource", func() {
-			Convey("Then fail to update resource and return a status not found (404) with a message `requested resource not found`", func() {
+			Convey("Then fail to update resource and return a status unauthorized (401)", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}", instanceID).WithBytes([]byte(validPUTFullInstanceJSON)).
-					Expect().Status(http.StatusNotFound).Body().Contains("requested resource not found")
+				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+					WithBytes([]byte(validPUTFullInstanceJSON)).
+					Expect().Status(http.StatusUnauthorized)
+
 			})
 		})
 
@@ -186,8 +205,11 @@ func TestFailureToPutInstance(t *testing.T) {
 			Convey("Then fail to update resource and return a status of forbidden (403) with a message `Unable to update resource, expected resource to have a state of completed`", func() {
 
 				datasetAPI.PUT("/instances/{instance_id}", instanceID).
-					WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(`{"state": "edition-confirmed"}`)).
-					Expect().Status(http.StatusForbidden).Body().Contains("Unable to update resource, expected resource to have a state of completed")
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(`{"state": "edition-confirmed"}`)).
+					Expect().Status(http.StatusForbidden).Body().
+					Contains("Unable to update resource, expected resource to have a state of completed")
+
 			})
 		})
 
@@ -195,8 +217,11 @@ func TestFailureToPutInstance(t *testing.T) {
 			Convey("Then fail to update resource and return a status of forbidden (403) with a message `Unable to update resource, expected resource to have a state of edition-confirmed`", func() {
 
 				datasetAPI.PUT("/instances/{instance_id}", instanceID).
-					WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(`{"state": "associated"}`)).
-					Expect().Status(http.StatusForbidden).Body().Contains("Unable to update resource, expected resource to have a state of edition-confirmed")
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(`{"state": "associated"}`)).
+					Expect().Status(http.StatusForbidden).
+					Body().Contains("Unable to update resource, expected resource to have a state of edition-confirmed")
+
 			})
 		})
 
@@ -204,8 +229,11 @@ func TestFailureToPutInstance(t *testing.T) {
 			Convey("Then fail to update resource and return a status of forbidden (403) with a message `Unable to update resource, expected resource to have a state of edition-confirmed`", func() {
 
 				datasetAPI.PUT("/instances/{instance_id}", instanceID).
-					WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(`{"state": "published"}`)).
-					Expect().Status(http.StatusForbidden).Body().Contains("Unable to update resource, expected resource to have a state of associated")
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(`{"state": "published"}`)).
+					Expect().Status(http.StatusForbidden).
+					Body().Contains("Unable to update resource, expected resource to have a state of associated")
+
 			})
 		})
 
@@ -213,8 +241,11 @@ func TestFailureToPutInstance(t *testing.T) {
 			Convey("Then fail to update resource and return a status of bad request (400) with a message `Bad request - invalid filter state values: [fake-state]`", func() {
 
 				datasetAPI.PUT("/instances/{instance_id}", instanceID).
-					WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(`{"state": "fake-state"}`)).
-					Expect().Status(http.StatusBadRequest).Body().Contains("bad request - invalid filter state values: [fake-state]")
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(`{"state": "fake-state"}`)).
+					Expect().Status(http.StatusBadRequest).
+					Body().Contains("bad request - invalid filter state values: [fake-state]")
+
 			})
 		})
 
@@ -247,10 +278,12 @@ func TestUpdatingStateOnPublishedDataset(t *testing.T) {
 			}
 
 			Convey("Then a forbidden http status is returned", func() {
+
 				datasetAPI.PUT("/instances/{instance_id}", instanceID).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(`{"state": "completed"}`)).
 					Expect().Status(http.StatusForbidden)
+
 			})
 
 			if err := mongo.Teardown(instance); err != nil {

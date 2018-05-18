@@ -17,6 +17,7 @@ import (
 func TestSuccessfullyGetADataset(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
+	unpublishedDatasetID := uuid.NewV4().String()
 
 	dataset := &mongo.Doc{
 		Database:   cfg.MongoDB,
@@ -26,18 +27,27 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
 	}
 
-	if err := mongo.Setup(dataset); err != nil {
+	unpublishedDataset := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: collection,
+		Key:        "_id",
+		Value:      unpublishedDatasetID,
+		Update:     validAssociatedDatasetData(unpublishedDatasetID),
+	}
+
+	if err := mongo.Setup(dataset, unpublishedDataset); err != nil {
 		log.ErrorC("Was unable to run test", err, nil)
 		os.Exit(1)
 	}
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-	Convey("Given a dataset exists", t, func() {
+	Convey("Given a published dataset exists", t, func() {
 		Convey("When the user is authenticated", func() {
 			Convey("Then response includes the expected current and next sub documents and returns a status ok (200)", func() {
 
-				response := datasetAPI.GET("/datasets/{id}", datasetID).WithHeader(florenceTokenName, florenceToken).
+				response := datasetAPI.GET("/datasets/{id}", datasetID).
+					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("id").Equal(datasetID)
@@ -47,20 +57,25 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 				response.Value("next").Object().Value("state").Equal("created")
 			})
 		})
+	})
 
-		Convey("When the user is unauthenticated", func() {
-			Convey("Then response only includes the expected current subdoc data and returns a status ok (200)", func() {
+	Convey("Given an  unpublished dataset exists", t, func() {
+		Convey("When the user is authenticated", func() {
+			Convey("Then response includes the expected next sub document and returns a status ok (200)", func() {
 
-				response := datasetAPI.GET("/datasets/{id}", datasetID).
+				response := datasetAPI.GET("/datasets/{id}", unpublishedDatasetID).
+					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				response.Value("id").Equal(datasetID)
-				checkDatasetDoc(datasetID, response)
+				response.Value("id").Equal(unpublishedDatasetID)
+				response.NotContainsKey("current")
+				response.Value("next").NotNull()
+				response.Value("next").Object().Value("state").Equal("associated")
 			})
 		})
 	})
 
-	if err := mongo.Teardown(dataset); err != nil {
+	if err := mongo.Teardown(dataset, unpublishedDataset); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
@@ -78,8 +93,11 @@ func TestFailureToGetADataset(t *testing.T) {
 	Convey("Given the dataset document does not exist", t, func() {
 		Convey("When requesting for document", func() {
 			Convey("Then return a status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}", datasetID).WithHeader(florenceTokenName, florenceToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
+
+				datasetAPI.GET("/datasets/{id}", datasetID).
+					WithHeader(florenceTokenName, florenceToken).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("Dataset not found")
 			})
 		})
 	})
@@ -99,10 +117,10 @@ func TestFailureToGetADataset(t *testing.T) {
 		}
 
 		Convey("When requesting for document for an unauthorised user", func() {
-			Convey("Then return a status not found (404)", func() {
+			Convey("Then return a status unauthorized (401)", func() {
 
 				datasetAPI.GET("/datasets/{id}", datasetID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 

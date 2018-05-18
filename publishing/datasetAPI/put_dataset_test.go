@@ -14,6 +14,9 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+// NOTE If endpoint is only available on publishing, remember to add a test to
+// web/datasetAPI/hidden_endpoints_test.go to check request returns 404
+
 func TestSuccessfullyUpdateDataset(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
@@ -56,8 +59,8 @@ func TestSuccessfullyUpdateDataset(t *testing.T) {
 
 		Convey("When a Put request is made to update the dataset including state", func() {
 			Convey("Then the dataset resource is updated and response contains a status ok (200)", func() {
-				datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(validPUTUpdateDatasetJSON)).
-					Expect().Status(http.StatusOK)
+				datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTUpdateDatasetJSON)).Expect().Status(http.StatusOK)
 
 				expectedNextSubDoc := expectedNextSubDoc(datasetID, "2018", "associated")
 
@@ -79,8 +82,8 @@ func TestSuccessfullyUpdateDataset(t *testing.T) {
 
 		Convey("When a Put request is made to update the dataset without state", func() {
 			Convey("Then the dataset next resource is updated to a state of created and response contains a status ok (200)", func() {
-				datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(validPUTUpdateDatasetWithoutStateJSON)).
-					Expect().Status(http.StatusOK)
+				datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTUpdateDatasetWithoutStateJSON)).Expect().Status(http.StatusOK)
 
 				expectedNextSubDoc := expectedNextSubDoc(datasetID, "2018", "created")
 
@@ -127,8 +130,8 @@ func TestSuccessfullyUpdateDataset(t *testing.T) {
 
 		Convey("When a Put request is made to update the dataset state to published", func() {
 			Convey("Then the dataset resource is updated and response contains a status ok (200)", func() {
-				datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(`{"state":"published"}`)).
-					Expect().Status(http.StatusOK)
+				datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(`{"state":"published"}`)).Expect().Status(http.StatusOK)
 
 				expectedSubDoc := expectedPublishedSubDoc(datasetID, "2018")
 
@@ -151,7 +154,6 @@ func TestSuccessfullyUpdateDataset(t *testing.T) {
 			}
 		}
 	})
-
 }
 
 func TestFailureToUpdateDataset(t *testing.T) {
@@ -171,7 +173,9 @@ func TestFailureToUpdateDataset(t *testing.T) {
 		Convey("When an authorised PUT request is made to update dataset resource", func() {
 			Convey("Then fail to update resource and return a status of not found (404) with a message `Dataset not found`", func() {
 
-				datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(validPUTUpdateDatasetJSON)).
+				datasetAPI.PUT("/datasets/{id}", datasetID).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTUpdateDatasetJSON)).
 					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
 			})
 		})
@@ -187,24 +191,30 @@ func TestFailureToUpdateDataset(t *testing.T) {
 		Convey("When an unauthorised PUT request is made to update a dataset resource with an invalid authentication header", func() {
 			Convey("Then fail to update resource and return a status unauthorized (401)", func() {
 
-				datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader(florenceTokenName, unauthorisedAuthToken).WithBytes([]byte(validPUTUpdateDatasetJSON)).
+				datasetAPI.PUT("/datasets/{id}", datasetID).
+					WithHeader(florenceTokenName, unauthorisedAuthToken).
+					WithBytes([]byte(validPUTUpdateDatasetJSON)).
 					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 
 		Convey("When no authentication header is provided in PUT request to update dataset resource", func() {
-			Convey("Then fail to update resource and return a status not found (404) with a message `requested resource not found`", func() {
+			Convey("Then fail to update resource and return a status unauthorized (401)", func() {
 
-				datasetAPI.POST("/datasets/{id}", datasetID).WithBytes([]byte(validPUTUpdateDatasetJSON)).
-					Expect().Status(http.StatusNotFound).Body().Contains("requested resource not found")
+				datasetAPI.POST("/datasets/{id}", datasetID).
+					WithBytes([]byte(validPUTUpdateDatasetJSON)).
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 
 		Convey("When an authorised PUT request is made to update dataset resource with an invalid body", func() {
 			Convey("Then fail to update resource and return a status of bad request (400) with a message `Failed to parse json body`", func() {
 
-				datasetAPI.PUT("/datasets/{id}", datasetID).WithHeader(florenceTokenName, florenceToken).WithBytes([]byte("{")).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Failed to parse json body")
+				datasetAPI.PUT("/datasets/{id}", datasetID).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte("{")).
+					Expect().Status(http.StatusBadRequest).
+					Body().Contains("Failed to parse json body")
 			})
 		})
 

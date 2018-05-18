@@ -78,8 +78,7 @@ var temporal = mongo.TemporalFrequency{
 func ValidPublishedWithUpdatesDatasetData(datasetID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"id": datasetID,
-			"current.collection_id":             "108064B3-A808-449B-9041-EA3A2F72CFAA",
+			"id":                                datasetID,
 			"current.contacts":                  []mongo.ContactDetails{contact},
 			"current.description":               "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
 			"current.id":                        datasetID,
@@ -108,7 +107,6 @@ func ValidPublishedWithUpdatesDatasetData(datasetID string) bson.M {
 			"current.title":                     "CPI",
 			"current.unit_of_measure":           "Pounds Sterling",
 			"current.uri":                       "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation",
-			"next.collection_id":                "208064B3-A808-449B-9041-EA3A2F72CFAB",
 			"next.contacts":                     []mongo.ContactDetails{contact},
 			"next.description":                  "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
 			"next.id":                           datasetID,
@@ -145,8 +143,7 @@ func ValidPublishedWithUpdatesDatasetData(datasetID string) bson.M {
 func validPublishedDatasetData(datasetID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"id": datasetID,
-			"current.collection_id":             "108064B3-A808-449B-9041-EA3A2F72CFAA",
+			"id":                                datasetID,
 			"current.contacts":                  []mongo.ContactDetails{contact},
 			"current.description":               "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
 			"current.id":                        datasetID,
@@ -175,7 +172,6 @@ func validPublishedDatasetData(datasetID string) bson.M {
 			"current.title":                     "CPI",
 			"current.unit_of_measure":           "Pounds Sterling",
 			"current.uri":                       "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation",
-			"next.collection_id":                "208064B3-A808-449B-9041-EA3A2F72CFAB",
 			"next.contacts":                     []mongo.ContactDetails{contact},
 			"next.description":                  "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
 			"next.id":                           datasetID,
@@ -335,7 +331,7 @@ func validAggregateDimensionsData(dimensionID, instanceID string) bson.M {
 	}
 }
 
-// ValidPublishedEditionData returns an example bson object fo a published edition resource
+// ValidPublishedEditionData returns an example bson object for a published edition resource
 func ValidPublishedEditionData(datasetID, editionID, edition string) bson.M {
 	return bson.M{
 		"$set": bson.M{
@@ -385,8 +381,7 @@ func validPublishedInstanceData(datasetID, edition, instanceID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"alerts":                                                       []mongo.Alert{alert},
-			"collection_id":                                                "108064B3-A808-449B-9041-EA3A2F72CFAA",
-			"dimensions":                                                   []mongo.CodeList{dimension, dimensionTwo, dimensionThree, dimensionFour},
+			"dimensions":                                                   []mongo.CodeList{dimensionTwo, dimensionThree, dimensionFour},
 			"downloads.csv.href":                                           cfg.DatasetAPIURL + "/aws/census-2017-1-csv",
 			"downloads.csv.size":                                           "10",
 			"downloads.csv.public":                                         "https://s3-eu-west-1.amazon.com/public/myfile.csv",
@@ -429,7 +424,7 @@ func validAssociatedInstanceData(datasetID, edition, instanceID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"collection_id":         "208064B3-A808-449B-9041-EA3A2F72CFAB",
-			"dimensions":            []mongo.CodeList{dimension, dimensionTwo, dimensionThree, dimensionFour},
+			"dimensions":            []mongo.CodeList{dimensionTwo, dimensionThree, dimensionFour},
 			"downloads.csv.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
 			"downloads.csv.size":    "10",
 			"downloads.csv.public":  "https://s3-eu-west-1.amazon.com/public/myfile.csv",
@@ -494,6 +489,77 @@ func validEditionConfirmedInstanceData(datasetID, edition, instanceID string) bs
 			"links.version.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/2",
 			"links.version.id":      "2",
 			"release_date":          "2017-12-12", // TODO Should be isodate
+			"state":                 "edition-confirmed",
+			"temporal":              []mongo.TemporalFrequency{temporal},
+			"import_tasks.import_observations.state":                       "completed",
+			"import_tasks.import_observations.total_inserted_observations": 1000,
+			"total_observations":                                           1000,
+			"version":                                                      2,
+			"test_data":                                                    "true",
+		},
+	}
+}
+
+func editionConfirmedInstanceInvalidFields(datasetID, edition, instanceID string) bson.M {
+	return bson.M{
+		"$set": bson.M{
+			"dimensions":            []mongo.CodeList{dimension},
+			"downloads.csv.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
+			"downloads.csv.private": "s3://private/myfile.csv",
+			"downloads.csv.size":    "ten",
+			"downloads.xls.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
+			"downloads.xls.private": "s3://private/myfile.xls",
+			"downloads.xls.size":    "twenty four",
+			"edition":               edition,
+			"headers":               []string{"time", "geography"},
+			"id":                    instanceID,
+			"last_updated":          "2017-09-08", // TODO Should be isodate
+			"license":               "ONS license",
+			"links.job.id":          "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+			"links.job.href":        cfg.DatasetAPIURL + "/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+			"links.dataset.id":      datasetID,
+			"links.dataset.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID,
+			"links.dimensions.href": cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/2/dimensions",
+			"links.edition.id":      edition,
+			"links.edition.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
+			"links.self.href":       cfg.DatasetAPIURL + "/instances/" + instanceID,
+			"links.spatial.href":    "http://ons.gov.uk/geographylist",
+			"links.version.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/2",
+			"links.version.id":      "2",
+			"release_date":          "2017-12-12", // TODO Should be isodate
+			"state":                 "edition-confirmed",
+			"temporal":              []mongo.TemporalFrequency{temporal},
+			"import_tasks.import_observations.state":                       "completed",
+			"import_tasks.import_observations.total_inserted_observations": 1000,
+			"total_observations":                                           1000,
+			"version":                                                      2,
+			"test_data":                                                    "true",
+		},
+	}
+}
+
+func editionConfirmedInstanceMissingMandatoryFields(datasetID, edition, instanceID string) bson.M {
+	return bson.M{
+		"$set": bson.M{
+			"dimensions":            []mongo.CodeList{dimension},
+			"downloads.csv.url":     cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
+			"downloads.xls.url":     cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
+			"edition":               edition,
+			"headers":               []string{"time", "geography"},
+			"id":                    instanceID,
+			"last_updated":          "2017-09-08", // TODO Should be isodate
+			"license":               "ONS license",
+			"links.job.id":          "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+			"links.job.href":        cfg.DatasetAPIURL + "/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+			"links.dataset.id":      datasetID,
+			"links.dataset.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID,
+			"links.dimensions.href": cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/2/dimensions",
+			"links.edition.id":      edition,
+			"links.edition.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
+			"links.self.href":       cfg.DatasetAPIURL + "/instances/" + instanceID,
+			"links.spatial.href":    "http://ons.gov.uk/geographylist",
+			"links.version.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/2",
+			"links.version.id":      "2",
 			"state":                 "edition-confirmed",
 			"temporal":              []mongo.TemporalFrequency{temporal},
 			"import_tasks.import_observations.state":                       "completed",

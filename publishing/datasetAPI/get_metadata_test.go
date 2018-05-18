@@ -33,18 +33,18 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 
 		Convey("When an authenticated request is made to get the unpublished version", func() {
 			Convey("Then the response body contains the expected metadata", func() {
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/metadata", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/metadata", datasetID, edition).
+					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("contacts").Array().Element(0).Object().Value("email").Equal("cpi@onstest.gov.uk")
 				response.Value("contacts").Array().Element(0).Object().Value("name").Equal("Automation Tester")
 				response.Value("contacts").Array().Element(0).Object().Value("telephone").Equal("+44 (0)1633 123456")
 				response.Value("description").Equal("Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.")
-				response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
-				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
-				response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
-				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
-				response.Value("distribution").Array().Element(0).Equal("json")
+				response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("An aggregate of the data")
+				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD$")
+				response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("508064B3-A808-449B-9041-EA3A2F72CFAD")
+				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("aggregate")
 				response.Value("distribution").Array().Element(1).Equal("csv")
 				response.Value("distribution").Array().Element(2).Equal("xls")
 				response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("/aws/census-2017-2-csv$")
@@ -94,20 +94,20 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 			})
 		})
 
-		Convey("When an unauthenticated request is made to get the metadata relevant to a published version ", func() {
+		Convey("When an authenticated request is made to get the metadata relevant to a published version ", func() {
 			Convey("Then the response body contains the expected metadata", func() {
 				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
+					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("contacts").Array().Element(0).Object().Value("email").Equal("cpi@onstest.gov.uk")
 				response.Value("contacts").Array().Element(0).Object().Value("name").Equal("Automation Tester")
 				response.Value("contacts").Array().Element(0).Object().Value("telephone").Equal("+44 (0)1633 123456")
 				response.Value("description").Equal("Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.")
-				response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
-				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
-				response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
-				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
-				response.Value("distribution").Array().Element(0).Equal("json")
+				response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("An aggregate of the data")
+				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD$")
+				response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("508064B3-A808-449B-9041-EA3A2F72CFAD")
+				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("aggregate")
 				response.Value("distribution").Array().Element(1).Equal("csv")
 				response.Value("distribution").Array().Element(2).Equal("xls")
 				response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("/aws/census-2017-1-csv$")
@@ -133,7 +133,7 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 				response.Value("methodologies").Array().Element(0).Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi")
 				response.Value("methodologies").Array().Element(0).Object().Value("title").Equal("Consumer Price Inflation (includes all 3 indices – CPIH, CPI and RPI)")
 				response.Value("national_statistic").Equal(true)
-				response.Value("next_release").Equal("2017-10-10")
+				response.Value("next_release").Equal("2018-10-10")
 				response.Value("publications").Array().Element(0).Object().Value("description").Equal("Price indices, percentage changes and weights for the different measures of consumer price inflation.")
 				response.Value("publications").Array().Element(0).Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/consumerpriceinflation/aug2017")
 				response.Value("publications").Array().Element(0).Object().Value("title").Equal("UK consumer price inflation: August 2017")
@@ -247,9 +247,9 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 		}
 
 		Convey("When an unauthorised request to get the metadate relevant to a version", func() {
-			Convey("Then return status not found (404) with message `Dataset not found`", func() {
+			Convey("Then return status unauthorized (401)", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 
@@ -281,9 +281,9 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 			}
 
 			Convey("When an unauthorised request to get the metadata relevant to a version", func() {
-				Convey("Then return status not found (404) with message `Edition not found`", func() {
+				Convey("Then return status unauthorized (401)", func() {
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
-						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
+						Expect().Status(http.StatusUnauthorized)
 				})
 			})
 
@@ -316,9 +316,9 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 			}
 
 			Convey("When an unauthorised request to get the metadata relevant to a version", func() {
-				Convey("Then return status not found (404) with message `Version not found`", func() {
+				Convey("Then return status unauthorized (401)", func() {
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
-						Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
+						Expect().Status(http.StatusUnauthorized)
 				})
 			})
 

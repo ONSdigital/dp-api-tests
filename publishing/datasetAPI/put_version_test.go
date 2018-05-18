@@ -15,6 +15,9 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+// NOTE If endpoint is only available on publishing, remember to add a test to
+// web/datasetAPI/hidden_endpoints_test.go to check request returns 404
+
 func TestSuccessfullyUpdateVersion(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
@@ -35,8 +38,11 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 
 		Convey("When a PUT request to update meta data against the version resource", func() {
 			Convey("Then version resource is updated and returns a status ok (200)", func() {
-				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).WithHeader(florenceTokenName, florenceToken).
-					WithBytes([]byte(validPUTUpdateVersionMetaDataJSON)).Expect().Status(http.StatusOK)
+
+				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTUpdateVersionMetaDataJSON)).
+					Expect().Status(http.StatusOK)
 
 				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
 				if err != nil {
@@ -90,8 +96,11 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 
 		Convey("When a PUT request to update version resource with a collection id and state of associated", func() {
 			Convey("Then the dataset and version resources are updated and returns a status ok (200)", func() {
-				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).WithHeader(florenceTokenName, florenceToken).
-					WithBytes([]byte(validPUTUpdateVersionToAssociatedJSON)).Expect().Status(http.StatusOK)
+
+				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTUpdateVersionToAssociatedJSON)).
+					Expect().Status(http.StatusOK)
 
 				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
 				if err != nil {
@@ -120,8 +129,10 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		Convey("When a PUT request to update version resource with a collection id and state of published", func() {
 			Convey("Then the dataset, edition and version resources are updated and returns a status ok (200)", func() {
 
-				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).WithHeader(florenceTokenName, florenceToken).
-					WithBytes([]byte(validPUTUpdateVersionToPublishedWithCollectionIDJSON)).Expect().Status(http.StatusOK)
+				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTUpdateVersionToPublishedWithCollectionIDJSON)).
+					Expect().Status(http.StatusOK)
 
 				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
 				if err != nil {
@@ -183,8 +194,11 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		// 1 test skipped
 		SkipConvey("When a PUT request to update version resource to remove collection id", func() {
 			Convey("Then the dataset and version resources are updated accordingly and returns a status ok (200)", func() {
-				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).WithHeader(florenceTokenName, florenceToken).
-					WithBytes([]byte(validPUTUpdateVersionFromAssociatedToEditionConfirmedJSON)).Expect().Status(http.StatusOK)
+
+				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTUpdateVersionFromAssociatedToEditionConfirmedJSON)).
+					Expect().Status(http.StatusOK)
 
 				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
 				if err != nil {
@@ -213,8 +227,10 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		Convey("When a PUT request to update version resource with a state of published", func() {
 			Convey("Then the dataset, edition and version resources are updated and returns a status ok (200)", func() {
 
-				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).WithHeader(florenceTokenName, florenceToken).
-					WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).Expect().Status(http.StatusOK)
+				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
+					Expect().Status(http.StatusOK)
 
 				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
 				if err != nil {
@@ -275,8 +291,10 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		Convey("When a PUT request to update version resource with a state of published", func() {
 			Convey("Then the dataset, edition and version resources are updated and returns a status ok (200)", func() {
 
-				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).WithHeader(florenceTokenName, florenceToken).
-					WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).Expect().Status(http.StatusOK)
+				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
+					Expect().Status(http.StatusOK)
 
 				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
 				if err != nil {
@@ -349,8 +367,10 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			Convey("Then fail to update resource and return a status of not found (404) with a message `Dataset not found`", func() {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
-					WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
 					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
+
 			})
 		})
 
@@ -375,8 +395,11 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			Convey("Then fail to update resource and return a status of not found (404) with a message `Edition not found`", func() {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
-					WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
-					Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("Edition not found")
+
 			})
 		})
 
@@ -401,8 +424,11 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			Convey("Then fail to update resource and return a status of not found (404) with a message `Version not found`", func() {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
-					WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
-					Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("Version not found")
+
 			})
 		})
 
@@ -414,13 +440,75 @@ func TestFailureToUpdateVersion(t *testing.T) {
 		}
 	})
 
+	// test for updating a version with a state of `published` but request missing mandatory fields
+	Convey("Given a published dataset and edition and an unpublished version exist", t, func() {
+
+		Convey("with mandatory fields missing", func() {
+			docs, err := setupResources(datasetID, editionID, edition, instanceID, 9)
+			if err != nil {
+				log.ErrorC("Was unable to setup test data", err, nil)
+				os.Exit(1)
+			}
+
+			Convey("When an authorised PUT request is made to update version resource to published", func() {
+				Convey("Then fail to update resource and return a status bad request (400) with the correct message", func() {
+
+					datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+						WithHeader(florenceTokenName, florenceToken).
+						WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
+						Expect().Status(http.StatusBadRequest).
+						Body().Contains("missing mandatory fields: [release_date Downloads.XLS.HRef Downloads.XLS.Size Downloads.CSV.HRef Downloads.CSV.Size]")
+
+				})
+			})
+
+			if err := mongo.Teardown(docs...); err != nil {
+				if err != mgo.ErrNotFound {
+					log.ErrorC("Was unable to remove test data", err, nil)
+					os.Exit(1)
+				}
+			}
+		})
+
+		Convey("with invalid fields", func() {
+			docs, err := setupResources(datasetID, editionID, edition, instanceID, 10)
+			if err != nil {
+				log.ErrorC("Was unable to setup test data", err, nil)
+				os.Exit(1)
+			}
+
+			Convey("When an authorised PUT request is made to update version resource to published", func() {
+				Convey("Then fail to update resource and return a status bad request (400) with the correct message", func() {
+
+					datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+						WithHeader(florenceTokenName, florenceToken).
+						WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
+						Expect().Status(http.StatusBadRequest).
+						Body().Contains("invalid fields: [Downloads.XLS.Size not a number Downloads.CSV.Size not a number]")
+
+				})
+			})
+
+			if err := mongo.Teardown(docs...); err != nil {
+				if err != mgo.ErrNotFound {
+					log.ErrorC("Was unable to remove test data", err, nil)
+					os.Exit(1)
+				}
+			}
+		})
+	})
+
 	// test for bad request (invalid json)
 	Convey("Given a dataset, edition and version do not exist", t, func() {
 		Convey("When an authorised PUT request is made to update version resource with invalid json", func() {
 			Convey("Then fail to update resource and return a status of bad request (400) with a message ``", func() {
+
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
-					WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(`{`)).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Failed to parse json body")
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(`{`)).
+					Expect().Status(http.StatusBadRequest).
+					Body().Contains("Failed to parse json body")
+
 			})
 		})
 	})
@@ -440,8 +528,10 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			Convey("Then fail to update resource and return a status of bad request (400) with a message `Missing collection_id for association between version and a collection`", func() {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
-					WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(`{"state": "associated"}`)).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Missing collection_id for association between version and a collection")
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(`{"state": "associated"}`)).
+					Expect().Status(http.StatusBadRequest).
+					Body().Contains("Missing collection_id for association between version and a collection")
 
 			})
 		})
@@ -451,7 +541,8 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			Convey("Then fail to update resource and return a status unauthorized (401)", func() {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
-					WithHeader(florenceTokenName, unauthorisedAuthToken).WithBytes([]byte(validPUTUpdateVersionMetaDataJSON)).
+					WithHeader(florenceTokenName, unauthorisedAuthToken).
+					WithBytes([]byte(validPUTUpdateVersionMetaDataJSON)).
 					Expect().Status(http.StatusUnauthorized)
 
 			})
@@ -459,11 +550,11 @@ func TestFailureToUpdateVersion(t *testing.T) {
 
 		// test for missing auth header when making a request to update version
 		Convey("When a PUT request is made to update version resource without an authentication header", func() {
-			Convey("Then fail to update resource and return a status not found (404) with a message `requested resource not found`", func() {
+			Convey("Then fail to update resource and return a status unauthorized (401)", func() {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
 					WithBytes([]byte(validPUTUpdateVersionMetaDataJSON)).
-					Expect().Status(http.StatusNotFound).Body().Contains("requested resource not found")
+					Expect().Status(http.StatusUnauthorized)
 
 			})
 		})
@@ -491,18 +582,24 @@ func TestFailureToUpdateVersion(t *testing.T) {
 			Convey("Then fail to update resource and return a status of forbidden (403) with a message `Unable to update document, already published`", func() {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
-					WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(`{"state": "edition-confirmed"}`)).
-					Expect().Status(http.StatusForbidden).Body().Contains("unable to update version as it has been published")
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(`{"state": "edition-confirmed"}`)).
+					Expect().Status(http.StatusForbidden).
+					Body().Contains("unable to update version as it has been published")
+
 			})
 		})
 
 		// test for updating meta data against a published version (forbidden)
-		Convey("When an authorised PUT request is made to update version resource with meta data", func() {
+		Convey("When an authorised PUT request is made to update a published version resource with meta data", func() {
 			Convey("Then fail to update resource and return a status of forbidden (403) with a message `Unable to update document, already published`", func() {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
-					WithHeader(florenceTokenName, florenceToken).WithBytes([]byte(`{"links":{"spatial":{"href": "http://ons.gov.uk/spatial-notes"}}}`)).
-					Expect().Status(http.StatusForbidden).Body().Contains("unable to update version as it has been published")
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(`{"links":{"spatial":{"href": "http://ons.gov.uk/spatial-notes"}}}`)).
+					Expect().Status(http.StatusForbidden).
+					Body().Contains("unable to update version as it has been published")
+
 			})
 		})
 
@@ -582,6 +679,22 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Update:     validEditionConfirmedInstanceData(datasetID, edition, instanceID),
 	}
 
+	editionConfirmedInstanceMissingMandatoryFieldsDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "instances",
+		Key:        "_id",
+		Value:      instanceID,
+		Update:     editionConfirmedInstanceMissingMandatoryFields(datasetID, edition, instanceID),
+	}
+
+	editionConfirmedInstanceInvalidFieldsDoc := &mongo.Doc{
+		Database:   cfg.MongoDB,
+		Collection: "instances",
+		Key:        "_id",
+		Value:      instanceID,
+		Update:     editionConfirmedInstanceInvalidFields(datasetID, edition, instanceID),
+	}
+
 	switch setup {
 	case 1:
 		docs = append(docs, createdDatasetDoc, unpublishedEditionDoc, editionConfirmedInstanceDoc)
@@ -599,6 +712,10 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		docs = append(docs, publishedDatasetDoc, publishedEditionDoc, editionConfirmedInstanceDoc)
 	case 8:
 		docs = append(docs, publishedDatasetDoc, publishedEditionDoc, publishedInstanceDoc)
+	case 9:
+		docs = append(docs, publishedDatasetDoc, publishedEditionDoc, editionConfirmedInstanceMissingMandatoryFieldsDoc)
+	case 10:
+		docs = append(docs, publishedDatasetDoc, publishedEditionDoc, editionConfirmedInstanceInvalidFieldsDoc)
 	default:
 		errMsg := fmt.Errorf("Failed to pick a valid setup value")
 		log.Error(errMsg, log.Data{"setup": setup})

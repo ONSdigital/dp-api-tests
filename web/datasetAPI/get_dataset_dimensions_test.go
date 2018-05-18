@@ -70,15 +70,8 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Get a list of all dimensions of a dataset", t, func() {
-		Convey("When user is authenticated", func() {
+		Convey("When a request is made to retrieve dimensions of a version", func() {
 
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions", datasetID, edition, 1).WithHeader(florenceTokenName, florenceToken).
-				Expect().Status(http.StatusOK).JSON().Object()
-
-			checkDimensionsResponse(datasetID, edition, instanceID, response)
-		})
-
-		Convey("When a user is not authenticated", func() {
 			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions", datasetID, edition, 1).
 				Expect().Status(http.StatusOK).JSON().Object()
 
@@ -140,73 +133,90 @@ func TestGetDimensions_Failed(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-	Convey("Fail to get a list of Dimensions for a dataset", t, func() {
-		// TODO Remove skip on test once endpoint fixed
-		SkipConvey("When user is authenticated and the dataset does not exist", func() {
-			Convey("Then return status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", "1234", "2018").WithHeader(florenceTokenName, florenceToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
-			})
-		})
+	Convey("Given the dataset resource does not exist", t, func() {
 
 		// TODO Remove skip on test once endpoint fixed
-		SkipConvey("When user is authenticated and the edition does not exist", func() {
+		SkipConvey("When user makes a request to get the dimensions for version of dataset", func() {
 			Convey("Then return status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, "2018").WithHeader(florenceTokenName, florenceToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
-			})
-		})
 
-		Convey("When user is authenticated and there are no versions", func() {
-			Convey("Then return status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/3/dimensions", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
-			})
-		})
-
-		// TODO Remove skip on test once endpoint fixed
-		SkipConvey("When user is unauthenticated and the dataset does not exist", func() {
-			Convey("Then return status not found (404)", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", "1234", "2018").
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
-			})
-		})
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("Dataset not found")
 
-		// TODO Remove skip on test once endpoint fixed
-		SkipConvey("When user is unauthenticated and the edition does not exist", func() {
-			Convey("Then return status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, "2018").
-					Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
-			})
-
-			Convey("When there are no published versions", func() {
-				// Create an unpublished instance document
-				unpublishedInstance := &mongo.Doc{
-					Database:   cfg.MongoDB,
-					Collection: "instances",
-					Key:        "_id",
-					Value:      unpublishedInstanceID,
-					Update:     validEditionConfirmedInstanceData(datasetID, edition, unpublishedInstanceID),
-				}
-
-				mongo.Setup(unpublishedInstance)
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/3/dimensions", datasetID, edition).
-					Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
-
-				mongo.Teardown(unpublishedInstance)
 			})
 		})
 	})
 
-	Convey("Given a valid dataset id, edition and version with no dimensions", t, func() {
-		Convey("When authenticated", func() {
+	Convey("Given the dataset resource does exist but the edition resource does not", t, func() {
+
+		// TODO Remove skip on test once endpoint fixed
+		SkipConvey("When user makes a request to get the dimensions for version of the dataset edition", func() {
 			Convey("Then return status not found (404)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dimensions not found")
+
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, "2018").
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("Edition not found")
+
+			})
+		})
+	})
+
+	Convey("Given the dataset and edition resource does exist", t, func() {
+		Convey("but the version does not", func() {
+
+			Convey("When user makes a request to get the dimensions for version of the dataset edition", func() {
+				Convey("Then return status not found (404)", func() {
+
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/3/dimensions", datasetID, edition).
+						Expect().Status(http.StatusNotFound).
+						Body().Contains("Version not found")
+
+				})
 			})
 		})
 
-		Convey("When user is unauthenticated", func() {
+		Convey("and version is unpublished", func() {
+			unpublishedInstance := &mongo.Doc{
+				Database:   cfg.MongoDB,
+				Collection: "instances",
+				Key:        "_id",
+				Value:      unpublishedInstanceID,
+				Update:     validEditionConfirmedInstanceData(datasetID, edition, unpublishedInstanceID),
+			}
+
+			mongo.Setup(unpublishedInstance)
+
+			Convey("When user makes a request to get the dimensions for unpublished version", func() {
+				Convey("Then return status not found (404)", func() {
+
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/dimensions", datasetID, edition).
+						Expect().Status(http.StatusNotFound).
+						Body().Contains("Version not found")
+
+				})
+			})
+
+			Convey("When user makes a request to get the dimensions for version of the dataset edition with a valid auth header", func() {
+				Convey("Then return status not found (404)", func() {
+
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/3/dimensions", datasetID, edition).
+						Expect().Status(http.StatusNotFound).
+						Body().Contains("Version not found")
+
+				})
+			})
+
+			if err := mongo.Teardown(unpublishedInstance); err != nil {
+				if err != mgo.ErrNotFound {
+					log.ErrorC("Failed to tear down test data", err, nil)
+					os.Exit(1)
+				}
+			}
+		})
+	})
+
+	Convey("Given the dataset, edition and version exist but no dimension resources exist", t, func() {
+		Convey("When user makes a request to get the dimensions for version of the dataset edition", func() {
 			Convey("Then return status not found (404)", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).
 					Expect().Status(http.StatusNotFound).Body().Contains("Dimensions not found")

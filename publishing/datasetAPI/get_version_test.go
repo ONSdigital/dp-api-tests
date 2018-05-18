@@ -36,15 +36,16 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 
 		Convey("When an authenticated request is made to get the unpublished version", func() {
 			Convey("Then the response body contains the expected version", func() {
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2", datasetID, edition).
+					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("id").Equal(unpublishedInstanceID)
 				response.Value("collection_id").Equal("208064B3-A808-449B-9041-EA3A2F72CFAB")
-				response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
-				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
-				response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
-				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
+				response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("An aggregate of the data")
+				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD$")
+				response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("508064B3-A808-449B-9041-EA3A2F72CFAD")
+				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("aggregate")
 				response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("/aws/census-2017-2-csv$")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
 				response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("/aws/census-2017-2-xls$")
@@ -67,9 +68,12 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 				response.Value("temporal").Array().Element(0).Object().Value("frequency").Equal("monthly")
 				response.Value("version").Equal(2)
 			})
+		})
 
-			Convey("When an authenticated request including a valid download service token is made to get the published version", func() {
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2", datasetID, edition).WithHeaders(authHeaders).
+		Convey("When an authenticated request including a valid download service token is made to get the published version", func() {
+			Convey("Then the response body contains the expected downloads object in version", func() {
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2", datasetID, edition).
+					WithHeaders(authHeaders).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/public/myfile.csv")
@@ -79,19 +83,20 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 			})
 		})
 
-		Convey("When an unauthenticated request is made to get the published version", func() {
+		Convey("When an authenticated request is made to get the published version", func() {
 			Convey("Then the response body contains the expected version", func() {
 				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).
+					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("alerts").Array().Element(0).Object().Value("date").String().Equal("2017-12-10")
 				response.Value("alerts").Array().Element(0).Object().Value("description").String().Equal("A correction to an observation for males of age 25, previously 11 now changed to 12")
 				response.Value("alerts").Array().Element(0).Object().Value("type").String().Equal("Correction")
 				response.Value("id").Equal(instanceID)
-				response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
-				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
-				response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
-				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
+				response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("An aggregate of the data")
+				response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD$")
+				response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("508064B3-A808-449B-9041-EA3A2F72CFAD")
+				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("aggregate")
 				response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("/aws/census-2017-1-csv$")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
 				response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("/aws/census-2017-1-xls$")
@@ -114,9 +119,12 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 				response.Value("temporal").Array().Element(0).Object().Value("frequency").Equal("monthly")
 				response.Value("version").Equal(1)
 			})
+		})
 
-			Convey("When a request including a valid download service token is made to get the published version", func() {
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).WithHeaders(authHeaders).
+		Convey("When a request including a valid download service token is made to get the published version", func() {
+			Convey("Then the response body contains the expected downloads object in version", func() {
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).
+					WithHeaders(authHeaders).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Equal("https://s3-eu-west-1.amazon.com/public/myfile.csv")
@@ -256,9 +264,9 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 		}
 
 		Convey("When an unauthorised request to get the version of the dataset edition", func() {
-			Convey("Then return status not found (404) with message `Dataset not found`", func() {
+			Convey("Then return status unauthorized (401)", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
+					Expect().Status(http.StatusUnauthorized)
 			})
 		})
 
@@ -282,9 +290,9 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 			}
 
 			Convey("When an unauthorised request to get the version of the dataset edition", func() {
-				Convey("Then return status not found (404) with message `Edition not found`", func() {
+				Convey("Then return status unauthorized (401)", func() {
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).
-						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
+						Expect().Status(http.StatusUnauthorized)
 				})
 			})
 
@@ -309,9 +317,9 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 			}
 
 			Convey("When an unauthorised request to get the version of the dataset edition", func() {
-				Convey("Then return status not found (404) with message `Version not found`", func() {
+				Convey("Then return status unauthorized (401)", func() {
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).
-						Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
+						Expect().Status(http.StatusUnauthorized)
 				})
 			})
 

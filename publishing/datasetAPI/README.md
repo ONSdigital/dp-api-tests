@@ -20,4 +20,9 @@ dp-dataset-api
 dp-auth-api-stub (mimics zebedee authentication)
 ```
 
-`dp-dataset-api` should be run with `make acceptance`
+`dp-dataset-api` should be run with `make acceptance-publishing`
+
+#### Note
+
+If an endpoint is only available on publishing, remember to add a test to
+web/datasetAPI/hidden_endpoints_test.go to check request returns 404 in web subnet

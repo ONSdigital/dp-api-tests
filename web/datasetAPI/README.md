@@ -19,4 +19,4 @@ kafka
 dp-dataset-api
 ```
 
-`dp-dataset-api` should be run with `make acceptance`
+`dp-dataset-api` should be run with `make acceptance-web`
