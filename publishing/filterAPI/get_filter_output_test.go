@@ -217,7 +217,7 @@ func TestFailureToGetFilterOutput(t *testing.T) {
 
 				filterAPI.GET("/filter-outputs/{filter_output_id}", filterID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter output not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains(filterOutputNotFoundResponse)
 			})
 		})
 	})

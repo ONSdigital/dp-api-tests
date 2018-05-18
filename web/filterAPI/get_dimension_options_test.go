@@ -128,7 +128,7 @@ func TestFailureToGetListOfDimensionOptions(t *testing.T) {
 			Convey("Then return status not found (404)", func() {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age/options", filterBlueprintID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found")
+					Expect().Status(http.StatusNotFound).Body().Contains(filterNotFoundResponse)
 			})
 		})
 	})
@@ -144,7 +144,7 @@ func TestFailureToGetListOfDimensionOptions(t *testing.T) {
 			Convey("Then return a status not found (404)", func() {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/wages/options", filterBlueprintID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dimension not found")
+					Expect().Status(http.StatusNotFound).Body().Contains(dimensionNotFoundResponse)
 			})
 		})
 	})

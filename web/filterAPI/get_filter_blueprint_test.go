@@ -137,7 +137,7 @@ func TestFailureToGetFilterBlueprint(t *testing.T) {
 			Convey("Then the response returns status not found (404)", func() {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}", filterID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains(filterNotFoundResponse)
 			})
 		})
 	})
@@ -152,7 +152,7 @@ func TestFailureToGetFilterBlueprint(t *testing.T) {
 		Convey("When requesting to get filter blueprint without authentication", func() {
 			Convey("Then the response returns status not found (404)", func() {
 				filterAPI.GET("/filters/{filter_blueprint_id}", unpublishedFilterBlueprintID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found\n")
+					Expect().Status(http.StatusNotFound).Body().Contains(versionNotFoundResponse)
 			})
 		})
 

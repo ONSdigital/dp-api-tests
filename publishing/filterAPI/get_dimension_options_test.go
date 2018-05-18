@@ -133,7 +133,7 @@ func TestFailureToGetListOfDimensionOptions(t *testing.T) {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age/options", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found")
+					Expect().Status(http.StatusNotFound).Body().Contains(filterNotFoundResponse)
 			})
 		})
 	})
@@ -150,7 +150,7 @@ func TestFailureToGetListOfDimensionOptions(t *testing.T) {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/wages/options", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dimension not found")
+					Expect().Status(http.StatusNotFound).Body().Contains(dimensionNotFoundResponse)
 			})
 		})
 	})

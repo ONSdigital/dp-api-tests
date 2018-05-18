@@ -117,10 +117,10 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 		invalidfilterBlueprintID := uuid.NewV4().String()
 
 		Convey("When a post request to add an option to a dimension for that filter blueprint", func() {
-			Convey("Then return status not found (404)", func() {
+			Convey("Then return status 400 bad request", func() {
 
 				filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/age/options/30", invalidfilterBlueprintID).
-					Expect().Status(http.StatusNotFound).Body().Contains("Filter blueprint not found")
+					Expect().Status(http.StatusBadRequest).Body().Contains(filterNotFoundResponse)
 			})
 		})
 	})
@@ -136,7 +136,7 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 			Convey("Then return status unprocessable entity (422)", func() {
 
 				filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
-					Expect().Status(http.StatusUnprocessableEntity).Body().Contains("Unprocessable entity - version for filter blueprint no longer exists\n")
+					Expect().Status(http.StatusUnprocessableEntity).Body().Contains("version for filter blueprint no longer exists\n")
 			})
 		})
 
@@ -151,7 +151,7 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 
 					filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
 						Expect().Status(http.StatusBadRequest).
-						Body().Contains("Bad request - incorrect dimensions chosen: [sex]\n")
+						Body().Contains("incorrect dimensions chosen: [sex]\n")
 				})
 			})
 
@@ -164,7 +164,7 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 				Convey("Then return status not found (400)", func() {
 
 					filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/age/options/75", filterBlueprintID).
-						Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - incorrect dimension options chosen: [75]\n")
+						Expect().Status(http.StatusBadRequest).Body().Contains("incorrect dimension options chosen: [75]\n")
 				})
 			})
 		})
