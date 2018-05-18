@@ -386,7 +386,7 @@ func validPublishedInstanceData(datasetID, edition, instanceID string) bson.M {
 		"$set": bson.M{
 			"alerts":                                                       []mongo.Alert{alert},
 			"collection_id":                                                "108064B3-A808-449B-9041-EA3A2F72CFAA",
-			"dimensions":                                                   []mongo.CodeList{dimension, dimensionTwo, dimensionThree, dimensionFour},
+			"dimensions":                                                   []mongo.CodeList{dimensionTwo, dimensionThree, dimensionFour},
 			"downloads.csv.href":                                           cfg.DatasetAPIURL + "/aws/census-2017-1-csv",
 			"downloads.csv.size":                                           "10",
 			"downloads.csv.public":                                         "https://s3-eu-west-1.amazon.com/public/myfile.csv",
@@ -429,7 +429,7 @@ func validAssociatedInstanceData(datasetID, edition, instanceID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"collection_id":         "208064B3-A808-449B-9041-EA3A2F72CFAB",
-			"dimensions":            []mongo.CodeList{dimension, dimensionTwo, dimensionThree, dimensionFour},
+			"dimensions":            []mongo.CodeList{dimensionTwo, dimensionThree, dimensionFour},
 			"downloads.csv.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
 			"downloads.csv.size":    "10",
 			"downloads.csv.public":  "https://s3-eu-west-1.amazon.com/public/myfile.csv",

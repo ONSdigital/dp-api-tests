@@ -168,10 +168,10 @@ func checkResponse(datasetID, edition, instanceID, version string, response *htt
 	}
 
 	response.Value("id").Equal(instanceID)
-	response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("A list of ages between 18 and 75+")
-	response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/408064B3-A808-449B-9041-EA3A2F72CFAC$")
-	response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("408064B3-A808-449B-9041-EA3A2F72CFAC")
-	response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
+	response.Value("dimensions").Array().Element(0).Object().Value("description").Equal("An aggregate of the data")
+	response.Value("dimensions").Array().Element(0).Object().Value("href").String().Match("/codelists/508064B3-A808-449B-9041-EA3A2F72CFAD$")
+	response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("508064B3-A808-449B-9041-EA3A2F72CFAD")
+	response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("aggregate")
 	response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("/aws/census-2017-" + version + "-csv$")
 	response.Value("downloads").Object().Value("csv").Object().Value("private").String().Match("/private/myfile.csv$")
 	response.Value("downloads").Object().Value("csv").Object().Value("public").String().Match("/public/myfile.csv$")
