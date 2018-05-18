@@ -11,7 +11,7 @@ import (
 	"github.com/gavv/httpexpect"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
-	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2"
 )
 
 func TestRedirectToPublicDownload(t *testing.T) {
