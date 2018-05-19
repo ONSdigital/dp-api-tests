@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"testing"
 
-	datasetJSON "github.com/ONSdigital/dp-api-tests/datasetAPI"
+	datasetJSON "github.com/ONSdigital/dp-api-tests/web/datasetAPI"
 	"github.com/ONSdigital/dp-api-tests/web/filterAPI/expectedTestData"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
