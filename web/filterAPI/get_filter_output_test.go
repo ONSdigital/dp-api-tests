@@ -66,7 +66,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 		}
 
 		Convey("When requesting to get filter output", func() {
-			Convey("Then filter output is returned in the response body without private download links", func() {
+			Convey("Then filter output is returned in the response body without private or public download links", func() {
 
 				response := filterAPI.GET("/filter-outputs/{filter_output_id}", publishedFilterOutputID).
 					Expect().Status(http.StatusOK).JSON().Object()
@@ -81,10 +81,10 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 				response.Value("downloads").Object().Value("csv").Object().Value("href").Equal("download-service-url.csv")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("12mb")
 				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("private")
-				response.Value("downloads").Object().Value("csv").Object().Value("public").Equal("https://s3-eu-west-1.amazonaws.com/dp-frontend-florence-file-uploads/2470609-cpicoicoptestcsv")
+				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("public")
 				response.Value("downloads").Object().Value("xls").Object().Value("href").Equal("download-service-url.xlsx")
 				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("private")
-				response.Value("downloads").Object().Value("xls").Object().Value("public").Equal("public-s3-xls-location")
+				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("public")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
 				response.Value("filter_id").Equal(publishedFilterOutputID)
 				response.Value("instance_id").Equal(instanceID)
@@ -125,12 +125,12 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
 				response.Value("dimensions").Array().Element(0).Object().Value("options").Equal([]string{"27"})
 				response.Value("downloads").Object().Value("csv").Object().Value("href").Equal("download-service-url.csv")
-				response.Value("downloads").Object().Value("csv").Object().Value("public").Equal("https://s3-eu-west-1.amazonaws.com/dp-frontend-florence-file-uploads/2470609-cpicoicoptestcsv")
 				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("private")
+				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("public")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("12mb")
 				response.Value("downloads").Object().Value("xls").Object().Value("href").Equal("download-service-url.xlsx")
-				response.Value("downloads").Object().Value("xls").Object().Value("public").Equal("public-s3-xls-location")
 				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("private")
+				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("public")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
 				response.Value("filter_id").Equal(unpublishedFilterOutputID)
 				response.Value("instance_id").Equal(instanceID)
@@ -199,12 +199,12 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
 				response.Value("dimensions").Array().Element(0).Object().Value("options").Equal([]string{"27"})
 				response.Value("downloads").Object().Value("csv").Object().Value("href").Equal("download-service-url.csv")
-				response.Value("downloads").Object().Value("csv").Object().Value("public").Equal("https://s3-eu-west-1.amazonaws.com/dp-frontend-florence-file-uploads/2470609-cpicoicoptestcsv")
 				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("private")
+				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("public")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("12mb")
 				response.Value("downloads").Object().Value("xls").Object().Value("href").Equal("download-service-url.xlsx")
-				response.Value("downloads").Object().Value("xls").Object().Value("public").Equal("public-s3-xls-location")
 				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("private")
+				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("public")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
 				response.Value("filter_id").Equal(unpublishedFilterOutputID)
 				response.Value("instance_id").Equal(instanceID)
