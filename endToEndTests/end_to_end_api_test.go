@@ -541,7 +541,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 		log.Info("Check data exists in elaticsearch by calling search API to find dimension option", nil)
 		getSearchResponse := searchAPI.GET("/search/datasets/{id}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetName, versionResource.Edition, strconv.Itoa(versionResource.Version), "aggregate").
-			WithQuery("q", "Overall Index").Expect().Status(http.StatusOK).JSON().Object()
+			WithQuery("q", "Overall Index").WithHeader(authorizationTokenHeader, authorizationToken).Expect().Status(http.StatusOK).JSON().Object()
 
 		getSearchResponse.Value("count").Equal(1)
 		getSearchResponse.Value("items").Array().Length().Equal(1)
@@ -561,7 +561,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 		log.Info("Get single observation post-published version", nil)
 		postObservationsResource := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/observations", datasetName, "2017", "1").
-			WithQueryString("time=Apr-05&geography=K02000001&aggregate=cpih1dim1G50100").
+			WithQueryString("time=Apr-05&geography=K02000001&aggregate=cpih1dim1G50100").WithHeader(authorizationTokenHeader, authorizationToken).
 			Expect().Status(http.StatusOK).JSON().Object()
 
 		postObservationsResource.Value("dimensions").Object().Value("aggregate").Object().Value("option").Object().Value("href").String().Match("/code-lists/cpih1dim1aggid/codes/cpih1dim1G50100$")
@@ -599,7 +599,10 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 				"xls_link": versionResource.Downloads.XLS.URL,
 			})
 
-		response, err := http.Get(csvURL)
+		req, err := http.NewRequest("GET", csvURL, nil)
+		req.Header.Set(authorizationTokenHeader, authorizationToken)
+
+		response, err := http.DefaultClient.Do(req)
 		if err != nil {
 			log.Error(err, nil)
 		}
@@ -792,10 +795,7 @@ func testFileDownload(url string, expectedSize int, isPublished bool) {
 		log.Error(err, nil)
 	}
 
-	if !isPublished {
-		log.Info("not published - adding auth headers to download service request", nil)
-		req.Header.Add(authorizationTokenHeader, authorizationToken)
-	}
+	req.Header.Add(authorizationTokenHeader, authorizationToken)
 
 	response, err := rchttp.DefaultClient.Do(context.Background(), req)
 	if err != nil {
@@ -825,6 +825,7 @@ func testFiltering(t *testing.T, filterAPI *httpexpect.Expect, instanceID string
 
 	filterBlueprintRequest := filterAPI.POST("/filters").
 		WithQuery("submitted", "true").
+		WithHeader(authorizationTokenHeader, authorizationToken).
 		WithBytes([]byte(json))
 
 	if !isPublished {

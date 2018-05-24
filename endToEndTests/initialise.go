@@ -29,7 +29,7 @@ const (
 )
 
 var (
-	dropDatabases = []string{"test"}
+	dropDatabases = []string{"datasets", "filters", "imports"}
 	vaultClient   *vault.VaultClient
 
 	headers = map[string]string{
