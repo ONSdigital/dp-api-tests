@@ -240,7 +240,7 @@ func checkDimensionsResponse(datasetID, edition, instanceID string, response *ht
 	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("options").Object().Value("id").Equal("aggregate")
 	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("options").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions/aggregate/options$")
 
-	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("/instances/" + instanceID + "$")
+	response.Value("items").Array().Element(0).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
 
 	response.Value("items").Array().Element(0).Object().Value("dimension").Equal("aggregate")
 	response.Value("items").Array().Element(0).Object().Value("description").Equal("An aggregate of the data")
@@ -251,7 +251,7 @@ func checkDimensionsResponse(datasetID, edition, instanceID string, response *ht
 	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("options").Object().Value("id").Equal("time")
 	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("options").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1/dimensions/time/options$")
 
-	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("/instances/" + instanceID + "$")
+	response.Value("items").Array().Element(1).Object().Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
 
 	response.Value("items").Array().Element(1).Object().Value("dimension").Equal("time")
 	response.Value("items").Array().Element(1).Object().Value("description").Equal("The time in which this dataset spans")

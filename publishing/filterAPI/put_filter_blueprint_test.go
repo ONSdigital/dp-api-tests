@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	datasetJSON "github.com/ONSdigital/dp-api-tests/web/datasetAPI"
+	datasetJSON "github.com/ONSdigital/dp-api-tests/publishing/datasetAPI"
 	"github.com/ONSdigital/dp-api-tests/publishing/filterAPI/expectedTestData"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"

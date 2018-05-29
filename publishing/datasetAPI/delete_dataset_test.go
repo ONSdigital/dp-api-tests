@@ -95,7 +95,7 @@ func TestFailureToDeleteDataset(t *testing.T) {
 				WithHeader(florenceTokenName, florenceToken)
 
 			Convey("Then the expected response is returned", func() {
-				request.Expect().Status(http.StatusForbidden).Body().Contains("forbidden - a published dataset cannot be deleted")
+				request.Expect().Status(http.StatusForbidden).Body().Contains("a published dataset cannot be deleted")
 			})
 		})
 
