@@ -14,5 +14,9 @@ pass:
 mongo db
 zookeeper
 kafka
+Dataset API
 Recipe API
 ```
+
+When running the dataset API, one should use a publishing instance of the
+service, this can be done by running `make acceptance-publishing`
