@@ -43,7 +43,7 @@ func TestSuccessfullyPostImportJob(t *testing.T) {
 
 				response.Value("last_updated").NotNull()
 
-				job, err := mongo.GetJob(cfg.MongoDB, collection, "id", importJobID)
+				job, err := mongo.GetJob(cfg.MongoImportsDB, collection, "id", importJobID)
 				if err != nil {
 					t.Errorf("unable to retrieve job resource [%s] from mongo, error: [%v]", importJobID, err)
 				}

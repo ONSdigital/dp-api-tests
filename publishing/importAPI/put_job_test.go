@@ -46,7 +46,7 @@ func TestUpdateImportJobState(t *testing.T) {
 					WithBytes([]byte(validPUTJobJSON)).
 					Expect().Status(http.StatusOK)
 
-				job, err := mongo.GetJob(cfg.MongoDB, collection, "id", jobID)
+				job, err := mongo.GetJob(cfg.MongoImportsDB, collection, "id", jobID)
 				if err != nil {
 					t.Errorf("unable to retrieve job resource [%s] from mongo, error: [%v]", jobID, err)
 				}
