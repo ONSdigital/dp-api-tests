@@ -108,12 +108,13 @@ func Setup(d ...*Doc) error {
 
 // Job for importing datasets
 type Job struct {
-	ID            string          `bson:"id,omitempty"             json:"id,omitempty"`
-	RecipeID      string          `bson:"recipe,omitempty"         json:"recipe,omitempty"`
-	State         string          `bson:"state,omitempty"          json:"state,omitempty"`
-	UploadedFiles *[]UploadedFile `bson:"files,omitempty"          json:"files,omitempty"`
-	Links         LinksMap        `bson:"links,omitempty"          json:"links,omitempty"`
-	LastUpdated   time.Time       `bson:"last_updated,omitempty"   json:"last_updated,omitempty"`
+	ID              string              `bson:"id,omitempty"             json:"id,omitempty"`
+	RecipeID        string              `bson:"recipe,omitempty"         json:"recipe,omitempty"`
+	State           string              `bson:"state,omitempty"          json:"state,omitempty"`
+	UploadedFiles   *[]UploadedFile     `bson:"files,omitempty"          json:"files,omitempty"`
+	Links           LinksMap            `bson:"links,omitempty"          json:"links,omitempty"`
+	LastUpdated     time.Time           `bson:"last_updated,omitempty"   json:"last_updated,omitempty"`
+	UniqueTimestamp bson.MongoTimestamp `bson:"unique_timestamp,omitempty"   json:"-"`
 }
 
 // UploadedFile used for a file which has been uploaded to a bucket

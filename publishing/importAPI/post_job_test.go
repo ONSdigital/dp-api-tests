@@ -43,6 +43,13 @@ func TestSuccessfullyPostImportJob(t *testing.T) {
 
 				response.Value("last_updated").NotNull()
 
+				job, err := mongo.GetJob(cfg.MongoDB, collection, "id", importJobID)
+				if err != nil {
+					t.Errorf("unable to retrieve job resource [%s] from mongo, error: [%v]", importJobID, err)
+				}
+
+				So(job.UniqueTimestamp, ShouldNotBeEmpty)
+
 				importJob := &mongo.Doc{
 					Database:   cfg.MongoImportsDB,
 					Collection: collection,

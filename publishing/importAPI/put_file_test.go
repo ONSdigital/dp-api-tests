@@ -46,6 +46,19 @@ func TestAddFileToImportJob(t *testing.T) {
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					WithBytes([]byte(validPUTAddFilesJSON)).
 					Expect().Status(http.StatusOK)
+
+				job, err := mongo.GetJob(cfg.MongoDB, collection, "id", jobID)
+				if err != nil {
+					t.Errorf("unable to retrieve job resource [%s] from mongo, error: [%v]", jobID, err)
+				}
+
+				files := *job.UploadedFiles
+				So(len(files), ShouldEqual, 2)
+				So(files[0].AliasName, ShouldEqual, "v4")
+				So(files[0].URL, ShouldEqual, "https://s3-eu-west-1.amazonaws.com/dp-publish-content-test/CPIGrowth.csv")
+				So(files[1].AliasName, ShouldEqual, "v5")
+				So(files[1].URL, ShouldEqual, "https://s3-eu-west-1.amazonaws.com/dp-publish-content-test/CPIGrowth.csv")
+				So(job.UniqueTimestamp, ShouldNotBeEmpty)
 			})
 		})
 	})
@@ -82,7 +95,8 @@ func TestFailureToAddFileToAnImportJob(t *testing.T) {
 				importAPI.PUT("/jobs/{id}/files", invalidJobID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					WithBytes([]byte(validPUTAddFilesJSON)).
-					Expect().Status(http.StatusNotFound)
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("")
 			})
 		})
 	})
@@ -94,7 +108,8 @@ func TestFailureToAddFileToAnImportJob(t *testing.T) {
 				importAPI.PUT("/jobs/{id}/files", jobID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					WithBytes([]byte("{")).
-					Expect().Status(http.StatusBadRequest)
+					Expect().Status(http.StatusBadRequest).
+					Body().Contains("invalid request")
 			})
 		})
 	})
@@ -138,7 +153,8 @@ func TestAddFileToImportJobUnauthorised(t *testing.T) {
 
 				importAPI.PUT("/jobs/{id}/files", jobID).
 					WithBytes([]byte(validPUTAddFilesJSON)).
-					Expect().Status(http.StatusUnauthorized)
+					Expect().Status(http.StatusUnauthorized).
+					Body().Contains("")
 			})
 		})
 	})
@@ -150,7 +166,8 @@ func TestAddFileToImportJobUnauthorised(t *testing.T) {
 				importAPI.PUT("/jobs/{id}/files", jobID).
 					WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
 					WithBytes([]byte(validPUTAddFilesJSON)).
-					Expect().Status(http.StatusUnauthorized)
+					Expect().Status(http.StatusUnauthorized).
+					Body().Contains("")
 			})
 		})
 	})
