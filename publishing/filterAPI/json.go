@@ -113,6 +113,7 @@ func GetValidCreatedFilterBlueprintBSON(host, filterID, instanceID, filterBluepr
 			"links.version.href":    "http://localhost:8080/datasets/123/editions/2017/versions/1",
 			"published":             true,
 			"test_data":             "true",
+			"unique_timestamp":      bson.MongoTimestamp(1),
 		},
 	}
 }
@@ -190,6 +191,7 @@ func GetValidFilterWithMultipleDimensionsBSON(host, filterID, instanceID, datase
 			"links.version.href":    "http://localhost:8080/datasets/123/editions/2017/versions/1",
 			"published":             published,
 			"test_data":             "true",
+			"unique_timestamp":      bson.MongoTimestamp(1),
 		},
 	}
 }
@@ -220,6 +222,7 @@ func GetValidFilterOutputWithMultipleDimensionsBSON(host, filterID, instanceID, 
 			"state":                       "completed",
 			"published":                   published,
 			"test_data":                   "true",
+			"unique_timestamp":            bson.MongoTimestamp(1),
 		},
 	}
 }
@@ -250,6 +253,7 @@ func GetValidFilterOutputBSON(host, filterID, instanceID, filterOutputID, filter
 			"published":                   true,
 			"state":                       "completed",
 			"test_data":                   "true",
+			"unique_timestamp":            bson.MongoTimestamp(1),
 		},
 	}
 }
@@ -273,6 +277,7 @@ func GetValidFilterOutputNoDimensionsBSON(host, filterID, instanceID, filterOutp
 			"state":                       "completed",
 			"published":                   true,
 			"test_data":                   "true",
+			"unique_timestamp":            bson.MongoTimestamp(1),
 		},
 	}
 }
@@ -293,6 +298,7 @@ func GetValidFilterOutputWithoutDownloadsBSON(host, filterID, instanceID, filter
 			"state":              "created",
 			"published":          true,
 			"test_data":          "true",
+			"unique_timestamp":   bson.MongoTimestamp(1),
 		},
 	}
 }
