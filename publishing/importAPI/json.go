@@ -2,7 +2,7 @@ package importAPI
 
 import "gopkg.in/mgo.v2/bson"
 
-var validPOSTCreateJobJSON string = `{
+var validPOSTCreateJobJSON = `{
   "recipe": "b944be78-f56d-409b-9ebd-ab2b77ffe187",
   "state": "created",
   "files": [
@@ -14,7 +14,7 @@ var validPOSTCreateJobJSON string = `{
 }`
 
 // Invalid Json body without recipe
-var invalidJSON string = `
+var invalidJSON = `
 {
   "state": "created",
   "files": [
@@ -25,7 +25,7 @@ var invalidJSON string = `
   ]
 }`
 
-var validPUTJobJSON string = `{
+var validPUTJobJSON = `{
   "recipe": "b944be78-f56d-409b-9ebd-ab2b77ffe187",
   "state": "submitted",
   "files": [
@@ -37,22 +37,20 @@ var validPUTJobJSON string = `{
 }`
 
 // Invalid Syntax Json body
-var invalidSyntaxJSON string = `
+var invalidSyntaxJSON = `
 {
   "state": "created",
   "files": [
 	{
 	  "alias_name": "v4",
 	  "url": "https://s3-eu-west-1.amazonaws.com/dp-publish-content-test/OCIGrowth.csv"
-	
+
   ]
 }`
 
-var validPUTAddFilesJSON string = `{
-
+var validPUTAddFilesJSON = `{
 	  "alias_name": "v5",
 	  "url": "https://s3-eu-west-1.amazonaws.com/dp-publish-content-test/CPIGrowth.csv"
-	
 }`
 
 // Files represents an object containing files information

@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	datasetJSON "github.com/ONSdigital/dp-api-tests/web/datasetAPI"
 	"github.com/ONSdigital/dp-api-tests/web/filterAPI/expectedTestData"
-	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	"github.com/satori/go.uuid"
@@ -105,6 +105,9 @@ func TestSuccessfullyPostFilterBlueprintForPublishedInstance(t *testing.T) {
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated document", err, nil)
 				}
+
+				So(filterOutput.UniqueTimestamp, ShouldNotBeEmpty)
+				filterOutput.UniqueTimestamp = 0
 
 				So(filterOutput, ShouldResemble, expectedTestData.ExpectedFilterOutputOnPost(cfg.FilterAPIURL, datasetID, edition, instanceID, filterOutputID, filterBlueprintID, version))
 

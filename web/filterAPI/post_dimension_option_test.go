@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ONSdigital/dp-api-tests/web/filterAPI/expectedTestData"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/dp-api-tests/web/filterAPI/expectedTestData"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	"github.com/satori/go.uuid"
@@ -67,6 +67,9 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 
 		// Set downloads empty object to nil to be able to compare other fields
 		filterJob.Downloads = nil
+
+		So(filterJob.UniqueTimestamp, ShouldNotBeEmpty)
+		filterJob.UniqueTimestamp = 0
 
 		expectedFilterJob := expectedTestData.ExpectedFilterBlueprintUpdated(cfg.FilterAPIURL, instanceID, filterBlueprintID)
 		expectedFilterJob.InstanceID = instanceID

@@ -6,6 +6,7 @@ import (
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
+	importAPIModel "github.com/ONSdigital/dp-import-api/models"
 	"github.com/ONSdigital/go-ns/log"
 )
 
@@ -106,34 +107,12 @@ func Setup(d ...*Doc) error {
 
 // ------------------------------------------------------------------------
 
-// Job for importing datasets
-type Job struct {
-	ID            string          `bson:"id,omitempty"             json:"id,omitempty"`
-	RecipeID      string          `bson:"recipe,omitempty"         json:"recipe,omitempty"`
-	State         string          `bson:"state,omitempty"          json:"state,omitempty"`
-	UploadedFiles *[]UploadedFile `bson:"files,omitempty"          json:"files,omitempty"`
-	Links         LinksMap        `bson:"links,omitempty"          json:"links,omitempty"`
-	LastUpdated   time.Time       `bson:"last_updated,omitempty"   json:"last_updated,omitempty"`
-}
-
-// UploadedFile used for a file which has been uploaded to a bucket
-type UploadedFile struct {
-	AliasName string `bson:"alias_name" json:"alias_name"`
-	URL       string `bson:"url"        json:"url"`
-}
-
-// LinksMap represents an object containing a set of links
-type LinksMap struct {
-	Instances []IDLink `bson:"instances,omitempty" json:"instances,omitempty"`
-	Self      IDLink   `bson:"self,omitempty" json:"self,omitempty"`
-}
-
 // GetJob retrieves a job document from mongo
-func GetJob(database, collection, key, value string) (Job, error) {
+func GetJob(database, collection, key, value string) (importAPIModel.Job, error) {
 	s := session.Copy()
 	defer s.Close()
 
-	var job Job
+	var job importAPIModel.Job
 	if err := s.DB(database).C(collection).Find(bson.M{key: value}).One(&job); err != nil {
 		return job, err
 	}
@@ -450,14 +429,15 @@ var (
 
 // Filter represents a structure for a filter blueprint or output
 type Filter struct {
-	InstanceID string      `bson:"instance_id"          json:"instance_id"`
-	Dimensions []Dimension `bson:"dimensions,omitempty" json:"dimensions,omitempty"`
-	Downloads  *Downloads  `bson:"downloads,omitempty"  json:"downloads,omitempty"`
-	Events     *Events     `bson:"events,omitempty"     json:"events,omitempty"`
-	FilterID   string      `bson:"filter_id"            json:"filter_id,omitempty"`
-	State      string      `bson:"state,omitempty"      json:"state,omitempty"`
-	Links      LinkMap     `bson:"links"                json:"links,omitempty"`
-	Published  *bool       `bson:"published,omitempty"  json:"published,omitempty"`
+	InstanceID      string              `bson:"instance_id"          json:"instance_id"`
+	UniqueTimestamp bson.MongoTimestamp `bson:"unique_timestamp"     json:"-"`
+	Dimensions      []Dimension         `bson:"dimensions,omitempty" json:"dimensions,omitempty"`
+	Downloads       *Downloads          `bson:"downloads,omitempty"  json:"downloads,omitempty"`
+	Events          *Events             `bson:"events,omitempty"     json:"events,omitempty"`
+	FilterID        string              `bson:"filter_id"            json:"filter_id,omitempty"`
+	State           string              `bson:"state,omitempty"      json:"state,omitempty"`
+	Links           LinkMap             `bson:"links"                json:"links,omitempty"`
+	Published       *bool               `bson:"published,omitempty"  json:"published,omitempty"`
 }
 
 // LinkMap contains a named LinkObject for each link to other resources
