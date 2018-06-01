@@ -78,6 +78,9 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 		expectedFilterJob.InstanceID = instanceID
 		expectedFilterJob.FilterID = filterBlueprintID
 
+		So(filterJob.UniqueTimestamp, ShouldNotBeEmpty)
+		filterJob.UniqueTimestamp = 0
+
 		So(filterJob, ShouldResemble, expectedFilterJob)
 	})
 
@@ -145,7 +148,7 @@ func TestFailureToPostDimensionOptions(t *testing.T) {
 				filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusUnprocessableEntity).
-						Body().Contains("version for filter blueprint no longer exists\n")
+					Body().Contains("version for filter blueprint no longer exists\n")
 			})
 		})
 

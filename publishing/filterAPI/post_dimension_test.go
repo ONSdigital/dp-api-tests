@@ -76,6 +76,9 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 			expectedfilterBlueprint.InstanceID = instanceID
 			expectedfilterBlueprint.FilterID = filterBlueprintID
 
+			So(filterBlueprint.UniqueTimestamp, ShouldNotBeEmpty)
+			filterBlueprint.UniqueTimestamp = 0
+
 			So(filterBlueprint, ShouldResemble, expectedfilterBlueprint)
 		})
 

@@ -127,6 +127,9 @@ func TestSuccessfulPutFilterBlueprint(t *testing.T) {
 					log.ErrorC("Unable to retrieve updated document", err, nil)
 				}
 
+				So(filterOutput.UniqueTimestamp, ShouldNotBeEmpty)
+				filterOutput.UniqueTimestamp = 0
+
 				So(filterOutput, ShouldResemble, expectedTestData.ExpectedFilterOutput(cfg.FilterAPIURL, instanceID, filterOutputID, filterBlueprintID))
 
 				//enable teardown of resources created during test

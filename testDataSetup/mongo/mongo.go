@@ -429,14 +429,15 @@ var (
 
 // Filter represents a structure for a filter blueprint or output
 type Filter struct {
-	InstanceID string      `bson:"instance_id"          json:"instance_id"`
-	Dimensions []Dimension `bson:"dimensions,omitempty" json:"dimensions,omitempty"`
-	Downloads  *Downloads  `bson:"downloads,omitempty"  json:"downloads,omitempty"`
-	Events     *Events     `bson:"events,omitempty"     json:"events,omitempty"`
-	FilterID   string      `bson:"filter_id"            json:"filter_id,omitempty"`
-	State      string      `bson:"state,omitempty"      json:"state,omitempty"`
-	Links      LinkMap     `bson:"links"                json:"links,omitempty"`
-	Published  *bool       `bson:"published,omitempty"  json:"published,omitempty"`
+	InstanceID      string              `bson:"instance_id"          json:"instance_id"`
+	UniqueTimestamp bson.MongoTimestamp `bson:"unique_timestamp"     json:"-"`
+	Dimensions      []Dimension         `bson:"dimensions,omitempty" json:"dimensions,omitempty"`
+	Downloads       *Downloads          `bson:"downloads,omitempty"  json:"downloads,omitempty"`
+	Events          *Events             `bson:"events,omitempty"     json:"events,omitempty"`
+	FilterID        string              `bson:"filter_id"            json:"filter_id,omitempty"`
+	State           string              `bson:"state,omitempty"      json:"state,omitempty"`
+	Links           LinkMap             `bson:"links"                json:"links,omitempty"`
+	Published       *bool               `bson:"published,omitempty"  json:"published,omitempty"`
 }
 
 // LinkMap contains a named LinkObject for each link to other resources

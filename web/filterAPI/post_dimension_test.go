@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ONSdigital/dp-api-tests/web/filterAPI/expectedTestData"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/dp-api-tests/web/filterAPI/expectedTestData"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	"github.com/satori/go.uuid"
@@ -74,6 +74,9 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 			expectedfilterBlueprint := expectedTestData.ExpectedFilterBlueprint(cfg.FilterAPIURL, instanceID, filterBlueprintID)
 			expectedfilterBlueprint.InstanceID = instanceID
 			expectedfilterBlueprint.FilterID = filterBlueprintID
+
+			So(filterBlueprint.UniqueTimestamp, ShouldNotBeEmpty)
+			filterBlueprint.UniqueTimestamp = 0
 
 			So(filterBlueprint, ShouldResemble, expectedfilterBlueprint)
 		})
