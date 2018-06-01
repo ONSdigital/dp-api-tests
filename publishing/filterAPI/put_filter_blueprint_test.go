@@ -231,7 +231,7 @@ func TestFailureToPutFilterBlueprint(t *testing.T) {
 				newVersion := 2
 				filterAPI.PUT("/filters/{filter_blueprint_id}", filterBlueprintID).WithBytes([]byte(GetValidPUTFilterBlueprintJSON(newVersion, time.Now()))).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusBadRequest).Body().Contains(versionNotFoundResponse)
+					Expect().Status(http.StatusBadRequest)
 			})
 		})
 

@@ -190,13 +190,19 @@ func TestFailureToPostDimension(t *testing.T) {
 				os.Exit(1)
 			}
 
+			if err := mongo.Setup(dimensions...); err != nil {
+				log.ErrorC("Unable to setup dimension option test resources", err, nil)
+				os.Exit(1)
+			}
+
 			Convey("When the dimension does not exist against version", func() {
 				Convey("Then the response returns a status bad request (400)", func() {
 
 					filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/{dimension}", filterBlueprintID, "foobar").
 						WithHeader(serviceAuthTokenName, serviceAuthToken).
 						WithBytes([]byte(GetValidPOSTDimensionToFilterBlueprintJSON())).
-						Expect().Status(http.StatusBadRequest).Body().Contains(dimensionNotFoundResponse)
+						Expect().Status(http.StatusBadRequest).
+						Body().Contains("incorrect dimensions chosen: [foobar]")
 				})
 			})
 
