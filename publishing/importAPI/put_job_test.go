@@ -45,6 +45,19 @@ func TestUpdateImportJobState(t *testing.T) {
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					WithBytes([]byte(validPUTJobJSON)).
 					Expect().Status(http.StatusOK)
+
+				job, err := mongo.GetJob(cfg.MongoImportsDB, collection, "id", jobID)
+				if err != nil {
+					t.Errorf("unable to retrieve job resource [%s] from mongo, error: [%v]", jobID, err)
+				}
+
+				So(job.State, ShouldEqual, "submitted")
+				So(job.UniqueTimestamp, ShouldNotBeEmpty)
+
+				files := *job.UploadedFiles
+				So(len(files), ShouldEqual, 1)
+				So(files[0].AliasName, ShouldEqual, "v4")
+				So(files[0].URL, ShouldEqual, "https://s3-eu-west-1.amazonaws.com/dp-publish-content-test/OCIGrowth.csv")
 			})
 		})
 	})
@@ -87,7 +100,8 @@ func TestUpdateImportJobStateUnauthorised(t *testing.T) {
 			Convey("Then the response returns status 404 not found", func() {
 				importAPI.PUT("/jobs/{id}", jobID).
 					WithBytes([]byte(validPUTJobJSON)).
-					Expect().Status(http.StatusUnauthorized)
+					Expect().Status(http.StatusUnauthorized).
+					Body().Contains("")
 			})
 		})
 	})
@@ -99,7 +113,8 @@ func TestUpdateImportJobStateUnauthorised(t *testing.T) {
 				importAPI.PUT("/jobs/{id}", jobID).
 					WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
 					WithBytes([]byte(validPUTJobJSON)).
-					Expect().Status(http.StatusUnauthorized)
+					Expect().Status(http.StatusUnauthorized).
+					Body().Contains("")
 			})
 		})
 	})
@@ -135,7 +150,8 @@ func TestFailureToUpdateAnImportJob(t *testing.T) {
 				importAPI.PUT("/jobs/{id}", invalidJobID).
 					WithBytes([]byte(validPUTJobJSON)).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusNotFound)
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("resource not found")
 			})
 		})
 	})
@@ -146,7 +162,8 @@ func TestFailureToUpdateAnImportJob(t *testing.T) {
 				importAPI.PUT("/jobs/{id}", jobID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					WithBytes([]byte("{")).
-					Expect().Status(http.StatusBadRequest)
+					Expect().Status(http.StatusBadRequest).
+					Body().Contains("invalid request")
 			})
 		})
 	})

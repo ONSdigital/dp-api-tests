@@ -3,6 +3,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "6iv9mxHoz86Rp4kewL4ZBLZIBns=",
+			"path": "github.com/ONSdigital/dp-import-api/models",
+			"revision": "265dc1690c10a801f76fd1ede4e3e2d296db428c",
+			"revisionTime": "2018-05-30T12:39:42Z"
+		},
+		{
 			"checksumSHA1": "flNyQmnq77A3SS1h3hWq0w1gJ/s=",
 			"path": "github.com/ONSdigital/go-ns/common",
 			"revision": "2aac7dcb478b14d4acdad6e2bfd7b8c63ce420e6",
@@ -230,6 +236,20 @@
 			"path": "github.com/gavv/monotime",
 			"revision": "47d58efa69556a936a3c15eb2ed42706d968ab01",
 			"revisionTime": "2016-10-10T19:08:48Z"
+		},
+		{
+			"checksumSHA1": "vQHOBV8lxWYAy46+x/nfmOqaTfU=",
+			"origin": "github.com/ONSdigital/dp-import-api/vendor/github.com/globalsign/mgo/bson",
+			"path": "github.com/globalsign/mgo/bson",
+			"revision": "265dc1690c10a801f76fd1ede4e3e2d296db428c",
+			"revisionTime": "2018-05-30T12:39:42Z"
+		},
+		{
+			"checksumSHA1": "//bXQG4HblBwxHJDIW/PklXAxu0=",
+			"origin": "github.com/ONSdigital/dp-import-api/vendor/github.com/globalsign/mgo/internal/json",
+			"path": "github.com/globalsign/mgo/internal/json",
+			"revision": "265dc1690c10a801f76fd1ede4e3e2d296db428c",
+			"revisionTime": "2018-05-30T12:39:42Z"
 		},
 		{
 			"checksumSHA1": "VvZKmbuBN1QAG699KduTdmSPwA4=",
