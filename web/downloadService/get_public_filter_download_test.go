@@ -6,11 +6,11 @@ import (
 	"testing"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/dp-api-tests/web/filterAPI"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
-	"github.com/ONSdigital/dp-api-tests/web/filterAPI"
 	"gopkg.in/mgo.v2"
 )
 
@@ -71,12 +71,10 @@ func TestRedirectToPublicFilterDownload(t *testing.T) {
 
 	Convey("Given a version does not exist", t, func() {
 		Convey("When a request is made to the download service for that resource", func() {
-			Convey("Then the download service returns a error http status code", func() {
+			Convey("Then the download service returns a not found http status code", func() {
 
-				// todo - update the download service to use the go-ns filter api client, which will make this
-				// return 404
 				downloadService.GET("/downloads/filter-outputs/12334534232_wut.csv", filterOutputID).
-					Expect().Status(http.StatusInternalServerError)
+					Expect().Status(http.StatusNotFound)
 			})
 		})
 	})
