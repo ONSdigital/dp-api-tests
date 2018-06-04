@@ -7,12 +7,12 @@ import (
 	"testing"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/dp-api-tests/web/filterAPI"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 	"gopkg.in/mgo.v2"
-	"github.com/ONSdigital/dp-api-tests/web/filterAPI"
 )
 
 func TestPrivateFilterDownloadDecryptedAndStreamedWithoutError(t *testing.T) {
@@ -143,12 +143,10 @@ func TestPrivateFilterDownloadDecryptedAndStreamedUnpublishedWithoutAuthenticati
 
 	Convey("Given an associated version exists with a private link", t, func() {
 		Convey("When a request is made for the private document without authentication", func() {
-			Convey("Then the response returns a 500 http status", func() {
+			Convey("Then the response returns a 404 http status", func() {
 
-				// todo - update the download service to use the go-ns filter api client, which will make this
-				// return 404
 				downloadService.GET("/downloads/filter-outputs/{filterOutputID}.csv", filterOutputID).
-					Expect().Status(http.StatusInternalServerError)
+					Expect().Status(http.StatusNotFound)
 
 			})
 		})
@@ -206,11 +204,11 @@ func TestPrivateFilterDownloadDecryptedAndStreamedFailure(t *testing.T) {
 
 	Convey("Given a public version exists with a private link, but the file is missing from Amazon S3", t, func() {
 		Convey("When a request is made for the private document", func() {
-			Convey("Then the download service returns an internal server error status code", func() {
+			Convey("Then the download service returns a not found status code", func() {
 				response := downloadService.GET("/downloads/filter-outputs/{filterOutputID}.csv", filterOutputID).
-					Expect().Status(http.StatusInternalServerError)
+					Expect().Status(http.StatusNotFound)
 
-				response.Body().Contains("internal server error")
+				response.Body().Contains("resource not found")
 			})
 		})
 	})
