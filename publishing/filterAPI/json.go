@@ -627,9 +627,35 @@ func GetValidPUTFilterOutputWithDimensionsJSON() string {
 		  {
 			  "name": "age",
 			  "options": [
-			    "27", "28"
+			    "27", "27", "28"
 			  ]
 		  }
+		]
+	}`
+}
+
+// GetDuplicateDimensionJSON returns a filter blue print with duplicate dimensions
+func GetDuplicateDimensionJSON(datasetID, edition string, version int) string {
+	return `
+	{
+		"dataset": {
+			"id": "` + datasetID + `",
+			"edition": "` + edition + `",
+			"version": ` + strconv.Itoa(version) + `
+		},
+		"dimensions": [
+	  	{
+			"name": "age",
+			"options": [
+		  	"27"
+				]
+		  },
+		  {
+			"name": "age",
+			"options": [
+		  	"28"
+				]
+	  	}
 		]
 	}`
 }
