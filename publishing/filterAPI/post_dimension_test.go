@@ -54,7 +54,39 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 
 			filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/{dimension}", filterBlueprintID, "Residence Type").
 				WithHeader(serviceAuthTokenName, serviceAuthToken).
-				WithBytes([]byte(GetValidPOSTDimensionToFilterBlueprintJSON())).
+				WithBytes([]byte(GetValidPOSTDimensionToFilterBlueprintJSON("Lives in a communal establishment", "Lives in a household"))).
+				Expect().Status(http.StatusCreated)
+
+			// Check data has been updated as expected
+			filterBlueprint, err := mongo.GetFilter(cfg.MongoFiltersDB, collection, "filter_id", filterBlueprintID)
+			if err != nil {
+				log.ErrorC("Unable to retrieve updated document", err, nil)
+			}
+
+			// Set these empty objects to nil to be able to compare other fields
+			filterBlueprint.Downloads = nil
+			filterBlueprint.Events = nil
+
+			So(len(filterBlueprint.Dimensions), ShouldEqual, 5)
+
+			// Check dimension has been added to the end of the array
+			So(filterBlueprint.Dimensions[4].Name, ShouldEqual, "Residence Type")
+
+			expectedfilterBlueprint := expectedTestData.ExpectedFilterBlueprint(cfg.FilterAPIURL, instanceID, filterBlueprintID)
+			expectedfilterBlueprint.InstanceID = instanceID
+			expectedfilterBlueprint.FilterID = filterBlueprintID
+
+			So(filterBlueprint.UniqueTimestamp, ShouldNotBeEmpty)
+			filterBlueprint.UniqueTimestamp = 0
+
+			So(filterBlueprint, ShouldResemble, expectedfilterBlueprint)
+		})
+
+		Convey("Add a dimension to the filter blueprint with duplicate options", func() {
+
+			filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/{dimension}", filterBlueprintID, "Residence Type").
+				WithHeader(serviceAuthTokenName, serviceAuthToken).
+				WithBytes([]byte(GetValidPOSTDimensionToFilterBlueprintJSON("Lives in a communal establishment", "Lives in a communal establishment", "Lives in a household"))).
 				Expect().Status(http.StatusCreated)
 
 			// Check data has been updated as expected
@@ -220,7 +252,7 @@ func TestFailureToPostDimension(t *testing.T) {
 
 					filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/{dimension}", filterBlueprintID, "age").
 						WithHeader(serviceAuthTokenName, serviceAuthToken).
-						WithBytes([]byte(GetValidPOSTDimensionToFilterBlueprintJSON())).
+						WithBytes([]byte(GetValidPOSTDimensionToFilterBlueprintJSON("Lives in a communal establishment", "Lives in a household"))).
 						Expect().Status(http.StatusBadRequest).Body().Contains("incorrect dimension options chosen: [Lives in a communal establishment Lives in a household]\n")
 				})
 			})

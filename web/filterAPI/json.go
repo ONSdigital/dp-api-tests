@@ -1,6 +1,7 @@
 package filterAPI
 
 import (
+	"bytes"
 	"strconv"
 	"time"
 
@@ -580,11 +581,11 @@ func GetInvalidSyntaxJSON(instanceID string) string {
 	}`
 }
 
-func GetValidPOSTDimensionToFilterBlueprintJSON() string {
+func GetValidPOSTDimensionToFilterBlueprintJSON(options ...string) string {
 	return `
 {
   "options": [
-    "Lives in a communal establishment", "Lives in a household"
+	` + optionsToString(options...) + `
   ]
 }`
 }
@@ -686,4 +687,17 @@ func GetValidPUTFilterOutputWithDimensionsJSON() string {
 		  }
 		]
 	}`
+}
+
+func optionsToString(options ...string) string {
+	var buffer bytes.Buffer
+	for i, option := range options {
+		buffer.WriteString(`"` + option + `"`)
+
+		if i != len(options)-1 {
+			buffer.WriteString(", ")
+		}
+	}
+
+	return buffer.String()
 }
