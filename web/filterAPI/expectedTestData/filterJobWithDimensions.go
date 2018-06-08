@@ -147,6 +147,11 @@ func ExpectedFilterOutput(host, instanceID, filterOutputID, filterBlueprintID st
 		},
 		Published: &mongo.Published,
 		State:     "created",
+		Events: []*mongo.Event{
+			{
+				Type:"FilterOutputCreated",
+			},
+		},
 	}
 }
 
@@ -187,6 +192,11 @@ func ExpectedFilterOutputOnPost(host, datasetID, edition, instanceID, filterOutp
 		},
 		Published: &mongo.Published,
 		State:     "created",
+		Events: []*mongo.Event{
+			{
+				Type:"FilterOutputCreated",
+			},
+		},
 	}
 }
 

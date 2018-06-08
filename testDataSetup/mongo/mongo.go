@@ -3,7 +3,7 @@ package mongo
 import (
 	"time"
 
-	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
 	importAPIModel "github.com/ONSdigital/dp-import-api/models"
@@ -352,12 +352,8 @@ type IDLink struct {
 	HRef string `bson:"href,omitempty" json:"href,omitempty"`
 }
 
-// Event which has happened to an instance
 type Event struct {
-	Type          string     `bson:"type,omitempty"           json:"type"`
-	Time          *time.Time `bson:"time,omitempty"           json:"time"`
-	Message       string     `bson:"message,omitempty"        json:"message"`
-	MessageOffset string     `bson:"message_offset,omitempty" json:"message_offset"`
+	Type string    `bson:"type,omitempty" json:"type"`
 }
 
 // GetDataset retrieves a dataset document from mongo
@@ -433,7 +429,7 @@ type Filter struct {
 	UniqueTimestamp bson.MongoTimestamp `bson:"unique_timestamp"     json:"-"`
 	Dimensions      []Dimension         `bson:"dimensions,omitempty" json:"dimensions,omitempty"`
 	Downloads       *Downloads          `bson:"downloads,omitempty"  json:"downloads,omitempty"`
-	Events          *Events             `bson:"events,omitempty"     json:"events,omitempty"`
+	Events          []*Event            `bson:"events,omitempty"     json:"events,omitempty"`
 	FilterID        string              `bson:"filter_id"            json:"filter_id,omitempty"`
 	State           string              `bson:"state,omitempty"      json:"state,omitempty"`
 	Links           LinkMap             `bson:"links"                json:"links,omitempty"`
@@ -467,19 +463,6 @@ type DownloadItem struct {
 	Private string `bson:"private,omitempty" json:"private,omitempty"`
 	Public  string `bson:"public,omitempty"  json:"public,omitempty"`
 	Size    string `bson:"size,omitempty"    json:"size,omitempty"`
-}
-
-// Events represents a list of array objects containing event information against the filter blueprint or output
-type Events struct {
-	Error *[]EventItem `bson:"error,omitempty" json:"error,omitempty"`
-	Info  *[]EventItem `bson:"info,omitempty"  json:"info,omitempty"`
-}
-
-// EventItem represents an event object containing event information
-type EventItem struct {
-	Message string `bson:"message,omitempty" json:"message,omitempty"`
-	Time    string `bson:"time,omitempty"    json:"time,omitempty"`
-	Type    string `bson:"type,omitempty"    json:"type,omitempty"`
 }
 
 // GetFilter retrieves a filter document from mongo
