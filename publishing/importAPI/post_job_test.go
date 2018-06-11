@@ -57,7 +57,14 @@ func TestSuccessfullyPostImportJob(t *testing.T) {
 					Value:      importJobID,
 				}
 
-				if err := mongo.Teardown(importJob); err != nil {
+				importInstance := &mongo.Doc{
+					Database:   cfg.MongoDB,
+					Collection: "instances",
+					Key:        "links.job.id",
+					Value:      importJobID,
+				}
+
+				if err := mongo.Teardown(importJob, importInstance); err != nil {
 					if err != mgo.ErrNotFound {
 						log.ErrorC("Failed to tear down test data", err, nil)
 						os.Exit(1)
@@ -72,26 +79,9 @@ func TestFailureToPostImportJob(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
-	Convey("Given an invalid JSON request", t, func() {
-		Convey("When create job is called", func() {
-			Convey("Then the response returns bad request (400)", func() {
-
-				importAPI.POST("/jobs").
-					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					WithBytes([]byte("{")).
-					Expect().Status(http.StatusBadRequest)
-			})
-		})
-	})
-}
-
-func TestPostImportJobWithNoAuthentication(t *testing.T) {
-
-	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
-
 	Convey("Given a request with no Authorization header", t, func() {
 		Convey("When create job is called", func() {
-			Convey("Then the response returns not found (404)", func() {
+			Convey("Then the response returns unauthorized (401)", func() {
 
 				importAPI.POST("/jobs").
 					WithBytes([]byte(validPOSTCreateJobJSON)).
@@ -99,11 +89,6 @@ func TestPostImportJobWithNoAuthentication(t *testing.T) {
 			})
 		})
 	})
-}
-
-func TestPostImportJobUnauthorised(t *testing.T) {
-
-	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
 	Convey("Given a request with an unauthorised Authorization header", t, func() {
 		Convey("When create job is called", func() {
@@ -113,6 +98,32 @@ func TestPostImportJobUnauthorised(t *testing.T) {
 					WithBytes([]byte(validPOSTCreateJobJSON)).
 					WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
 					Expect().Status(http.StatusUnauthorized)
+			})
+		})
+	})
+
+	Convey("Given an invalid JSON request", t, func() {
+		Convey("When create job is called", func() {
+			Convey("Then the response returns bad request (400)", func() {
+
+				importAPI.POST("/jobs").
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
+					WithBytes([]byte("{")).
+					Expect().Status(http.StatusBadRequest).
+					Body().Contains("failed to parse json body")
+			})
+		})
+	})
+
+	Convey("Given request is missing a mandatory field, ", t, func() {
+		Convey("When create job is called", func() {
+			Convey("Then the response returns bad request (400)", func() {
+
+				importAPI.POST("/jobs").
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
+					WithBytes([]byte("{\"number_of_instances\": 1}")).
+					Expect().Status(http.StatusBadRequest).
+					Body().Contains("the provided Job is not valid")
 			})
 		})
 	})

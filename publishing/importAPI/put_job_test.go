@@ -12,7 +12,7 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
-func TestUpdateImportJobState(t *testing.T) {
+func TestSuccessfullyUpdateImportJobState(t *testing.T) {
 
 	importJob := &mongo.Doc{
 		Database:   cfg.MongoImportsDB,
@@ -70,7 +70,7 @@ func TestUpdateImportJobState(t *testing.T) {
 	}
 }
 
-func TestUpdateImportJobStateUnauthorised(t *testing.T) {
+func TestFailureToUpdateImportJobState(t *testing.T) {
 
 	importJob := &mongo.Doc{
 		Database:   cfg.MongoImportsDB,
@@ -97,7 +97,7 @@ func TestUpdateImportJobStateUnauthorised(t *testing.T) {
 
 	Convey("Given a request with no Authorization header", t, func() {
 		Convey("When update job is called", func() {
-			Convey("Then the response returns status 404 not found", func() {
+			Convey("Then the response returns status unauthorized (401)", func() {
 				importAPI.PUT("/jobs/{id}", jobID).
 					WithBytes([]byte(validPUTJobJSON)).
 					Expect().Status(http.StatusUnauthorized).
@@ -108,7 +108,7 @@ func TestUpdateImportJobStateUnauthorised(t *testing.T) {
 
 	Convey("Given a request with an unauthorised Authorization header", t, func() {
 		Convey("When update job is called", func() {
-			Convey("Then the response returns status 401 unauthorised", func() {
+			Convey("Then the response returns status unauthorized (401)", func() {
 
 				importAPI.PUT("/jobs/{id}", jobID).
 					WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
@@ -119,31 +119,6 @@ func TestUpdateImportJobStateUnauthorised(t *testing.T) {
 		})
 	})
 
-	if err := mongo.Teardown(importJob, instance); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Failed to tear down test data", err, nil)
-			os.Exit(1)
-		}
-	}
-}
-
-func TestFailureToUpdateAnImportJob(t *testing.T) {
-
-	importJob := &mongo.Doc{
-		Database:   cfg.MongoImportsDB,
-		Collection: collection,
-		Key:        "id",
-		Value:      jobID,
-		Update:     validCreatedImportJobData,
-	}
-
-	if err := mongo.Setup(importJob); err != nil {
-		log.ErrorC("Failed to set up test data", err, nil)
-		os.Exit(1)
-	}
-
-	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
-
 	Convey("Given a request for a job that does not exist", t, func() {
 		Convey("When update job is called", func() {
 			Convey("Then the response returns status not found (404)", func() {
@@ -151,7 +126,7 @@ func TestFailureToUpdateAnImportJob(t *testing.T) {
 					WithBytes([]byte(validPUTJobJSON)).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("resource not found")
+					Body().Contains("job not found")
 			})
 		})
 	})
@@ -163,12 +138,12 @@ func TestFailureToUpdateAnImportJob(t *testing.T) {
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					WithBytes([]byte("{")).
 					Expect().Status(http.StatusBadRequest).
-					Body().Contains("invalid request")
+					Body().Contains("failed to parse json body")
 			})
 		})
 	})
 
-	if err := mongo.Teardown(importJob); err != nil {
+	if err := mongo.Teardown(importJob, instance); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("Failed to tear down test data", err, nil)
 			os.Exit(1)
