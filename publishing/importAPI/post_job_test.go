@@ -49,7 +49,6 @@ func TestSuccessfullyPostImportJob(t *testing.T) {
 				}
 
 				So(job.UniqueTimestamp, ShouldNotBeEmpty)
-				log.Trace("jon id", log.Data{"import job id": importJobID})
 
 				importJob := &mongo.Doc{
 					Database:   cfg.MongoImportsDB,
