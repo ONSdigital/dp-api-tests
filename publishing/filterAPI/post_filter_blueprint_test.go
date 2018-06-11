@@ -111,7 +111,23 @@ func TestSuccessfullyPostFilterBlueprintForPublishedInstance(t *testing.T) {
 				So(filterOutput.UniqueTimestamp, ShouldNotBeEmpty)
 				filterOutput.UniqueTimestamp = 0
 
-				So(filterOutput, ShouldResemble, expectedTestData.ExpectedFilterOutputOnPost(cfg.FilterAPIURL, datasetID, edition, instanceID, filterOutputID, filterBlueprintID, version))
+				So(filterOutput.FilterID, ShouldEqual, filterOutputID)
+				So(filterOutput.InstanceID, ShouldEqual, instanceID)
+				So(filterOutput.Downloads, ShouldResemble, expectedTestData.EmptyDownloads)
+				So(*filterOutput.Published, ShouldEqual, mongo.Published)
+				So(filterOutput.State, ShouldEqual, "created")
+
+				expectedDimensions := []mongo.Dimension{
+					expectedTestData.UpdatedAge(cfg.FilterAPIURL, ""),
+				}
+				So(filterOutput.Dimensions, ShouldResemble, expectedDimensions)
+
+				expectedLinks := expectedTestData.ExpectedFilterOutputLinks(cfg.FilterAPIURL, datasetID, filterBlueprintID, filterOutputID)
+				So(filterOutput.Links, ShouldResemble, expectedLinks)
+
+				So(filterOutput.Events, ShouldNotBeNil)
+				So(len(filterOutput.Events), ShouldEqual, 1)
+				So(filterOutput.Events[0].Type, ShouldEqual, "FilterOutputCreated")
 
 				//enable teardown of resources created during test
 				docs = append(docs, &mongo.Doc{
