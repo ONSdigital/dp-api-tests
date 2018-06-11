@@ -603,15 +603,6 @@ func GetValidPUTFilterBlueprintJSON(version int, time time.Time) string {
 	return `{
 	  "dataset": {
 			"version": ` + strconv.Itoa(version) + `
-		},
-	  "events": {
-		  "info": [
-		    {
-		      "message": "blueprint has created filter output resource",
-					"time": "` + time.String() + `",
-					"type": "info"
-	      }
-	    ]
 		}
   }`
 }
