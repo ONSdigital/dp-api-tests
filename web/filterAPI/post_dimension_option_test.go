@@ -71,7 +71,7 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 		So(filterJob.UniqueTimestamp, ShouldNotBeEmpty)
 		filterJob.UniqueTimestamp = 0
 
-		expectedFilterJob := expectedTestData.ExpectedFilterBlueprintUpdated(cfg.FilterAPIURL, instanceID, filterBlueprintID)
+		expectedFilterJob := expectedTestData.ExpectedFilterBlueprintUpdated(cfg.FilterAPIURL, datasetID, filterBlueprintID)
 		expectedFilterJob.InstanceID = instanceID
 		expectedFilterJob.FilterID = filterBlueprintID
 

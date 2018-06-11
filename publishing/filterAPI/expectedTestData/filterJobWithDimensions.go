@@ -1,8 +1,6 @@
 package expectedTestData
 
 import (
-	"strconv"
-
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 )
 
@@ -146,48 +144,6 @@ func ExpectedFilterOutputLinks(host, datasetID, filterBlueprintID, filterOutputI
 		Version: mongo.LinkObject{
 			ID:   "1",
 			HRef: "http://localhost:8080/datasets/" + datasetID + "/editions/2017/versions/1",
-		},
-	}
-}
-
-// ExpectedFilterOutputOnPost represents the expected data stored against a filter output resource
-func ExpectedFilterOutputOnPost(host, datasetID, edition, instanceID, filterOutputID, filterBlueprintID string, version int) mongo.Filter {
-	return mongo.Filter{
-		FilterID:   filterOutputID,
-		InstanceID: instanceID,
-		Downloads: &mongo.Downloads{
-			CSV: &mongo.DownloadItem{
-				HRef:    "",
-				Private: "",
-				Public:  "",
-				Size:    "",
-			},
-			XLS: &mongo.DownloadItem{
-				HRef:    "",
-				Private: "",
-				Public:  "",
-				Size:    "",
-			},
-		},
-		Links: mongo.LinkMap{
-			FilterBlueprint: mongo.LinkObject{
-				HRef: host + "/filters/" + filterBlueprintID,
-				ID:   filterBlueprintID,
-			},
-			Self: mongo.LinkObject{
-				HRef: host + "/filter-outputs/" + filterOutputID,
-			},
-			Version: mongo.LinkObject{
-				ID:   "1",
-				HRef: "http://localhost:8080/datasets/" + datasetID + "/editions/" + edition + "/versions/" + strconv.Itoa(version),
-			},
-		},
-		Published: &mongo.Published,
-		State:     "created",
-		Events: []*mongo.Event{
-			{
-				Type: "FilterOutputCreated",
-			},
 		},
 	}
 }
