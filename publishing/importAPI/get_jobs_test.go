@@ -61,7 +61,7 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 	}
 }
 
-func TestGetListOfImportJobsUnauthorised(t *testing.T) {
+func TestFailureToGetListOfImportJobs(t *testing.T) {
 
 	var docs []*mongo.Doc
 
@@ -96,6 +96,17 @@ func TestGetListOfImportJobsUnauthorised(t *testing.T) {
 				importAPI.GET("/jobs").
 					WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
 					Expect().Status(http.StatusUnauthorized)
+			})
+		})
+	})
+
+	Convey("Given no import job are in a state of submitted", t, func() {
+		Convey("When get jobs is called with an authenticated request", func() {
+			Convey("Then the response returns status not found (404)", func() {
+				importAPI.GET("/jobs?state=submitted").
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("requested resource not found")
 			})
 		})
 	})

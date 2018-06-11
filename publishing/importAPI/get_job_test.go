@@ -67,41 +67,6 @@ func TestFailureToGetAnImportJob(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
 
-	Convey("Given a request for a job that does not exist", t, func() {
-		Convey("When get job is called", func() {
-			Convey("Then the response returns status not found (404)", func() {
-				importAPI.GET("/jobs/{id}", invalidJobID).
-					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusNotFound)
-			})
-		})
-	})
-
-	if err := mongo.Teardown(importCreateJobDoc); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Failed to tear down test data", err, nil)
-			os.Exit(1)
-		}
-	}
-}
-
-func TestGetAnImportJobUnauthorised(t *testing.T) {
-
-	importCreateJobDoc := &mongo.Doc{
-		Database:   cfg.MongoImportsDB,
-		Collection: collection,
-		Key:        "id",
-		Value:      jobID,
-		Update:     validCreatedImportJobData,
-	}
-
-	if err := mongo.Setup(importCreateJobDoc); err != nil {
-		log.ErrorC("Failed to set up test data", err, nil)
-		os.Exit(1)
-	}
-
-	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
-
 	Convey("Given a request with no Authorization header", t, func() {
 		Convey("When get job is called", func() {
 			Convey("Then the response returns status unauthorized (401)", func() {
@@ -117,6 +82,17 @@ func TestGetAnImportJobUnauthorised(t *testing.T) {
 				importAPI.GET("/jobs/{id}", jobID).
 					WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
 					Expect().Status(http.StatusUnauthorized)
+			})
+		})
+	})
+
+	Convey("Given a request for a job that does not exist", t, func() {
+		Convey("When get job is called", func() {
+			Convey("Then the response returns status not found (404)", func() {
+				importAPI.GET("/jobs/{id}", invalidJobID).
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("job not found")
 			})
 		})
 	})
