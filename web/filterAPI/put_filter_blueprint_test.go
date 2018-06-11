@@ -98,12 +98,6 @@ func TestSuccessfulPutFilterBlueprint(t *testing.T) {
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
 				response.NotContainsKey("last_updated")
 				response.NotContainsKey("downloads")
-
-				info := response.Value("events").Object().Value("info").Array()
-				info.Length().Equal(1)
-				info.Element(0).Object().Value("message").Equal("blueprint has created filter output resource")
-				info.Element(0).Object().Value("time").Equal(time.String())
-				info.Element(0).Object().Value("type").Equal("info")
 			})
 		})
 
