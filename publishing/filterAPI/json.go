@@ -1,6 +1,7 @@
 package filterAPI
 
 import (
+	"bytes"
 	"strconv"
 	"time"
 
@@ -526,11 +527,11 @@ func GetInvalidSyntaxJSON(instanceID string) string {
 	}`
 }
 
-func GetValidPOSTDimensionToFilterBlueprintJSON() string {
+func GetValidPOSTDimensionToFilterBlueprintJSON(options ...string) string {
 	return `
 {
   "options": [
-    "Lives in a communal establishment", "Lives in a household"
+	` + optionsToString(options...) + `
   ]
 }`
 }
@@ -612,15 +613,54 @@ func GetValidPUTFilterOutputWithXLSPublicLinkJSON() string {
 	}`
 }
 
-func GetValidPUTFilterOutputWithDimensionsJSON() string {
+func GetValidPUTFilterOutputWithDimensionsJSON(options ...string) string {
 	return `{
 	  "dimensions": [
 		  {
 			  "name": "age",
 			  "options": [
-			    "27", "28"
+			    ` + optionsToString(options...) + ` 
 			  ]
 		  }
+		]
+	}`
+}
+
+func optionsToString(options ...string) string {
+	var buffer bytes.Buffer
+	for i, option := range options {
+		buffer.WriteString(`"` + option + `"`)
+
+		if i != len(options)-1 {
+			buffer.WriteString(", ")
+		}
+	}
+
+	return buffer.String()
+}
+
+// GetDuplicateDimensionJSON returns a filter blue print with duplicate dimensions
+func GetDuplicateDimensionJSON(datasetID, edition string, version int) string {
+	return `
+	{
+		"dataset": {
+			"id": "` + datasetID + `",
+			"edition": "` + edition + `",
+			"version": ` + strconv.Itoa(version) + `
+		},
+		"dimensions": [
+	  	{
+			"name": "age",
+			"options": [
+		  	"27"
+				]
+		  },
+		  {
+			"name": "age",
+			"options": [
+		  	"28"
+				]
+	  	}
 		]
 	}`
 }

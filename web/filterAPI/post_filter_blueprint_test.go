@@ -214,6 +214,14 @@ func TestFailureToPostfilterBlueprintForPublishedInstance(t *testing.T) {
 			})
 		})
 
+		Convey("When the request contains a valid version of an editon for a dataset but duplicate dimensions have been provided", func() {
+			Convey("Then the response returns status bad request (400)", func() {
+
+				filterAPI.POST("/filters").WithBytes([]byte(GetDuplicateDimensionJSON(datasetID, edition, version))).
+					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - duplicate dimension found: age")
+			})
+		})
+
 		if err := mongo.Teardown(instance, dimension); err != nil {
 			log.ErrorC("Unable to teardown instance", err, nil)
 			os.Exit(1)

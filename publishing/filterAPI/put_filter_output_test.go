@@ -233,7 +233,7 @@ func TestFailureToPutFilterOutput(t *testing.T) {
 
 				filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					WithBytes([]byte(GetValidPUTFilterOutputWithDimensionsJSON())).
+					WithBytes([]byte(GetValidPUTFilterOutputWithDimensionsJSON("27", "28"))).
 					Expect().Status(http.StatusForbidden).Body().Contains("Forbidden from updating the following fields: [dimensions]\n")
 
 				filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
