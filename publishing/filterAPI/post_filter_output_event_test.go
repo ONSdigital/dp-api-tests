@@ -44,7 +44,7 @@ func TestSuccessfulPostFilterOutputEvent(t *testing.T) {
 			filterAPI.POST("/filter-outputs/{filter_output_id}/events", filterOutputID).
 				WithHeader(serviceAuthTokenName, serviceAuthToken).
 				WithBytes([]byte(`{"type":"CSVCreated","time":"2018-06-10T05:59:05.893+01:00"}`)).
-				Expect().Status(http.StatusOK)
+				Expect().Status(http.StatusCreated)
 
 			Convey("Then the filter output resource the event", func() {
 
