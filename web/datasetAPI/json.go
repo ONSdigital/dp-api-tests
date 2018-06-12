@@ -936,3 +936,12 @@ var invalidPOSTCreateInstanceJSON = `
     }
   }
 }`
+
+var validPOSTAgeDimensionJSON = `
+{
+	"code": "ABC123DEF456",
+	"code_list": "age-list",
+	"dimension": "age",
+	"label": "25",
+	"option": "25"
+}`

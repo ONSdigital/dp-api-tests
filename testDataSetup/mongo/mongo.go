@@ -6,6 +6,7 @@ import (
 	"github.com/gedge/mgo"
 	"github.com/gedge/mgo/bson"
 
+	datasetAPIModel "github.com/ONSdigital/dp-dataset-api/models"
 	importAPIModel "github.com/ONSdigital/dp-import-api/models"
 	"github.com/ONSdigital/go-ns/log"
 )
@@ -407,6 +408,18 @@ func GetInstance(database, collection, key, value string) (Instance, error) {
 	}
 
 	return instance, nil
+}
+
+// GetDimensionOption retrieves a dimension option document from mongo
+func GetDimensionOption(database, collection, key, value string) (dimensionOption datasetAPIModel.DimensionOption, err error) {
+	s := session.Copy()
+	defer s.Close()
+
+	if err = s.DB(database).C(collection).Find(bson.M{key: value}).One(&dimensionOption); err != nil {
+		return
+	}
+
+	return
 }
 
 // CountDimensionOptions retrieves a count of the number of dimension options exist for an instance in mongo
