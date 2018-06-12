@@ -299,7 +299,7 @@ type Instance struct {
 	Events            *[]Event             `bson:"events,omitempty"                      json:"events,omitempty"`
 	Headers           *[]string            `bson:"headers,omitempty"                     json:"headers,omitempty"`
 	ImportTasks       *InstanceImportTasks `bson:"import_tasks,omitempty"                json:"import_tasks,omitempty"`
-	LatestChanges     *[]LatestChange      `bson:"latest_changes,omitempty" json:"latest_changes,omitempty"`
+	LatestChanges     *[]LatestChange      `bson:"latest_changes,omitempty"              json:"latest_changes,omitempty"`
 	Links             InstanceLinks        `bson:"links,omitempty"                       json:"links,omitempty"`
 	ReleaseDate       string               `bson:"release_date,omitempty"                json:"release_date,omitempty"`
 	State             string               `bson:"state,omitempty"                       json:"state,omitempty"`
@@ -307,6 +307,7 @@ type Instance struct {
 	TotalObservations int64                `bson:"total_observations,omitempty"          json:"total_observations,omitempty"`
 	Version           int                  `bson:"version,omitempty"                     json:"version,omitempty"`
 	LastUpdated       time.Time            `bson:"last_updated,omitempty"                json:"last_updated,omitempty"`
+	UniqueTimestamp   bson.MongoTimestamp  `bson:"unique_timestamp"                      json:"-"`
 }
 
 // InstanceImportTasks represent an object containing specific lists of tasks for import process
@@ -353,7 +354,7 @@ type IDLink struct {
 }
 
 type Event struct {
-	Type string    `bson:"type,omitempty" json:"type"`
+	Type string `bson:"type,omitempty" json:"type"`
 }
 
 // GetDataset retrieves a dataset document from mongo
@@ -395,7 +396,7 @@ func GetVersion(database, collection, key, value string) (Version, error) {
 	return version, nil
 }
 
-// GetInstance retrieves a version document from mongo
+// GetInstance retrieves an instance document from mongo
 func GetInstance(database, collection, key, value string) (Instance, error) {
 	s := session.Copy()
 	defer s.Close()

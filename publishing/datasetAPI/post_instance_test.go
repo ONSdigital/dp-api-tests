@@ -24,6 +24,8 @@ func TestSuccessfullyPostInstance(t *testing.T) {
 		Convey("When a valid authorised POST request is made with a job properties", func() {
 			Convey("Then the expected response body is returned and a status of created (201)", func() {
 
+				timeStart := time.Now().Truncate(time.Second).UTC()
+
 				response := datasetAPI.POST("/instances").
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPOSTCreateInstanceJSON)).
@@ -37,6 +39,18 @@ func TestSuccessfullyPostInstance(t *testing.T) {
 				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/instances/" + instanceUniqueID + "$")
 				response.Value("state").Equal("created")
 				response.Value("last_updated").NotNull()
+				response.NotContainsKey("unique_timestamp")
+
+				// ensure DB has a unique_timestamp which is current
+				instanceFromDB, err := mongo.GetInstance(cfg.MongoDB, "instances", "id", instanceUniqueID)
+				if err != nil {
+					if err != mgo.ErrNotFound {
+						log.ErrorC("Was unable to retrieve test data", err, nil)
+						os.Exit(1)
+					}
+				}
+				So(instanceFromDB.InstanceID, ShouldEqual, instanceUniqueID)
+				So(instanceFromDB.UniqueTimestamp.Time().UTC(), ShouldHappenOnOrBetween, timeStart, time.Now().UTC())
 
 				instance := &mongo.Doc{
 					Database:   cfg.MongoDB,
@@ -75,6 +89,7 @@ func TestSuccessfullyPostInstance(t *testing.T) {
 				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/instances/" + instanceUniqueID + "$")
 				response.Value("state").Equal("created")
 				response.Value("last_updated").NotNull()
+				response.NotContainsKey("unique_timestamp")
 
 				instance := &mongo.Doc{
 					Database:   cfg.MongoDB,
