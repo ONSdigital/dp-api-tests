@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	mgo "gopkg.in/mgo.v2"
+	"github.com/gedge/mgo"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	datasetAPIModel "github.com/ONSdigital/dp-dataset-api/models"
@@ -216,7 +216,7 @@ func setupInstances(datasetID, edition, instanceID, invalidInstanceID string) ([
 		Collection: "instances",
 		Key:        "_id",
 		Value:      invalidInstanceID,
-		Update:     validCreatedInstanceData(datasetID, edition, invalidInstanceID, "gobbly gook"),
+		Update:     validCreatedInstanceData(datasetID, edition, invalidInstanceID, "gobbledygook"),
 	}
 
 	docs = append(docs, instanceDoc, invalidInstanceDoc)

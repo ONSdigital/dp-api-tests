@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	mgo "gopkg.in/mgo.v2"
+	"github.com/gedge/mgo"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	datasetAPIModel "github.com/ONSdigital/dp-dataset-api/models"

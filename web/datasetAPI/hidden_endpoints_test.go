@@ -45,7 +45,7 @@ func TestPublishingEndpointsAreHiddenForWeb(t *testing.T) {
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPOSTCreateDatasetJSON)).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("")
+					Body().Contains("404 page not found")
 
 				// ^^ check message is empty, if not it could mean endpoint
 				// is available on the web instance of the dataset API
@@ -62,7 +62,7 @@ func TestPublishingEndpointsAreHiddenForWeb(t *testing.T) {
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTUpdateDatasetJSON)).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("")
+					Body().Contains("404 page not found")
 			})
 		})
 
@@ -75,7 +75,7 @@ func TestPublishingEndpointsAreHiddenForWeb(t *testing.T) {
 				datasetAPI.DELETE("/datasets/{id}", datasetID).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("")
+					Body().Contains("404 page not found")
 			})
 		})
 
@@ -91,7 +91,7 @@ func TestPublishingEndpointsAreHiddenForWeb(t *testing.T) {
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTUpdateVersionMetaDataJSON)).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("")
+					Body().Contains("404 page not found")
 			})
 		})
 
@@ -106,7 +106,7 @@ func TestPublishingEndpointsAreHiddenForWeb(t *testing.T) {
 				datasetAPI.GET("/instance").
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("")
+					Body().Contains("404 page not found")
 			})
 		})
 
@@ -119,7 +119,7 @@ func TestPublishingEndpointsAreHiddenForWeb(t *testing.T) {
 				datasetAPI.GET("/instances").
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("")
+					Body().Contains("404 page not found")
 			})
 		})
 
@@ -133,7 +133,7 @@ func TestPublishingEndpointsAreHiddenForWeb(t *testing.T) {
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPOSTCreateInstanceJSON)).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("")
+					Body().Contains("404 page not found")
 			})
 		})
 
@@ -147,7 +147,7 @@ func TestPublishingEndpointsAreHiddenForWeb(t *testing.T) {
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTFullInstanceJSON)).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("")
+					Body().Contains("404 page not found")
 			})
 		})
 
@@ -162,7 +162,7 @@ func TestPublishingEndpointsAreHiddenForWeb(t *testing.T) {
 				datasetAPI.GET("/instances/{instance_id}/dimensions", instanceID).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("")
+					Body().Contains("404 page not found")
 			})
 		})
 
@@ -177,7 +177,7 @@ func TestPublishingEndpointsAreHiddenForWeb(t *testing.T) {
 				datasetAPI.GET("/instances/{instance_id}/dimensions/time/options", instanceID).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("")
+					Body().Contains("404 page not found")
 			})
 		})
 
@@ -191,12 +191,12 @@ func TestPublishingEndpointsAreHiddenForWeb(t *testing.T) {
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPOSTAgeDimensionJSON)).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("")
+					Body().Contains("404 page not found")
 			})
 		})
 
 		// PUT request to /instances/{instance_id}/dimensions/{dimension}/options/{value}/node_id/{node_id}
-		Convey("When a POST request to update a dimension option resource for an instance in web with a node_id", func() {
+		Convey("When a PUT request to update a dimension option resource for an instance in web with a node_id", func() {
 			Convey("Then response returns a status not found (404)", func() {
 
 				log.Debug("PUT request on Dimension Option resource for an instance", log.Data{"endpoint": "/instances/{instance_id}/dimensions/{dimension}/options/{value}/node_id/{node_id}", "method": "PUT"})
@@ -204,7 +204,7 @@ func TestPublishingEndpointsAreHiddenForWeb(t *testing.T) {
 				datasetAPI.PUT("/instances/{instance_id}/dimensions/age/options/23/node_id/123456789", instanceID).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("")
+					Body().Contains("404 page not found")
 			})
 		})
 
