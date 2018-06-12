@@ -181,6 +181,33 @@ func TestPublishingEndpointsAreHiddenForWeb(t *testing.T) {
 			})
 		})
 
+		// POST request to /instances/{instance_id}/dimensions
+		Convey("When a POST request to create a dimension option resource for an instance in web", func() {
+			Convey("Then response returns a status not found (404)", func() {
+
+				log.Debug("POST request on Dimension Option resource for an instance", log.Data{"endpoint": "/instances/{instance_id}/dimensions", "method": "POST"})
+
+				datasetAPI.POST("/instances/{instance_id}/dimensions", instanceID).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPOSTAgeDimensionJSON)).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("")
+			})
+		})
+
+		// PUT request to /instances/{instance_id}/dimensions/{dimension}/options/{value}/node_id/{node_id}
+		Convey("When a POST request to update a dimension option resource for an instance in web with a node_id", func() {
+			Convey("Then response returns a status not found (404)", func() {
+
+				log.Debug("PUT request on Dimension Option resource for an instance", log.Data{"endpoint": "/instances/{instance_id}/dimensions/{dimension}/options/{value}/node_id/{node_id}", "method": "PUT"})
+
+				datasetAPI.PUT("/instances/{instance_id}/dimensions/age/options/23/node_id/123456789", instanceID).
+					WithHeader(florenceTokenName, florenceToken).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("")
+			})
+		})
+
 		if err := mongo.Teardown(docs...); err != nil {
 			if err != mgo.ErrNotFound {
 				log.ErrorC("Was unable to remove test data", err, nil)

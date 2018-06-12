@@ -310,7 +310,7 @@ func setupInstance(datasetID, edition, instanceID string) ([]*mongo.Doc, error) 
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
-		Update:     validCreatedInstanceData(datasetID, edition, instanceID),
+		Update:     validCreatedInstanceData(datasetID, edition, instanceID, "created"),
 	}
 
 	docs = append(docs, datasetDoc, instanceOneDoc)
