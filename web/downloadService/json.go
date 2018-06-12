@@ -2,13 +2,13 @@ package downloadService
 
 import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
-	"gopkg.in/mgo.v2/bson"
+	"github.com/gedge/mgo/bson"
 )
 
 func validPublishedDataset(datasetID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"_id":   datasetID,
+			"_id":           datasetID,
 			"current.state": "published",
 		},
 	}

@@ -238,6 +238,36 @@
 			"revisionTime": "2016-10-10T19:08:48Z"
 		},
 		{
+			"checksumSHA1": "Tsc4M+xTb2NgaCq3y8dbIcgBJ0A=",
+			"path": "github.com/gedge/mgo",
+			"revision": "a170908eafcff6f64b9ad83db3943fe6332d52a1",
+			"revisionTime": "2018-05-23T09:46:01Z"
+		},
+		{
+			"checksumSHA1": "SAegSFbBQ3lKgxV3opxcqTPwz+o=",
+			"path": "github.com/gedge/mgo/bson",
+			"revision": "a170908eafcff6f64b9ad83db3943fe6332d52a1",
+			"revisionTime": "2018-05-23T09:46:01Z"
+		},
+		{
+			"checksumSHA1": "+soDoin5Apt/Dyk73uC1trzHx5M=",
+			"path": "github.com/gedge/mgo/internal/json",
+			"revision": "a170908eafcff6f64b9ad83db3943fe6332d52a1",
+			"revisionTime": "2018-05-23T09:46:01Z"
+		},
+		{
+			"checksumSHA1": "PZU+CtYXLjDXogLC2nNePsLBlkU=",
+			"path": "github.com/gedge/mgo/internal/sasl",
+			"revision": "a170908eafcff6f64b9ad83db3943fe6332d52a1",
+			"revisionTime": "2018-05-23T09:46:01Z"
+		},
+		{
+			"checksumSHA1": "Uoi1jh9qrlyApl2Q5JgW7OW9wy4=",
+			"path": "github.com/gedge/mgo/internal/scram",
+			"revision": "a170908eafcff6f64b9ad83db3943fe6332d52a1",
+			"revisionTime": "2018-05-23T09:46:01Z"
+		},
+		{
 			"checksumSHA1": "vQHOBV8lxWYAy46+x/nfmOqaTfU=",
 			"origin": "github.com/ONSdigital/dp-import-api/vendor/github.com/globalsign/mgo/bson",
 			"path": "github.com/globalsign/mgo/bson",
@@ -745,12 +775,6 @@
 			"path": "golang.org/x/text/unicode/norm",
 			"revision": "42f266d4b778145dd2b0e69d0c84223ecefaffc2",
 			"revisionTime": "2018-03-13T10:32:54Z"
-		},
-		{
-			"checksumSHA1": "1D8GzeoFGUs5FZOoyC2DpQg8c5Y=",
-			"path": "gopkg.in/mgo.v2",
-			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
-			"revisionTime": "2016-08-18T02:01:20Z"
 		},
 		{
 			"checksumSHA1": "YsB2DChSV9HxdzHaKATllAUKWSI=",

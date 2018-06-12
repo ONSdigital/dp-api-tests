@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"gopkg.in/mgo.v2/bson"
+	"github.com/gedge/mgo/bson"
 )
 
 func GetValidPublishedInstanceDataBSON(instanceID, datasetID, edition string, version int) bson.M {

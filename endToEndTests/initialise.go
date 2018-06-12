@@ -3,7 +3,7 @@ package generateFiles
 import (
 	"os"
 
-	"gopkg.in/mgo.v2"
+	"github.com/gedge/mgo"
 
 	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"

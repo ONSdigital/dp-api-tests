@@ -4,12 +4,14 @@ import (
 	"net/http"
 	"os"
 	"testing"
+	"time"
 
-	mgo "gopkg.in/mgo.v2"
+	"github.com/gavv/httpexpect"
+	"github.com/gedge/mgo"
+	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
-	"github.com/gavv/httpexpect"
-	. "github.com/smartystreets/goconvey/convey"
+	"github.com/ONSdigital/go-ns/log"
 )
 
 // NOTE If endpoint is only available on publishing, remember to add a test to
