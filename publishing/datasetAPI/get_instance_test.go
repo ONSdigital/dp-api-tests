@@ -3,17 +3,16 @@ package datasetAPI
 import (
 	"net/http"
 	"os"
+	"strconv"
 	"testing"
 
-	mgo "gopkg.in/mgo.v2"
-
-	"strconv"
+	"github.com/gavv/httpexpect"
+	"github.com/gedge/mgo"
+	uuid "github.com/satori/go.uuid"
+	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
-	"github.com/gavv/httpexpect"
-	uuid "github.com/satori/go.uuid"
-	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestSuccessfullyGetInstance(t *testing.T) {

@@ -5,11 +5,12 @@ import (
 	"os"
 	"testing"
 
+	"github.com/gavv/httpexpect"
+	"github.com/gedge/mgo"
+	. "github.com/smartystreets/goconvey/convey"
+
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
-	"github.com/gavv/httpexpect"
-	. "github.com/smartystreets/goconvey/convey"
-	"gopkg.in/mgo.v2"
 )
 
 func TestSuccessfullyGetListOfImportJobs(t *testing.T) {

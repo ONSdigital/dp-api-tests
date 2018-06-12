@@ -1,8 +1,9 @@
 package downloadService
 
 import (
+	"github.com/gedge/mgo/bson"
+
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
-	"gopkg.in/mgo.v2/bson"
 )
 
 func validPublishedDataset(datasetID string) bson.M {

@@ -5,14 +5,14 @@ import (
 	"os"
 	"testing"
 
-	mgo "gopkg.in/mgo.v2"
+	"github.com/gavv/httpexpect"
+	"github.com/gedge/mgo"
+	uuid "github.com/satori/go.uuid"
+	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
 	"github.com/ONSdigital/go-ns/log"
-	"github.com/gavv/httpexpect"
-	uuid "github.com/satori/go.uuid"
-	. "github.com/smartystreets/goconvey/convey"
 )
 
 const (

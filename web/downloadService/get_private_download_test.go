@@ -7,12 +7,13 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
-	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
+	"github.com/gedge/mgo"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
-	"gopkg.in/mgo.v2"
+
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/go-ns/log"
 )
 
 func TestPrivateDownloadDecryptedAndStreamedSuccess(t *testing.T) {
