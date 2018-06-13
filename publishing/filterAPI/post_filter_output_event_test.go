@@ -114,7 +114,7 @@ func TestFailureToPostFilterOutputEvent(t *testing.T) {
 				filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					WithBytes([]byte(`{`)).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - Invalid request body\n")
+					Expect().Status(http.StatusBadRequest).Body().Contains("Bad request - Invalid request body")
 			})
 		})
 
@@ -143,7 +143,7 @@ func TestFailureToPostFilterOutputEvent(t *testing.T) {
 				filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					WithBytes([]byte(GetValidPUTFilterOutputWithDimensionsJSON())).
-					Expect().Status(http.StatusForbidden).Body().Contains("Forbidden from updating the following fields: [dimensions]\n")
+					Expect().Status(http.StatusForbidden).Body().Contains("Forbidden from updating the following fields: [dimensions]")
 
 				filterAPI.PUT("/filter-outputs/{filter_output_id}", filterOutputID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
