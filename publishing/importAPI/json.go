@@ -1,6 +1,6 @@
 package importAPI
 
-import "gopkg.in/mgo.v2/bson"
+import "github.com/gedge/mgo/bson"
 
 var validPOSTCreateJobJSON = `{
   "recipe": "b944be78-f56d-409b-9ebd-ab2b77ffe187",
@@ -91,7 +91,6 @@ var validCreatedImportJobData = bson.M{
 
 var validSubmittedImportJobData = bson.M{
 	"$set": bson.M{
-
 		"id":              "01C24F0D-24BE-479F-962B-C76BCCD0AD00",
 		"recipe":          "6C9D2696-131F-40C3-B598-12200C90415C",
 		"state":           "Submitted",

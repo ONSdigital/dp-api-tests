@@ -1,8 +1,9 @@
 package datasetAPI
 
 import (
+	"github.com/gedge/mgo/bson"
+
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
-	"gopkg.in/mgo.v2/bson"
 )
 
 var alert = mongo.Alert{
@@ -286,9 +287,9 @@ func validTimeDimensionsData(dimensionID, instanceID string) bson.M {
 			"name":                 "time",
 			"option":               "202.45",
 			"links.code_list.id":   "64d384f1-ea3b-445c-8fb8-aa453f96e58a",
-			"links.code_list.href": cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a",
+			"links.code_list.href": cfg.CodeListAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a",
 			"links.code.id":        "202.45",
-			"links.code.href":      cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/202.45",
+			"links.code.href":      cfg.CodeListAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/202.45",
 			"node_id":              "",
 			"last_updated":         "2017-09-09", // TODO Should be isodate
 			"test_data":            "true",
@@ -303,9 +304,9 @@ func validTimeDimensionsDataWithOutOptions(dimensionID, instanceID string) bson.
 			"instance_id":          instanceID,
 			"name":                 "time",
 			"links.code_list.id":   "64d384f1-ea3b-445c-8fb8-aa453f96e58a",
-			"links.code_list.href": cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a",
+			"links.code_list.href": cfg.CodeListAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a",
 			"links.code.id":        "202.45",
-			"links.code.href":      cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/202.45",
+			"links.code.href":      cfg.CodeListAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/202.45",
 			"node_id":              "",
 			"last_updated":         "2017-09-09", // TODO Should be isodate
 			"test_data":            "true",
@@ -322,9 +323,9 @@ func validAggregateDimensionsData(dimensionID, instanceID string) bson.M {
 			"option":               "cpi1dimA19",
 			"label":                "CPI (Overall Index)",
 			"links.code_list.id":   "64d384f1-ea3b-445c-8fb8-aa453f96e58a",
-			"links.code_list.href": cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a",
+			"links.code_list.href": cfg.CodeListAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a",
 			"links.code.id":        "cpi1dimA19",
-			"links.code.href":      cfg.DatasetAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/cpi1dimA19",
+			"links.code.href":      cfg.CodeListAPIURL + "/code-lists/64d384f1-ea3b-445c-8fb8-aa453f96e58a/codes/cpi1dimA19",
 			"last_updated":         "2017-09-08", // TODO Should be isodate
 			"test_data":            "true",
 		},
@@ -608,7 +609,7 @@ func validCompletedInstanceData(datasetID, edition, instanceID string) bson.M {
 	}
 }
 
-func validCreatedInstanceData(datasetID, edition, instanceID string) bson.M {
+func validCreatedInstanceData(datasetID, edition, instanceID, state string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"edition":            edition,
@@ -620,7 +621,7 @@ func validCreatedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"links.dataset.id":   datasetID,
 			"links.dataset.href": cfg.DatasetAPIURL + "/datasets/" + datasetID,
 			"links.self.href":    cfg.DatasetAPIURL + "/instances/" + instanceID,
-			"state":              "created",
+			"state":              state,
 			"total_observations": 1000,
 			"test_data":          "true",
 		},
@@ -1001,4 +1002,28 @@ var invalidPOSTCreateInstanceJSON = `
       "href": "http://localhost:21800/datasets/34B13D18-B4D8-4227-9820-492B2971E221"
     }
   }
+}`
+
+var validPOSTAgeDimensionJSON = `
+{
+	"code": "ABC123DEF456",
+	"code_list": "age-list",
+	"dimension": "age",
+	"label": "25",
+	"option": "25"
+}`
+
+var invalidPOSTDimensionJSONMissingDimension = `
+{
+	"code": "ABC123DEF456",
+	"code_list": "age-list",
+	"label": "25",
+	"option": "25"
+}`
+
+var invalidPOSTDimensionJSONMissingOptionAndCodelist = `
+{
+	"code": "ABC123DEF456",
+	"dimension": "age",
+	"label": "25"
 }`

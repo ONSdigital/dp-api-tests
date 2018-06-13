@@ -5,13 +5,13 @@ import (
 	"os"
 	"testing"
 
-	mgo "gopkg.in/mgo.v2"
+	"github.com/gavv/httpexpect"
+	"github.com/gedge/mgo"
+	uuid "github.com/satori/go.uuid"
+	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
-	"github.com/gavv/httpexpect"
-	uuid "github.com/satori/go.uuid"
-	. "github.com/smartystreets/goconvey/convey"
 )
 
 // NOTE If endpoint is only available on publishing, remember to add a test to
@@ -310,7 +310,7 @@ func setupInstance(datasetID, edition, instanceID string) ([]*mongo.Doc, error) 
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
-		Update:     validCreatedInstanceData(datasetID, edition, instanceID),
+		Update:     validCreatedInstanceData(datasetID, edition, instanceID, "created"),
 	}
 
 	docs = append(docs, datasetDoc, instanceOneDoc)

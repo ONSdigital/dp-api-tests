@@ -2,7 +2,7 @@ package datasetAPI
 
 import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
-	"gopkg.in/mgo.v2/bson"
+	"github.com/gedge/mgo/bson"
 )
 
 var alert = mongo.Alert{
@@ -935,4 +935,13 @@ var invalidPOSTCreateInstanceJSON = `
       "href": "http://localhost:21800/datasets/34B13D18-B4D8-4227-9820-492B2971E221"
     }
   }
+}`
+
+var validPOSTAgeDimensionJSON = `
+{
+	"code": "ABC123DEF456",
+	"code_list": "age-list",
+	"dimension": "age",
+	"label": "25",
+	"option": "25"
 }`

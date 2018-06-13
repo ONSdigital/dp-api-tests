@@ -7,16 +7,16 @@ import (
 	"testing"
 	"time"
 
-	"gopkg.in/mgo.v2"
+	"github.com/gavv/httpexpect"
+	"github.com/gedge/mgo"
+	"github.com/satori/go.uuid"
+	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/ONSdigital/dp-api-tests/datasetAPI"
+	"github.com/ONSdigital/dp-api-tests/publishing/datasetAPI"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/common"
 	"github.com/ONSdigital/go-ns/log"
-	"github.com/gavv/httpexpect"
-	"github.com/satori/go.uuid"
-	. "github.com/smartystreets/goconvey/convey"
 )
 
 const (

@@ -3,9 +3,10 @@ package mongo
 import (
 	"time"
 
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
+	"github.com/gedge/mgo"
+	"github.com/gedge/mgo/bson"
 
+	datasetAPIModel "github.com/ONSdigital/dp-dataset-api/models"
 	importAPIModel "github.com/ONSdigital/dp-import-api/models"
 	"github.com/ONSdigital/go-ns/log"
 )
@@ -299,7 +300,7 @@ type Instance struct {
 	Events            *[]Event             `bson:"events,omitempty"                      json:"events,omitempty"`
 	Headers           *[]string            `bson:"headers,omitempty"                     json:"headers,omitempty"`
 	ImportTasks       *InstanceImportTasks `bson:"import_tasks,omitempty"                json:"import_tasks,omitempty"`
-	LatestChanges     *[]LatestChange      `bson:"latest_changes,omitempty" json:"latest_changes,omitempty"`
+	LatestChanges     *[]LatestChange      `bson:"latest_changes,omitempty"              json:"latest_changes,omitempty"`
 	Links             InstanceLinks        `bson:"links,omitempty"                       json:"links,omitempty"`
 	ReleaseDate       string               `bson:"release_date,omitempty"                json:"release_date,omitempty"`
 	State             string               `bson:"state,omitempty"                       json:"state,omitempty"`
@@ -307,6 +308,7 @@ type Instance struct {
 	TotalObservations int64                `bson:"total_observations,omitempty"          json:"total_observations,omitempty"`
 	Version           int                  `bson:"version,omitempty"                     json:"version,omitempty"`
 	LastUpdated       time.Time            `bson:"last_updated,omitempty"                json:"last_updated,omitempty"`
+	UniqueTimestamp   bson.MongoTimestamp  `bson:"unique_timestamp"                      json:"-"`
 }
 
 // InstanceImportTasks represent an object containing specific lists of tasks for import process
@@ -396,7 +398,7 @@ func GetVersion(database, collection, key, value string) (Version, error) {
 	return version, nil
 }
 
-// GetInstance retrieves a version document from mongo
+// GetInstance retrieves an instance document from mongo
 func GetInstance(database, collection, key, value string) (Instance, error) {
 	s := session.Copy()
 	defer s.Close()
@@ -407,6 +409,18 @@ func GetInstance(database, collection, key, value string) (Instance, error) {
 	}
 
 	return instance, nil
+}
+
+// GetDimensionOption retrieves a dimension option document from mongo
+func GetDimensionOption(database, collection, key, value string) (dimensionOption datasetAPIModel.DimensionOption, err error) {
+	s := session.Copy()
+	defer s.Close()
+
+	if err = s.DB(database).C(collection).Find(bson.M{key: value}).One(&dimensionOption); err != nil {
+		return
+	}
+
+	return
 }
 
 // CountDimensionOptions retrieves a count of the number of dimension options exist for an instance in mongo

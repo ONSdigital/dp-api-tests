@@ -5,11 +5,12 @@ import (
 	"os"
 	"testing"
 
+	"github.com/gavv/httpexpect"
+	"github.com/gedge/mgo"
+	. "github.com/smartystreets/goconvey/convey"
+
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
-	"github.com/gavv/httpexpect"
-	. "github.com/smartystreets/goconvey/convey"
-	"gopkg.in/mgo.v2"
 )
 
 func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
@@ -61,7 +62,7 @@ func TestSuccessfullyGetListOfImportJobs(t *testing.T) {
 	}
 }
 
-func TestGetListOfImportJobsUnauthorised(t *testing.T) {
+func TestFailureToGetListOfImportJobs(t *testing.T) {
 
 	var docs []*mongo.Doc
 
@@ -96,6 +97,17 @@ func TestGetListOfImportJobsUnauthorised(t *testing.T) {
 				importAPI.GET("/jobs").
 					WithHeader(serviceAuthTokenName, unauthorisedServiceAuthToken).
 					Expect().Status(http.StatusUnauthorized)
+			})
+		})
+	})
+
+	Convey("Given no import job are in a state of submitted", t, func() {
+		Convey("When get jobs is called with an authenticated request", func() {
+			Convey("Then the response returns status not found (404)", func() {
+				importAPI.GET("/jobs?state=submitted").
+					WithHeader(serviceAuthTokenName, serviceAuthToken).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("requested resource not found")
 			})
 		})
 	})

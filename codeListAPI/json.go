@@ -1,6 +1,6 @@
 package codeListAPI
 
-import "gopkg.in/mgo.v2/bson"
+import "github.com/gedge/mgo/bson"
 
 var validFirstCodeListData = bson.M{
 	"$set": bson.M{

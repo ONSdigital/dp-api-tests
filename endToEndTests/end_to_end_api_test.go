@@ -1,27 +1,26 @@
 package generateFiles
 
 import (
+	"context"
 	"encoding/csv"
 	"errors"
 	"io"
 	"io/ioutil"
 	"net/http"
+	"path/filepath"
 	"strconv"
 	"testing"
 	"time"
 
-	"gopkg.in/mgo.v2"
-
-	"context"
-	"path/filepath"
+	"github.com/gavv/httpexpect"
+	"github.com/gedge/mgo"
+	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/ONSdigital/go-ns/rchttp"
-	"github.com/gavv/httpexpect"
-	. "github.com/smartystreets/goconvey/convey"
 )
 
 var timeout = time.Duration(15 * time.Second)

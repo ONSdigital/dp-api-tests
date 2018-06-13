@@ -1,9 +1,10 @@
 package filterAPI
 
 import (
-	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/gedge/mgo/bson"
 	"github.com/satori/go.uuid"
-	"gopkg.in/mgo.v2/bson"
+
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 )
 
 func setupDimensionOptions(id string, update bson.M) *mongo.Doc {

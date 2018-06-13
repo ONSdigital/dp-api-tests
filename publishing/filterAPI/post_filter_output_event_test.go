@@ -59,7 +59,7 @@ func TestSuccessfulPostFilterOutputEvent(t *testing.T) {
 				So(filterOutput.Events[0].Type, ShouldEqual, "CSVCreated")
 
 				eventTime := filterOutput.Events[0].Time.Format(time.RFC3339Nano)
-				So(eventTime, ShouldEqual, "2018-06-10T05:59:05.893+01:00")
+				So(eventTime, ShouldEqual, "2018-06-10T04:59:05.893Z")
 			})
 		})
 	})
