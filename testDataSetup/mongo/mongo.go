@@ -355,7 +355,8 @@ type IDLink struct {
 }
 
 type Event struct {
-	Type string `bson:"type,omitempty" json:"type"`
+	Type string    `bson:"type,omitempty" json:"type"`
+	Time time.Time `bson:"time,omitempty" json:"time"`
 }
 
 // GetDataset retrieves a dataset document from mongo
