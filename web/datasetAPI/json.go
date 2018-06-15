@@ -945,3 +945,19 @@ var validPOSTAgeDimensionJSON = `
 	"label": "25",
 	"option": "25"
 }`
+
+var validPUTDimensionOptionJSON = `
+{
+	"label": "28"
+	"option": "28"
+}`
+
+var validPOSTInstanceEvent = `
+{
+
+}`
+
+var validPUTInstanceImportTask = `
+{
+
+}`

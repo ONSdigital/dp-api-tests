@@ -1,9 +1,13 @@
 package datasetAPI
 
 import (
+	"encoding/json"
+	"time"
+
 	"github.com/gedge/mgo/bson"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	datasetAPI "github.com/ONSdigital/dp-dataset-api/models"
 )
 
 var alert = mongo.Alert{
@@ -609,6 +613,57 @@ func validCompletedInstanceData(datasetID, edition, instanceID string) bson.M {
 	}
 }
 
+var hierarchy = mongo.BuildHierarchyTask{
+	State:         "created",
+	DimensionName: "geography",
+	CodeListID:    "K02000001",
+}
+
+var searchIndex = mongo.BuildSearchIndexTask{
+	State:         "created",
+	DimensionName: "geography",
+}
+
+func validSubmittedInstanceData(datasetID, edition, instanceID string) bson.M {
+	return bson.M{
+		"$set": bson.M{
+			"collection_id":         "208064B3-A808-449B-9041-EA3A2F72CFAB",
+			"dimensions":            []mongo.CodeList{dimensionFour},
+			"downloads.csv.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
+			"downloads.csv.private": "s3://private/myfile.csv",
+			"downloads.csv.size":    "10",
+			"downloads.xls.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
+			"downloads.xls.private": "s3://private/myfile.xls",
+			"downloads.xls.size":    "24",
+			"edition":               edition,
+			"headers":               []string{"time", "geography"},
+			"id":                    instanceID,
+			"last_updated":          "2017-09-08", // TODO Should be isodate
+			"latest_changes":        []mongo.LatestChange{latestChanges},
+			"license":               "ONS license",
+			"links.job.id":          "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+			"links.job.href":        cfg.DatasetAPIURL + "/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+			"links.dataset.id":      datasetID,
+			"links.dataset.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID,
+			"links.dimensions.href": cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/2/dimensions",
+			"links.edition.id":      edition,
+			"links.edition.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017",
+			"links.self.href":       cfg.DatasetAPIURL + "/instances/" + instanceID,
+			"links.version.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/2",
+			"links.version.id":      "2",
+			"release_date":          "2017-12-12", // TODO Should be isodate
+			"state":                 "submitted",
+			"import_tasks.import_observations.state":                       "created",
+			"import_tasks.import_observations.total_inserted_observations": 500,
+			"import_tasks.build_hierarchies":                               []mongo.BuildHierarchyTask{hierarchy},
+			"import_tasks.build_search_indexes":                            []mongo.BuildSearchIndexTask{searchIndex},
+			"total_observations":                                           1000,
+			"version":                                                      2,
+			"test_data":                                                    "true",
+		},
+	}
+}
+
 func validCreatedInstanceData(datasetID, edition, instanceID, state string) bson.M {
 	return bson.M{
 		"$set": bson.M{
@@ -1027,3 +1082,112 @@ var invalidPOSTDimensionJSONMissingOptionAndCodelist = `
 	"dimension": "age",
 	"label": "25"
 }`
+
+var validPUTGeographyDimensionJSON = `
+{
+  "label": "geo-sites",
+	"description": "The sites in which this dataset spans"
+}`
+
+var validPUTAgeDimensionJSON = `
+{
+  "label": "age",
+	"description": "age ranging from 1 to 75"
+}`
+
+var validObservationImportTaskJSON = `
+{
+	"import_observations": {
+		"state": "completed"
+	}
+}`
+
+var validHierarchyImportTaskJSON = `
+{
+	"build_hierarchies": [
+		{
+			"state": "completed",
+			"dimension_name": "geography"
+		}
+	]
+}`
+
+var validSearchIndexImportTaskJSON = `
+{
+	"build_search_indexes": [
+		{
+			"state": "completed",
+			"dimension_name": "geography"
+		}
+	]
+}`
+
+var validMultipleImportTaskJSON = `
+{
+	"import_observations": {
+		"state": "completed"
+	},
+	"build_hierarchies": [
+		{
+			"state": "completed",
+			"dimension_name": "geography"
+		}
+	],
+	"build_search_indexes": [
+		{
+			"state": "completed",
+			"dimension_name": "geography"
+		}
+	]
+}`
+
+func createValidPOSTEventJSON(time time.Time) ([]byte, error) {
+	event := &datasetAPI.Event{
+		Message:       "unable to add observation to neo4j",
+		MessageOffset: "5",
+		Time:          &time,
+		Type:          "error",
+	}
+
+	return json.Marshal(event)
+}
+
+func createInvalidPOSTEventJSONWithoutMessage(time time.Time) ([]byte, error) {
+	event := &datasetAPI.Event{
+		MessageOffset: "5",
+		Time:          &time,
+		Type:          "error",
+	}
+
+	return json.Marshal(event)
+}
+
+func createInvalidPOSTEventJSONWithoutMessageOffset(time time.Time) ([]byte, error) {
+	event := &datasetAPI.Event{
+		Message: "unable to add observation to neo4j",
+		Time:    &time,
+		Type:    "error",
+	}
+
+	return json.Marshal(event)
+}
+
+func createInvalidPOSTEventJSONWithoutTime() ([]byte, error) {
+	event := &datasetAPI.Event{
+		Message:       "unable to add observation to neo4j",
+		MessageOffset: "5",
+		Type:          "error",
+	}
+
+	return json.Marshal(event)
+}
+
+func createInvalidPOSTEventJSONWithoutType(time time.Time) ([]byte, error) {
+	event := &datasetAPI.Event{
+		Message:       "unable to add observation to neo4j",
+		MessageOffset: "5",
+		Time:          &time,
+	}
+
+	return json.Marshal(event)
+}

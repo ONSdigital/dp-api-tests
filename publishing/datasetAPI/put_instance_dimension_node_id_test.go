@@ -91,10 +91,12 @@ func TestSuccessfullyPutInstanceDimensionOptionNodeID(t *testing.T) {
 
 func TestFailureToPutDimensionOptionNodeID(t *testing.T) {
 	datasetID := uuid.NewV4().String()
-	instanceID := uuid.NewV4().String()
-	invalidInstanceID := uuid.NewV4().String()
 	edition := "2017"
 	nodeID := uuid.NewV4().String()
+
+	instances := make(map[string]string)
+	instances[created] = uuid.NewV4().String()
+	instances[invalid] = uuid.NewV4().String()
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
@@ -105,7 +107,7 @@ func TestFailureToPutDimensionOptionNodeID(t *testing.T) {
 			Convey(`Then the response return a status not found (404)
 				with message 'Instance not found'`, func() {
 
-				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", instanceID, nodeID).
+				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", instances[created], nodeID).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
 					Body().Contains("Instance not found")
@@ -115,8 +117,7 @@ func TestFailureToPutDimensionOptionNodeID(t *testing.T) {
 	})
 
 	Convey("Given a created instance exists", t, func() {
-		// use setupInstance in file post_instance_dimension_test.go
-		docs, err := setupInstances(datasetID, edition, instanceID, invalidInstanceID)
+		docs, err := setupInstances(datasetID, edition, instances)
 		if err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
@@ -126,7 +127,7 @@ func TestFailureToPutDimensionOptionNodeID(t *testing.T) {
 				 for an instance with a node id`, func() {
 			Convey("Then fail to create resource and return a status unauthorized (401)", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", instanceID, nodeID).
+				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", instances[created], nodeID).
 					WithHeader(florenceTokenName, unauthorisedAuthToken).
 					Expect().Status(http.StatusUnauthorized)
 
@@ -137,7 +138,7 @@ func TestFailureToPutDimensionOptionNodeID(t *testing.T) {
 				dimension option for an instance with a node id`, func() {
 			Convey("Then fail to update resource and return a status unauthorized (401)", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", instanceID, nodeID).
+				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", instances[created], nodeID).
 					Expect().Status(http.StatusUnauthorized)
 
 			})
@@ -149,39 +150,10 @@ func TestFailureToPutDimensionOptionNodeID(t *testing.T) {
 			Convey(`Then the response return a status internal server error (500)
 						with message 'internal error'`, func() {
 
-				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", invalidInstanceID, nodeID).
+				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", instances[invalid], nodeID).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusInternalServerError).
 					Body().Contains("internal error")
-
-			})
-		})
-
-		Convey(`When an authorised PUT request is made to update dimension option
-					for an instance but the dimension option does not exist`, func() {
-
-			Convey(`Then the response return a status not found (404)
-						with message 'failed to parse json body'`, func() {
-
-				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", instanceID, nodeID).
-					WithHeader(florenceTokenName, florenceToken).
-					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dimension option not found")
-
-			})
-		})
-
-		Convey(`When an authorised POST request is made to create dimension option
-					for an instance but the json is missing mandatory field 'dimension'`, func() {
-
-			Convey(`Then the response return a status not found (400)
-						with message 'missing properties in JSON'`, func() {
-
-				datasetAPI.POST("/instances/{instance_id}/dimensions", instanceID).
-					WithHeader(florenceTokenName, florenceToken).
-					WithBytes([]byte(invalidPOSTDimensionJSONMissingDimension)).
-					Expect().Status(http.StatusBadRequest).
-					Body().Contains("missing properties in JSON")
 
 			})
 		})

@@ -354,8 +354,11 @@ type IDLink struct {
 	HRef string `bson:"href,omitempty" json:"href,omitempty"`
 }
 
+// Event structure
 type Event struct {
-	Type string `bson:"type,omitempty" json:"type"`
+	Message       string `bson:"message,omitempty" json:"message"`
+	MessageOffset string `bson:"message_offset,omitempty" json:"message_offset"`
+	Type          string `bson:"type,omitempty" json:"type"`
 }
 
 // GetDataset retrieves a dataset document from mongo

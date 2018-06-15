@@ -151,6 +151,69 @@ func TestPublishingEndpointsAreHiddenForWeb(t *testing.T) {
 			})
 		})
 
+		// PUT request to /instances/{instance_id}/dimensions/{dimension}
+		Convey(`When a PUT request on instance resource to update dimension object in web`, func() {
+			Convey("Then response returns a status not found (404)", func() {
+
+				log.Debug("PUT request on instance resource to update dimension object",
+					log.Data{"endpoint": "/instances/{instance_id}/dimensions/{dimension}", "method": "PUT"},
+				)
+
+				datasetAPI.PUT("/instances/{instance_id}/dimensions/{dimension}", instanceID, "age").
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTDimensionOptionJSON)).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("404 page not found")
+			})
+		})
+
+		// POST request to /instances/{instance_id}/events
+		Convey("When a POST request to add an event to an instance resource in web", func() {
+			Convey("Then response returns a status not found (404)", func() {
+
+				log.Debug("POST request to add an event to an instance resource", log.Data{"endpoint": "/instances/{instance_id}/events", "method": "POST"})
+
+				datasetAPI.POST("/instances/{instance_id}/events", instanceID).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPOSTInstanceEvent)).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("404 page not found")
+			})
+		})
+
+		// PUT request to /instances/{instance_id}/inserted_observations/{inserted_observations}
+		Convey("When a PUT request to update the number of inserted observations against an instance resource in web", func() {
+			Convey("Then response returns a status not found (404)", func() {
+
+				log.Debug(
+					"PUT request to update the number of inserted observations against an instance resource",
+					log.Data{"endpoint": "/instances/{instance_id}/inserted_observations/{inserted_observations}", "method": "PUT"},
+				)
+
+				datasetAPI.PUT("/instances/{instance_id}/inserted_observations/{inserted_observations}", instanceID, 10).
+					WithHeader(florenceTokenName, florenceToken).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("404 page not found")
+			})
+		})
+
+		// PUT request to /instances/{instance_id}/import_tasks
+		Convey("When a PUT request to update the import tasks against an instance resource in web", func() {
+			Convey("Then response returns a status not found (404)", func() {
+
+				log.Debug(
+					"PUT request to update the number of import tasks against an instance resource",
+					log.Data{"endpoint": "/instances/{instance_id}/import_tasks", "method": "PUT"},
+				)
+
+				datasetAPI.PUT("/instances/{instance_id}/import_tasks", instanceID).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTInstanceImportTask)).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("404 page not found")
+			})
+		})
+
 		// INSTANCE DIMENSION
 
 		// GET request to /instances/{instance_id}/dimensions

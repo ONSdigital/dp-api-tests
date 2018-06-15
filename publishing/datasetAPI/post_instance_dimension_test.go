@@ -18,7 +18,7 @@ import (
 // NOTE If endpoint is only available on publishing, remember to add a test to
 // web/datasetAPI/hidden_endpoints_test.go to check request returns 404
 
-func TestSuccessfullyPostInstanceDimensioOption(t *testing.T) {
+func TestSuccessfullyPostInstanceDimension(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
@@ -80,11 +80,13 @@ func TestSuccessfullyPostInstanceDimensioOption(t *testing.T) {
 	})
 }
 
-func TestFailureToPostDimensionOption(t *testing.T) {
+func TestFailureToPostDimension(t *testing.T) {
 	datasetID := uuid.NewV4().String()
-	instanceID := uuid.NewV4().String()
-	invalidInstanceID := uuid.NewV4().String()
 	edition := "2017"
+
+	instances := make(map[string]string)
+	instances[created] = uuid.NewV4().String()
+	instances[invalid] = uuid.NewV4().String()
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
@@ -92,7 +94,7 @@ func TestFailureToPostDimensionOption(t *testing.T) {
 		Convey("When an authorised POST request is made to add dimension option for an instance", func() {
 			Convey("Then the response return a status not found (404) with message `Instance not found`", func() {
 
-				datasetAPI.POST("/instances/{instance_id}/dimensions", instanceID).
+				datasetAPI.POST("/instances/{instance_id}/dimensions", instances["created"]).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPOSTAgeDimensionJSON)).
 					Expect().Status(http.StatusNotFound).
@@ -103,7 +105,7 @@ func TestFailureToPostDimensionOption(t *testing.T) {
 	})
 
 	Convey("Given a created instance exists", t, func() {
-		docs, err := setupInstances(datasetID, edition, instanceID, invalidInstanceID)
+		docs, err := setupInstances(datasetID, edition, instances)
 		if err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
@@ -113,7 +115,7 @@ func TestFailureToPostDimensionOption(t *testing.T) {
 			 for an instance with an invalid authentication header`, func() {
 			Convey("Then fail to create resource and return a status unauthorized (401)", func() {
 
-				datasetAPI.POST("/instances/{instance_id}/dimensions", instanceID).
+				datasetAPI.POST("/instances/{instance_id}/dimensions", instances["created"]).
 					WithBytes([]byte(validPOSTAgeDimensionJSON)).
 					WithHeader(florenceTokenName, unauthorisedAuthToken).
 					Expect().Status(http.StatusUnauthorized)
@@ -125,7 +127,7 @@ func TestFailureToPostDimensionOption(t *testing.T) {
 			dimension option for an instance`, func() {
 			Convey("Then fail to update resource and return a status unauthorized (401)", func() {
 
-				datasetAPI.POST("/instances/{instance_id}/dimensions", instanceID).
+				datasetAPI.POST("/instances/{instance_id}/dimensions", instances["created"]).
 					WithBytes([]byte(validPOSTAgeDimensionJSON)).
 					Expect().Status(http.StatusUnauthorized)
 
@@ -138,7 +140,7 @@ func TestFailureToPostDimensionOption(t *testing.T) {
 			Convey(`Then the response return a status not found (400)
 				with message 'failed to parse json body'`, func() {
 
-				datasetAPI.POST("/instances/{instance_id}/dimensions", instanceID).
+				datasetAPI.POST("/instances/{instance_id}/dimensions", instances["created"]).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte("{")).
 					Expect().Status(http.StatusBadRequest).
@@ -153,7 +155,7 @@ func TestFailureToPostDimensionOption(t *testing.T) {
 			Convey(`Then the response return a status internal server error (500)
 				with message 'internal error'`, func() {
 
-				datasetAPI.POST("/instances/{instance_id}/dimensions", invalidInstanceID).
+				datasetAPI.POST("/instances/{instance_id}/dimensions", instances["invalid"]).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPOSTAgeDimensionJSON)).
 					Expect().Status(http.StatusInternalServerError).
@@ -168,7 +170,7 @@ func TestFailureToPostDimensionOption(t *testing.T) {
 			Convey(`Then the response return a status not found (400)
 				with message 'missing properties in JSON'`, func() {
 
-				datasetAPI.POST("/instances/{instance_id}/dimensions", instanceID).
+				datasetAPI.POST("/instances/{instance_id}/dimensions", instances["created"]).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(invalidPOSTDimensionJSONMissingDimension)).
 					Expect().Status(http.StatusBadRequest).
@@ -183,7 +185,7 @@ func TestFailureToPostDimensionOption(t *testing.T) {
 			Convey(`Then the response return a status not found (400)
 				with message 'missing properties in JSON'`, func() {
 
-				datasetAPI.POST("/instances/{instance_id}/dimensions", instanceID).
+				datasetAPI.POST("/instances/{instance_id}/dimensions", instances["created"]).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(invalidPOSTDimensionJSONMissingOptionAndCodelist)).
 					Expect().Status(http.StatusBadRequest).
@@ -198,34 +200,6 @@ func TestFailureToPostDimensionOption(t *testing.T) {
 			}
 		}
 	})
-}
-
-func setupInstances(datasetID, edition, instanceID, invalidInstanceID string) ([]*mongo.Doc, error) {
-	var docs []*mongo.Doc
-
-	instanceDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "instances",
-		Key:        "_id",
-		Value:      instanceID,
-		Update:     validCreatedInstanceData(datasetID, edition, instanceID, "created"),
-	}
-
-	invalidInstanceDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "instances",
-		Key:        "_id",
-		Value:      invalidInstanceID,
-		Update:     validCreatedInstanceData(datasetID, edition, invalidInstanceID, "gobbledygook"),
-	}
-
-	docs = append(docs, instanceDoc, invalidInstanceDoc)
-
-	if err := mongo.Setup(docs...); err != nil {
-		return nil, err
-	}
-
-	return docs, nil
 }
 
 func checkDimensionOptionDoc(instanceID string, dimensionOptionDoc *datasetAPIModel.DimensionOption) {
