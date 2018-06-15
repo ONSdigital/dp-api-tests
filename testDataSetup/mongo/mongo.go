@@ -297,7 +297,7 @@ type Instance struct {
 	Dimensions        []CodeList           `bson:"dimensions,omitempty"                  json:"dimensions,omitempty"`
 	Downloads         *DownloadList        `bson:"downloads,omitempty"                   json:"downloads,omitempty"`
 	Edition           string               `bson:"edition,omitempty"                     json:"edition,omitempty"`
-	Events            *[]Event             `bson:"events,omitempty"                      json:"events,omitempty"`
+	Events            *[]InstanceEvent     `bson:"events,omitempty"                      json:"events,omitempty"`
 	Headers           *[]string            `bson:"headers,omitempty"                     json:"headers,omitempty"`
 	ImportTasks       *InstanceImportTasks `bson:"import_tasks,omitempty"                json:"import_tasks,omitempty"`
 	LatestChanges     *[]LatestChange      `bson:"latest_changes,omitempty"              json:"latest_changes,omitempty"`
@@ -354,11 +354,18 @@ type IDLink struct {
 	HRef string `bson:"href,omitempty" json:"href,omitempty"`
 }
 
+// InstanceEvent represents the event structure against an instance
+// until it is deprecated to the event structure below
+type InstanceEvent struct {
+	Message       string `bson:"message,omitempty" json:"message,omitempty"`
+	MessageOffset string `bson:"message_offset,omitempty" json:"message_offset,omitempty"`
+	Type          string `bson:"type,omitempty" json:"type,omitempty"`
+}
+
 // Event structure
 type Event struct {
-	Message       string `bson:"message,omitempty" json:"message"`
-	MessageOffset string `bson:"message_offset,omitempty" json:"message_offset"`
-	Type          string `bson:"type,omitempty" json:"type"`
+	Type string    `bson:"type,omitempty" json:"type"`
+	Time time.Time `bson:"time,omitempty" json:"time"`
 }
 
 // GetDataset retrieves a dataset document from mongo

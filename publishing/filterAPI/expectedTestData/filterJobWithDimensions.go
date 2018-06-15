@@ -1,9 +1,24 @@
 package expectedTestData
 
 import (
-	"strconv"
-
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+)
+
+var (
+	EmptyDownloads = &mongo.Downloads{
+		CSV: &mongo.DownloadItem{
+			HRef:    "",
+			Private: "",
+			Public:  "",
+			Size:    "",
+		},
+		XLS: &mongo.DownloadItem{
+			HRef:    "",
+			Private: "",
+			Public:  "",
+			Size:    "",
+		},
+	}
 )
 
 func age(host, filterBlueprintID string) mongo.Dimension {
@@ -82,7 +97,7 @@ func residenceType(host, filterBlueprintID string) mongo.Dimension {
 }
 
 // ExpectedFilterBlueprint represents the expected data stored against a filter blueprint resource
-func ExpectedFilterBlueprint(host, instanceID, filterBlueprintID string) mongo.Filter {
+func ExpectedFilterBlueprint(host, datasetID, filterBlueprintID string) mongo.Filter {
 	return mongo.Filter{
 		Dimensions: []mongo.Dimension{
 			age(host, filterBlueprintID),
@@ -100,107 +115,40 @@ func ExpectedFilterBlueprint(host, instanceID, filterBlueprintID string) mongo.F
 			},
 			Version: mongo.LinkObject{
 				ID:   "1",
-				HRef: "http://localhost:8080/datasets/123/editions/2017/versions/1",
+				HRef: "http://localhost:8080/datasets/" + datasetID + "/editions/2017/versions/1",
 			},
 		},
 		Published: &mongo.Published,
 	}
 }
 
-// ExpectedFilterOutput represents the expected data stored against a filter output resource
-func ExpectedFilterOutput(host, instanceID, filterOutputID, filterBlueprintID string) mongo.Filter {
-	return mongo.Filter{
-		FilterID:   filterOutputID,
-		InstanceID: instanceID,
-		Dimensions: []mongo.Dimension{
-			age(host, ""),
-			sex(host, ""),
-			goodsAndServices(host, ""),
-			time(host, ""),
+// ExpectedFilterOutputDimensions represents the expected dimensions stored against a filter output
+func ExpectedFilterOutputDimensions(host string) []mongo.Dimension {
+	return []mongo.Dimension{
+		age(host, ""),
+		sex(host, ""),
+		goodsAndServices(host, ""),
+		time(host, ""),
+	}
+}
+
+func ExpectedFilterOutputLinks(host, datasetID, filterBlueprintID, filterOutputID string) mongo.LinkMap {
+	return mongo.LinkMap{
+		FilterBlueprint: mongo.LinkObject{
+			HRef: host + "/filters/" + filterBlueprintID,
+			ID:   filterBlueprintID,
 		},
-		Downloads: &mongo.Downloads{
-			CSV: &mongo.DownloadItem{
-				HRef:    "",
-				Private: "",
-				Public:  "",
-				Size:    "",
-			},
-			XLS: &mongo.DownloadItem{
-				HRef:    "",
-				Private: "",
-				Public:  "",
-				Size:    "",
-			},
+		Self: mongo.LinkObject{
+			HRef: host + "/filter-outputs/" + filterOutputID,
 		},
-		Links: mongo.LinkMap{
-			FilterBlueprint: mongo.LinkObject{
-				HRef: host + "/filters/" + filterBlueprintID,
-				ID:   filterBlueprintID,
-			},
-			Self: mongo.LinkObject{
-				HRef: host + "/filter-outputs/" + filterOutputID,
-			},
-			Version: mongo.LinkObject{
-				ID:   "1",
-				HRef: "http://localhost:8080/datasets/123/editions/2017/versions/1",
-			},
-		},
-		Published: &mongo.Published,
-		State:     "created",
-		Events: []*mongo.Event{
-			{
-				Type:"FilterOutputCreated",
-			},
+		Version: mongo.LinkObject{
+			ID:   "1",
+			HRef: "http://localhost:8080/datasets/" + datasetID + "/editions/2017/versions/1",
 		},
 	}
 }
 
-// ExpectedFilterOutputOnPost represents the expected data stored against a filter output resource
-func ExpectedFilterOutputOnPost(host, datasetID, edition, instanceID, filterOutputID, filterBlueprintID string, version int) mongo.Filter {
-	return mongo.Filter{
-		FilterID:   filterOutputID,
-		InstanceID: instanceID,
-		Dimensions: []mongo.Dimension{
-			updatedAge(host, ""),
-		},
-		Downloads: &mongo.Downloads{
-			CSV: &mongo.DownloadItem{
-				HRef:    "",
-				Private: "",
-				Public:  "",
-				Size:    "",
-			},
-			XLS: &mongo.DownloadItem{
-				HRef:    "",
-				Private: "",
-				Public:  "",
-				Size:    "",
-			},
-		},
-		Links: mongo.LinkMap{
-			FilterBlueprint: mongo.LinkObject{
-				HRef: host + "/filters/" + filterBlueprintID,
-				ID:   filterBlueprintID,
-			},
-			Self: mongo.LinkObject{
-				HRef: host + "/filter-outputs/" + filterOutputID,
-			},
-			Version: mongo.LinkObject{
-				ID:   "1",
-				HRef: "http://localhost:8080/datasets/" + datasetID + "/editions/" + edition + "/versions/" + strconv.Itoa(version),
-			},
-		},
-		Published: &mongo.Published,
-		State:     "created",
-		Events: []*mongo.Event{
-			{
-				Type:"FilterOutputCreated",
-			},
-		},
-	}
-}
-
-func updatedAge(host, filterBlueprintID string) mongo.Dimension {
+func UpdatedAge(host, filterBlueprintID string) mongo.Dimension {
 	if filterBlueprintID == "" {
 		return mongo.Dimension{
 			Name:    "age",
@@ -240,10 +188,10 @@ func updatedTime(host, filterBlueprintID string) mongo.Dimension {
 }
 
 // ExpectedFilterBlueprintUpdated represents the expected data stored against a filter job with dimensions
-func ExpectedFilterBlueprintUpdated(host, instanceID, filterBlueprintID string) mongo.Filter {
+func ExpectedFilterBlueprintUpdated(host, filterBlueprintID, datasetID string) mongo.Filter {
 	return mongo.Filter{
 		Dimensions: []mongo.Dimension{
-			updatedAge(host, filterBlueprintID),
+			UpdatedAge(host, filterBlueprintID),
 			updatedSex(host, filterBlueprintID),
 			updatedGoodsAndServices(host, filterBlueprintID),
 			updatedTime(host, filterBlueprintID),
@@ -257,7 +205,7 @@ func ExpectedFilterBlueprintUpdated(host, instanceID, filterBlueprintID string) 
 			},
 			Version: mongo.LinkObject{
 				ID:   "1",
-				HRef: "http://localhost:8080/datasets/123/editions/2017/versions/1",
+				HRef: "http://localhost:8080/datasets/" + datasetID + "/editions/2017/versions/1",
 			},
 		},
 		Published: &mongo.Published,

@@ -61,7 +61,7 @@ func TestSuccessfullyPostInstanceEvent(t *testing.T) {
 
 				So(instance.InstanceID, ShouldEqual, instanceID)
 
-				expectedEvent := mongo.Event{Message: "unable to add observation to neo4j", MessageOffset: "5", Type: "error"}
+				expectedEvent := mongo.InstanceEvent{Message: "unable to add observation to neo4j", MessageOffset: "5", Type: "error"}
 				checkInstanceEvent(instance.Events, expectedEvent)
 			})
 		})
@@ -241,8 +241,8 @@ func TestFailureToPostInstanceEvent(t *testing.T) {
 	})
 }
 
-func checkInstanceEvent(events *[]mongo.Event, expectedEvent mongo.Event) {
-	So(events, ShouldResemble, &[]mongo.Event{expectedEvent})
+func checkInstanceEvent(events *[]mongo.InstanceEvent, expectedEvent mongo.InstanceEvent) {
+	So(events, ShouldResemble, &[]mongo.InstanceEvent{expectedEvent})
 
 	return
 }

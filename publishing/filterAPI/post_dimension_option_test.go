@@ -74,7 +74,7 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 		// Set downloads empty object to nil to be able to compare other fields
 		filterJob.Downloads = nil
 
-		expectedFilterJob := expectedTestData.ExpectedFilterBlueprintUpdated(cfg.FilterAPIURL, instanceID, filterBlueprintID)
+		expectedFilterJob := expectedTestData.ExpectedFilterBlueprintUpdated(cfg.FilterAPIURL, filterBlueprintID, datasetID)
 		expectedFilterJob.InstanceID = instanceID
 		expectedFilterJob.FilterID = filterBlueprintID
 

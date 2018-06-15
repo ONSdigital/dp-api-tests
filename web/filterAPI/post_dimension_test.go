@@ -71,7 +71,7 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 			// Check dimension has been added to the end of the array
 			So(filterBlueprint.Dimensions[4].Name, ShouldEqual, "Residence Type")
 
-			expectedfilterBlueprint := expectedTestData.ExpectedFilterBlueprint(cfg.FilterAPIURL, instanceID, filterBlueprintID)
+			expectedfilterBlueprint := expectedTestData.ExpectedFilterBlueprint(cfg.FilterAPIURL, datasetID, filterBlueprintID)
 			expectedfilterBlueprint.InstanceID = instanceID
 			expectedfilterBlueprint.FilterID = filterBlueprintID
 
@@ -102,7 +102,7 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 			// Check dimension has been added to the end of the array
 			So(filterBlueprint.Dimensions[4].Name, ShouldEqual, "Residence Type")
 
-			expectedfilterBlueprint := expectedTestData.ExpectedFilterBlueprint(cfg.FilterAPIURL, instanceID, filterBlueprintID)
+			expectedfilterBlueprint := expectedTestData.ExpectedFilterBlueprint(cfg.FilterAPIURL, datasetID, filterBlueprintID)
 			expectedfilterBlueprint.InstanceID = instanceID
 			expectedfilterBlueprint.FilterID = filterBlueprintID
 
