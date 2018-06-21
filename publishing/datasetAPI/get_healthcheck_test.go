@@ -16,8 +16,11 @@ func TestSuccessfullyGetHealthcheck(t *testing.T) {
 		Convey("When you ask the healthcheck endpoint", func() {
 			Convey("Then you should see a status of OK", func() {
 
-				response := datasetAPIClient.GET("/healthcheck", nil).Expect().Status(http.StatusOK).JSON().Object()
-				response.Value("status").Equal("OK")
+				response := datasetAPIClient.GET("/healthcheck", nil).Expect().Raw()
+				isValidResponse := response.StatusCode == http.StatusOK ||
+					response.StatusCode == http.StatusTooManyRequests
+
+				So(isValidResponse, ShouldBeTrue)
 			})
 		})
 	})
