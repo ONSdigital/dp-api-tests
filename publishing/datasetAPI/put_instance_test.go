@@ -7,11 +7,14 @@ import (
 
 	"github.com/gavv/httpexpect"
 	"github.com/gedge/mgo"
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
+	bolt "github.com/johnnadratowski/golang-neo4j-bolt-driver"
+
+	"fmt"
 )
 
 // NOTE If endpoint is only available on publishing, remember to add a test to
@@ -81,6 +84,9 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 			So(instance.State, ShouldEqual, "completed")
 
 			Convey("When a PUT request is made to update instance meta data and set state to `edition-confirmed`", func() {
+
+				createNeo4jInstanceNode(instanceID)
+
 				Convey("Then the instance is updated and return a status ok (200)", func() {
 
 					datasetAPI.PUT("/instances/{instance_id}", instanceID).
@@ -111,6 +117,13 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 
 					checkEditionDoc(datasetID, instanceID, edition.Next)
 
+					Convey("and the dataset_id, edition and version values are set a properties on the neo4j instance node", func() {
+						neoDatasetID, neoEdition, neoVersion := getNeo4jInstanceProperties(instanceID)
+						So(datasetID, ShouldEqual, neoDatasetID)
+						So(instance.Edition, ShouldEqual, neoEdition)
+						So(int64(instance.Version), ShouldEqual, neoVersion)
+					})
+
 					if instance.Links.Edition != nil {
 						e := &mongo.Doc{
 							Database:   cfg.MongoDB,
@@ -124,6 +137,8 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 								os.Exit(1)
 							}
 						}
+
+						cleanUpNeo4jInstances(instanceID)
 					}
 				})
 			})
@@ -423,4 +438,64 @@ func checkEditionDoc(datasetID, instanceID string, editionDoc *mongo.Edition) {
 	So(editionDoc.State, ShouldEqual, "edition-confirmed")
 
 	return
+}
+
+func getNeo4jInstanceProperties(instanceID string) (string, string, int64) {
+	conn, err :=  bolt.NewDriver().OpenNeo(cfg.Neo4jAddr)
+	So(err, ShouldBeNil)
+	defer conn.Close()
+
+	query := fmt.Sprintf("MATCH (i:`_%s_Instance`) RETURN i.dataset_id, i.edition, i.version", instanceID)
+	stmt, err := conn.PrepareNeo(query)
+	So(err, ShouldBeNil)
+	defer stmt.Close()
+
+	rows, err := stmt.QueryNeo(nil)
+	So(err, ShouldBeNil)
+	defer rows.Close()
+
+	data, _, err := rows.NextNeo()
+	So(err, ShouldBeNil)
+	So(len(data), ShouldEqual, 3)
+
+	return data[0].(string), data[1].(string), data[2].(int64)
+}
+
+func createNeo4jInstanceNode(instanceID string) {
+	conn, err := bolt.NewDriver().OpenNeo(cfg.Neo4jAddr)
+	So(err, ShouldBeNil)
+	defer conn.Close()
+
+	stmt, err := conn.PrepareNeo(fmt.Sprintf("CREATE (i:`_%s_Instance`) RETURN i", instanceID))
+	So(err, ShouldBeNil)
+	defer stmt.Close()
+
+	result, err := stmt.ExecNeo(nil)
+	So(err, ShouldBeNil)
+
+	count, err := result.RowsAffected()
+	So(err, ShouldBeNil)
+	So(count, ShouldEqual, 1)
+}
+
+func cleanUpNeo4jInstances(instanceID string) {
+	log.Info("cleaning up test instance", log.Data{"instanceID": instanceID})
+
+	conn, err :=  bolt.NewDriver().OpenNeo(cfg.Neo4jAddr)
+	So(err, ShouldBeNil)
+	defer conn.Close()
+
+	query := fmt.Sprintf("MATCH (i:`_%s_Instance`) DETACH DELETE i", instanceID)
+	stmt, err := conn.PrepareNeo(query)
+	So(err, ShouldBeNil)
+	defer stmt.Close()
+
+	result, err := stmt.ExecNeo(nil)
+	So(err, ShouldBeNil)
+
+	count, err := result.RowsAffected()
+	So(err, ShouldBeNil)
+	So(count, ShouldEqual, int64(1))
+
+	log.Info("cleaning up test instance complete", log.Data{"instanceID": instanceID})
 }
