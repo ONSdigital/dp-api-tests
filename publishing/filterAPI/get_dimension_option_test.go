@@ -52,59 +52,59 @@ func TestSuccessfullyGetDimensionOption(t *testing.T) {
 
 				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusOK).JSON()
-				validateOptionResponse(*response.Object(), filterBlueprintID, "sex", "male")
+					Expect().Status(http.StatusOK).JSON().Object()
+				validateOptionResponse(*response, filterBlueprintID, "sex", "male")
 
 				response = filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex/options/female", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusOK).JSON()
-				validateOptionResponse(*response.Object(), filterBlueprintID, "sex", "female")
+					Expect().Status(http.StatusOK).JSON().Object()
+				validateOptionResponse(*response, filterBlueprintID, "sex", "female")
 			})
 
 			Convey("Then return status ok (200) and expected response body for dimension `aggregate` options", func() {
 
 				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1S10201", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusOK).JSON()
-				validateOptionResponse(*response.Object(), filterBlueprintID, "aggregate", "cpi1dim1S10201")
+					Expect().Status(http.StatusOK).JSON().Object()
+				validateOptionResponse(*response, filterBlueprintID, "aggregate", "cpi1dim1S10201")
 
 				response = filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1S10105", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusOK).JSON()
-				validateOptionResponse(*response.Object(), filterBlueprintID, "aggregate", "cpi1dim1S10105")
+					Expect().Status(http.StatusOK).JSON().Object()
+				validateOptionResponse(*response, filterBlueprintID, "aggregate", "cpi1dim1S10105")
 
 				response = filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1T60000", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusOK).JSON()
-				validateOptionResponse(*response.Object(), filterBlueprintID, "aggregate", "cpi1dim1T60000")
+					Expect().Status(http.StatusOK).JSON().Object()
+				validateOptionResponse(*response, filterBlueprintID, "aggregate", "cpi1dim1T60000")
 			})
 
-			Convey("Then return status no content (204) for dimension `time` options", func() {
+			Convey("Then return status ok (200) and expected response body for dimension `time` options", func() {
 
 				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/March 1997", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusOK).JSON()
-				validateOptionResponse(*response.Object(), filterBlueprintID, "time", "March 1997")
+					Expect().Status(http.StatusOK).JSON().Object()
+				validateOptionResponse(*response, filterBlueprintID, "time", "March 1997")
 
 				response = filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/April 1997", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusOK).JSON()
-				validateOptionResponse(*response.Object(), filterBlueprintID, "time", "April 1997")
+					Expect().Status(http.StatusOK).JSON().Object()
+				validateOptionResponse(*response, filterBlueprintID, "time", "April 1997")
 
 				response = filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/June 1997", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusOK).JSON()
-				validateOptionResponse(*response.Object(), filterBlueprintID, "time", "June 1997")
+					Expect().Status(http.StatusOK).JSON().Object()
+				validateOptionResponse(*response, filterBlueprintID, "time", "June 1997")
 
 				response = filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/September 1997", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusOK).JSON()
-				validateOptionResponse(*response.Object(), filterBlueprintID, "time", "September 1997")
+					Expect().Status(http.StatusOK).JSON().Object()
+				validateOptionResponse(*response, filterBlueprintID, "time", "September 1997")
 
 				response = filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/December 1997", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusOK).JSON()
-				validateOptionResponse(*response.Object(), filterBlueprintID, "time", "December 1997")
+					Expect().Status(http.StatusOK).JSON().Object()
+				validateOptionResponse(*response, filterBlueprintID, "time", "December 1997")
 			})
 		})
 	})
