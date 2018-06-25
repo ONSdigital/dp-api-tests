@@ -5,12 +5,12 @@ import (
 	"os"
 	"testing"
 
+	"fmt"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
-	"fmt"
 )
 
 func TestSuccessfullyGetListOfDimensionOptions(t *testing.T) {
@@ -45,7 +45,7 @@ func TestSuccessfullyGetListOfDimensionOptions(t *testing.T) {
 				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age/options", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusOK).JSON().Array()
-					validateOptionsResponse(*response, filterBlueprintID, "age", []string{"27"})
+				validateOptionsResponse(*response, filterBlueprintID, "age", []string{"27"})
 
 			})
 
@@ -54,7 +54,7 @@ func TestSuccessfullyGetListOfDimensionOptions(t *testing.T) {
 				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex/options", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusOK).JSON().Array()
-					validateOptionsResponse(*response, filterBlueprintID, "sex", []string{"male", "female"})
+				validateOptionsResponse(*response, filterBlueprintID, "sex", []string{"male", "female"})
 			})
 
 			Convey("Then return a list of options for `goods and services` dimension", func() {
@@ -70,7 +70,7 @@ func TestSuccessfullyGetListOfDimensionOptions(t *testing.T) {
 				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusOK).JSON().Array()
-					validateOptionsResponse(*response, filterBlueprintID, "time", []string{"March 1997", "April 1997", "June 1997", "September 1997", "December 1997"})
+				validateOptionsResponse(*response, filterBlueprintID, "time", []string{"March 1997", "April 1997", "June 1997", "September 1997", "December 1997"})
 			})
 		})
 	})
@@ -134,22 +134,22 @@ func TestFailureToGetListOfDimensionOptions(t *testing.T) {
 	}
 }
 
+func validateOptionsResponse(responseArray httpexpect.Array, filterBlueprintID, dimensionID string, expectedOptions []string) {
 
-func validateOptionsResponse(responseArray httpexpect.Array , filterBlueprintID, dimensionID string, expectedOptions []string) {
-
-	for i, op := range expectedOptions {
+	for i, option := range expectedOptions {
 
 		filterURL := fmt.Sprintf("http://localhost:22100/filters/%s", filterBlueprintID)
-		dimURL := filterURL + "/dimensions/" + dimensionID
-		selfURL := dimURL + "/options/" + op
+		dimensionURL := filterURL + "/dimensions/" + dimensionID
+		selfURL := dimensionURL + "/options/" + option
 
-		expectedLinksObj := map[string]interface{}{
-			"dimension": map[string]interface{}{"href": dimURL, "id": dimensionID},
-			"filter":    map[string]interface{}{"href": filterURL, "id": filterBlueprintID},
-			"self":      map[string]interface{}{"href": selfURL, "id": op},
-		}
+		links := responseArray.Element(i).Object().Value("links").Object()
 
-		So(responseArray.Element(i).Object().Value("option").Raw(), ShouldResemble, op)
-		So(responseArray.Element(i).Object().Value("links").Raw(), ShouldResemble, expectedLinksObj)
+		So(responseArray.Element(i).Object().Value("option").Raw(), ShouldEqual, option)
+		So(links.Value("dimension").Object().Value("id").Raw(), ShouldEqual, dimensionID)
+		So(links.Value("dimension").Object().Value("href").Raw(), ShouldEqual, dimensionURL)
+		So(links.Value("filter").Object().Value("id").Raw(), ShouldEqual, filterBlueprintID)
+		So(links.Value("filter").Object().Value("href").Raw(), ShouldEqual, filterURL)
+		So(links.Value("self").Object().Value("id").Raw(), ShouldEqual, option)
+		So(links.Value("self").Object().Value("href").Raw(), ShouldEqual, selfURL)
 	}
 }
