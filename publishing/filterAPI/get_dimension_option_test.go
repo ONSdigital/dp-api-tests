@@ -5,7 +5,6 @@ import (
 	"os"
 	"testing"
 
-	"fmt"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
@@ -179,7 +178,7 @@ func TestFailureToGetDimensionOption(t *testing.T) {
 
 func validateOptionResponse(responseObject httpexpect.Object, filterBlueprintID, dimensionID, option string) {
 
-	filterURL := fmt.Sprintf("http://localhost:22100/filters/%s", filterBlueprintID)
+	filterURL := "http://localhost:22100/filters/" + filterBlueprintID
 	dimensionURL := filterURL + "/dimensions/" + dimensionID
 	selfURL := dimensionURL + "/options/" + option
 
