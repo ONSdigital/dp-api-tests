@@ -9,6 +9,9 @@ import (
 
 	"github.com/ONSdigital/go-ns/log"
 	bolt "github.com/johnnadratowski/golang-neo4j-bolt-driver"
+	. "github.com/smartystreets/goconvey/convey"
+	"github.com/johnnadratowski/golang-neo4j-bolt-driver/structures/graph"
+	"github.com/pkg/errors"
 )
 
 const ObservationTestData = "../../testDataSetup/neo4j/instance.cypher"
@@ -136,4 +139,59 @@ func (ds *Datastore) CreateGenericHierarchy(hierarchyCode string) error {
 
 	log.Info("successfully loaded data into neo4j", log.Data{"cypher_file": ds.testData})
 	return nil
+}
+
+func (ds *Datastore) CreateInstanceNode(instanceID string) {
+
+	stmt, err := ds.connection.PrepareNeo(fmt.Sprintf("CREATE (i:`_%s_Instance`) RETURN i", instanceID))
+	So(err, ShouldBeNil)
+	defer stmt.Close()
+
+	result, err := stmt.ExecNeo(nil)
+	So(err, ShouldBeNil)
+
+	count, err := result.RowsAffected()
+	So(err, ShouldBeNil)
+	So(count, ShouldEqual, 1)
+}
+
+func (ds *Datastore) CleanupInstanceNode(instanceID string) {
+	log.Info("cleaning up test instance", log.Data{"instanceID": instanceID})
+
+	query := fmt.Sprintf("MATCH (i:`_%s_Instance`) DETACH DELETE i", instanceID)
+	stmt, err := ds.connection.PrepareNeo(query)
+	So(err, ShouldBeNil)
+	defer stmt.Close()
+
+	result, err := stmt.ExecNeo(nil)
+	So(err, ShouldBeNil)
+
+	count, err := result.RowsAffected()
+	So(err, ShouldBeNil)
+	So(count, ShouldEqual, int64(1))
+
+	log.Info("cleaning up test instance complete", log.Data{"instanceID": instanceID})
+}
+
+func (ds *Datastore) GetInstanceProperties(instanceID string) (map[string]interface{}, error) {
+
+	query := fmt.Sprintf("MATCH (i:`_%s_Instance`) RETURN i", instanceID)
+	stmt, err := ds.connection.PrepareNeo(query)
+	So(err, ShouldBeNil)
+	defer stmt.Close()
+
+	rows, err := stmt.QueryNeo(nil)
+	So(err, ShouldBeNil)
+	defer rows.Close()
+
+	data, _, err := rows.NextNeo()
+
+	nodeData := data[0]
+	graphNode, ok := nodeData.(graph.Node)
+	if ok {
+		return graphNode.Properties, nil
+	}
+
+	return nil, errors.New("failed to retrieve properties from neo4j instance node")
+
 }

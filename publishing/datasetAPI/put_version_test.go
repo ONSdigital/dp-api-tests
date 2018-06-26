@@ -8,11 +8,12 @@ import (
 
 	"github.com/gavv/httpexpect"
 	"github.com/gedge/mgo"
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
 )
 
 // NOTE If endpoint is only available on publishing, remember to add a test to
@@ -20,21 +21,30 @@ import (
 
 func TestSuccessfullyUpdateVersion(t *testing.T) {
 
-	datasetID := uuid.NewV4().String()
-	editionID := uuid.NewV4().String()
-	instanceID := uuid.NewV4().String()
-
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
+	neo4JStore, err := neo4j.NewDatastore(cfg.Neo4jAddr, "", neo4j.GenericHierarchyCPIHTestData)
+	if err != nil {
+		log.ErrorC("unable to connect to neo4j", err, nil)
+		t.FailNow()
+	}
+
 	Convey("Given an unpublished dataset, edition and version", t, func() {
+
+		datasetID := uuid.NewV4().String()
+		editionID := uuid.NewV4().String()
+		instanceID := uuid.NewV4().String()
+
 		edition := "2018"
 		version := "2"
 
 		docs, err := setupResources(datasetID, editionID, edition, instanceID, 1)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
-			os.Exit(1)
+			t.FailNow()
 		}
+
+		neo4JStore.CreateInstanceNode(instanceID)
 
 		Convey("When a PUT request to update meta data against the version resource", func() {
 			Convey("Then version resource is updated and returns a status ok (200)", func() {
@@ -169,6 +179,14 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				So(updatedDataset.ID, ShouldEqual, datasetID)
 				So(updatedDataset.Current.CollectionID, ShouldBeEmpty)
 				So(updatedDataset.Current.State, ShouldEqual, "published")
+
+				instanceProps, err := neo4JStore.GetInstanceProperties(instanceID)
+				if err != nil {
+					log.ErrorC("failed to get properties from neo4j instance node", err, nil)
+					t.FailNow()
+				}
+
+				So(instanceProps["is_published"], ShouldBeTrue)
 			})
 		})
 
@@ -178,9 +196,16 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				os.Exit(1)
 			}
 		}
+
+		neo4JStore.CleanupInstanceNode(instanceID)
 	})
 
 	Convey("Given an unpublished dataset, edition and a version that has been associated", t, func() {
+
+		datasetID := uuid.NewV4().String()
+		editionID := uuid.NewV4().String()
+		instanceID := uuid.NewV4().String()
+
 		edition := "2018"
 		version := "2"
 
@@ -189,6 +214,8 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
 		}
+
+		neo4JStore.CreateInstanceNode(instanceID)
 
 		// TODO Remove skipped tests when code has been refactored (and hence fixed)
 		// 1 test skipped
@@ -276,9 +303,16 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				os.Exit(1)
 			}
 		}
+
+		neo4JStore.CleanupInstanceNode(instanceID)
 	})
 
 	Convey("Given a published dataset and edition, and a version that has been associated", t, func() {
+
+		datasetID := uuid.NewV4().String()
+		editionID := uuid.NewV4().String()
+		instanceID := uuid.NewV4().String()
+
 		edition := "2017"
 		version := "2"
 
@@ -287,6 +321,8 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
 		}
+
+		neo4JStore.CreateInstanceNode(instanceID)
 
 		Convey("When a PUT request to update version resource with a state of published", func() {
 			Convey("Then the dataset, edition and version resources are updated and returns a status ok (200)", func() {
@@ -340,6 +376,8 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				os.Exit(1)
 			}
 		}
+
+		neo4JStore.CleanupInstanceNode(instanceID)
 	})
 }
 
