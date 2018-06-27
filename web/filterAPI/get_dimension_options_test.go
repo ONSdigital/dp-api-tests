@@ -41,59 +41,47 @@ func TestSuccessfullyGetListOfDimensionOptions(t *testing.T) {
 		Convey("When requesting a list of options for a dimension", func() {
 			Convey("Then return a list of options for `age` dimension", func() {
 
-				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age/options", filterBlueprintID).
+				dimension := "age"
+				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/"+dimension+"/options", filterBlueprintID).
 					Expect().Status(http.StatusOK).JSON().Array()
 
-				response.Element(0).Object().Value("option").Equal("27")
-				response.Element(0).Object().Value("dimension_option_url").NotNull()
+				checkDimensionOptionJson(response.Element(0), filterBlueprintID, dimension, "27")
 			})
 
 			Convey("Then return a list of options for `sex` dimension", func() {
 
-				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex/options", filterBlueprintID).
+				dimension := "sex"
+
+				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/"+dimension+"/options", filterBlueprintID).
 					Expect().Status(http.StatusOK).JSON().Array()
 
-				response.Element(0).Object().Value("option").Equal("male")
-				response.Element(0).Object().Value("dimension_option_url").NotNull()
-
-				response.Element(1).Object().Value("option").Equal("female")
-				response.Element(1).Object().Value("dimension_option_url").NotNull()
+				checkDimensionOptionJson(response.Element(0), filterBlueprintID, dimension, "male")
+				checkDimensionOptionJson(response.Element(1), filterBlueprintID, dimension, "female")
 			})
 
 			Convey("Then return a list of options for `goods and services` dimension", func() {
 
-				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options", filterBlueprintID).
+				dimension := "aggregate"
+
+				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/"+dimension+"/options", filterBlueprintID).
 					Expect().Status(http.StatusOK).JSON().Array()
 
-				response.Element(0).Object().Value("option").Equal("cpi1dim1T60000")
-				response.Element(0).Object().Value("dimension_option_url").NotNull()
-
-				response.Element(1).Object().Value("option").Equal("cpi1dim1S10201")
-				response.Element(1).Object().Value("dimension_option_url").NotNull()
-
-				response.Element(2).Object().Value("option").Equal("cpi1dim1S10105")
-				response.Element(2).Object().Value("dimension_option_url").NotNull()
+				checkDimensionOptionJson(response.Element(0), filterBlueprintID, dimension, "cpi1dim1T60000")
+				checkDimensionOptionJson(response.Element(1), filterBlueprintID, dimension, "cpi1dim1S10201")
+				checkDimensionOptionJson(response.Element(2), filterBlueprintID, dimension, "cpi1dim1S10105")
 			})
 
 			Convey("Then return a list of options for `time` dimension", func() {
 
-				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options", filterBlueprintID).
+				dimension := "time"
+				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/"+dimension+"/options", filterBlueprintID).
 					Expect().Status(http.StatusOK).JSON().Array()
 
-				response.Element(0).Object().Value("option").Equal("March 1997")
-				response.Element(0).Object().Value("dimension_option_url").NotNull()
-
-				response.Element(1).Object().Value("option").Equal("April 1997")
-				response.Element(1).Object().Value("dimension_option_url").NotNull()
-
-				response.Element(2).Object().Value("option").Equal("June 1997")
-				response.Element(2).Object().Value("dimension_option_url").NotNull()
-
-				response.Element(3).Object().Value("option").Equal("September 1997")
-				response.Element(3).Object().Value("dimension_option_url").NotNull()
-
-				response.Element(4).Object().Value("option").Equal("December 1997")
-				response.Element(4).Object().Value("dimension_option_url").NotNull()
+				checkDimensionOptionJson(response.Element(0), filterBlueprintID, dimension, "March 1997")
+				checkDimensionOptionJson(response.Element(1), filterBlueprintID, dimension, "April 1997")
+				checkDimensionOptionJson(response.Element(2), filterBlueprintID, dimension, "June 1997")
+				checkDimensionOptionJson(response.Element(3), filterBlueprintID, dimension, "September 1997")
+				checkDimensionOptionJson(response.Element(4), filterBlueprintID, dimension, "December 1997")
 			})
 		})
 	})
@@ -102,6 +90,17 @@ func TestSuccessfullyGetListOfDimensionOptions(t *testing.T) {
 		log.ErrorC("Unable to remove test data from mongo db", err, nil)
 		os.Exit(1)
 	}
+}
+
+func checkDimensionOptionJson(json *httpexpect.Value, filterBlueprintID string, dimension, option string) {
+
+	json.Object().Value("links").Object().Value("filter").Object().Value("href").Equal("http://localhost:22100/filters/" + filterBlueprintID)
+	json.Object().Value("links").Object().Value("filter").Object().Value("id").Equal(filterBlueprintID)
+	json.Object().Value("links").Object().Value("dimension").Object().Value("href").Equal("http://localhost:22100/filters/" + filterBlueprintID + "/dimensions/" + dimension)
+	json.Object().Value("links").Object().Value("dimension").Object().Value("id").Equal(dimension)
+	json.Object().Value("links").Object().Value("self").Object().Value("href").Equal("http://localhost:22100/filters/" + filterBlueprintID + "/dimensions/" + dimension + "/options/" + option)
+	json.Object().Value("links").Object().Value("self").Object().Value("id").Equal(option)
+	json.Object().Value("option").Equal(option)
 }
 
 func TestFailureToGetListOfDimensionOptions(t *testing.T) {

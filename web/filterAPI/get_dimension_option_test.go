@@ -42,40 +42,40 @@ func TestSuccessfullyGetDimensionOption(t *testing.T) {
 			Convey("Then return status no content (204) for dimension `age` options", func() {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age/options/27", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
+					Expect().Status(http.StatusOK)
 			})
 
 			Convey("Then return status no content (204) for dimension `sex` options", func() {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
+					Expect().Status(http.StatusOK)
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex/options/female", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
+					Expect().Status(http.StatusOK)
 
 			})
 
 			Convey("Then return status no content (204) for dimension `goods and services` options", func() {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1S10201", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
+					Expect().Status(http.StatusOK)
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1S10105", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
+					Expect().Status(http.StatusOK)
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1T60000", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
+					Expect().Status(http.StatusOK)
 			})
 
 			Convey("Then return status no content (204) for dimension `time` options", func() {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/March 1997", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
+					Expect().Status(http.StatusOK)
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/April 1997", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
+					Expect().Status(http.StatusOK)
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/June 1997", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
+					Expect().Status(http.StatusOK)
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/September 1997", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
+					Expect().Status(http.StatusOK)
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/December 1997", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
+					Expect().Status(http.StatusOK)
 			})
 		})
 	})

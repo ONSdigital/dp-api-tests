@@ -142,7 +142,7 @@ func TestFailureToDeleteDimensionOptions(t *testing.T) {
 				filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/wages/options/27000", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusNotFound).
-						Body().Contains(dimensionNotFoundResponse)
+					Body().Contains(dimensionNotFoundResponse)
 			})
 		})
 
@@ -152,7 +152,7 @@ func TestFailureToDeleteDimensionOptions(t *testing.T) {
 				filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/age/options/44", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusNotFound).
-						Body().Contains(optionNotFoundResponse)
+					Body().Contains(optionNotFoundResponse)
 			})
 		})
 

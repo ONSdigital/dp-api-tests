@@ -43,28 +43,28 @@ func TestSuccessfullyGetDimension(t *testing.T) {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusNoContent)
+					Expect().Status(http.StatusOK)
 			})
 
 			Convey("Then return status no content (204) for `sex` dimension", func() {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusNoContent)
+					Expect().Status(http.StatusOK)
 			})
 
 			Convey("Then return status no content (204) for `goods and services` dimension", func() {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusNoContent)
+					Expect().Status(http.StatusOK)
 			})
 
 			Convey("Then return status no content (204) for `time` dimension", func() {
 
 				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusNoContent)
+					Expect().Status(http.StatusOK)
 			})
 		})
 	})

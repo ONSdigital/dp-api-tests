@@ -6,11 +6,11 @@ import (
 	"testing"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/go-ns/common"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
-	"github.com/ONSdigital/go-ns/common"
 )
 
 func TestSuccessfullyGetFilterOutput(t *testing.T) {

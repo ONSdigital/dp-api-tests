@@ -6,11 +6,11 @@ import (
 	"testing"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/go-ns/common"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
-	"github.com/ONSdigital/go-ns/common"
 )
 
 func TestSuccessfullyGetFilterOutput(t *testing.T) {
@@ -110,7 +110,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 				response := filterAPI.GET("/filter-outputs/{filter_output_id}", publishedFilterOutputID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					WithHeader(common.DownloadServiceHeaderKey, downloadServiceToken).
-				Expect().Status(http.StatusOK).JSON().Object()
+					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("dataset").Object().Value("id").Equal(datasetID)
 				response.Value("dataset").Object().Value("edition").Equal(edition)

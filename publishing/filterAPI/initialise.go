@@ -18,11 +18,11 @@ const (
 	downloadServiceToken    = "QB0108EZ-825D-412C-9B1D-41EF7747F462"
 	invalidServiceAuthToken = "invalid-auth-token"
 
-	filterNotFoundResponse = "filter blueprint not found\n"
+	filterNotFoundResponse       = "filter blueprint not found\n"
 	filterOutputNotFoundResponse = "filter output not found\n"
-	versionNotFoundResponse = "version not found\n"
-	dimensionNotFoundResponse = "dimension not found\n"
-	optionNotFoundResponse = "option not found\n"
+	versionNotFoundResponse      = "version not found\n"
+	dimensionNotFoundResponse    = "dimension not found\n"
+	optionNotFoundResponse       = "option not found\n"
 )
 
 func init() {

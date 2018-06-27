@@ -45,14 +45,10 @@ func TestSuccessfullyGetListOfDimensions(t *testing.T) {
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusOK).JSON().Array()
 
-				actual.Element(0).Object().Value("dimension_url").NotNull()
-				actual.Element(0).Object().Value("name").Equal("age")
-				actual.Element(1).Object().Value("dimension_url").NotNull()
-				actual.Element(1).Object().Value("name").Equal("sex")
-				actual.Element(2).Object().Value("dimension_url").NotNull()
-				actual.Element(2).Object().Value("name").Equal("aggregate")
-				actual.Element(3).Object().Value("dimension_url").NotNull()
-				actual.Element(3).Object().Value("name").Equal("time")
+				checkDimensionJson(actual.Element(0), filterBlueprintID, "age")
+				checkDimensionJson(actual.Element(1), filterBlueprintID, "sex")
+				checkDimensionJson(actual.Element(2), filterBlueprintID, "aggregate")
+				checkDimensionJson(actual.Element(3), filterBlueprintID, "time")
 			})
 		})
 	})
@@ -61,6 +57,17 @@ func TestSuccessfullyGetListOfDimensions(t *testing.T) {
 		log.ErrorC("Unable to remove test data from mongo db", err, nil)
 		os.Exit(1)
 	}
+}
+
+func checkDimensionJson(dimensionJSON *httpexpect.Value, filterBlueprintID string, dimension string) {
+
+	dimensionJSON.Object().Value("links").Object().Value("filter").Object().Value("href").Equal("http://localhost:22100/filters/" + filterBlueprintID)
+	dimensionJSON.Object().Value("links").Object().Value("filter").Object().Value("id").Equal(filterBlueprintID)
+	dimensionJSON.Object().Value("links").Object().Value("options").Object().Value("href").Equal("http://localhost:22100/filters/" + filterBlueprintID + "/dimensions/" + dimension + "/options")
+	dimensionJSON.Object().Value("links").Object().Value("self").Object().Value("href").Equal("http://localhost:22100/filters/" + filterBlueprintID + "/dimensions/" + dimension)
+	dimensionJSON.Object().Value("links").Object().Value("self").Object().Value("id").Equal(dimension)
+	dimensionJSON.Object().Value("name").Equal(dimension)
+
 }
 
 func TestFailureToGetListOfDimensions(t *testing.T) {
