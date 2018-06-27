@@ -1,6 +1,7 @@
 package datasetAPI
 
 import (
+	"errors"
 	"net/http"
 	"os"
 	"testing"
@@ -23,13 +24,23 @@ import (
 func TestSuccessfullyPutInstance(t *testing.T) {
 
 	datasetID := uuid.NewV4().String()
+	editionID := uuid.NewV4().String()
+	publishedInstanceID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
 	edition := "2017"
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Given an instance has been created by an import job", t, func() {
-		instance := &mongo.Doc{
+		publishedInstance := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: "instances",
+			Key:        "_id",
+			Value:      publishedInstanceID,
+			Update:     validPublishedInstanceData(datasetID, edition, publishedInstanceID),
+		}
+
+		completedInstance := &mongo.Doc{
 			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
@@ -37,7 +48,15 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 			Update:     validCompletedInstanceData(datasetID, edition, instanceID),
 		}
 
-		if err := mongo.Setup(instance); err != nil {
+		editionDoc := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: "editions",
+			Key:        "_id",
+			Value:      editionID,
+			Update:     ValidPublishedEditionData(datasetID, editionID, edition),
+		}
+
+		if err := mongo.Setup(publishedInstance, completedInstance, editionDoc); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
@@ -118,10 +137,13 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 					checkEditionDoc(datasetID, instanceID, edition.Next)
 
 					Convey("and the dataset_id, edition and version values are set a properties on the neo4j instance node", func() {
-						neoDatasetID, neoEdition, neoVersion := getNeo4jInstanceProperties(instanceID)
-						So(datasetID, ShouldEqual, neoDatasetID)
-						So(instance.Edition, ShouldEqual, neoEdition)
-						So(int64(instance.Version), ShouldEqual, neoVersion)
+						neoDatasetID, neoEdition, neoVersion, err := getNeo4jInstanceProperties(instanceID)
+						if err != nil {
+							t.Error(err)
+						}
+						So(neoDatasetID, ShouldEqual, datasetID)
+						So(neoEdition, ShouldEqual, instance.Edition)
+						So(neoVersion, ShouldEqual, int64(instance.Version))
 					})
 
 					if instance.Links.Edition != nil {
@@ -144,7 +166,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 			})
 		})
 
-		if err := mongo.Teardown(instance); err != nil {
+		if err := mongo.Teardown(publishedInstance, completedInstance, editionDoc); err != nil {
 			if err != mgo.ErrNotFound {
 				os.Exit(1)
 			}
@@ -380,10 +402,6 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 			ID:   "2017",
 			HRef: "http://localhost:22000/datasets/" + datasetID + "/editions/2017",
 		},
-		Version: &mongo.IDLink{
-			ID:   "2",
-			HRef: "http://localhost:22000/datasets/" + datasetID + "/editions/2017/versions/2",
-		},
 	}
 
 	if state == "edition-confirmed" {
@@ -412,6 +430,9 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 	So(instance.Dimensions, ShouldResemble, []mongo.CodeList{dimension})
 	So(instance.Edition, ShouldEqual, "2017")
 	So(instance.Headers, ShouldResemble, &[]string{"time", "geography"})
+	So(instance.ImportTasks, ShouldNotBeNil)
+	So(instance.ImportTasks.ImportObservations, ShouldNotBeNil)
+	So(instance.ImportTasks.ImportObservations.InsertedObservations, ShouldEqual, observations)
 	So(instance.LastUpdated, ShouldNotBeNil)
 	So(instance.LatestChanges, ShouldResemble, &[]mongo.LatestChange{latestChange})
 	So(instance.Links, ShouldResemble, links)
@@ -419,9 +440,6 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 	So(instance.State, ShouldEqual, state)
 	So(instance.Temporal, ShouldResemble, &[]mongo.TemporalFrequency{temporal})
 	So(instance.TotalObservations, ShouldEqual, observations)
-	So(instance.ImportTasks, ShouldNotBeNil)
-	So(instance.ImportTasks.ImportObservations, ShouldNotBeNil)
-	So(instance.ImportTasks.ImportObservations.InsertedObservations, ShouldEqual, observations)
 
 	return
 }
@@ -431,8 +449,8 @@ func checkEditionDoc(datasetID, instanceID string, editionDoc *mongo.Edition) {
 	So(editionDoc.Edition, ShouldEqual, "2017")
 	So(editionDoc.Links.Dataset.ID, ShouldEqual, datasetID)
 	So(editionDoc.Links.Dataset.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID)
-	So(editionDoc.Links.LatestVersion.ID, ShouldEqual, "1")
-	So(editionDoc.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/1")
+	So(editionDoc.Links.LatestVersion.ID, ShouldEqual, "2")
+	So(editionDoc.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/2")
 	So(editionDoc.Links.Self.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017")
 	So(editionDoc.Links.Versions.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions")
 	So(editionDoc.State, ShouldEqual, "edition-confirmed")
@@ -440,25 +458,36 @@ func checkEditionDoc(datasetID, instanceID string, editionDoc *mongo.Edition) {
 	return
 }
 
-func getNeo4jInstanceProperties(instanceID string) (string, string, int64) {
-	conn, err :=  bolt.NewDriver().OpenNeo(cfg.Neo4jAddr)
-	So(err, ShouldBeNil)
+func getNeo4jInstanceProperties(instanceID string) (string, string, int64, error) {
+	conn, err := bolt.NewDriver().OpenNeo(cfg.Neo4jAddr)
 	defer conn.Close()
+	if err != nil {
+		return "", "", 0, err
+	}
 
 	query := fmt.Sprintf("MATCH (i:`_%s_Instance`) RETURN i.dataset_id, i.edition, i.version", instanceID)
 	stmt, err := conn.PrepareNeo(query)
-	So(err, ShouldBeNil)
 	defer stmt.Close()
+	if err != nil {
+		return "", "", 0, err
+	}
 
 	rows, err := stmt.QueryNeo(nil)
-	So(err, ShouldBeNil)
 	defer rows.Close()
+	if err != nil {
+		return "", "", 0, err
+	}
 
 	data, _, err := rows.NextNeo()
-	So(err, ShouldBeNil)
-	So(len(data), ShouldEqual, 3)
+	if err != nil {
+		return "", "", 0, err
+	}
 
-	return data[0].(string), data[1].(string), data[2].(int64)
+	if len(data) != 3 {
+		return "", "", 0, errors.New("instance in neo4j does not contain one of the following: dataset_id, edition or version")
+	}
+
+	return data[0].(string), data[1].(string), data[2].(int64), nil
 }
 
 func createNeo4jInstanceNode(instanceID string) {
@@ -481,7 +510,7 @@ func createNeo4jInstanceNode(instanceID string) {
 func cleanUpNeo4jInstances(instanceID string) {
 	log.Info("cleaning up test instance", log.Data{"instanceID": instanceID})
 
-	conn, err :=  bolt.NewDriver().OpenNeo(cfg.Neo4jAddr)
+	conn, err := bolt.NewDriver().OpenNeo(cfg.Neo4jAddr)
 	So(err, ShouldBeNil)
 	defer conn.Close()
 
