@@ -11,7 +11,7 @@ import (
 	bolt "github.com/johnnadratowski/golang-neo4j-bolt-driver"
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/johnnadratowski/golang-neo4j-bolt-driver/structures/graph"
-	"github.com/pkg/errors"
+	"errors"
 )
 
 const ObservationTestData = "../../testDataSetup/neo4j/instance.cypher"
@@ -48,33 +48,6 @@ func (ds *Datastore) TeardownInstance() error {
 	}
 	results.Close()
 	return ds.connection.Close()
-}
-
-// DropDatabases cleans out all data that exists on neo4j
-func DropDatabases(uri string) error {
-	log.Info("dropping neo4j database", log.Data{"uri": uri})
-	pool, err := bolt.NewDriverPool(uri, 1)
-	if err != nil {
-		return err
-	}
-
-	conn, err := pool.OpenPool()
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err := conn.Close(); err != nil {
-			log.ErrorC("DropDatabases", err, nil)
-		}
-	}()
-
-	if _, err := conn.ExecNeo("MATCH(n) DETACH DELETE n", nil); err != nil {
-		return err
-	}
-
-	log.Info("dropping databases complete", nil)
-
-	return nil
 }
 
 // TeardownHierarchy removes all hierarchy nodes within neo4j
@@ -141,38 +114,7 @@ func (ds *Datastore) CreateGenericHierarchy(hierarchyCode string) error {
 	return nil
 }
 
-func (ds *Datastore) CreateInstanceNode(instanceID string) {
-
-	stmt, err := ds.connection.PrepareNeo(fmt.Sprintf("CREATE (i:`_%s_Instance`) RETURN i", instanceID))
-	So(err, ShouldBeNil)
-	defer stmt.Close()
-
-	result, err := stmt.ExecNeo(nil)
-	So(err, ShouldBeNil)
-
-	count, err := result.RowsAffected()
-	So(err, ShouldBeNil)
-	So(count, ShouldEqual, 1)
-}
-
-func (ds *Datastore) CleanupInstanceNode(instanceID string) {
-	log.Info("cleaning up test instance", log.Data{"instanceID": instanceID})
-
-	query := fmt.Sprintf("MATCH (i:`_%s_Instance`) DETACH DELETE i", instanceID)
-	stmt, err := ds.connection.PrepareNeo(query)
-	So(err, ShouldBeNil)
-	defer stmt.Close()
-
-	result, err := stmt.ExecNeo(nil)
-	So(err, ShouldBeNil)
-
-	count, err := result.RowsAffected()
-	So(err, ShouldBeNil)
-	So(count, ShouldEqual, int64(1))
-
-	log.Info("cleaning up test instance complete", log.Data{"instanceID": instanceID})
-}
-
+// GetInstanceProperties returns a map of properties that are stored on the instance node
 func (ds *Datastore) GetInstanceProperties(instanceID string) (map[string]interface{}, error) {
 
 	query := fmt.Sprintf("MATCH (i:`_%s_Instance`) RETURN i", instanceID)
@@ -193,5 +135,53 @@ func (ds *Datastore) GetInstanceProperties(instanceID string) (map[string]interf
 	}
 
 	return nil, errors.New("failed to retrieve properties from neo4j instance node")
+}
 
+// CreateInstanceNode creates a new instance node for the given instance ID
+func (ds *Datastore) CreateInstanceNode(instanceID string) (int64, error) {
+
+	stmt, err := ds.connection.PrepareNeo(fmt.Sprintf("CREATE (i:`_%s_Instance`) RETURN i", instanceID))
+	if err != nil {
+		return 0, err
+	}
+	defer stmt.Close()
+
+	result, err := stmt.ExecNeo(nil)
+	if err != nil {
+		return 0, err
+	}
+
+	count, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+// CleanUpInstance removes the instance node for the given instance ID
+func (ds *Datastore) CleanUpInstance(instanceID string) (error) {
+	log.Info("cleaning up test instance", log.Data{"instanceID": instanceID})
+
+	query := fmt.Sprintf("MATCH (i:`_%s_Instance`) DETACH DELETE i", instanceID)
+	stmt, err := ds.connection.PrepareNeo(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	result, err := stmt.ExecNeo(nil)
+	if err != nil {
+		return err
+	}
+
+	count, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	So(count, ShouldEqual, int64(1))
+
+	log.Info("cleaning up test instance complete", log.Data{"instanceID": instanceID})
+
+	return nil
 }

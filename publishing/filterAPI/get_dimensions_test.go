@@ -45,14 +45,24 @@ func TestSuccessfullyGetListOfDimensions(t *testing.T) {
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusOK).JSON().Array()
 
-				actual.Element(0).Object().Value("dimension_url").NotNull()
-				actual.Element(0).Object().Value("name").Equal("age")
-				actual.Element(1).Object().Value("dimension_url").NotNull()
-				actual.Element(1).Object().Value("name").Equal("sex")
-				actual.Element(2).Object().Value("dimension_url").NotNull()
-				actual.Element(2).Object().Value("name").Equal("aggregate")
-				actual.Element(3).Object().Value("dimension_url").NotNull()
-				actual.Element(3).Object().Value("name").Equal("time")
+				expectedDimensions := []string{"age", "sex", "aggregate", "time"}
+				for i, dim := range expectedDimensions {
+
+					filterURL := "http://localhost:22100/filters/" + filterBlueprintID
+					selfURL := filterURL + "/dimensions/" + dim
+					optionsURL := selfURL + "/options"
+
+					links := actual.Element(i).Object().Value("links").Object()
+
+					So(actual.Element(i).Object().Value("name").Raw(), ShouldEqual, dim)
+					So(links.Value("filter").Object().Value("href").Raw(), ShouldEqual, filterURL)
+					So(links.Value("filter").Object().Value("id").Raw(), ShouldEqual, filterBlueprintID)
+					So(links.Value("self").Object().Value("href").Raw(), ShouldEqual, selfURL)
+					So(links.Value("self").Object().Value("id").Raw(), ShouldEqual, dim)
+					So(links.Value("options").Object().Value("href").Raw(), ShouldEqual, optionsURL)
+
+				}
+
 			})
 		})
 	})

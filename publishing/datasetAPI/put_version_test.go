@@ -12,8 +12,8 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
-	"github.com/ONSdigital/go-ns/log"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
+	"github.com/ONSdigital/go-ns/log"
 )
 
 // NOTE If endpoint is only available on publishing, remember to add a test to
@@ -44,7 +44,12 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			t.FailNow()
 		}
 
-		neo4JStore.CreateInstanceNode(instanceID)
+		count, err := neo4JStore.CreateInstanceNode(instanceID)
+		if err != nil {
+			t.Errorf("failed to create neo4j instance node: [%v]\n error: [%v]\n", instanceID, err)
+			t.FailNow()
+		}
+		So(count, ShouldEqual, 1)
 
 		Convey("When a PUT request to update meta data against the version resource", func() {
 			Convey("Then version resource is updated and returns a status ok (200)", func() {
@@ -197,7 +202,10 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			}
 		}
 
-		neo4JStore.CleanupInstanceNode(instanceID)
+		if err := neo4JStore.CleanUpInstance(instanceID); err != nil {
+			t.Errorf("failed to cleanup neo4j instances: [%v]\n error: [%v]\n", instanceID, err)
+			t.FailNow()
+		}
 	})
 
 	Convey("Given an unpublished dataset, edition and a version that has been associated", t, func() {
@@ -215,7 +223,12 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			os.Exit(1)
 		}
 
-		neo4JStore.CreateInstanceNode(instanceID)
+		count, err := neo4JStore.CreateInstanceNode(instanceID)
+		if err != nil {
+			t.Errorf("failed to create neo4j instance node: [%v]\n error: [%v]\n", instanceID, err)
+			t.FailNow()
+		}
+		So(count, ShouldEqual, 1)
 
 		// TODO Remove skipped tests when code has been refactored (and hence fixed)
 		// 1 test skipped
@@ -304,7 +317,10 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			}
 		}
 
-		neo4JStore.CleanupInstanceNode(instanceID)
+		if err := neo4JStore.CleanUpInstance(instanceID); err != nil {
+			t.Errorf("failed to cleanup neo4j instances: [%v]\n error: [%v]\n", instanceID, err)
+			t.FailNow()
+		}
 	})
 
 	Convey("Given a published dataset and edition, and a version that has been associated", t, func() {
@@ -322,7 +338,12 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			os.Exit(1)
 		}
 
-		neo4JStore.CreateInstanceNode(instanceID)
+		count, err := neo4JStore.CreateInstanceNode(instanceID)
+		if err != nil {
+			t.Errorf("failed to create neo4j instance node: [%v]\n error: [%v]\n", instanceID, err)
+			t.Fail()
+		}
+		So(count, ShouldEqual, 1)
 
 		Convey("When a PUT request to update version resource with a state of published", func() {
 			Convey("Then the dataset, edition and version resources are updated and returns a status ok (200)", func() {
@@ -353,8 +374,8 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				So(updatedEdition.Next.State, ShouldEqual, "published")
 				So(updatedEdition.Current, ShouldNotBeNil)
 				So(updatedEdition.Current.State, ShouldEqual, "published")
-				So(updatedEdition.Current.Links.LatestVersion.ID, ShouldEqual, "2")
-				So(updatedEdition.Current.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/2")
+				So(updatedEdition.Current.Links.LatestVersion.ID, ShouldEqual, "1")
+				So(updatedEdition.Current.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/1")
 
 				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
 				if err != nil {
@@ -377,7 +398,10 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			}
 		}
 
-		neo4JStore.CleanupInstanceNode(instanceID)
+		if err := neo4JStore.CleanUpInstance(instanceID); err != nil {
+			t.Errorf("failed to cleanup neo4j instances: [%v]\n error: [%v]\n", instanceID, err)
+			t.FailNow()
+		}
 	})
 }
 

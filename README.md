@@ -19,6 +19,8 @@ dp-filter-api
 dp-import-api
 ```
 
+You will also need to run https://github.com/ONSdigital/dp-auth-api-stub instead of Zebedee.
+
 If you're running applications using websysd ensure `InheritEnvironment`
 is set to true in the `websysd.json` file.
 
