@@ -17,9 +17,10 @@ const GenericHierarchyCPIHTestData = "../testDataSetup/neo4j/genericHierarchyCPI
 
 // Datastore used to setup data within neo4j
 type Datastore struct {
-	instance   string
-	testData   string
-	connection bolt.Conn
+	instance      string
+	testData      string
+	connection    bolt.Conn
+	CodeListLabel string
 }
 
 // CypherTemplate allows cypher queries to be updated with new ID
@@ -100,6 +101,30 @@ func (ds *Datastore) Setup() error {
 	if err != nil {
 		return err
 	}
+	return err
+}
+
+// SetupCodelists creates two valid codelists with no relationships to codes
+func (ds *Datastore) SetupCodelists() error {
+	query := `
+	CREATE(_1:_%s {last_updated:"01 Jan 2015", code:"ABCDEF", label:"Tottenham", year: 2018})
+	CREATE(_2:_%s {last_updated:"01 Jan 1900", code:"ZYXWVU", label:"Crystal Palace", year: 1900})
+	CREATE(_3:_%s:_geography {last_updated:"01 Jan 2006", code:"ENG", label:"England", year: 2006})
+	`
+
+	query = fmt.Sprintf(query, ds.CodeListLabel, ds.CodeListLabel, ds.CodeListLabel)
+
+	fmt.Println(query)
+
+	_, err := ds.connection.ExecNeo(query, nil)
+	return err
+}
+
+// DropCodelists removes codelists from the datastore
+func (ds *Datastore) DropCodelists() error {
+	query := `MATCH (n:_%s) DETACH DELETE n`
+	query = fmt.Sprintf(query, ds.CodeListLabel)
+	_, err := ds.connection.ExecNeo(query, nil)
 	return err
 }
 

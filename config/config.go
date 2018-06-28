@@ -5,6 +5,7 @@ import "github.com/kelseyhightower/envconfig"
 // Config values for the application.
 type Config struct {
 	CodeListAPIURL            string   `envconfig:"CODELIST_API_URL"`
+	CodeListLabel             string   `envconfig:"NEO4J_CODELIST_LABEL"`
 	DatasetAPIURL             string   `envconfig:"DATASET_API_URL"`
 	DownloadServiceURL        string   `envconfig:"DOWNLOAD_SERVICE_URL"`
 	FilterAPIURL              string   `envconfig:"FILTER_API_URL"`
@@ -35,6 +36,7 @@ func Get() (*Config, error) {
 
 	cfg := &Config{
 		CodeListAPIURL:            "http://localhost:22400",
+		CodeListLabel:             "code_list_acceptance",
 		DatasetAPIURL:             "http://localhost:22000",
 		DownloadServiceURL:        "http://localhost:23600",
 		FilterAPIURL:              "http://localhost:22100",
