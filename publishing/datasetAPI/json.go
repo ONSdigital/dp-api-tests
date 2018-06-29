@@ -354,8 +354,8 @@ func ValidPublishedEditionData(datasetID, editionID, edition string) bson.M {
 			"next.last_updated":                 "2017-09-08", // TODO Should be isodate
 			"next.links.dataset.id":             datasetID,
 			"next.links.dataset.href":           cfg.DatasetAPIURL + "/datasets/" + datasetID,
-			"next.links.latest_version.id":      "2",
-			"next.links.latest_version.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/2",
+			"next.links.latest_version.id":      "1",
+			"next.links.latest_version.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/1",
 			"next.links.self.href":              cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
 			"next.links.versions.href":          cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions",
 			"next.state":                        "edition-confirmed",
@@ -600,14 +600,11 @@ func validCompletedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"links.edition.id":      edition,
 			"links.edition.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017",
 			"links.self.href":       cfg.DatasetAPIURL + "/instances/" + instanceID,
-			"links.version.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/2",
-			"links.version.id":      "2",
 			"release_date":          "2017-12-12", // TODO Should be isodate
 			"state":                 "completed",
 			"import_tasks.import_observations.state":                       "completed",
 			"import_tasks.import_observations.total_inserted_observations": 1000,
 			"total_observations":                                           1000,
-			"version":                                                      2,
 			"test_data":                                                    "true",
 		},
 	}

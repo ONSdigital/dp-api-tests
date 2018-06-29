@@ -9,6 +9,7 @@ import (
 
 	"github.com/ONSdigital/go-ns/log"
 	bolt "github.com/johnnadratowski/golang-neo4j-bolt-driver"
+	"errors"
 )
 
 const ObservationTestData = "../../testDataSetup/neo4j/instance.cypher"
@@ -140,12 +141,16 @@ func (ds *Datastore) CreateGenericHierarchy(hierarchyCode string) error {
 	return nil
 }
 
-
 func (ds *Datastore) CreateCPIHCodeList() error {
-	//_, err := ds.connection.ExecNeo("MATCH (n:`_generic_hierarchy_node_"+hierarchyCode+"`) DETACH DELETE n", nil)
-	//if err != nil {
-	//	return err
-	//}
+	_, err := ds.connection.ExecNeo("MATCH (n:`_code`) DETACH DELETE n", nil)
+	if err != nil {
+		return err
+	}
+
+	_, err = ds.connection.ExecNeo("MATCH (n:`_code_list`) DETACH DELETE n", nil)
+	if err != nil {
+		return err
+	}
 
 	file, err := os.Open(codeListCPIHTestData)
 	if err != nil {
@@ -172,5 +177,97 @@ func (ds *Datastore) CreateCPIHCodeList() error {
 	}
 
 	log.Info("successfully loaded data into neo4j", log.Data{"cypher_file": codeListCPIHTestData})
+
+	return nil
+}
+
+// GetInstanceProperties retrieves the properties of an instance in neo4j
+func GetInstanceProperties(uri, instanceID string) (string, string, int64, error) {
+	conn, err := bolt.NewDriver().OpenNeo(uri)
+	defer conn.Close()
+	if err != nil {
+		return "", "", 0, err
+	}
+
+	query := fmt.Sprintf("MATCH (i:`_%s_Instance`) RETURN i.dataset_id, i.edition, i.version", instanceID)
+	stmt, err := conn.PrepareNeo(query)
+	defer stmt.Close()
+	if err != nil {
+		return "", "", 0, err
+	}
+
+	rows, err := stmt.QueryNeo(nil)
+	defer rows.Close()
+	if err != nil {
+		return "", "", 0, err
+	}
+
+	data, _, err := rows.NextNeo()
+	if err != nil {
+		return "", "", 0, err
+	}
+
+	if len(data) != 3 {
+		return "", "", 0, errors.New("instance in neo4j does not contain one of the following: dataset_id, edition or version")
+	}
+
+	return data[0].(string), data[1].(string), data[2].(int64), nil
+}
+
+// CreateInstanceNode creates a single instance in neo4j
+func CreateInstanceNode(uri, instanceID string) (int64, error) {
+	conn, err := bolt.NewDriver().OpenNeo(uri)
+	defer conn.Close()
+	if err != nil {
+		return 0, err
+	}
+
+	stmt, err := conn.PrepareNeo(fmt.Sprintf("CREATE (i:`_%s_Instance`) RETURN i", instanceID))
+	defer stmt.Close()
+	if err != nil {
+		return 0, err
+	}
+
+	result, err := stmt.ExecNeo(nil)
+	if err != nil {
+		return 0, err
+	}
+
+	count, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+// CleanUpInstance removes instance from neo4j
+func CleanUpInstance(uri, instanceID string) error {
+	log.Info("cleaning up test instance", log.Data{"instanceID": instanceID})
+
+	conn, err := bolt.NewDriver().OpenNeo(uri)
+	defer conn.Close()
+	if err != nil {
+		return err
+	}
+
+	query := fmt.Sprintf("MATCH (i:`_%s_Instance`) DETACH DELETE i", instanceID)
+	stmt, err := conn.PrepareNeo(query)
+	defer stmt.Close()
+	if err != nil {
+		return err
+	}
+
+	result, err := stmt.ExecNeo(nil)
+	if err != nil {
+		return err
+	}
+
+	count, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	log.Info("cleaning up test instance complete", log.Data{"instance_id": instanceID, "rows_affected": count})
 	return nil
 }
