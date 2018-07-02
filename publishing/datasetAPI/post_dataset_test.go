@@ -89,11 +89,11 @@ func TestFailureToPostDataset(t *testing.T) {
 	Convey("Given the dataset does not already exist", t, func() {
 		Convey("When an authorised POST request is made to create dataset resource with an invalid body", func() {
 
-			Convey("Then return a status of bad request with a message `Failed to parse json body`", func() {
+			Convey("Then return a status of bad request with a message `failed to parse json body`", func() {
 
 				datasetAPI.POST("/datasets/{id}", datasetID).
 					WithHeader(florenceTokenName, florenceToken).WithBytes([]byte("{")).
-					Expect().Status(http.StatusBadRequest).Body().Contains("Failed to parse json body")
+					Expect().Status(http.StatusBadRequest).Body().Contains("failed to parse json body")
 			})
 		})
 

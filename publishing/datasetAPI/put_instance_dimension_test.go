@@ -84,13 +84,13 @@ func TestFailureToPutInstanceDimension(t *testing.T) {
 
 	Convey("Given an instance does not exist", t, func() {
 		Convey("When an authorised PUT request is made to update dimension on an instance resource", func() {
-			Convey("Then the response return a status not found (404) with message `Instance not found`", func() {
+			Convey("Then the response return a status not found (404) with message `instance not found`", func() {
 
 				datasetAPI.PUT("/instances/{instance_id}/dimensions/geography", instances[submitted]).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTGeographyDimensionJSON)).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Instance not found")
+					Body().Contains("instance not found")
 
 			})
 		})
@@ -161,13 +161,13 @@ func TestFailureToPutInstanceDimension(t *testing.T) {
 			instance resource but the 'dimension' does not exist`, func() {
 
 			Convey(`Then the response return a status not found (404)
-						with message 'missing properties in JSON'`, func() {
+						with message 'dimension not found'`, func() {
 
 				datasetAPI.PUT("/instances/{instance_id}/dimensions/age", instances[submitted]).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTAgeDimensionJSON)).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dimension not found")
+					Body().Contains("dimension not found")
 
 			})
 		})

@@ -155,13 +155,13 @@ func TestFailureToPutImportTasks(t *testing.T) {
 		Convey(`When an authorised PUT request to update import task against
 			an instance resource`, func() {
 
-			Convey("Then the response return a status not found (404) with message `Instance not found`", func() {
+			Convey("Then the response return a status not found (404) with message `instance not found`", func() {
 
 				datasetAPI.PUT("/instances/{instance_id}/import_tasks", instances[submitted]).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validObservationImportTaskJSON)).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Instance not found")
+					Body().Contains("instance not found")
 
 			})
 		})

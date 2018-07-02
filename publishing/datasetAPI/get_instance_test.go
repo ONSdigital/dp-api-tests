@@ -108,12 +108,12 @@ func TestFailureToGetInstance(t *testing.T) {
 
 	Convey("Given an instance resource does not exist", t, func() {
 		Convey("When an authorised request is made to get instance", func() {
-			Convey("Then return a status not found (404) with message `Instance not found`", func() {
+			Convey("Then return a status not found (404) with message `instance not found`", func() {
 
 				datasetAPI.GET("/instances/{id}", instanceID).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Instance not found")
+					Body().Contains("instance not found")
 
 			})
 		})
