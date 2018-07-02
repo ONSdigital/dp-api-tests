@@ -105,12 +105,12 @@ func TestFailureToPutDimensionOptionNodeID(t *testing.T) {
 			with a 'node_id' for an instance`, func() {
 
 			Convey(`Then the response return a status not found (404)
-				with message 'Instance not found'`, func() {
+				with message 'instance not found'`, func() {
 
 				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", instances[created], nodeID).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Instance not found")
+					Body().Contains("instance not found")
 
 			})
 		})
