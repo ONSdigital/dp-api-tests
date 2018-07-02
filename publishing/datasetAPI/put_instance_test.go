@@ -148,7 +148,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 
 						instanceProps, err := neo4JStore.GetInstanceProperties(instanceID)
 						if err != nil {
-							log.ErrorC("failed to get properties from neo4j instance node", err, nil)
+							t.Errorf("failed to get properties from neo4j instance node: [%v]\n error: [%v]\n", instanceID, err)
 							t.FailNow()
 						}
 

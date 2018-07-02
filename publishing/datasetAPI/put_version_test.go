@@ -25,6 +25,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 
 	neo4JStore, err := neo4j.NewDatastore(cfg.Neo4jAddr, "", neo4j.GenericHierarchyCPIHTestData)
 	if err != nil {
+		t.Errorf("unable to connect to neo4j. error: [%v]\n", err)
 		log.ErrorC("unable to connect to neo4j", err, nil)
 		t.FailNow()
 	}
