@@ -531,7 +531,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(`{"state": "associated"}`)).
 					Expect().Status(http.StatusBadRequest).
-					Body().Contains("Missing collection_id for association between version and a collection")
+					Body().Contains("missing collection_id for association between version and a collection")
 
 			})
 		})
