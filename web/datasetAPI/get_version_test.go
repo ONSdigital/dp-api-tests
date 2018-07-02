@@ -154,7 +154,7 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dataset not found")
+					Body().Contains("dataset not found")
 
 			})
 		})
@@ -166,7 +166,7 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dataset not found")
+					Body().Contains("dataset not found")
 
 			})
 		})
@@ -181,11 +181,11 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 
 	Convey("Given the dataset, edition and version do not exist", t, func() {
 		Convey("When a request to get the version of the dataset edition", func() {
-			Convey("Then return status not found (404) with message `Dataset not found`", func() {
+			Convey("Then return status not found (404) with message `dataset not found`", func() {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dataset not found")
+					Body().Contains("dataset not found")
 			})
 		})
 	})
@@ -198,11 +198,11 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 
 		Convey("but an edition and version do not exist", func() {
 			Convey("When a request to get the version of the dataset edition", func() {
-				Convey("Then return status not found (404) with message `Edition not found`", func() {
+				Convey("Then return status not found (404) with message `edition not found`", func() {
 
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).
 						Expect().Status(http.StatusNotFound).
-						Body().Contains("Edition not found")
+						Body().Contains("edition not found")
 
 				})
 			})
@@ -216,11 +216,11 @@ func TestFailureToGetVersionOfADatasetEdition(t *testing.T) {
 
 			Convey("but a version does not exist", func() {
 				Convey("When a request to get the version of the dataset edition", func() {
-					Convey("Then return status bad request (404) with message `Version not found`", func() {
+					Convey("Then return status bad request (404) with message `version not found`", func() {
 
 						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1", datasetID, edition).
 							Expect().Status(http.StatusNotFound).
-							Body().Contains("Version not found")
+							Body().Contains("version not found")
 
 					})
 				})

@@ -97,7 +97,7 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 
 				datasetAPI.GET("/datasets/{id}/editions", datasetID).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dataset not found")
+					Body().Contains("dataset not found")
 
 			})
 		})
@@ -115,7 +115,7 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 
 					datasetAPI.GET("/datasets/{id}/editions", datasetID).
 						Expect().Status(http.StatusNotFound).
-						Body().Contains("Edition not found")
+						Body().Contains("edition not found")
 				})
 			})
 		})
@@ -132,7 +132,7 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 
 					datasetAPI.GET("/datasets/{id}/editions", datasetID).
 						Expect().Status(http.StatusNotFound).
-						Body().Contains("Edition not found")
+						Body().Contains("edition not found")
 				})
 			})
 		})

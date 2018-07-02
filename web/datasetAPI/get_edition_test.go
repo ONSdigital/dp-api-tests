@@ -109,7 +109,7 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dataset not found")
+					Body().Contains("dataset not found")
 			})
 		})
 
@@ -123,7 +123,7 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dataset not found")
+					Body().Contains("dataset not found")
 
 			})
 
@@ -133,7 +133,7 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 					datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).
 						WithHeader(florenceTokenName, florenceToken).
 						Expect().Status(http.StatusNotFound).
-						Body().Contains("Dataset not found")
+						Body().Contains("dataset not found")
 
 				})
 			})
@@ -156,7 +156,7 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Edition not found")
+					Body().Contains("edition not found")
 
 			})
 
@@ -166,7 +166,7 @@ func TestFailureToGetDatasetEdition(t *testing.T) {
 					datasetAPI.GET("/datasets/{id}/editions/{edition}", datasetID, unpublishedEdition).
 						WithHeader(florenceTokenName, florenceToken).
 						Expect().Status(http.StatusNotFound).
-						Body().Contains("Edition not found")
+						Body().Contains("edition not found")
 
 				})
 			})
