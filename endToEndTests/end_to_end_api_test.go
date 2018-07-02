@@ -21,6 +21,7 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/ONSdigital/go-ns/rchttp"
+	"net/url"
 )
 
 var timeout = time.Duration(15 * time.Second)
@@ -454,7 +455,14 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		}
 		log.Debug("Pre publish full downloads have been generated", logData)
 
-		privateCSVFilename := filepath.Base(instanceResource.Downloads.CSV.Private)
+
+		privateCSVURL, err := url.Parse(instanceResource.Downloads.CSV.Private)
+		if err != nil {
+			log.ErrorC("failed to parse private CSV URL", err, log.Data{"url": instanceResource.Downloads.CSV.Private})
+			t.FailNow()
+		}
+
+		privateCSVFilename := privateCSVURL.Path
 
 		// read csv download from s3
 		privateCSVFile, err := getS3File(region, bucket, privateCSVFilename, true)
