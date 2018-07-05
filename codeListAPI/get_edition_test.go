@@ -30,7 +30,6 @@ func TestSuccessfulRetrievalOfEdition(t *testing.T) {
 				response.Value("id").Equal("ABCDEF")
 				response.Value("edition").Equal("2018")
 				response.Value("label").Equal("Tottenham")
-				response.Value("release_date").Equal("01 Jan 2018")
 				response.Value("links").Object().Value("self").Object().Value("href").Equal("/code-lists/ABCDEF/editions/2018")
 				response.Value("links").Object().Value("self").Object().Value("id").Equal("2018")
 				response.Value("links").Object().Value("editions").Object().Value("href").Equal("/code-lists/ABCDEF/editions")

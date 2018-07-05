@@ -123,8 +123,8 @@ func (ds *Datastore) SetupCodelists() error {
 // SetupCodelistEditions sets up two editions of one codelist
 func (ds *Datastore) SetupCodelistEditions() error {
 	query := `
-	CREATE(_1:_%s {last_updated:"01 Jan 2018", code:"ABCDEF", label:"Tottenham", year: 2018})
-	CREATE(_2:_%s {last_updated:"01 Jan 2017", code:"ABCDEF", label:"Tottenham", year: 2017})
+	CREATE(_1:_%s:_name_ABCDEF {label:"Tottenham", edition: "2018"})
+	CREATE(_2:_%s:_name_ABCDEF {label:"Tottenham", edition: "2017"})
 	`
 
 	query = fmt.Sprintf(query, ds.CodeListLabel, ds.CodeListLabel)
