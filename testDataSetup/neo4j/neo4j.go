@@ -107,9 +107,9 @@ func (ds *Datastore) Setup() error {
 // SetupCodelists creates two valid codelists with no relationships to codes
 func (ds *Datastore) SetupCodelists() error {
 	query := `
-	CREATE(_1:_%s {last_updated:"01 Jan 2015", code:"ABCDEF", label:"Tottenham", year: 2018})
-	CREATE(_2:_%s {last_updated:"01 Jan 1900", code:"ZYXWVU", label:"Crystal Palace", year: 1900})
-	CREATE(_3:_%s:_geography {last_updated:"01 Jan 2006", code:"ENG", label:"England", year: 2006})
+	CREATE(_1:_%s:_name_ABCDEF {label:"Tottenham", edition: "2018"})
+	CREATE(_2:_%s:_name_ZYXWVU {label:"Crystal Palace", edition: "1900"})
+	CREATE(_3:_%s:_name_ENG:_geography {label:"England", edition: "2006"})
 	`
 
 	query = fmt.Sprintf(query, ds.CodeListLabel, ds.CodeListLabel, ds.CodeListLabel)
