@@ -38,18 +38,24 @@ func TestSuccessfulRetrievalOfCodeLists(t *testing.T) {
 				item1.Value("links").Object().Value("self").Object().Value("href").Equal("/code-lists/ABCDEF")
 				item1.Value("links").Object().Value("self").Object().Value("id").Equal("ABCDEF")
 				item1.Value("links").Object().Value("editions").Object().Value("href").Equal("/code-lists/ABCDEF/editions")
+				item1.Value("links").Object().Value("latest").Object().Value("href").Equal("/code-lists/ABCDEF/editions/2018")
+				item1.Value("links").Object().Value("latest").Object().Value("id").Equal("2018")
 
 				item2 := response.Value("items").Array().Element(1).Object()
 				item2.Value("name").Equal("Crystal Palace")
 				item2.Value("links").Object().Value("self").Object().Value("href").Equal("/code-lists/ZYXWVU")
 				item2.Value("links").Object().Value("self").Object().Value("id").Equal("ZYXWVU")
 				item2.Value("links").Object().Value("editions").Object().Value("href").Equal("/code-lists/ZYXWVU/editions")
+				item2.Value("links").Object().Value("latest").Object().Value("href").Equal("/code-lists/ZYXWVU/editions/1900")
+				item2.Value("links").Object().Value("latest").Object().Value("id").Equal("1900")
 
 				item3 := response.Value("items").Array().Element(2).Object()
 				item3.Value("name").Equal("England")
 				item3.Value("links").Object().Value("self").Object().Value("href").Equal("/code-lists/ENG")
 				item3.Value("links").Object().Value("self").Object().Value("id").Equal("ENG")
 				item3.Value("links").Object().Value("editions").Object().Value("href").Equal("/code-lists/ENG/editions")
+				item3.Value("links").Object().Value("latest").Object().Value("href").Equal("/code-lists/ENG/editions/2006")
+				item3.Value("links").Object().Value("latest").Object().Value("id").Equal("2006")
 
 			})
 		})
@@ -71,6 +77,8 @@ func TestSuccessfulRetrievalOfCodeLists(t *testing.T) {
 				item.Value("links").Object().Value("self").Object().Value("href").Equal("/code-lists/ENG")
 				item.Value("links").Object().Value("self").Object().Value("id").Equal("ENG")
 				item.Value("links").Object().Value("editions").Object().Value("href").Equal("/code-lists/ENG/editions")
+				item.Value("links").Object().Value("latest").Object().Value("href").Equal("/code-lists/ENG/editions/2006")
+				item.Value("links").Object().Value("latest").Object().Value("id").Equal("2006")
 
 			})
 		})
