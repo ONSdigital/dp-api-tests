@@ -24,13 +24,12 @@ func TestSuccessfulRetrievalOfEditions(t *testing.T) {
 
 	Convey("Given two editions of the same codelist exists", t, func() {
 		Convey("When a request is made for the editions", func() {
-			Convey("Then the codelists are returned to the user", func() {
+			Convey("Then the editions for the codelist are returned to the user", func() {
 				response := codelistAPI.GET("/code-lists/ABCDEF/editions").Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("number_of_results").Equal(2)
 
 				item1 := response.Value("items").Array().Element(0).Object()
-				item1.Value("id").Equal("ABCDEF")
 				item1.Value("edition").Equal("2018")
 				item1.Value("label").Equal("Tottenham")
 				item1.Value("links").Object().Value("self").Object().Value("href").Equal("/code-lists/ABCDEF/editions/2018")
@@ -39,7 +38,6 @@ func TestSuccessfulRetrievalOfEditions(t *testing.T) {
 				item1.Value("links").Object().Value("codes").Object().Value("href").Equal("/code-lists/ABCDEF/editions/2018/codes")
 
 				item2 := response.Value("items").Array().Element(1).Object()
-				item2.Value("id").Equal("ABCDEF")
 				item2.Value("edition").Equal("2017")
 				item2.Value("label").Equal("Tottenham")
 				item2.Value("links").Object().Value("self").Object().Value("href").Equal("/code-lists/ABCDEF/editions/2017")

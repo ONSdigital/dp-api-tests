@@ -22,12 +22,11 @@ func TestSuccessfulRetrievalOfEdition(t *testing.T) {
 
 	codelistAPI := httpexpect.New(t, cfg.CodeListAPIURL)
 
-	Convey("Given an edition of a codelist eqists", t, func() {
+	Convey("Given an edition of a codelist exists", t, func() {
 		Convey("When a request is made for the edition", func() {
 			Convey("Then the codelist is returned to the user", func() {
 				response := codelistAPI.GET("/code-lists/ABCDEF/editions/2018").Expect().Status(http.StatusOK).JSON().Object()
 
-				response.Value("id").Equal("ABCDEF")
 				response.Value("edition").Equal("2018")
 				response.Value("label").Equal("Tottenham")
 				response.Value("links").Object().Value("self").Object().Value("href").Equal("/code-lists/ABCDEF/editions/2018")
@@ -44,6 +43,14 @@ func TestSuccessfulRetrievalOfEdition(t *testing.T) {
 			Convey("Then the a not found status is returned to the user", func() {
 
 				codelistAPI.GET("/code-lists/BCDSOE/editions/2018").Expect().Status(http.StatusNotFound)
+
+			})
+		})
+	})
+
+	Convey("Given a user wants an edition which doesn't exist for a valid code list", t, func() {
+		Convey("When a request is made for the edition", func() {
+			Convey("Then the a not found status is returned to the user", func() {
 
 				codelistAPI.GET("/code-lists/ABCDEF/editions/2019").Expect().Status(http.StatusNotFound)
 
