@@ -23,7 +23,7 @@ import (
 	"net/url"
 )
 
-var timeout = time.Duration(15 * time.Second)
+var timeout = time.Duration(30 * time.Second)
 
 // TODO Once export services have been updated with encryption and decryption
 // remove decrypt boolean flag from all setup functions
