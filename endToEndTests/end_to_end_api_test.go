@@ -678,9 +678,6 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		log.Info("Then an api customer should be able to filter a dataset and be able to download", nil)
 
 		filterBlueprintID, filterOutputID := testFiltering(t, filterAPI, instanceID, true)
-		if err != nil {
-			return
-		}
 
 		filterBlueprint := &mongo.Doc{
 			Database:   cfg.MongoFiltersDB,
@@ -730,7 +727,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		edition := &mongo.Doc{
 			Database:   cfg.MongoDB,
 			Collection: "editions",
-			Key:        "links.self.href",
+			Key:        "current.links.self.href",
 			Value:      instanceResource.Links.Edition.HRef,
 		}
 
