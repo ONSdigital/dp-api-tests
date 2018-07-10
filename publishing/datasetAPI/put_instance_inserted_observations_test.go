@@ -131,13 +131,13 @@ func TestFailureToPutInsertedObservations(t *testing.T) {
 		Convey(`When an authorised PUT request to add the number of inserted
 					observations against an instance resource but number observations in path is not a number`, func() {
 
-			Convey(`Then the response return a status internal server error (500)
+			Convey(`Then the response return a status bad request (400)
 						with message 'internal error'`, func() {
 
-				datasetAPI.PUT("/instances/{instance_id}/inserted_observations/twohundredandfiftyfive", instances[invalid]).
+				datasetAPI.PUT("/instances/{instance_id}/inserted_observations/twohundredandfiftyfive", instances[submitted]).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusBadRequest).
-					Body().Contains("strconv.ParseInt: parsing \"twohundredandfiftyfive\": invalid syntax")
+					Body().Contains("inserted observation request parameter not an integer")
 
 			})
 		})

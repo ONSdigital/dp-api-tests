@@ -118,7 +118,7 @@ func TestFailureToPostInstance(t *testing.T) {
 				datasetAPI.POST("/instances").WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(`{`)).
 					Expect().Status(http.StatusBadRequest).
-					Body().Contains("failed to parse json body: unexpected end of JSON input")
+					Body().Contains("failed to parse json body")
 			})
 		})
 	})

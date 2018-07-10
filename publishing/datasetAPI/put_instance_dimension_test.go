@@ -137,7 +137,7 @@ func TestFailureToPutInstanceDimension(t *testing.T) {
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte("{")).
 					Expect().Status(http.StatusBadRequest).
-					Body().Contains("unexpected end of JSON input")
+					Body().Contains("failed to parse json body")
 
 			})
 		})
