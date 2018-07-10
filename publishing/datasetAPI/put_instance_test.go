@@ -387,11 +387,11 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 	links := mongo.InstanceLinks{
 		Job: &mongo.IDLink{
 			ID:   "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
-			HRef: "http://localhost:22000/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+			HRef: cfg.DatasetAPIURL + "/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
 		},
 		Dataset: &mongo.IDLink{
 			ID:   datasetID,
-			HRef: "http://localhost:22000/datasets/" + datasetID,
+			HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID,
 		},
 		Self: &mongo.IDLink{
 			HRef: cfg.DatasetAPIURL + "/instances/" + instanceID,
@@ -401,11 +401,11 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 		},
 		Dimensions: &mongo.IDLink{
 			ID:   "",
-			HRef: "http://localhost:22000/datasets/" + datasetID + "/editions/2017/versions/2/dimensions",
+			HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/2/dimensions",
 		},
 		Edition: &mongo.IDLink{
 			ID:   "2017",
-			HRef: "http://localhost:22000/datasets/" + datasetID + "/editions/2017",
+			HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017",
 		},
 	}
 
