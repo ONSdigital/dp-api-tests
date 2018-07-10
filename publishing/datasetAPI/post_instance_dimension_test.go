@@ -92,13 +92,13 @@ func TestFailureToPostDimension(t *testing.T) {
 
 	Convey("Given an instance does not exist", t, func() {
 		Convey("When an authorised POST request is made to add dimension option for an instance", func() {
-			Convey("Then the response return a status not found (404) with message `Instance not found`", func() {
+			Convey("Then the response return a status not found (404) with message `instance not found`", func() {
 
 				datasetAPI.POST("/instances/{instance_id}/dimensions", instances["created"]).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPOSTAgeDimensionJSON)).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Instance not found")
+					Body().Contains("instance not found")
 
 			})
 		})

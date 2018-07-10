@@ -113,24 +113,24 @@ func TestFailureToPostInstance(t *testing.T) {
 
 	Convey("Given an authorised user wants to create an instance", t, func() {
 		Convey("When an authorised POST request is made to create an instance resource with invalid json", func() {
-			Convey("Then fail to create resource and return a status bad request (400) with a message `Failed to parse json body: unexpected end of JSON input`", func() {
+			Convey("Then fail to create resource and return a status bad request (400) with a message `failed to parse json body: unexpected end of JSON input`", func() {
 
 				datasetAPI.POST("/instances").WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(`{`)).
 					Expect().Status(http.StatusBadRequest).
-					Body().Contains("Failed to parse json body: unexpected end of JSON input")
+					Body().Contains("failed to parse json body: unexpected end of JSON input")
 			})
 		})
 	})
 
 	Convey("Given an authorised user wants to create an instance", t, func() {
 		Convey("When an authorised POST request is made to create an instance resource with missing job properties", func() {
-			Convey("Then fail to create resource and return a status bad request (400) with a message `Missing job properties`", func() {
+			Convey("Then fail to create resource and return a status bad request (400) with a message `missing job properties`", func() {
 
 				datasetAPI.POST("/instances").WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(invalidPOSTCreateInstanceJSON)).
 					Expect().Status(http.StatusBadRequest).
-					Body().Contains("Missing job properties")
+					Body().Contains("missing job properties")
 			})
 		})
 	})

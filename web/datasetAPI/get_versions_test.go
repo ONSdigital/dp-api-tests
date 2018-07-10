@@ -129,11 +129,11 @@ func TestGetVersions_Failed(t *testing.T) {
 
 	Convey("Given the dataset and subsequently the edition does not exist", t, func() {
 		Convey("When a request is made to get a list of versions of the dataset edition", func() {
-			Convey("Then return status not found (404) with message `Dataset not found`", func() {
+			Convey("Then return status not found (404) with message `dataset not found`", func() {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dataset not found")
+					Body().Contains("dataset not found")
 
 			})
 		})
@@ -147,11 +147,11 @@ func TestGetVersions_Failed(t *testing.T) {
 
 		Convey("but the edition does not", func() {
 			Convey("When a request is made to get a list of versions of the dataset edition", func() {
-				Convey("Then return status not found (404) with message `Edition not found`", func() {
+				Convey("Then return status not found (404) with message `edition not found`", func() {
 
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
 						Expect().Status(http.StatusNotFound).
-						Body().Contains("Edition not found")
+						Body().Contains("edition not found")
 
 				})
 			})
@@ -164,11 +164,11 @@ func TestGetVersions_Failed(t *testing.T) {
 			}
 
 			Convey("When a request is made to get a list of versions of the dataset edition", func() {
-				Convey("Then return status not found (404) with message `Version not found`", func() {
+				Convey("Then return status not found (404) with message `version not found`", func() {
 
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
 						Expect().Status(http.StatusNotFound).
-						Body().Contains("Version not found")
+						Body().Contains("version not found")
 
 				})
 			})
@@ -197,22 +197,22 @@ func TestGetVersions_Failed(t *testing.T) {
 		}
 
 		Convey("When a request is made to get a list of versions of the dataset edition", func() {
-			Convey("Then return status not found (404) with message `Dataset not found`", func() {
+			Convey("Then return status not found (404) with message `dataset not found`", func() {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dataset not found")
+					Body().Contains("dataset not found")
 
 			})
 		})
 
 		Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
-			Convey("Then return status not found (404) with message `Dataset not found`", func() {
+			Convey("Then return status not found (404) with message `dataset not found`", func() {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dataset not found")
+					Body().Contains("dataset not found")
 
 			})
 		})
@@ -236,22 +236,22 @@ func TestGetVersions_Failed(t *testing.T) {
 			}
 
 			Convey("When a request is made to get a list of versions of the dataset edition", func() {
-				Convey("Then return status not found (404) with message `Edition not found`", func() {
+				Convey("Then return status not found (404) with message `edition not found`", func() {
 
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
 						Expect().Status(http.StatusNotFound).
-						Body().Contains("Edition not found")
+						Body().Contains("edition not found")
 
 				})
 			})
 
 			Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
-				Convey("Then return status not found (404) with message `Edition not found`", func() {
+				Convey("Then return status not found (404) with message `edition not found`", func() {
 
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
 						WithHeader(florenceTokenName, florenceToken).
 						Expect().Status(http.StatusNotFound).
-						Body().Contains("Edition not found")
+						Body().Contains("edition not found")
 
 				})
 			})
@@ -284,22 +284,22 @@ func TestGetVersions_Failed(t *testing.T) {
 				}
 
 				Convey("When a request is made to get a list of versions of the dataset edition", func() {
-					Convey("Then return status not found (404) with message `Version not found`", func() {
+					Convey("Then return status not found (404) with message `version not found`", func() {
 
 						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
 							Expect().Status(http.StatusNotFound).
-							Body().Contains("Version not found")
+							Body().Contains("version not found")
 
 					})
 				})
 
 				Convey("When an authenticated request is made to get a list of versions of the dataset edition", func() {
-					Convey("Then return status not found (404) with message `Version not found`", func() {
+					Convey("Then return status not found (404) with message `version not found`", func() {
 
 						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions", datasetID, edition).
 							WithHeader(florenceTokenName, florenceToken).
 							Expect().Status(http.StatusNotFound).
-							Body().Contains("Version not found")
+							Body().Contains("version not found")
 
 					})
 				})

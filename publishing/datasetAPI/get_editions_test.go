@@ -127,7 +127,7 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 
 					datasetAPI.GET("/datasets/{id}/editions", datasetID).
 						WithHeader(florenceTokenName, florenceToken).
-						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
+						Expect().Status(http.StatusNotFound).Body().Contains("edition not found")
 				})
 			})
 		})

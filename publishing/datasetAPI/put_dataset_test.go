@@ -171,12 +171,12 @@ func TestFailureToUpdateDataset(t *testing.T) {
 
 	Convey("Given a published dataset does not exist", t, func() {
 		Convey("When an authorised PUT request is made to update dataset resource", func() {
-			Convey("Then fail to update resource and return a status of not found (404) with a message `Dataset not found`", func() {
+			Convey("Then fail to update resource and return a status of not found (404) with a message `dataset not found`", func() {
 
 				datasetAPI.PUT("/datasets/{id}", datasetID).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTUpdateDatasetJSON)).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
+					Expect().Status(http.StatusNotFound).Body().Contains("dataset not found")
 			})
 		})
 	})
@@ -208,13 +208,13 @@ func TestFailureToUpdateDataset(t *testing.T) {
 		})
 
 		Convey("When an authorised PUT request is made to update dataset resource with an invalid body", func() {
-			Convey("Then fail to update resource and return a status of bad request (400) with a message `Failed to parse json body`", func() {
+			Convey("Then fail to update resource and return a status of bad request (400) with a message `failed to parse json body`", func() {
 
 				datasetAPI.PUT("/datasets/{id}", datasetID).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte("{")).
 					Expect().Status(http.StatusBadRequest).
-					Body().Contains("Failed to parse json body")
+					Body().Contains("failed to parse json body")
 			})
 		})
 

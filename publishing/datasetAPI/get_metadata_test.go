@@ -195,9 +195,9 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 
 	Convey("Given the dataset, edition and version do not exist", t, func() {
 		Convey("When an authorised request to get the metadata relevant to a version", func() {
-			Convey("Then return status not found (404) with message `Dataset not found`", func() {
+			Convey("Then return status not found (404) with message `dataset not found`", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
+					Expect().Status(http.StatusNotFound).Body().Contains("dataset not found")
 			})
 		})
 	})
@@ -210,9 +210,9 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 
 		Convey("but an edition and version do not exist", func() {
 			Convey("When a request to get the metadata relevant to a version", func() {
-				Convey("Then return status not found (404) with message `Edition not found`", func() {
+				Convey("Then return status not found (404) with message `edition not found`", func() {
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(florenceTokenName, florenceToken).
-						Expect().Status(http.StatusNotFound).Body().Contains("Edition not found")
+						Expect().Status(http.StatusNotFound).Body().Contains("edition not found")
 				})
 			})
 		})
@@ -225,9 +225,9 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 
 			Convey("but a version does not exist", func() {
 				Convey("When a request to get the metadata relevant to a version", func() {
-					Convey("Then return status bad request (404) with message `Version not found`", func() {
+					Convey("Then return status bad request (404) with message `version not found`", func() {
 						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(florenceTokenName, florenceToken).
-							Expect().Status(http.StatusNotFound).Body().Contains("Version not found")
+							Expect().Status(http.StatusNotFound).Body().Contains("version not found")
 					})
 				})
 			})

@@ -142,7 +142,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", "1234", "2018").
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dataset not found")
+					Body().Contains("dataset not found")
 
 			})
 		})
@@ -156,7 +156,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, "2018").
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Edition not found")
+					Body().Contains("edition not found")
 
 			})
 		})
@@ -170,7 +170,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/3/dimensions", datasetID, edition).
 						Expect().Status(http.StatusNotFound).
-						Body().Contains("Version not found")
+						Body().Contains("version not found")
 
 				})
 			})
@@ -192,7 +192,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/dimensions", datasetID, edition).
 						Expect().Status(http.StatusNotFound).
-						Body().Contains("Version not found")
+						Body().Contains("version not found")
 
 				})
 			})
@@ -202,7 +202,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/3/dimensions", datasetID, edition).
 						Expect().Status(http.StatusNotFound).
-						Body().Contains("Version not found")
+						Body().Contains("version not found")
 
 				})
 			})
@@ -220,7 +220,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 		Convey("When user makes a request to get the dimensions for version of the dataset edition", func() {
 			Convey("Then return status not found (404)", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dimensions not found")
+					Expect().Status(http.StatusNotFound).Body().Contains("dimensions not found")
 			})
 		})
 	})

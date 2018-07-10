@@ -90,13 +90,13 @@ func TestFailureToPostInstanceEvent(t *testing.T) {
 
 	Convey("Given an instance does not exist", t, func() {
 		Convey("When an authorised POST request to create an event against an instance resource", func() {
-			Convey("Then the response return a status not found (404) with message `Instance not found`", func() {
+			Convey("Then the response return a status not found (404) with message `instance not found`", func() {
 
 				datasetAPI.POST("/instances/{instance_id}/events", instances[submitted]).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes(b).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Instance not found")
+					Body().Contains("instance not found")
 
 			})
 		})
@@ -138,13 +138,13 @@ func TestFailureToPostInstanceEvent(t *testing.T) {
 				instance resource but the json is invalid`, func() {
 
 			Convey(`Then the response return a status bad request (400)
-							with message 'Failed to parse json body'`, func() {
+							with message 'failed to parse json body'`, func() {
 
 				datasetAPI.POST("/instances/{instance_id}/events", instances[submitted]).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte("{")).
 					Expect().Status(http.StatusBadRequest).
-					Body().Contains("Failed to parse json body")
+					Body().Contains("failed to parse json body")
 
 			})
 		})
