@@ -25,8 +25,6 @@ import (
 
 var timeout = time.Duration(30 * time.Second)
 
-// TODO Once export services have been updated with encryption and decryption
-// remove decrypt boolean flag from all setup functions
 func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
