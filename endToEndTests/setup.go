@@ -15,6 +15,7 @@ import (
 	reqst "github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"path"
 )
 
 var client = http.Client{}
@@ -156,7 +157,7 @@ func getS3File(region, bucket, filename string, decrypt bool) (io.ReadCloser, er
 			log.Data{"vault_path": cfg.VaultPath,
 				"filename": filename})
 
-		vaultPath := cfg.VaultPath + "/" + filename
+		vaultPath := cfg.VaultPath + "/" + path.Base(filename)
 		vaultKey := "key"
 
 		pskStr, err := vaultClient.ReadKey(vaultPath, vaultKey)
@@ -315,7 +316,7 @@ func (req request) createRequest() *http.Request {
 func getClient(sess *session.Session, decrypt bool) (client Client, err error) {
 	logData := log.Data{"encryption_disabled_flag": cfg.EncryptionDisabled, "decrpyt_flag": decrypt}
 
-	cryptoConfig := &s3crypto.Config{HasUserDefinedPSK: true}
+	cryptoConfig := &s3crypto.Config{HasUserDefinedPSK: true, MultipartChunkSize: 5 * 1024 * 1024}
 
 	log.Debug("setting up s3 client", logData)
 
