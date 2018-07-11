@@ -43,7 +43,7 @@ func TestSuccessfullyGetRootHierarchy(t *testing.T) {
 				selfLink := response.Value("links").Object().Value("self").Object()
 				codeLink := response.Value("links").Object().Value("code").Object()
 				codeLink.Value("href").String().
-					Equal(cfg.HierarchyAPIURL + "/code-list/e44de4c4-d39e-4e2f-942b-3ca10584d078/code/cpi1dim1A0")
+					Equal(cfg.HierarchyAPIURL + "http://localhost:22400//code-list/e44de4c4-d39e-4e2f-942b-3ca10584d078/code/cpi1dim1A0")
 				selfLink.Value("href").String().
 					Equal(fmt.Sprintf("%s/hierarchies/%s/aggregate", cfg.HierarchyAPIURL, instanceID))
 
@@ -55,7 +55,7 @@ func TestSuccessfullyGetRootHierarchy(t *testing.T) {
 				firstSelfLink := first.Value("links").Object().Value("self").Object()
 				firstCodeLink := first.Value("links").Object().Value("code").Object()
 				firstCodeLink.Value("href").String().
-					Equal(cfg.HierarchyAPIURL + "/code-list/e44de4c4-d39e-4e2f-942b-3ca10584d078/code/cpi1dim1T10000")
+					Equal("http://localhost:22400/code-list/e44de4c4-d39e-4e2f-942b-3ca10584d078/code/cpi1dim1T10000")
 				firstSelfLink.Value("href").String().
 					Equal(fmt.Sprintf("%s/hierarchies/%s/aggregate/cpi1dim1T10000", cfg.HierarchyAPIURL, instanceID))
 			})
