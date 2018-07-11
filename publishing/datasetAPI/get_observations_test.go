@@ -217,12 +217,12 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 
 	Convey("Given the dataset, edition and version do not exist", t, func() {
 		Convey("When an authorised request to get an observation for a version of a dataset", func() {
-			Convey("Then return status not found (404) with message `Dataset not found`", func() {
+			Convey("Then return status not found (404) with message `dataset not found`", func() {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
 					WithQueryString("time=Aug-16&geography=K02000001&aggregate=cpi1dim1S40403").
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dataset not found")
+					Body().Contains("dataset not found")
 			})
 		})
 	})
@@ -259,12 +259,12 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 
 		Convey("but edition and version do not exist", func() {
 			Convey("When a request to get an observation for a version of a dataset", func() {
-				Convey("Then return status not found (404) with message `Edition not found`", func() {
+				Convey("Then return status not found (404) with message `edition not found`", func() {
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
 						WithQueryString("time=Aug-16&geography=K02000001&aggregate=cpi1dim1S40403").
 						WithHeader(florenceTokenName, florenceToken).
 						Expect().Status(http.StatusNotFound).
-						Body().Contains("Edition not found")
+						Body().Contains("edition not found")
 				})
 			})
 		})
@@ -278,12 +278,12 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 
 			Convey("but a version does not exist", func() {
 				Convey("When a request to get an observation for a version of a dataset", func() {
-					Convey("Then return status not found (404) with message `Version not found`", func() {
+					Convey("Then return status not found (404) with message `version not found`", func() {
 						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
 							WithQueryString("time=Aug-16&geography=K02000001&aggregate=cpi1dim1S40403").
 							WithHeader(florenceTokenName, florenceToken).
 							Expect().Status(http.StatusNotFound).
-							Body().Contains("Version not found")
+							Body().Contains("version not found")
 					})
 				})
 			})
@@ -301,7 +301,7 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 							WithHeader(florenceTokenName, florenceToken).
 							WithQueryString("age=24&gender=male&time=Aug-16&geography=K02000001&aggregate=cpi1dim1S40403").
 							Expect().Status(http.StatusBadRequest).
-							Body().Match(`Incorrect selection of query parameters: \[(age gender|gender age)\], these dimensions do not exist for this version of the dataset`)
+							Body().Match(`incorrect selection of query parameters: \[(age gender|gender age)\], these dimensions do not exist for this version of the dataset`)
 					})
 				})
 
@@ -311,7 +311,7 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 							WithHeader(florenceTokenName, florenceToken).
 							WithQueryString("geography=K02000001").
 							Expect().Status(http.StatusBadRequest).
-							Body().Match(`Missing query parameters for the following dimensions: \[(time aggregate|aggregate time)\]`)
+							Body().Match(`missing query parameters for the following dimensions: \[(time aggregate|aggregate time)\]`)
 					})
 				})
 
@@ -331,17 +331,17 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 							WithHeader(florenceTokenName, florenceToken).
 							WithQueryString("time=Aug-16&time=Aug-17&geography=K02000001&geography=*&aggregate=cpi1dim1S40403").
 							Expect().Status(http.StatusBadRequest).
-							Body().Match(`Multi-valued query parameters for the following dimensions: \[(time geography|geography time)\]`)
+							Body().Match(`multi-valued query parameters for the following dimensions: \[(time geography|geography time)\]`)
 					})
 				})
 
 				Convey("When a request to get an observation for an unpublished version of a dataset with the correct query parameters but the values don't exist", func() {
-					Convey("Then return status not found (404) with message `No observations found`", func() {
+					Convey("Then return status not found (404) with message `no observations found`", func() {
 						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
 							WithHeader(florenceTokenName, florenceToken).
 							WithQueryString("time=Aug-17&geography=K02000001&aggregate=cpi1dim1S40403").
 							Expect().Status(http.StatusNotFound).
-							Body().Contains("No observations found")
+							Body().Contains("no observations found")
 					})
 				})
 			})

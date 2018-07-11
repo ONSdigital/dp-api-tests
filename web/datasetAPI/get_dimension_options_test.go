@@ -132,7 +132,7 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", "1234", edition).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dataset not found")
+					Body().Contains("dataset not found")
 
 			})
 		})
@@ -144,7 +144,7 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/time/options", datasetID, "2018").
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Edition not found")
+					Body().Contains("edition not found")
 
 			})
 		})
@@ -156,7 +156,7 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/5/dimensions/time/options", datasetID, edition).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Version not found")
+					Body().Contains("version not found")
 
 			})
 		})
@@ -168,7 +168,7 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/dimensions/time/options", datasetID, edition).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Version not found")
+					Body().Contains("version not found")
 
 			})
 		})
@@ -179,7 +179,7 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/dimensions/time/options", datasetID, edition).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Version not found")
+					Body().Contains("version not found")
 
 			})
 		})
@@ -191,7 +191,7 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions/aggregate/options", datasetID, edition).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dimension not found")
+					Body().Contains("dimension not found")
 
 			})
 		})
@@ -204,7 +204,7 @@ func TestGetDimensionOptions_Failed(t *testing.T) {
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/dimensions/time/options", datasetID, edition).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dimension not found")
+					Body().Contains("dimension not found")
 			})
 		})
 	})

@@ -90,11 +90,11 @@ func TestFailureToGetInstanceDimensionOptions(t *testing.T) {
 		})
 
 		Convey("When an authenticated user sends a GET request for an instances dimension options", func() {
-			Convey("Then return status not found (404) with a message `Instance not found`", func() {
+			Convey("Then return status not found (404) with a message `instance not found`", func() {
 
 				datasetAPI.GET("/instances/{id}/dimensions/time/options", instanceID).
 					WithHeader(florenceTokenName, florenceToken).
-					Expect().Status(http.StatusNotFound).Body().Contains("Instance not found")
+					Expect().Status(http.StatusNotFound).Body().Contains("instance not found")
 			})
 		})
 	})
@@ -132,12 +132,12 @@ func TestFailureToGetInstanceDimensionOptions(t *testing.T) {
 		})
 
 		Convey("When an authenticated user sends a GET request for an instances dimension options", func() {
-			Convey("Then return status not found (404) with a message `Dimension node not found`", func() {
+			Convey("Then return status not found (404) with a message `dimension node not found`", func() {
 
 				datasetAPI.GET("/instances/{id}/dimensions/time/options", instanceID).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dimension node not found\n")
+					Body().Contains("dimension node not found\n")
 			})
 		})
 

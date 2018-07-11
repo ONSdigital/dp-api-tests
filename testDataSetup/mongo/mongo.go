@@ -74,7 +74,12 @@ func Teardown(d ...*Doc) error {
 	for _, doc := range d {
 		if err := s.DB(doc.Database).C(doc.Collection).Remove(bson.M{doc.Key: doc.Value}); err != nil {
 			if err == mgo.ErrNotFound {
-				log.Info("data does not exist, continue", nil)
+				log.Info("data does not exist, continue", log.Data{
+					"database":   doc.Database,
+					"collection": doc.Collection,
+					"key":        doc.Key,
+					"value":      doc.Value,
+				})
 				continue
 			}
 			return err

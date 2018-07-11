@@ -97,7 +97,7 @@ func TestFailureToGetADataset(t *testing.T) {
 				datasetAPI.GET("/datasets/{id}", datasetID).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dataset not found")
+					Body().Contains("dataset not found")
 			})
 		})
 	})

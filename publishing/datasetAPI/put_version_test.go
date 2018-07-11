@@ -427,12 +427,12 @@ func TestFailureToUpdateVersion(t *testing.T) {
 		}
 
 		Convey("When an authorised PUT request is made to update version resource", func() {
-			Convey("Then fail to update resource and return a status of not found (404) with a message `Dataset not found`", func() {
+			Convey("Then fail to update resource and return a status of not found (404) with a message `dataset not found`", func() {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
-					Expect().Status(http.StatusNotFound).Body().Contains("Dataset not found")
+					Expect().Status(http.StatusNotFound).Body().Contains("dataset not found")
 
 			})
 		})
@@ -455,13 +455,13 @@ func TestFailureToUpdateVersion(t *testing.T) {
 		}
 
 		Convey("When an authorised PUT request is made to update version resource", func() {
-			Convey("Then fail to update resource and return a status of not found (404) with a message `Edition not found`", func() {
+			Convey("Then fail to update resource and return a status of not found (404) with a message `edition not found`", func() {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Edition not found")
+					Body().Contains("edition not found")
 
 			})
 		})
@@ -484,13 +484,13 @@ func TestFailureToUpdateVersion(t *testing.T) {
 		}
 
 		Convey("When an authorised PUT request is made to update version resource", func() {
-			Convey("Then fail to update resource and return a status of not found (404) with a message `Version not found`", func() {
+			Convey("Then fail to update resource and return a status of not found (404) with a message `version not found`", func() {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Version not found")
+					Body().Contains("version not found")
 
 			})
 		})
@@ -564,13 +564,13 @@ func TestFailureToUpdateVersion(t *testing.T) {
 	// test for bad request (invalid json)
 	Convey("Given a dataset, edition and version do not exist", t, func() {
 		Convey("When an authorised PUT request is made to update version resource with invalid json", func() {
-			Convey("Then fail to update resource and return a status of bad request (400) with a message ``", func() {
+			Convey("Then fail to update resource and return a status of bad request (400) with a message `failed to parse json body`", func() {
 
 				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(`{`)).
 					Expect().Status(http.StatusBadRequest).
-					Body().Contains("Failed to parse json body")
+					Body().Contains("failed to parse json body")
 
 			})
 		})
@@ -594,7 +594,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(`{"state": "associated"}`)).
 					Expect().Status(http.StatusBadRequest).
-					Body().Contains("Missing collection_id for association between version and a collection")
+					Body().Contains("missing collection_id for association between version and a collection")
 
 			})
 		})

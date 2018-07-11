@@ -87,12 +87,12 @@ func TestFailureToPutInsertedObservations(t *testing.T) {
 		Convey(`When an authorised PUT request to add the number of inserted
 			observations against an instance resource`, func() {
 
-			Convey("Then the response return a status not found (404) with message `Instance not found`", func() {
+			Convey("Then the response return a status not found (404) with message `instance not found`", func() {
 
 				datasetAPI.PUT("/instances/{instance_id}/inserted_observations/255", instances[submitted]).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Instance not found")
+					Body().Contains("instance not found")
 
 			})
 		})

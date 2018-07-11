@@ -154,11 +154,11 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 
 	Convey("Given the dataset, edition and version do not exist", t, func() {
 		Convey("When a request to get the metadata relevant to a version", func() {
-			Convey("Then return status not found (404) with message `Dataset not found`", func() {
+			Convey("Then return status not found (404) with message `dataset not found`", func() {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dataset not found")
+					Body().Contains("dataset not found")
 
 			})
 		})
@@ -171,22 +171,22 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 		}
 
 		Convey("When a request to get the metadata relevant to a version", func() {
-			Convey("Then return status not found (404) with message `Dataset not found`", func() {
+			Convey("Then return status not found (404) with message `dataset not found`", func() {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dataset not found")
+					Body().Contains("dataset not found")
 
 			})
 		})
 
 		Convey("When a request to get the metadata relevant to an unpublished version with a valid auth header", func() {
-			Convey("Then return status not found (404) with message `Dataset not found`", func() {
+			Convey("Then return status not found (404) with message `dataset not found`", func() {
 
 				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Dataset not found")
+					Body().Contains("dataset not found")
 
 			})
 		})
@@ -211,11 +211,11 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 			}
 
 			Convey("When a request to get the metadata relevant to a version", func() {
-				Convey("Then return status bad request (404) with message `Edition not found`", func() {
+				Convey("Then return status bad request (404) with message `edition not found`", func() {
 
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
 						Expect().Status(http.StatusNotFound).
-						Body().Contains("Edition not found")
+						Body().Contains("edition not found")
 
 				})
 			})
@@ -228,11 +228,11 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 			}
 
 			Convey("When a request to get the metadata relevant to a version that does not exist", func() {
-				Convey("Then return status bad request (404) with message `Version not found`", func() {
+				Convey("Then return status bad request (404) with message `version not found`", func() {
 
 					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
 						Expect().Status(http.StatusNotFound).
-						Body().Contains("Version not found")
+						Body().Contains("version not found")
 
 				})
 			})
@@ -244,11 +244,11 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 				}
 
 				Convey("When a request to get the metadata relevant to version", func() {
-					Convey("Then return status bad request (404) with message `Version not found`", func() {
+					Convey("Then return status bad request (404) with message `version not found`", func() {
 
 						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/metadata", datasetID, edition).
 							Expect().Status(http.StatusNotFound).
-							Body().Contains("Version not found")
+							Body().Contains("version not found")
 
 					})
 				})
@@ -256,12 +256,12 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 				// Check web subnet is unable to authenticated auth tokens
 				// and hence is unable to find unpublished versions
 				Convey("When a request to get the metadata relevant to unpublished version with a valid auth header", func() {
-					Convey("Then return status bad request (404) with message `Version not found`", func() {
+					Convey("Then return status bad request (404) with message `version not found`", func() {
 
 						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/metadata", datasetID, edition).
 							WithHeader(florenceTokenName, florenceToken).
 							Expect().Status(http.StatusNotFound).
-							Body().Contains("Version not found")
+							Body().Contains("version not found")
 
 					})
 				})

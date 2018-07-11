@@ -200,13 +200,13 @@ func TestFailureToPutInstance(t *testing.T) {
 	Convey("Given an instance does not exist", t, func() {
 
 		Convey("When an authorised PUT request is made to update instance with meta data", func() {
-			Convey("Then the response return a status not found (404) with message `Instance not found`", func() {
+			Convey("Then the response return a status not found (404) with message `instance not found`", func() {
 
 				datasetAPI.PUT("/instances/{instance_id}", instanceID).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTFullInstanceJSON)).
 					Expect().Status(http.StatusNotFound).
-					Body().Contains("Instance not found")
+					Body().Contains("instance not found")
 
 			})
 		})
@@ -220,13 +220,13 @@ func TestFailureToPutInstance(t *testing.T) {
 		}
 
 		Convey("When an authorised PUT request is made to update instance with invalid json", func() {
-			Convey("Then the response return a status not found (400) with message `Failed to parse json body: unexpected end of JSON input`", func() {
+			Convey("Then the response return a status not found (400) with message `failed to parse json body: unexpected end of JSON input`", func() {
 
 				datasetAPI.PUT("/instances/{instance_id}", instanceID).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte("{")).
 					Expect().Status(http.StatusBadRequest).
-					Body().Contains("Failed to parse json body: unexpected end of JSON input")
+					Body().Contains("failed to parse json body: unexpected end of JSON input")
 
 			})
 		})
