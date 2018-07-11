@@ -4,13 +4,14 @@ import (
 	"testing"
 
 	"fmt"
+	"net/http"
+	"os"
+
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	uuid "github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
-	"net/http"
-	"os"
 )
 
 func TestSuccessfullyGetRootHierarchy(t *testing.T) {
