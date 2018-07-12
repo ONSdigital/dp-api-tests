@@ -1,0 +1,566 @@
+version: '2.1'
+services:
+
+    zookeeper:
+        image: zookeeper:3.4.9
+        hostname: zookeeper
+        container_name: zookeeper
+        ports:
+            - "2181:2181"
+        environment:
+            ZOO_MY_ID: 1
+            ZOO_PORT: 2181
+            ZOO_SERVERS: server.1=zoo1:2888:3888
+        volumes:
+            - ./zk-single-kafka-single/zoo1/data:/data
+            - ./zk-single-kafka-single/zoo1/datalog:/datalog
+
+    kafka:
+        image: confluentinc/cp-kafka:3.2.0
+        hostname: kafka
+        ports:
+            - "9092:9092"
+        environment:
+            KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
+            KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+            KAFKA_BROKER_ID: 1
+            KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+            KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+        volumes:
+            - ./zk-single-kafka-single/kafka1/data:/var/lib/kafka/data
+        depends_on:
+            - zookeeper
+        
+    mongo:
+        image: 'mongo:latest'
+        container_name: 'mongo'
+        ports:
+            - '27100:27017'
+    
+    neo4j:
+        environment:
+            - NEO4J_AUTH=none
+        image: 'neo4j:latest'
+        container_name: 'neo4j'
+        ports:
+            - '7688:7687'
+
+    vault:
+        image: 'vault:0.9.5'
+        ports:
+            - "127.0.0.1:8200:8200"
+        container_name: 'vault'
+    
+    elasticsearch:
+        image: 'elasticsearch:latest'
+        ports:
+            - '9201:9200'
+        container_name: 'elasticsearch'
+
+    auth_api:
+        container_name: 'zebedee'
+        build: ./auth-api
+        working_dir: /go/src/github.com/ONSdigital/dp-auth-api-stub
+        command: bash -c "make debug"
+        ports:
+            - '8082:8082'
+
+
+    dataset_api_publishing:
+        container_name: 'dataset-api-publishing'
+        build: ./dataset-api
+        working_dir: /go/src/github.com/ONSdigital/dp-dataset-api
+        command: bash -c "git pull && git checkout ${DATASET_API_BRANCH} && make acceptance-publishing"
+        ports:
+            - '22000:22000'
+        depends_on:
+            - 'mongo'
+            - 'kafka'
+            - 'neo4j'
+            - 'auth_api'
+        environment:
+            - HEALTHCHECK_INTERVAL=60s
+            - KAFKA_ADDR=kafka:9092
+            - MONGODB_BIND_ADDR=mongodb://mongo:27017
+            - NEO4J_BIND_ADDRESS=bolt://neo4j:7687
+            - ZEBEDEE_URL=http://zebedee:8082
+            - DATASET_API_URL=http://dataset-api-publishing:22000
+
+    dataset_api_web:
+        container_name: 'dataset-api-web'
+        build: ./dataset-api
+        working_dir: /go/src/github.com/ONSdigital/dp-dataset-api
+        command: bash -c "git pull && git checkout ${DATASET_API_BRANCH} && make acceptance-web"
+        ports:
+            - '22000:22000'
+        depends_on:
+            - 'mongo'
+            - 'kafka'
+            - 'neo4j'
+        environment:
+            - HEALTHCHECK_INTERVAL=60s
+            - KAFKA_ADDR=kafka:9092
+            - MONGODB_BIND_ADDR=mongodb://mongo:27017
+            - NEO4J_BIND_ADDRESS=bolt://neo4j:7687
+
+    download_service_web:
+        container_name: 'download-service-web'
+        build: ./download-service
+        working_dir: /go/src/github.com/ONSdigital/dp-download-service
+        command: bash -c "vault login ${VAULT_TOKEN} && git pull && git checkout ${DOWNLOAD_SERVICE_BRANCH} && make acceptance"
+        ports:
+            - '23600:23600'
+        depends_on:
+            - 'vault'
+            - 'dataset_api_web'
+            - 'filter_api_web'
+        environment:
+            - DATASET_API_URL=http://dataset-api-web:22000
+            - ZEBEDEE_URL=http://zebedee:8082
+            - IS_PUBLISHING=false
+            - VAULT_ADDR=http://vault:8200
+            - FILTER_API_URL=http://filter-api-web:22100
+            - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+
+    download_service_publishing:
+        container_name: 'download-service-publishing'
+        build: ./download-service
+        working_dir: /go/src/github.com/ONSdigital/dp-download-service
+        command: bash -c "vault login ${VAULT_TOKEN} && git pull && git checkout ${DOWNLOAD_SERVICE_BRANCH} && make acceptance"
+        ports:
+            - '23600:23600'
+        depends_on:
+            - 'vault'
+            - 'dataset_api_publishing'
+            - 'filter_api_publishing'
+        environment:
+            - DATASET_API_URL=http://dataset-api-publishing:22000
+            - ZEBEDEE_URL=http://zebedee:8082
+            - IS_PUBLISHING=true
+            - VAULT_ADDR=http://vault:8200
+            - FILTER_API_URL=http://filter-api-publishing:22100
+            - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+
+    dataset_exporter:
+        container_name: 'dataset-exporter'
+        build: ./dataset-exporter
+        working_dir: /go/src/github.com/ONSdigital/dp-dataset-exporter
+        command: bash -c "vault login ${VAULT_TOKEN} && git pull && git checkout ${DATASET_EXPORTER_BRANCH} && make acceptance"
+        depends_on:
+            - 'vault'
+            - 'dataset_api_publishing'
+            - 'filter_api_publishing'
+        environment:
+            - DATASET_API_URL=http://dataset-api-publishing:22000
+            - ZEBEDEE_URL=http://zebedee:8082
+            - KAFKA_ADDR=kafka:9092
+            - DATABASE_ADDRESS=bolt://neo4j:7687
+            - VAULT_ADDR=http://vault:8200
+            - FILTER_API_URL=http://filter-api-publishing:22100
+            - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+            - DOWNLOAD_SERVICE_URL=http://download-service-publishing:23600
+
+    dataset_exporter_xlsx:
+        container_name: 'dataset-exporter-xlsx'
+        build: ./dataset-exporter-xlsx
+        working_dir: /dp-dataset-exporter-xlsx
+        command: bash -c "vault login ${VAULT_TOKEN} && git pull && git checkout ${DATASET_EXPORTER_XLSX_BRANCH} && make acceptance"
+        depends_on:
+            - 'vault'
+            - 'dataset_api_publishing'
+            - 'filter_api_publishing'
+        environment:
+            - DATASET_API_URL=http://dataset-api-publishing:22000
+            - ZEBEDEE_URL=http://zebedee:8082
+            - KAFKA_ADDR=kafka:9092
+            - DATABASE_ADDRESS=bolt://neo4j:7687
+            - VAULT_ADDR=http://vault:8200
+            - FILTER_API_URL=http://filter-api-publishing:22100
+            - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+            - DOWNLOAD_SERVICE_URL=http://download-service-publishing:23600
+
+    filter_api_web:
+        container_name: 'filter-api-web'
+        build: ./filter-api
+        working_dir: /go/src/github.com/ONSdigital/dp-filter-api
+        command: bash -c "git pull && git checkout ${FILTER_API_BRANCH} && make acceptance"
+        ports:
+            - '22100:22100'
+        depends_on:
+            - 'kafka'
+            - 'mongo'
+            - 'dataset_api_web'
+            - 'neo4j'
+        environment:
+            - DATASET_API_URL=http://dataset-api-web:22000
+            - NEO4J_BIND_ADDR=bolt://neo4j:7687
+            - KAFKA_ADDR=kafka:9092
+            - MONGODB_BIND_ADDR=mongodb://mongo:27017
+            - ENABLE_PRIVATE_ENDPOINTS=false
+            - HOST=http://filter-api-web:22100
+
+    filter_api_publishing:
+        container_name: 'filter-api-publishing'
+        build: ./filter-api
+        working_dir: /go/src/github.com/ONSdigital/dp-filter-api
+        command: bash -c "git pull && git checkout ${FILTER_API_BRANCH} && make acceptance"
+        ports:
+            - '22100:22100'
+        depends_on:
+            - 'kafka'
+            - 'mongo'
+            - 'dataset_api_publishing'
+            - 'neo4j'
+        environment:
+            - DATASET_API_URL=http://dataset-api-publishing:22000
+            - NEO4J_BIND_ADDR=bolt://neo4j:7687
+            - KAFKA_ADDR=kafka:9092
+            - MONGODB_BIND_ADDR=mongodb://mongo:27017
+            - ENABLE_PRIVATE_ENDPOINTS=true
+            - ZEBEDEE_URL=http://zebedee:8082
+            - HOST=http://filter-api-publishing:22100
+            - DOWNLOAD_SERVICE_URL=http://download-service-publishing:23600
+
+    recipe_api:
+        container_name: 'recipe-api'
+        build: ./recipe-api
+        working_dir: /go/src/github.com/ONSdigital/dp-recipe-api
+        command: bash -c "git pull && git checkout ${RECIPE_API_BRANCH} && make debug"
+        ports:
+            - '22300:22300'
+
+    import_api:
+        container_name: 'import-api'
+        build: ./import-api
+        working_dir: /go/src/github.com/ONSdigital/dp-import-api
+        command: bash -c "git pull && git checkout ${IMPORT_API_BRANCH} && sleep 5 && make acceptance"
+        ports:
+            - '21800:21800'
+        depends_on:
+            - 'mongo'
+            - 'kafka'
+            - 'dataset_api_publishing'
+            - 'recipe_api'
+        environment:
+            - KAFKA_ADDR=kafka:9092
+            - MONGODB_IMPORTS_ADDR=mongodb://mongo:27017
+            - DATASET_API_URL=http://dataset-api-publishing:22000
+            - ZEBEDEE_URL=http://zebedee:8082
+            - RECIPE_API_URL=http://recipe-api:22300
+            - HOST=http://import-api:21800
+
+    search_api:
+        container_name: 'search-api'
+        build: ./search-api
+        working_dir: /go/src/github.com/ONSdigital/dp-search-api
+        command: bash -c "git pull && git checkout ${SEARCH_API_BRANCH} && sleep 5 && make debug"
+        ports:
+            - '23100:23100'
+        depends_on:
+            - 'dataset_api_publishing'
+            - 'kafka'
+            - 'elasticsearch'
+        environment:
+            - ZEBEDEE_URL=http://zebedee:8082
+            - KAFKA_ADDR=kafka:9092
+            - DATASET_API_URL=http://dataset-api-publishing:22000
+            - ELASTIC_SEARCH_URL=http://elasticsearch:9200
+            - ENABLE_PRIVATE_ENDPOINTS=true
+            - SEARCH_API_URL=http://search-api:23100
+
+    hierarchy_api:
+        container_name: 'hierarchy-api'
+        build: ./hierarchy-api
+        working_dir: /go/src/github.com/ONSdigital/dp-hierarchy-api
+        command: bash -c "git pull && git checkout ${HIEARCHY_API_BRANCH} && make debug"
+        ports:
+            - '22600:22600'
+        depends_on:
+            - neo4j
+        environment:
+            - HIERARCHY_DATABASE_ADDRESS=bolt://neo4j:7687
+            - HIERARCHY_API_URL=http://hierarchy-api:22600
+
+    hierarchy_builder:
+        container_name: 'hierarchy-builder'
+        build: ./hierarchy-builder
+        working_dir: /go/src/github.com/ONSdigital/dp-hierarchy-builder
+        command: bash -c "git pull && git checkout ${HIERARCHY_BUILDER_BRANCH} && make debug"
+        depends_on:
+            - kafka
+            - neo4j
+        environment:
+            - DATABASE_ADDRESS=bolt://neo4j:7687
+            - KAFKA_ADDR=kafka:9092
+
+    search_builder:
+        container_name: 'search-builder'
+        build: ./search-builder
+        working_dir: /go/src/github.com/ONSdigital/dp-search-builder
+        command: bash -c "git pull && git checkout ${SEARCH_BUILDER_BRANCH} && make debug"
+        depends_on:
+            - kafka
+            - neo4j
+            - hierarchy_api
+        environment:
+            - KAFKA_ADDR=kafka:9092
+            - HIERARCHY_API_URL=http://hierarchy-api:22600
+            - ELASTIC_SEARCH_URL=http://elasticsearch:9200
+
+    dimension_extractor:
+        container_name: 'dimension-extractor'
+        build: ./dimension-extractor
+        working_dir: /go/src/github.com/ONSdigital/dp-dimension-extractor
+        command: bash -c "vault login ${VAULT_TOKEN} && git pull && git checkout ${DIMENSION_EXTRACTOR_BRANCH} && sleep 10 && make acceptance"
+        depends_on:
+            - kafka
+            - dataset_api_publishing
+            - vault
+            - auth_api
+        environment:
+            - KAFKA_ADDR=kafka:9092
+            - DATASET_API_URL=http://dataset-api-publishing:22000
+            - VAULT_ADDR=http://vault:8200
+            - ZEBEDEE_URL=http://zebedee:8082
+            - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+
+    observation_extractor:
+        container_name: 'observation-extractor'
+        build: ./observation-extractor
+        working_dir: /go/src/github.com/ONSdigital/dp-observation-extractor
+        command: bash -c "vault login ${VAULT_TOKEN} && git pull && git checkout ${OBSERVATION_EXTRACTOR_BRANCH} && sleep 10 && make acceptance"
+        depends_on:
+            - kafka
+            - vault
+        environment:
+            - KAFKA_ADDR=kafka:9092
+            - VAULT_ADDR=http://vault:8200
+            - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+
+    dimension_importer:
+        container_name: 'dimension-importer'
+        build: ./dimension-importer
+        working_dir: /go/src/github.com/ONSdigital/dp-dimension-importer
+        command: bash -c "git pull && git checkout ${DIMENSION_IMPORTER_BRANCH} && sleep 10 && make debug"
+        depends_on:
+            - kafka
+            - dataset_api_publishing
+            - auth_api
+            - neo4j
+        environment:
+            - KAFKA_ADDR=kafka:9092
+            - DATASET_API_ADDR=http://dataset-api-publishing:22000
+            - DB_URL=bolt://neo4j:7687
+            - ZEBEDEE_URL=http://zebedee:8082
+
+    observation_importer:
+        container_name: 'observation-importer'
+        build: ./observation-importer
+        working_dir: /go/src/github.com/ONSdigital/dp-observation-importer
+        command: bash -c "git pull && git checkout ${OBSERVATION_IMPORTER_BRANCH} && sleep 10 && make debug"
+        depends_on:
+            - kafka
+            - dataset_api_publishing
+            - auth_api
+            - neo4j
+        environment:
+            - KAFKA_ADDR=kafka:9092
+            - DATASET_API_URL=http://dataset-api-publishing:22000
+            - DATABASE_ADDRESS=bolt://neo4j:7687
+            - ZEBEDEE_URL=http://zebedee:8082
+
+    import_tracker:
+        container_name: 'import-tracker'
+        build: ./import-tracker
+        working_dir: /go/src/github.com/ONSdigital/dp-import-tracker
+        command: bash -c "git pull && git checkout ${IMPORT_TRACKER_BRANCH} && sleep 10 && make debug"
+        depends_on:
+            - kafka
+            - import_api
+            - dataset_api_publishing
+            - auth_api
+            - neo4j
+        environment:
+            - KAFKA_ADDR=kafka:9092
+            - IMPORT_API_ADDR=http://import-api:21800
+            - DATASET_API_ADDR=http://dataset-api-publishing:22000
+            - ZEBEDEE_URL=http://zebedee:8082
+            - DATABASE_ADDRESS=bolt://neo4j:7687
+
+    import_reporter:
+        container_name: 'import-reporter'
+        build: ./import-reporter
+        working_dir: /go/src/github.com/ONSdigital/dp-import-reporter
+        command: bash -c "git pull && git checkout ${IMPORT_REPORTER_BRANCH} && sleep 5 && make debug"
+        depends_on:
+            - kafka
+            - dataset_api_publishing
+            - auth_api
+        environment:
+            - KAFKA_ADDR=kafka:9092
+            - DATASET_API_URL=http://dataset-api-publishing:22000
+            - ZEBEDEE_URL=http://zebedee:8082
+
+    dataset_api_web_tests:
+        environment:
+            - MONGODB_BIND_ADDR=mongodb://mongo:27017
+            - KAFKA_ADDR=kafka:9092
+            - NEO4J_BIND_ADDR=bolt://neo4j:7687
+            - DATASET_API_URL=http://dataset-api-web:22000
+        container_name: 'dataset-api-web-tests'
+        build: ./dataset-api-web-tests
+        working_dir: /go/src/github.com/ONSdigital/dp-api-tests/web/datasetAPI
+        command: bash -c "git pull && git checkout ${API_TESTS_BRANCH} && sleep 10 && HUMAN_LOG=1 go test ./..."
+        depends_on:
+            - 'dataset_api_web'
+
+    dataset_api_publishing_tests:
+        environment:
+            - MONGODB_BIND_ADDR=mongodb://mongo:27017
+            - KAFKA_ADDR=kafka:9092
+            - NEO4J_BIND_ADDR=bolt://neo4j:7687
+            - DATASET_API_URL=http://dataset-api-publishing:22000
+        container_name: 'dataset-api-publishing-tests'
+        build: ./dataset-api-publishing-tests
+        working_dir: /go/src/github.com/ONSdigital/dp-api-tests/publishing/datasetAPI
+        command: bash -c "git pull && git checkout ${API_TESTS_BRANCH} && sleep 10 && HUMAN_LOG=1 go test ./..."
+        depends_on:
+            - 'dataset_api_publishing'
+
+    download_service_web_tests:
+        environment:
+            - MONGODB_BIND_ADDR=mongodb://mongo:27017
+            - VAULT_ADDR=http://vault:8200
+            - DOWNLOAD_SERVICE_URL=http://download-service-web:23600
+            - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+        container_name: 'download-service-web-tests'
+        build: ./download-service-web-tests
+        working_dir: /go/src/github.com/ONSdigital/dp-api-tests/web/downloadService
+        command: bash -c "vault login ${VAULT_TOKEN} && git pull && git checkout ${API_TESTS_BRANCH} && sleep 20 && HUMAN_LOG=1 make test"
+        depends_on:
+            - 'download_service_web'
+
+    download_service_publishing_tests:
+        environment:
+            - MONGODB_BIND_ADDR=mongodb://mongo:27017
+            - VAULT_ADDR=http://vault:8200
+            - DOWNLOAD_SERVICE_URL=http://download-service-publishing:23600
+            - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+        container_name: 'download-service-publishing-tests'
+        build: ./download-service-publishing-tests
+        working_dir: /go/src/github.com/ONSdigital/dp-api-tests/publishing/downloadService
+        command: bash -c "vault login ${VAULT_TOKEN} && git pull && git checkout ${API_TESTS_BRANCH} && sleep 20 && HUMAN_LOG=1 make test"
+        depends_on:
+            - 'download_service_publishing'
+
+    filter_api_web_tests:
+        environment:
+            - MONGODB_BIND_ADDR=mongodb://mongo:27017
+            - FILTER_API_URL=http://filter-api-web:22100
+            - NEO4J_BIND_ADDR=bolt://neo4j:7687
+        container_name: 'filter-api-web-tests'
+        build: ./filter-api-web-tests
+        working_dir: /go/src/github.com/ONSdigital/dp-api-tests/web/filterAPI
+        command: bash -c "git pull && git checkout ${API_TESTS_BRANCH} && sleep 20 && HUMAN_LOG=1 go test ./..."
+        depends_on:
+            - 'filter_api_web'
+
+    filter_api_publishing_tests:
+        environment:
+            - MONGODB_BIND_ADDR=mongodb://mongo:27017
+            - FILTER_API_URL=http://filter-api-publishing:22100
+            - NEO4J_BIND_ADDR=bolt://neo4j:7687
+        container_name: 'filter-api-publishing-tests'
+        build: ./filter-api-publishing-tests
+        working_dir: /go/src/github.com/ONSdigital/dp-api-tests/publishing/filterAPI
+        command: bash -c "git pull && git checkout ${API_TESTS_BRANCH} && sleep 20 && HUMAN_LOG=1 go test ./..."
+        depends_on:
+            - 'filter_api_publishing'
+
+    import_api_tests:
+        environment:
+            - MONGODB_BIND_ADDR=mongodb://mongo:27017
+            - IMPORT_API_URL=http://import-api:21800
+        container_name: 'import-api-tests'
+        build: ./import-api-tests
+        working_dir: /go/src/github.com/ONSdigital/dp-api-tests/publishing/importAPI
+        command: bash -c "git pull && git checkout ${API_TESTS_BRANCH} && sleep 20 && HUMAN_LOG=1 go test ./..."
+        depends_on:
+            - 'import_api'
+
+    search_api_tests:
+        environment:
+            - SEARCH_API_URL=http://search-api:23100
+            - ELASTIC_SEARCH_URL=http://elasticsearch:9200
+            - MONGODB_BIND_ADDR=mongodb://mongo:27017
+        container_name: 'search-api-tests'
+        build: ./search-api-tests
+        working_dir: /go/src/github.com/ONSdigital/dp-api-tests/searchAPI
+        command: bash -c "git pull && git checkout ${API_TESTS_BRANCH} && sleep 20 && HUMAN_LOG=1 go test ./..."
+        depends_on:
+            - 'search_api'
+
+    hierarchy_api_tests:
+        environment:
+            - HIERARCHY_API_URL=http://hierarchy-api:22600
+            - NEO4J_BIND_ADDR=bolt://neo4j:7687
+        container_name: 'hierarchy-api-tests'
+        build: ./hierarchy-api-tests
+        working_dir: /go/src/github.com/ONSdigital/dp-api-tests/web/hierarchyAPI
+        command: bash -c "git pull && git checkout ${API_TESTS_BRANCH} && HUMAN_LOG=1 go test ./..."
+        depends_on:
+            - 'hierarchy_api'
+
+    end_to_end_tests:
+        environment:
+            - DATASET_API_URL=http://dataset-api-publishing:22000
+            - DOWNLOAD_SERVICE_URL=http://download-service-publishing:23600
+            - FILTER_API_URL=http://filter-api-publishing:22100
+            - HIERARCHY_API_URL=http://hierarchy-api:22600
+            - IMPORT_API_URL=http://import-api:21800
+            - RECIPE_API_URL=http://recipe-api:22300
+            - SEARCH_API_URL=http://search-api:23100
+            - ELASTIC_SEARCH_URL=http://elasticsearch:9200
+            - MONGODB_BIND_ADDR=mongodb://mongo:27017
+            - NEO4J_BIND_ADDR=bolt://neo4j:7687
+            - KAFKA_ADDR=kafka:9092
+            - VAULT_ADDR=http://vault:8200
+            - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+        container_name: 'end-to-end-tests'
+        build: ./end-to-end-tests
+        working_dir: /go/src/github.com/ONSdigital/dp-api-tests/endToEndTests
+        command: bash -c "vault login ${VAULT_TOKEN} && git pull && git checkout ${API_TESTS_BRANCH} && HUMAN_LOG=1 && make test"
+        depends_on:
+            - 'dataset_api_publishing'
+            - 'download_service_publishing'
+            - 'filter_api_publishing'
+            - 'hierarchy_api'
+            - 'import_api'
+            - 'recipe_api'
+            - 'search_api'
+            - 'elasticsearch'
+            - 'mongo'
+            - 'neo4j'
+            - 'kafka'
+            - 'vault'
+            - 'import_tracker'
+            - 'import_reporter'
+            - 'dimension_importer'
+            - 'dimension_extractor'
+            - 'observation_importer'
+            - 'observation_extractor'
+            - 'dataset_exporter'
+            - 'dataset_exporter_xlsx'
+            - 'search_builder'
+            - 'hierarchy_builder'
+
+
