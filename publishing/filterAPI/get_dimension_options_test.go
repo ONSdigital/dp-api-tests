@@ -137,7 +137,7 @@ func validateOptionsResponse(responseArray httpexpect.Array, filterBlueprintID, 
 
 	for i, option := range expectedOptions {
 
-		filterURL := "http://localhost:22100/filters/" + filterBlueprintID
+		filterURL := cfg.FilterAPIURL + "/filters/" + filterBlueprintID
 		dimensionURL := filterURL + "/dimensions/" + dimensionID
 		selfURL := dimensionURL + "/options/" + option
 

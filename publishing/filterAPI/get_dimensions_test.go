@@ -48,7 +48,7 @@ func TestSuccessfullyGetListOfDimensions(t *testing.T) {
 				expectedDimensions := []string{"age", "sex", "aggregate", "time"}
 				for i, dim := range expectedDimensions {
 
-					filterURL := "http://localhost:22100/filters/" + filterBlueprintID
+					filterURL := cfg.FilterAPIURL + "/filters/" + filterBlueprintID
 					selfURL := filterURL + "/dimensions/" + dim
 					optionsURL := selfURL + "/options"
 
