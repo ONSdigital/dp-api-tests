@@ -120,6 +120,19 @@ func (ds *Datastore) SetupCodelists() error {
 	return err
 }
 
+// SetupCodelistEditions sets up two editions of one codelist
+func (ds *Datastore) SetupCodelistEditions() error {
+	query := `
+	CREATE(_1:_%s:_name_ABCDEF {label:"Tottenham", edition: "2018"})
+	CREATE(_2:_%s:_name_ABCDEF {label:"Tottenham", edition: "2017"})
+	`
+
+	query = fmt.Sprintf(query, ds.CodeListLabel, ds.CodeListLabel)
+
+	_, err := ds.connection.ExecNeo(query, nil)
+	return err
+}
+
 // DropCodelists removes codelists from the datastore
 func (ds *Datastore) DropCodelists() error {
 	query := `MATCH (n:_%s) DETACH DELETE n`
