@@ -86,7 +86,7 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 				So(filterOutput.Downloads.CSV.Size, ShouldEqual, "12mb")
 
 				So(filterOutput.Downloads.XLS, ShouldNotBeNil)
-				So(filterOutput.Downloads.XLS.HRef, ShouldEqual, "http://localhost:23600/downloads/filter-outputs/"+filterOutputID+".xlsx")
+				So(filterOutput.Downloads.XLS.HRef, ShouldEqual, cfg.DownloadServiceURL+"/downloads/filter-outputs/"+filterOutputID+".xlsx")
 				So(filterOutput.Downloads.XLS.Private, ShouldEqual, "private-s3-xls-location")
 				So(filterOutput.Downloads.XLS.Public, ShouldBeEmpty)
 				So(filterOutput.Downloads.XLS.Size, ShouldEqual, "24mb")
@@ -124,7 +124,7 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 				So(filterOutput.Downloads.CSV.Public, ShouldEqual, "public-s3-csv-location")
 				So(filterOutput.Downloads.CSV.Size, ShouldEqual, "12mb")
 				So(filterOutput.Downloads.XLS, ShouldNotBeNil)
-				So(filterOutput.Downloads.XLS.HRef, ShouldEqual, "http://localhost:23600/downloads/filter-outputs/"+filterOutputID+".xlsx")
+				So(filterOutput.Downloads.XLS.HRef, ShouldEqual, cfg.DownloadServiceURL+"/downloads/filter-outputs/"+filterOutputID+".xlsx")
 				So(filterOutput.Downloads.XLS.Private, ShouldEqual, "private-s3-xls-location")
 				So(filterOutput.Downloads.XLS.Public, ShouldEqual, "public-s3-xls-location")
 				So(filterOutput.Downloads.XLS.Size, ShouldEqual, "24mb")
