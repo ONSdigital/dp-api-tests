@@ -28,6 +28,12 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
+	neo4JStore, err := neo4j.NewDatastore(cfg.Neo4jAddr, "", "")
+	if err != nil {
+		log.ErrorC("unable to connect to neo4j", err, nil)
+		t.FailNow()
+	}
+
 	Convey("Given an instance has been created by an import job", t, func() {
 		publishedInstance := &mongo.Doc{
 			Database:   cfg.MongoDB,
@@ -101,10 +107,10 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 
 			Convey("When a PUT request is made to update instance meta data and set state to `edition-confirmed`", func() {
 
-				count, err := neo4j.CreateInstanceNode(cfg.Neo4jAddr, instanceID)
+				count, err := neo4JStore.CreateInstanceNode(instanceID)
 				if err != nil {
 					t.Errorf("failed to create neo4j instance node: [%v]\n error: [%v]\n", instanceID, err)
-					t.Fail()
+					t.FailNow()
 				}
 				So(count, ShouldEqual, 1)
 
@@ -139,13 +145,16 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 					checkEditionDoc(datasetID, instanceID, edition.Next)
 
 					Convey("and the dataset_id, edition and version values are set a properties on the neo4j instance node", func() {
-						neoDatasetID, neoEdition, neoVersion, err := neo4j.GetInstanceProperties(cfg.Neo4jAddr, instanceID)
+
+						instanceProps, err := neo4JStore.GetInstanceProperties(instanceID)
 						if err != nil {
-							t.Error(err)
+							t.Errorf("failed to get properties from neo4j instance node: [%v]\n error: [%v]\n", instanceID, err)
+							t.FailNow()
 						}
-						So(neoDatasetID, ShouldEqual, datasetID)
-						So(neoEdition, ShouldEqual, instance.Edition)
-						So(neoVersion, ShouldEqual, int64(instance.Version))
+
+						So(instanceProps["dataset_id"], ShouldEqual, datasetID)
+						So(instanceProps["edition"], ShouldEqual, instance.Edition)
+						So(instanceProps["version"], ShouldEqual, instance.Version)
 					})
 
 					if instance.Links.Edition != nil {
@@ -162,9 +171,9 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 							}
 						}
 
-						if err := neo4j.CleanUpInstance(cfg.Neo4jAddr, instanceID); err != nil {
+						if err := neo4JStore.CleanUpInstance(instanceID); err != nil {
 							t.Errorf("failed to cleanup neo4j instances: [%v]\n error: [%v]\n", instanceID, err)
-							t.Fail()
+							t.FailNow()
 						}
 					}
 				})

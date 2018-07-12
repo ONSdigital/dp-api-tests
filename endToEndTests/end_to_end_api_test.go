@@ -7,7 +7,6 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"path/filepath"
 	"strconv"
 	"testing"
 	"time"
@@ -21,12 +20,11 @@ import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/ONSdigital/go-ns/rchttp"
+	"net/url"
 )
 
-var timeout = time.Duration(15 * time.Second)
+var timeout = time.Duration(30 * time.Second)
 
-// TODO Once export services have been updated with encryption and decryption
-// remove decrypt boolean flag from all setup functions
 func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 	importAPI := httpexpect.New(t, cfg.ImportAPIURL)
@@ -454,7 +452,14 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		}
 		log.Debug("Pre publish full downloads have been generated", logData)
 
-		privateCSVFilename := filepath.Base(instanceResource.Downloads.CSV.Private)
+
+		privateCSVURL, err := url.Parse(instanceResource.Downloads.CSV.Private)
+		if err != nil {
+			log.ErrorC("failed to parse private CSV URL", err, log.Data{"url": instanceResource.Downloads.CSV.Private})
+			t.FailNow()
+		}
+
+		privateCSVFilename := privateCSVURL.Path
 
 		// read csv download from s3
 		privateCSVFile, err := getS3File(region, bucket, privateCSVFilename, true)
@@ -673,9 +678,6 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		log.Info("Then an api customer should be able to filter a dataset and be able to download", nil)
 
 		filterBlueprintID, filterOutputID := testFiltering(t, filterAPI, instanceID, true)
-		if err != nil {
-			return
-		}
 
 		filterBlueprint := &mongo.Doc{
 			Database:   cfg.MongoFiltersDB,
@@ -725,7 +727,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		edition := &mongo.Doc{
 			Database:   cfg.MongoDB,
 			Collection: "editions",
-			Key:        "links.self.href",
+			Key:        "current.links.self.href",
 			Value:      instanceResource.Links.Edition.HRef,
 		}
 
@@ -884,19 +886,31 @@ func testFiltering(t *testing.T, filterAPI *httpexpect.Expect, instanceID string
 	So(filterOutputResource.Downloads.CSV, ShouldNotBeNil)
 	So(filterOutputResource.Downloads.XLS, ShouldNotBeNil)
 
-	log.Debug("filter is complete, checking csv download",
+	log.Info("filter is complete, checking csv download",
 		log.Data{
 			"public_link":  filterOutputResource.Downloads.CSV.Public,
 			"private_link": filterOutputResource.Downloads.CSV.Private,
 			"href":         filterOutputResource.Downloads.CSV.HRef,
 		})
 
-	filteredCSVURL := filterOutputResource.Downloads.CSV.Public
+	filteredCSVURLRaw := filterOutputResource.Downloads.CSV.Public
 	if !isPublished {
-		filteredCSVURL = filterOutputResource.Downloads.CSV.Private
+		filteredCSVURLRaw = filterOutputResource.Downloads.CSV.Private
 	}
 
-	filteredCSVFilename := filepath.Base(filteredCSVURL)
+	filteredCSVURL, err := url.Parse(filteredCSVURLRaw)
+	if err != nil {
+		log.ErrorC("failed to parse private filteredCSV URL", err, log.Data{"url": filteredCSVURLRaw})
+		t.FailNow()
+	}
+
+	filteredCSVFilename := filteredCSVURL.Path
+
+	log.Info("attempting to get filtered CSV file from S3",
+		log.Data{
+			"filtered_csv_filename": filteredCSVFilename,
+			"filtered_csv_url":      filteredCSVURLRaw,
+		})
 
 	// read csv download from s3
 	filteredCSVFile, err := getS3File(region, bucket, filteredCSVFilename, !isPublished)
@@ -918,11 +932,23 @@ func testFiltering(t *testing.T, filterAPI *httpexpect.Expect, instanceID string
 			"href":         filterOutputResource.Downloads.XLS.HRef,
 		})
 
-	filteredXLSURL := filterOutputResource.Downloads.XLS.Public
+	filteredXLSURLRaw := filterOutputResource.Downloads.XLS.Public
 	if !isPublished {
-		filteredXLSURL = filterOutputResource.Downloads.XLS.Private
+		filteredXLSURLRaw = filterOutputResource.Downloads.XLS.Private
 	}
-	filteredXLSFilename := filepath.Base(filteredXLSURL)
+
+	filteredXLSURL, err := url.Parse(filteredXLSURLRaw)
+	if err != nil {
+		log.ErrorC("failed to parse private filtered XLS URL", err, log.Data{"url": filteredXLSURLRaw})
+		t.FailNow()
+	}
+
+	filteredXLSFilename := filteredXLSURL.Path
+	log.Info("attempting to get filtered XLS file from S3",
+		log.Data{
+			"filtered_xls_filename": filteredXLSFilename,
+			"filtered_xls_url":      filteredXLSURLRaw,
+		})
 
 	// read xls download from s3
 	filteredXLSFile, err := getS3File(region, bucket, filteredXLSFilename, !isPublished)

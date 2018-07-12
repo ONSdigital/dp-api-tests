@@ -71,8 +71,7 @@ func init() {
 		os.Exit(1)
 	}
 
-	// Create generic hierarchy for test (CPIH)
-	if err = generateGenericHierarchy(); err != nil {
+	if err = generateCPIHData(); err != nil {
 		log.ErrorC("neo4j datastore error", err, nil)
 		os.Exit(1)
 	}
@@ -162,7 +161,7 @@ func deleteMongoTestData(datasetID string) bool {
 	return successfullyRemovedMongoTestData
 }
 
-func generateGenericHierarchy() error {
+func generateCPIHData() error {
 	datastore, err := neo4j.NewDatastore(cfg.Neo4jAddr, "", neo4j.GenericHierarchyCPIHTestData)
 	if err != nil {
 		log.ErrorC("unable to connect to neo4j", err, nil)
@@ -171,6 +170,11 @@ func generateGenericHierarchy() error {
 
 	if err = datastore.CreateGenericHierarchy(genericHierarchy); err != nil {
 		log.ErrorC("unable to create generic hierarchy", err, log.Data{"generic_hierarchy": genericHierarchy})
+		return err
+	}
+
+	if err = datastore.CreateCPIHCodeList(); err != nil {
+		log.ErrorC("unable to create CPIH code list", err, nil)
 		return err
 	}
 
