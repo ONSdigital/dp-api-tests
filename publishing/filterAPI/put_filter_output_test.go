@@ -54,7 +54,7 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 				}
 
 				So(filterOutput.Downloads.CSV, ShouldNotBeNil)
-				So(filterOutput.Downloads.CSV.HRef, ShouldEqual, "http://localhost:23600/downloads/filter-outputs/"+filterOutputID+".csv")
+				So(filterOutput.Downloads.CSV.HRef, ShouldEqual, cfg.DownloadServiceURL+"/downloads/filter-outputs/"+filterOutputID+".csv")
 				So(filterOutput.Downloads.CSV.Private, ShouldEqual, "private-s3-csv-location")
 				So(filterOutput.Downloads.CSV.Public, ShouldBeEmpty)
 				So(filterOutput.Downloads.CSV.Size, ShouldEqual, "12mb")
@@ -80,7 +80,7 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 				}
 
 				So(filterOutput.Downloads.CSV, ShouldNotBeNil)
-				So(filterOutput.Downloads.CSV.HRef, ShouldEqual, "http://localhost:23600/downloads/filter-outputs/"+filterOutputID+".csv")
+				So(filterOutput.Downloads.CSV.HRef, ShouldEqual, cfg.DownloadServiceURL+"/downloads/filter-outputs/"+filterOutputID+".csv")
 				So(filterOutput.Downloads.CSV.Private, ShouldEqual, "private-s3-csv-location")
 				So(filterOutput.Downloads.CSV.Public, ShouldBeEmpty)
 				So(filterOutput.Downloads.CSV.Size, ShouldEqual, "12mb")
@@ -119,7 +119,7 @@ func TestSuccessfulPutFilterOutput(t *testing.T) {
 				log.Debug("filter output", log.Data{"filter_output": filterOutput.Downloads})
 
 				So(filterOutput.Downloads.CSV, ShouldNotBeNil)
-				So(filterOutput.Downloads.CSV.HRef, ShouldEqual, "http://localhost:23600/downloads/filter-outputs/"+filterOutputID+".csv")
+				So(filterOutput.Downloads.CSV.HRef, ShouldEqual, cfg.DownloadServiceURL+"/downloads/filter-outputs/"+filterOutputID+".csv")
 				So(filterOutput.Downloads.CSV.Private, ShouldEqual, "private-s3-csv-location")
 				So(filterOutput.Downloads.CSV.Public, ShouldEqual, "public-s3-csv-location")
 				So(filterOutput.Downloads.CSV.Size, ShouldEqual, "12mb")
