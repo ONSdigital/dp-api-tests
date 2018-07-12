@@ -2,7 +2,7 @@
 
 A docker compose project for running the dp-api-tests
 
-## Requirements
+Please note that you will need the following installed to automate the acceptance tests:
 
 - Docker
 - Docker compose

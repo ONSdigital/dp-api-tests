@@ -478,6 +478,7 @@ services:
             - MONGODB_BIND_ADDR=mongodb://mongo:27017
             - FILTER_API_URL=http://filter-api-publishing:22100
             - NEO4J_BIND_ADDR=bolt://neo4j:7687
+            - DOWNLOAD_SERVICE_URL=http://download-service-publishing:23600
         container_name: 'filter-api-publishing-tests'
         build: ./filter-api-publishing-tests
         working_dir: /go/src/github.com/ONSdigital/dp-api-tests/publishing/filterAPI
