@@ -226,7 +226,7 @@ func TestFailureToPutInstance(t *testing.T) {
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte("{")).
 					Expect().Status(http.StatusBadRequest).
-					Body().Contains("failed to parse json body: unexpected end of JSON input")
+					Body().Contains("failed to parse json body")
 
 			})
 		})
@@ -259,7 +259,7 @@ func TestFailureToPutInstance(t *testing.T) {
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(`{"state": "edition-confirmed"}`)).
 					Expect().Status(http.StatusForbidden).Body().
-					Contains("Unable to update resource, expected resource to have a state of completed")
+					Contains("unable to update resource, expected resource to have a state of completed")
 
 			})
 		})
@@ -271,7 +271,7 @@ func TestFailureToPutInstance(t *testing.T) {
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(`{"state": "associated"}`)).
 					Expect().Status(http.StatusForbidden).
-					Body().Contains("Unable to update resource, expected resource to have a state of edition-confirmed")
+					Body().Contains("unable to update resource, expected resource to have a state of edition-confirmed")
 
 			})
 		})
@@ -283,7 +283,7 @@ func TestFailureToPutInstance(t *testing.T) {
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(`{"state": "published"}`)).
 					Expect().Status(http.StatusForbidden).
-					Body().Contains("Unable to update resource, expected resource to have a state of associated")
+					Body().Contains("unable to update resource, expected resource to have a state of associated")
 
 			})
 		})
