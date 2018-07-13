@@ -197,20 +197,20 @@ func TestFailureToPutInstance(t *testing.T) {
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-	// Convey("Given an instance does not exist", t, func() {
-	//
-	// 	Convey("When an authorised PUT request is made to update instance with meta data", func() {
-	// 		Convey("Then the response return a status not found (404) with message `instance not found`", func() {
-	//
-	// 			datasetAPI.PUT("/instances/{instance_id}", instanceID).
-	// 				WithHeader(florenceTokenName, florenceToken).
-	// 				WithBytes([]byte(validPUTFullInstanceJSON)).
-	// 				Expect().Status(http.StatusNotFound).
-	// 				Body().Contains("instance not found")
-	//
-	// 		})
-	// 	})
-	// })
+	Convey("Given an instance does not exist", t, func() {
+
+		Convey("When an authorised PUT request is made to update instance with meta data", func() {
+			Convey("Then the response return a status not found (404) with message `instance not found`", func() {
+
+				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(validPUTFullInstanceJSON)).
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("instance not found")
+
+			})
+		})
+	})
 
 	Convey("Given a created instance exists", t, func() {
 		docs, err := setupInstance(datasetID, edition, instanceID)
@@ -219,74 +219,74 @@ func TestFailureToPutInstance(t *testing.T) {
 			os.Exit(1)
 		}
 
-		// Convey("When an authorised PUT request is made to update instance with invalid json", func() {
-		// 	Convey("Then the response return a status not found (400) with message `failed to parse json body: unexpected end of JSON input`", func() {
-		//
-		// 		datasetAPI.PUT("/instances/{instance_id}", instanceID).
-		// 			WithHeader(florenceTokenName, florenceToken).
-		// 			WithBytes([]byte("{")).
-		// 			Expect().Status(http.StatusBadRequest).
-		// 			Body().Contains("failed to parse json body")
-		//
-		// 	})
-		// })
-		//
-		// Convey("When an unauthorised PUT request is made to update an instance resource with an invalid authentication header", func() {
-		// 	Convey("Then fail to update resource and return a status unauthorized (401)", func() {
-		//
-		// 		datasetAPI.PUT("/instances/{instance_id}", instanceID).
-		// 			WithBytes([]byte(validPUTFullInstanceJSON)).
-		// 			WithHeader(florenceTokenName, unauthorisedAuthToken).
-		// 			Expect().Status(http.StatusUnauthorized)
-		//
-		// 	})
-		// })
-		//
-		// Convey("When no authentication header is provided in PUT request to update an instance resource", func() {
-		// 	Convey("Then fail to update resource and return a status unauthorized (401)", func() {
-		//
-		// 		datasetAPI.PUT("/instances/{instance_id}", instanceID).
-		// 			WithBytes([]byte(validPUTFullInstanceJSON)).
-		// 			Expect().Status(http.StatusUnauthorized)
-		//
-		// 	})
-		// })
-		//
-		// Convey("When a PUT request is made to update instance state to `edition-confirmed`", func() {
-		// 	Convey("Then fail to update resource and return a status of forbidden (403) with a message `Unable to update resource, expected resource to have a state of completed`", func() {
-		//
-		// 		datasetAPI.PUT("/instances/{instance_id}", instanceID).
-		// 			WithHeader(florenceTokenName, florenceToken).
-		// 			WithBytes([]byte(`{"state": "edition-confirmed"}`)).
-		// 			Expect().Status(http.StatusForbidden).Body().
-		// 			Contains("unable to update resource, expected resource to have a state of completed")
-		//
-		// 	})
-		// })
-		//
-		// Convey("When a PUT request is made to update instance state to `associated`", func() {
-		// 	Convey("Then fail to update resource and return a status of forbidden (403) with a message `Unable to update resource, expected resource to have a state of edition-confirmed`", func() {
-		//
-		// 		datasetAPI.PUT("/instances/{instance_id}", instanceID).
-		// 			WithHeader(florenceTokenName, florenceToken).
-		// 			WithBytes([]byte(`{"state": "associated"}`)).
-		// 			Expect().Status(http.StatusForbidden).
-		// 			Body().Contains("unable to update resource, expected resource to have a state of edition-confirmed")
-		//
-		// 	})
-		// })
-		//
-		// Convey("When a PUT request is made to update instance state to `published`", func() {
-		// 	Convey("Then fail to update resource and return a status of forbidden (403) with a message `Unable to update resource, expected resource to have a state of edition-confirmed`", func() {
-		//
-		// 		datasetAPI.PUT("/instances/{instance_id}", instanceID).
-		// 			WithHeader(florenceTokenName, florenceToken).
-		// 			WithBytes([]byte(`{"state": "published"}`)).
-		// 			Expect().Status(http.StatusForbidden).
-		// 			Body().Contains("unable to update resource, expected resource to have a state of associated")
-		//
-		// 	})
-		// })
+		Convey("When an authorised PUT request is made to update instance with invalid json", func() {
+			Convey("Then the response return a status not found (400) with message `failed to parse json body: unexpected end of JSON input`", func() {
+
+				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte("{")).
+					Expect().Status(http.StatusBadRequest).
+					Body().Contains("failed to parse json body")
+
+			})
+		})
+
+		Convey("When an unauthorised PUT request is made to update an instance resource with an invalid authentication header", func() {
+			Convey("Then fail to update resource and return a status unauthorized (401)", func() {
+
+				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+					WithBytes([]byte(validPUTFullInstanceJSON)).
+					WithHeader(florenceTokenName, unauthorisedAuthToken).
+					Expect().Status(http.StatusUnauthorized)
+
+			})
+		})
+
+		Convey("When no authentication header is provided in PUT request to update an instance resource", func() {
+			Convey("Then fail to update resource and return a status unauthorized (401)", func() {
+
+				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+					WithBytes([]byte(validPUTFullInstanceJSON)).
+					Expect().Status(http.StatusUnauthorized)
+
+			})
+		})
+
+		Convey("When a PUT request is made to update instance state to `edition-confirmed`", func() {
+			Convey("Then fail to update resource and return a status of forbidden (403) with a message `Unable to update resource, expected resource to have a state of completed`", func() {
+
+				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(`{"state": "edition-confirmed"}`)).
+					Expect().Status(http.StatusForbidden).Body().
+					Contains("unable to update resource, expected resource to have a state of completed")
+
+			})
+		})
+
+		Convey("When a PUT request is made to update instance state to `associated`", func() {
+			Convey("Then fail to update resource and return a status of forbidden (403) with a message `Unable to update resource, expected resource to have a state of edition-confirmed`", func() {
+
+				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(`{"state": "associated"}`)).
+					Expect().Status(http.StatusForbidden).
+					Body().Contains("unable to update resource, expected resource to have a state of edition-confirmed")
+
+			})
+		})
+
+		Convey("When a PUT request is made to update instance state to `published`", func() {
+			Convey("Then fail to update resource and return a status of forbidden (403) with a message `Unable to update resource, expected resource to have a state of edition-confirmed`", func() {
+
+				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+					WithHeader(florenceTokenName, florenceToken).
+					WithBytes([]byte(`{"state": "published"}`)).
+					Expect().Status(http.StatusForbidden).
+					Body().Contains("unable to update resource, expected resource to have a state of associated")
+
+			})
+		})
 
 		Convey("When a PUT request is made to update instance state to `fake-state`", func() {
 			Convey("Then fail to update resource and return a status of bad request (400) with a message `Bad request - invalid filter state values: [fake-state]`", func() {
