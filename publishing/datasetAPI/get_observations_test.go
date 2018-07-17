@@ -6,10 +6,11 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect"
-	"github.com/gedge/mgo"
-	uuid "github.com/satori/go.uuid"
+	"github.com/globalsign/mgo"
+	"github.com/globalsign/mgo/bson"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"github.com/ONSdigital/dp-api-tests/helpers"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
 	"github.com/ONSdigital/go-ns/log"
@@ -21,16 +22,17 @@ const (
 )
 
 func TestSuccessfullyGetObservationsForVersion(t *testing.T) {
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
-	instanceID := uuid.NewV4().String()
-	unpublishedInstanceID := uuid.NewV4().String()
-	datasetID := uuid.NewV4().String()
-	editionID := uuid.NewV4().String()
 	edition := "2017"
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-	publishedGraphData, err := neo4j.NewDatastore(cfg.Neo4jAddr, instanceID, observationTestData)
+	publishedGraphData, err := neo4j.NewDatastore(cfg.Neo4jAddr, ids.InstancePublished, observationTestData)
 	if err != nil {
 		log.ErrorC("Unable to connect to a neo4j instance", err, nil)
 		os.Exit(1)
@@ -41,7 +43,7 @@ func TestSuccessfullyGetObservationsForVersion(t *testing.T) {
 		os.Exit(1)
 	}
 
-	unpublishedGraphData, err := neo4j.NewDatastore(cfg.Neo4jAddr, unpublishedInstanceID, observationTestData)
+	unpublishedGraphData, err := neo4j.NewDatastore(cfg.Neo4jAddr, ids.InstanceAssociated, observationTestData)
 	if err != nil {
 		log.ErrorC("Unable to connect to a neo4j instance", err, nil)
 		os.Exit(1)
@@ -53,7 +55,7 @@ func TestSuccessfullyGetObservationsForVersion(t *testing.T) {
 	}
 
 	Convey("Given a published and unpublished version", t, func() {
-		docs, err := setupObservationDocs(datasetID, editionID, edition, instanceID, unpublishedInstanceID)
+		docs, err := setupObservationDocs(ids.DatasetPublished, ids.EditionPublished, edition, ids.InstancePublished, ids.InstanceAssociated, ids.UniqueTimestamp)
 		if err != nil {
 			log.ErrorC("Failed to setup test data", err, nil)
 			os.Exit(1)
@@ -61,7 +63,7 @@ func TestSuccessfullyGetObservationsForVersion(t *testing.T) {
 
 		Convey("When an authenticated request is made to get an observation resource for a published version", func() {
 			Convey("Then the response body contains the expected observation data", func() {
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/observations", datasetID, edition).
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/observations", ids.DatasetPublished, edition).
 					WithQueryString("time=Aug-16&geography=K02000001&aggregate=cpi1dim1G50100").
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
@@ -73,9 +75,9 @@ func TestSuccessfullyGetObservationsForVersion(t *testing.T) {
 				response.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("href").String().Match("/codelists/608064B3-A808-449B-9041-EA3A2F72CFAE/codes/Aug-16$")
 				response.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("id").Equal("Aug-16")
 				response.Value("limit").Equal(10000)
-				response.Value("links").Object().Value("dataset_metadata").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1/metadata$")
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match(".+/datasets/" + datasetID + "/editions/" + edition + "/versions/1/observations\\?aggregate=cpi1dim1G50100&geography=K02000001&time=Aug-16$")
-				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
+				response.Value("links").Object().Value("dataset_metadata").Object().Value("href").String().Match("/datasets/" + ids.DatasetPublished + "/editions/" + edition + "/versions/1/metadata$")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match(".+/datasets/" + ids.DatasetPublished + "/editions/" + edition + "/versions/1/observations\\?aggregate=cpi1dim1G50100&geography=K02000001&time=Aug-16$")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + ids.DatasetPublished + "/editions/" + edition + "/versions/1$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
 				response.Value("observations").Array().Length().Equal(1)
 				response.Value("observations").Array().Element(0).Object().Value("observation").Equal("117.9")
@@ -88,7 +90,7 @@ func TestSuccessfullyGetObservationsForVersion(t *testing.T) {
 		Convey("When an authenticated request is made to get an observation resource for an unpublished version", func() {
 			Convey("Then the response body contains the expected observation data", func() {
 
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", ids.DatasetPublished, edition).
 					WithQueryString("time=Aug-16&geography=K02000001&aggregate=cpi1dim1S40403").
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
@@ -100,9 +102,9 @@ func TestSuccessfullyGetObservationsForVersion(t *testing.T) {
 				response.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("href").String().Match("/codelists/608064B3-A808-449B-9041-EA3A2F72CFAE/codes/Aug-16$")
 				response.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("id").Equal("Aug-16")
 				response.Value("limit").Equal(10000)
-				response.Value("links").Object().Value("dataset_metadata").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/2/metadata$")
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match(".+/datasets/" + datasetID + "/editions/" + edition + "/versions/2/observations\\?aggregate=cpi1dim1S40403&geography=K02000001&time=Aug-16$")
-				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/2$")
+				response.Value("links").Object().Value("dataset_metadata").Object().Value("href").String().Match("/datasets/" + ids.DatasetPublished + "/editions/" + edition + "/versions/2/metadata$")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match(".+/datasets/" + ids.DatasetPublished + "/editions/" + edition + "/versions/2/observations\\?aggregate=cpi1dim1S40403&geography=K02000001&time=Aug-16$")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + ids.DatasetPublished + "/editions/" + edition + "/versions/2$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("2")
 				response.Value("observations").Array().Length().Equal(1)
 				response.Value("observations").Array().Element(0).Object().Value("observation").Equal("154.6")
@@ -114,7 +116,7 @@ func TestSuccessfullyGetObservationsForVersion(t *testing.T) {
 
 		Convey("When a request is made to get an observations resource containing more than one observation for an unpublished version", func() {
 			Convey("Then the response body contains the expected observations data", func() {
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", ids.DatasetPublished, edition).
 					WithQueryString("time=Aug-16&geography=K02000001&aggregate=*").
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
@@ -124,9 +126,9 @@ func TestSuccessfullyGetObservationsForVersion(t *testing.T) {
 				response.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("href").String().Match("/codelists/608064B3-A808-449B-9041-EA3A2F72CFAE/codes/Aug-16$")
 				response.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("id").Equal("Aug-16")
 				response.Value("limit").Equal(10000)
-				response.Value("links").Object().Value("dataset_metadata").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/2/metadata$")
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match(".+/datasets/" + datasetID + "/editions/" + edition + "/versions/2/observations\\?aggregate=\\%2A&geography=K02000001&time=Aug-16$")
-				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/2$")
+				response.Value("links").Object().Value("dataset_metadata").Object().Value("href").String().Match("/datasets/" + ids.DatasetPublished + "/editions/" + edition + "/versions/2/metadata$")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match(".+/datasets/" + ids.DatasetPublished + "/editions/" + edition + "/versions/2/observations\\?aggregate=\\%2A&geography=K02000001&time=Aug-16$")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + ids.DatasetPublished + "/editions/" + edition + "/versions/2$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("2")
 				response.Value("observations").Array().Length().Equal(expectedNumberOfObservations)
 
@@ -184,16 +186,17 @@ func TestSuccessfullyGetObservationsForVersion(t *testing.T) {
 }
 
 func TestFailureToGetObservationsForVersion(t *testing.T) {
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
-	instanceID := uuid.NewV4().String()
-	unpublishedInstanceID := uuid.NewV4().String()
-	datasetID := uuid.NewV4().String()
-	editionID := uuid.NewV4().String()
 	edition := "2017"
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-	publishedGraphData, err := neo4j.NewDatastore(cfg.Neo4jAddr, instanceID, observationTestData)
+	publishedGraphData, err := neo4j.NewDatastore(cfg.Neo4jAddr, ids.InstancePublished, observationTestData)
 	if err != nil {
 		log.ErrorC("Unable to connect to a neo4j instance", err, nil)
 		os.Exit(1)
@@ -204,7 +207,7 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 		os.Exit(1)
 	}
 
-	unpublishedGraphData, err := neo4j.NewDatastore(cfg.Neo4jAddr, unpublishedInstanceID, observationTestData)
+	unpublishedGraphData, err := neo4j.NewDatastore(cfg.Neo4jAddr, ids.InstanceAssociated, observationTestData)
 	if err != nil {
 		log.ErrorC("Unable to connect to a neo4j instance", err, nil)
 		os.Exit(1)
@@ -218,7 +221,7 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 	Convey("Given the dataset, edition and version do not exist", t, func() {
 		Convey("When an authorised request to get an observation for a version of a dataset", func() {
 			Convey("Then return status not found (404) with message `dataset not found`", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", ids.DatasetPublished, edition).
 					WithQueryString("time=Aug-16&geography=K02000001&aggregate=cpi1dim1S40403").
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
@@ -231,24 +234,24 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
-		Value:      datasetID,
-		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
+		Value:      ids.DatasetPublished,
+		Update:     ValidPublishedWithUpdatesDatasetData(ids.DatasetPublished),
 	}
 
 	publishedEditionDoc := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
-		Value:      editionID,
-		Update:     ValidPublishedEditionData(datasetID, editionID, edition),
+		Value:      ids.EditionPublished,
+		Update:     ValidPublishedEditionData(ids.DatasetPublished, ids.EditionPublished, edition),
 	}
 
 	unpublishedVersionDoc := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
-		Value:      unpublishedInstanceID,
-		Update:     validAssociatedInstanceData(datasetID, edition, unpublishedInstanceID),
+		Value:      ids.InstanceAssociated,
+		Update:     validAssociatedInstanceData(ids.DatasetPublished, edition, ids.InstanceAssociated, ids.UniqueTimestamp),
 	}
 
 	Convey("Given a published dataset exist", t, func() {
@@ -260,7 +263,7 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 		Convey("but edition and version do not exist", func() {
 			Convey("When a request to get an observation for a version of a dataset", func() {
 				Convey("Then return status not found (404) with message `edition not found`", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", ids.DatasetPublished, edition).
 						WithQueryString("time=Aug-16&geography=K02000001&aggregate=cpi1dim1S40403").
 						WithHeader(florenceTokenName, florenceToken).
 						Expect().Status(http.StatusNotFound).
@@ -279,7 +282,7 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 			Convey("but a version does not exist", func() {
 				Convey("When a request to get an observation for a version of a dataset", func() {
 					Convey("Then return status not found (404) with message `version not found`", func() {
-						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", ids.DatasetPublished, edition).
 							WithQueryString("time=Aug-16&geography=K02000001&aggregate=cpi1dim1S40403").
 							WithHeader(florenceTokenName, florenceToken).
 							Expect().Status(http.StatusNotFound).
@@ -297,7 +300,7 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 
 				Convey("When a request to get an observation for unpublished version of a dataset with incorrect query parameters", func() {
 					Convey("Then return status bad request (400) with a message", func() {
-						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", ids.DatasetPublished, edition).
 							WithHeader(florenceTokenName, florenceToken).
 							WithQueryString("age=24&gender=male&time=Aug-16&geography=K02000001&aggregate=cpi1dim1S40403").
 							Expect().Status(http.StatusBadRequest).
@@ -307,7 +310,7 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 
 				Convey("When a request to get an observation for unpublished version of a dataset with missing query parameters", func() {
 					Convey("Then return status bad request (400) with a message", func() {
-						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", ids.DatasetPublished, edition).
 							WithHeader(florenceTokenName, florenceToken).
 							WithQueryString("geography=K02000001").
 							Expect().Status(http.StatusBadRequest).
@@ -317,7 +320,7 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 
 				Convey("When a request to get an observation for a version of a dataset with more than one wildcard used", func() {
 					Convey("Then return status bad request (400) with a message", func() {
-						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", ids.DatasetPublished, edition).
 							WithHeader(florenceTokenName, florenceToken).
 							WithQueryString("time=*&geography=*&aggregate=cpi1dim1S40403").
 							Expect().Status(http.StatusBadRequest).
@@ -327,7 +330,7 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 
 				Convey("When a request to get an observation for a version of a dataset with more than one value per query parameter", func() {
 					Convey("Then return status bad request (400) with a message", func() {
-						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", ids.DatasetPublished, edition).
 							WithHeader(florenceTokenName, florenceToken).
 							WithQueryString("time=Aug-16&time=Aug-17&geography=K02000001&geography=*&aggregate=cpi1dim1S40403").
 							Expect().Status(http.StatusBadRequest).
@@ -337,7 +340,7 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 
 				Convey("When a request to get an observation for an unpublished version of a dataset with the correct query parameters but the values don't exist", func() {
 					Convey("Then return status not found (404) with message `no observations found`", func() {
-						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", datasetID, edition).
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/observations", ids.DatasetPublished, edition).
 							WithHeader(florenceTokenName, florenceToken).
 							WithQueryString("time=Aug-17&geography=K02000001&aggregate=cpi1dim1S40403").
 							Expect().Status(http.StatusNotFound).
@@ -357,7 +360,7 @@ func TestFailureToGetObservationsForVersion(t *testing.T) {
 	unpublishedGraphData.TeardownInstance()
 }
 
-func setupObservationDocs(datasetID, editionID, edition, instanceID, unpublishedInstanceID string) ([]*mongo.Doc, error) {
+func setupObservationDocs(datasetID, editionID, edition, instanceID, unpublishedInstanceID string, uniqueTimestamp bson.MongoTimestamp) ([]*mongo.Doc, error) {
 	var docs []*mongo.Doc
 
 	datasetDoc := &mongo.Doc{
@@ -381,7 +384,7 @@ func setupObservationDocs(datasetID, editionID, edition, instanceID, unpublished
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
-		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+		Update:     validPublishedInstanceData(datasetID, edition, instanceID, uniqueTimestamp),
 	}
 
 	unpublishedVersionDoc := &mongo.Doc{
@@ -389,7 +392,7 @@ func setupObservationDocs(datasetID, editionID, edition, instanceID, unpublished
 		Collection: "instances",
 		Key:        "_id",
 		Value:      unpublishedInstanceID,
-		Update:     validAssociatedInstanceData(datasetID, edition, unpublishedInstanceID),
+		Update:     validAssociatedInstanceData(datasetID, edition, unpublishedInstanceID, uniqueTimestamp),
 	}
 
 	docs = append(docs, datasetDoc, publishedEditionDoc, publishedVersionDoc, unpublishedVersionDoc)

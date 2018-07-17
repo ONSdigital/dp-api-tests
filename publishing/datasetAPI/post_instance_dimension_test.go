@@ -5,13 +5,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gedge/mgo"
+	"github.com/globalsign/mgo"
 
+	"github.com/ONSdigital/dp-api-tests/helpers"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	datasetAPIModel "github.com/ONSdigital/dp-dataset-api/models"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
-	uuid "github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -19,9 +19,12 @@ import (
 // web/datasetAPI/hidden_endpoints_test.go to check request returns 404
 
 func TestSuccessfullyPostInstanceDimension(t *testing.T) {
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
-	datasetID := uuid.NewV4().String()
-	instanceID := uuid.NewV4().String()
 	edition := "2017"
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
@@ -33,8 +36,8 @@ func TestSuccessfullyPostInstanceDimension(t *testing.T) {
 			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
-			Value:      instanceID,
-			Update:     validCreatedInstanceData(datasetID, edition, instanceID, "created"),
+			Value:      ids.InstanceCreated,
+			Update:     validCreatedInstanceData(ids.DatasetPublished, edition, ids.InstanceCreated, created, ids.UniqueTimestamp),
 		}
 
 		if err := mongo.Setup(instance); err != nil {
@@ -47,25 +50,25 @@ func TestSuccessfullyPostInstanceDimension(t *testing.T) {
 		Convey("When a POST request is made to add dimension for instance", func() {
 			Convey("Then the dimension option is created and response returns status ok (200)", func() {
 
-				datasetAPI.POST("/instances/{instance_id}/dimensions", instanceID).
+				datasetAPI.POST("/instances/{instance_id}/dimensions", ids.InstanceCreated).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPOSTAgeDimensionJSON)).
 					Expect().Status(http.StatusOK)
 
-				dimensionOption, err := mongo.GetDimensionOption(cfg.MongoDB, "dimension.options", "instance_id", instanceID)
+				dimensionOption, err := mongo.GetDimensionOption(cfg.MongoDB, "dimension.options", "instance_id", ids.InstanceCreated)
 				if err != nil {
-					log.ErrorC("Was unable to retrieve dimension option test data", err, log.Data{"instance_id": instanceID})
+					log.ErrorC("Was unable to retrieve dimension option test data", err, log.Data{"instance_id": ids.InstanceCreated})
 					os.Exit(1)
 				}
 
-				So(dimensionOption.InstanceID, ShouldEqual, instanceID)
-				checkDimensionOptionDoc(instanceID, &dimensionOption)
+				So(dimensionOption.InstanceID, ShouldEqual, ids.InstanceCreated)
+				checkDimensionOptionDoc(ids.InstanceCreated, &dimensionOption)
 
 				dimensionOptionDoc := &mongo.Doc{
 					Database:   cfg.MongoDB,
 					Collection: "dimension.options",
 					Key:        "instance_id",
-					Value:      instanceID,
+					Value:      ids.InstanceCreated,
 				}
 
 				docs = append(docs, dimensionOptionDoc)
@@ -81,12 +84,16 @@ func TestSuccessfullyPostInstanceDimension(t *testing.T) {
 }
 
 func TestFailureToPostDimension(t *testing.T) {
-	datasetID := uuid.NewV4().String()
-	edition := "2017"
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
+	edition := "2017"
 	instances := make(map[string]string)
-	instances[created] = uuid.NewV4().String()
-	instances[invalid] = uuid.NewV4().String()
+	instances[created] = ids.InstanceCreated
+	instances[invalid] = ids.InstanceInvalid
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
@@ -94,7 +101,7 @@ func TestFailureToPostDimension(t *testing.T) {
 		Convey("When an authorised POST request is made to add dimension option for an instance", func() {
 			Convey("Then the response return a status not found (404) with message `instance not found`", func() {
 
-				datasetAPI.POST("/instances/{instance_id}/dimensions", instances["created"]).
+				datasetAPI.POST("/instances/{instance_id}/dimensions", ids.InstanceCreated).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPOSTAgeDimensionJSON)).
 					Expect().Status(http.StatusNotFound).
@@ -105,7 +112,7 @@ func TestFailureToPostDimension(t *testing.T) {
 	})
 
 	Convey("Given a created instance exists", t, func() {
-		docs, err := setupInstances(datasetID, edition, instances)
+		docs, err := setupInstances(ids.DatasetPublished, edition, ids.UniqueTimestamp, instances)
 		if err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)

@@ -6,11 +6,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ONSdigital/dp-api-tests/helpers"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
-	"github.com/gedge/mgo"
-	uuid "github.com/satori/go.uuid"
+	"github.com/globalsign/mgo"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -18,9 +18,12 @@ import (
 // web/datasetAPI/hidden_endpoints_test.go to check request returns 404
 
 func TestSuccessfullyPostInstanceEvent(t *testing.T) {
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
-	datasetID := uuid.NewV4().String()
-	instanceID := uuid.NewV4().String()
 	edition := "2017"
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
@@ -31,8 +34,8 @@ func TestSuccessfullyPostInstanceEvent(t *testing.T) {
 			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
-			Value:      instanceID,
-			Update:     validSubmittedInstanceData(datasetID, edition, instanceID),
+			Value:      ids.InstanceSubmitted,
+			Update:     validSubmittedInstanceData(ids.DatasetPublished, edition, ids.InstanceSubmitted, submitted, ids.UniqueTimestamp),
 		}
 
 		if err := mongo.Setup(instance); err != nil {
@@ -48,18 +51,18 @@ func TestSuccessfullyPostInstanceEvent(t *testing.T) {
 					log.ErrorC("Unable to create event test data", err, nil)
 					os.Exit(1)
 				}
-				datasetAPI.POST("/instances/{instance_id}/events", instanceID).
+				datasetAPI.POST("/instances/{instance_id}/events", ids.InstanceSubmitted).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes(b).
 					Expect().Status(http.StatusOK)
 
-				instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
+				instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", ids.InstanceSubmitted)
 				if err != nil {
-					log.ErrorC("Was unable to retrieve instance test data", err, log.Data{"instance_id": instanceID})
+					log.ErrorC("Was unable to retrieve instance test data", err, log.Data{"instance_id": ids.InstanceSubmitted})
 					os.Exit(1)
 				}
 
-				So(instance.InstanceID, ShouldEqual, instanceID)
+				So(instance.InstanceID, ShouldEqual, ids.InstanceSubmitted)
 
 				expectedEvent := mongo.InstanceEvent{Message: "unable to add observation to neo4j", MessageOffset: "5", Type: "error"}
 				checkInstanceEvent(instance.Events, expectedEvent)
@@ -75,11 +78,17 @@ func TestSuccessfullyPostInstanceEvent(t *testing.T) {
 }
 
 func TestFailureToPostInstanceEvent(t *testing.T) {
-	datasetID := uuid.NewV4().String()
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
+
 	edition := "2017"
 
 	instances := make(map[string]string)
-	instances[submitted] = uuid.NewV4().String()
+	instances[submitted] = ids.InstanceSubmitted
+	instances[created] = ids.InstanceCreated
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 	b, err := createValidPOSTEventJSON(time.Now().UTC())
@@ -103,14 +112,14 @@ func TestFailureToPostInstanceEvent(t *testing.T) {
 	})
 
 	Convey("Given a created instance exists", t, func() {
-		docs, err := setupInstances(datasetID, edition, instances)
+		docs, err := setupInstances(ids.DatasetPublished, edition, ids.UniqueTimestamp, instances)
 		if err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
 
 		Convey(`When an unauthorised POST request to create an event against an
-			instance resource with an invalid authentication header`, func() {
+				instance resource with an invalid authentication header`, func() {
 
 			Convey("Then fail to add event to instance resource and return a status unauthorized (401)", func() {
 
@@ -123,7 +132,7 @@ func TestFailureToPostInstanceEvent(t *testing.T) {
 		})
 
 		Convey(`When no authentication header is provided in POST request to create
-			an event against an instance resource`, func() {
+				an event against an instance resource`, func() {
 
 			Convey("Then fail to add event to instance resource and return a status unauthorized (401)", func() {
 

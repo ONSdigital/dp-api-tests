@@ -6,33 +6,35 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect"
-	"github.com/gedge/mgo"
-	uuid "github.com/satori/go.uuid"
+	"github.com/globalsign/mgo"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"github.com/ONSdigital/dp-api-tests/helpers"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 )
 
 func TestSuccessfullyGetADataset(t *testing.T) {
-
-	datasetID := uuid.NewV4().String()
-	unpublishedDatasetID := uuid.NewV4().String()
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
 	dataset := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: collection,
 		Key:        "_id",
-		Value:      datasetID,
-		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
+		Value:      ids.DatasetPublished,
+		Update:     ValidPublishedWithUpdatesDatasetData(ids.DatasetPublished),
 	}
 
 	unpublishedDataset := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: collection,
 		Key:        "_id",
-		Value:      unpublishedDatasetID,
-		Update:     validAssociatedDatasetData(unpublishedDatasetID),
+		Value:      ids.DatasetAssociated,
+		Update:     validAssociatedDatasetData(ids.DatasetAssociated),
 	}
 
 	if err := mongo.Setup(dataset, unpublishedDataset); err != nil {
@@ -46,12 +48,12 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 		Convey("When the user is authenticated", func() {
 			Convey("Then response includes the expected current and next sub documents and returns a status ok (200)", func() {
 
-				response := datasetAPI.GET("/datasets/{id}", datasetID).
+				response := datasetAPI.GET("/datasets/{id}", ids.DatasetPublished).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				response.Value("id").Equal(datasetID)
-				checkDatasetDoc(datasetID, response.Value("current").Object())
+				response.Value("id").Equal(ids.DatasetPublished)
+				checkDatasetDoc(ids.DatasetPublished, response.Value("current").Object())
 
 				response.Value("next").NotNull()
 				response.Value("next").Object().Value("state").Equal("created")
@@ -63,11 +65,11 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 		Convey("When the user is authenticated", func() {
 			Convey("Then response includes the expected next sub document and returns a status ok (200)", func() {
 
-				response := datasetAPI.GET("/datasets/{id}", unpublishedDatasetID).
+				response := datasetAPI.GET("/datasets/{id}", ids.DatasetAssociated).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				response.Value("id").Equal(unpublishedDatasetID)
+				response.Value("id").Equal(ids.DatasetAssociated)
 				response.NotContainsKey("current")
 				response.Value("next").NotNull()
 				response.Value("next").Object().Value("state").Equal("associated")
@@ -84,9 +86,11 @@ func TestSuccessfullyGetADataset(t *testing.T) {
 }
 
 func TestFailureToGetADataset(t *testing.T) {
-
-	datasetID := uuid.NewV4().String()
-	secondDatasetID := uuid.NewV4().String()
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
@@ -94,7 +98,7 @@ func TestFailureToGetADataset(t *testing.T) {
 		Convey("When requesting for document", func() {
 			Convey("Then return a status not found (404)", func() {
 
-				datasetAPI.GET("/datasets/{id}", datasetID).
+				datasetAPI.GET("/datasets/{id}", ids.DatasetPublished).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
 					Body().Contains("dataset not found")
@@ -107,8 +111,8 @@ func TestFailureToGetADataset(t *testing.T) {
 			Database:   cfg.MongoDB,
 			Collection: collection,
 			Key:        "_id",
-			Value:      secondDatasetID,
-			Update:     validAssociatedDatasetData(secondDatasetID),
+			Value:      ids.DatasetAssociated,
+			Update:     validAssociatedDatasetData(ids.DatasetAssociated),
 		}
 
 		if err := mongo.Setup(associatedDataset); err != nil {
@@ -119,7 +123,7 @@ func TestFailureToGetADataset(t *testing.T) {
 		Convey("When requesting for document for an unauthorised user", func() {
 			Convey("Then return a status unauthorized (401)", func() {
 
-				datasetAPI.GET("/datasets/{id}", datasetID).
+				datasetAPI.GET("/datasets/{id}", ids.DatasetAssociated).
 					Expect().Status(http.StatusUnauthorized)
 			})
 		})

@@ -6,26 +6,28 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect"
-	"github.com/gedge/mgo"
-	uuid "github.com/satori/go.uuid"
+	"github.com/globalsign/mgo"
+	"github.com/globalsign/mgo/bson"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"github.com/ONSdigital/dp-api-tests/helpers"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 )
 
 func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
-	instanceID := uuid.NewV4().String()
-	unpublishedInstanceID := uuid.NewV4().String()
-	datasetID := uuid.NewV4().String()
-	editionID := uuid.NewV4().String()
 	edition := "2017"
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Given a published and unpublished version", t, func() {
-		docs, err := setupMetadataDocs(datasetID, editionID, edition, instanceID, unpublishedInstanceID)
+		docs, err := setupMetadataDocs(ids.DatasetPublished, ids.EditionPublished, edition, ids.InstancePublished, ids.InstanceAssociated, ids.UniqueTimestamp)
 		if err != nil {
 			log.ErrorC("Failed to setup test data", err, nil)
 			os.Exit(1)
@@ -33,7 +35,7 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 
 		Convey("When an authenticated request is made to get the unpublished version", func() {
 			Convey("Then the response body contains the expected metadata", func() {
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/metadata", datasetID, edition).
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/2/metadata", ids.DatasetPublished, edition).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
@@ -62,9 +64,9 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 				response.Value("latest_changes").Array().Element(0).Object().Value("type").String().Equal("Summary of Changes")
 				response.Value("license").Equal("ONS license")
 				response.Value("links").Object().Value("access_rights").Object().Value("href").Equal("http://ons.gov.uk/accessrights")
-				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/2$")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + ids.DatasetPublished + "/editions/" + edition + "/versions/2$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("2")
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/2/metadata$")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + ids.DatasetPublished + "/editions/" + edition + "/versions/2/metadata$")
 				response.Value("links").Object().Value("spatial").Object().Value("href").Equal("http://ons.gov.uk/geographylist")
 				response.Value("methodologies").Array().Element(0).Object().Value("description").Equal("Consumer price inflation is the rate at which the prices of the goods and services bought by households rise or fall, and is estimated by using consumer price indices.")
 				response.Value("methodologies").Array().Element(0).Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi")
@@ -96,7 +98,7 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 
 		Convey("When an authenticated request is made to get the metadata relevant to a published version ", func() {
 			Convey("Then the response body contains the expected metadata", func() {
-				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
+				response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", ids.DatasetPublished, edition).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
@@ -125,9 +127,9 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 				response.Value("latest_changes").Array().Element(0).Object().Value("type").String().Equal("Summary of Changes")
 				response.Value("license").Equal("ONS license")
 				response.Value("links").Object().Value("access_rights").Object().Value("href").Equal("http://ons.gov.uk/accessrights")
-				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1$")
+				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + ids.DatasetPublished + "/editions/" + edition + "/versions/1$")
 				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/" + edition + "/versions/1/metadata$")
+				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/datasets/" + ids.DatasetPublished + "/editions/" + edition + "/versions/1/metadata$")
 				response.Value("links").Object().Value("spatial").Object().Value("href").Equal("http://ons.gov.uk/geographylist")
 				response.Value("methodologies").Array().Element(0).Object().Value("description").Equal("Consumer price inflation is the rate at which the prices of the goods and services bought by households rise or fall, and is estimated by using consumer price indices.")
 				response.Value("methodologies").Array().Element(0).Object().Value("href").Equal("https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi")
@@ -166,14 +168,13 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 }
 
 func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
-	datasetID := uuid.NewV4().String()
-	editionID := uuid.NewV4().String()
 	edition := "2017"
-
-	unpublishedDatasetID := uuid.NewV4().String()
-	unpublishedEditionID := uuid.NewV4().String()
-	unpublishedInstanceID := uuid.NewV4().String()
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
@@ -181,22 +182,22 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 		Database:   cfg.MongoDB,
 		Collection: collection,
 		Key:        "_id",
-		Value:      unpublishedDatasetID,
-		Update:     validAssociatedDatasetData(unpublishedDatasetID),
+		Value:      ids.DatasetAssociated,
+		Update:     validAssociatedDatasetData(ids.DatasetAssociated),
 	}
 
 	unpublishedEdition := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
-		Value:      unpublishedEditionID,
-		Update:     validUnpublishedEditionData(unpublishedDatasetID, unpublishedEditionID, edition),
+		Value:      ids.EditionUnpublished,
+		Update:     validUnpublishedEditionData(ids.DatasetAssociated, ids.EditionUnpublished, edition),
 	}
 
 	Convey("Given the dataset, edition and version do not exist", t, func() {
 		Convey("When an authorised request to get the metadata relevant to a version", func() {
 			Convey("Then return status not found (404) with message `dataset not found`", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).WithHeader(florenceTokenName, florenceToken).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", ids.DatasetAssociated, edition).WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("dataset not found")
 			})
 		})
@@ -211,7 +212,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 		Convey("but an edition and version do not exist", func() {
 			Convey("When a request to get the metadata relevant to a version", func() {
 				Convey("Then return status not found (404) with message `edition not found`", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(florenceTokenName, florenceToken).
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", ids.DatasetAssociated, edition).WithHeader(florenceTokenName, florenceToken).
 						Expect().Status(http.StatusNotFound).Body().Contains("edition not found")
 				})
 			})
@@ -226,7 +227,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 			Convey("but a version does not exist", func() {
 				Convey("When a request to get the metadata relevant to a version", func() {
 					Convey("Then return status bad request (404) with message `version not found`", func() {
-						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", unpublishedDatasetID, edition).WithHeader(florenceTokenName, florenceToken).
+						datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", ids.DatasetAssociated, edition).WithHeader(florenceTokenName, florenceToken).
 							Expect().Status(http.StatusNotFound).Body().Contains("version not found")
 					})
 				})
@@ -248,7 +249,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 
 		Convey("When an unauthorised request to get the metadate relevant to a version", func() {
 			Convey("Then return status unauthorized (401)", func() {
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", ids.DatasetAssociated, edition).
 					Expect().Status(http.StatusUnauthorized)
 			})
 		})
@@ -264,8 +265,8 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 			Database:   cfg.MongoDB,
 			Collection: collection,
 			Key:        "_id",
-			Value:      datasetID,
-			Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
+			Value:      ids.DatasetPublished,
+			Update:     ValidPublishedWithUpdatesDatasetData(ids.DatasetPublished),
 		}
 
 		if err := mongo.Setup(publishedDataset); err != nil {
@@ -274,7 +275,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 		}
 
 		Convey("and an unpublished edition", func() {
-			unpublishedEdition.Update = validUnpublishedEditionData(datasetID, unpublishedEditionID, edition)
+			unpublishedEdition.Update = validUnpublishedEditionData(ids.DatasetPublished, ids.EditionUnpublished, edition)
 			if err := mongo.Setup(unpublishedEdition); err != nil {
 				log.ErrorC("Was unable to run test", err, nil)
 				os.Exit(1)
@@ -282,7 +283,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 
 			Convey("When an unauthorised request to get the metadata relevant to a version", func() {
 				Convey("Then return status unauthorized (401)", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", ids.DatasetPublished, edition).
 						Expect().Status(http.StatusUnauthorized)
 				})
 			})
@@ -298,16 +299,16 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 				Database:   cfg.MongoDB,
 				Collection: "editions",
 				Key:        "_id",
-				Value:      editionID,
-				Update:     ValidPublishedEditionData(datasetID, editionID, edition),
+				Value:      ids.EditionPublished,
+				Update:     ValidPublishedEditionData(ids.DatasetPublished, ids.EditionPublished, edition),
 			}
 
 			associatedInstance := &mongo.Doc{
 				Database:   cfg.MongoDB,
 				Collection: "instances",
 				Key:        "_id",
-				Value:      unpublishedInstanceID,
-				Update:     validAssociatedInstanceData(datasetID, editionID, unpublishedInstanceID),
+				Value:      ids.InstanceAssociated,
+				Update:     validAssociatedInstanceData(ids.DatasetPublished, ids.EditionPublished, ids.InstanceAssociated, ids.UniqueTimestamp),
 			}
 
 			if err := mongo.Setup(publishedEdition, associatedInstance); err != nil {
@@ -317,7 +318,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 
 			Convey("When an unauthorised request to get the metadata relevant to a version", func() {
 				Convey("Then return status unauthorized (401)", func() {
-					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", datasetID, edition).
+					datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/metadata", ids.DatasetPublished, edition).
 						Expect().Status(http.StatusUnauthorized)
 				})
 			})
@@ -335,7 +336,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 	})
 }
 
-func setupMetadataDocs(datasetID, editionID, edition, instanceID, unpublishedInstanceID string) ([]*mongo.Doc, error) {
+func setupMetadataDocs(datasetID, editionID, edition, instanceID, unpublishedInstanceID string, uniqueTimestamp bson.MongoTimestamp) ([]*mongo.Doc, error) {
 	var docs []*mongo.Doc
 
 	datasetDoc := &mongo.Doc{
@@ -359,7 +360,7 @@ func setupMetadataDocs(datasetID, editionID, edition, instanceID, unpublishedIns
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
-		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+		Update:     validPublishedInstanceData(datasetID, edition, instanceID, uniqueTimestamp),
 	}
 
 	unpublishedVersionDoc := &mongo.Doc{
@@ -367,7 +368,7 @@ func setupMetadataDocs(datasetID, editionID, edition, instanceID, unpublishedIns
 		Collection: "instances",
 		Key:        "_id",
 		Value:      unpublishedInstanceID,
-		Update:     validAssociatedInstanceData(datasetID, edition, unpublishedInstanceID),
+		Update:     validAssociatedInstanceData(datasetID, edition, unpublishedInstanceID, uniqueTimestamp),
 	}
 
 	docs = append(docs, datasetDoc, publishedEditionDoc, publishedVersionDoc, unpublishedVersionDoc)

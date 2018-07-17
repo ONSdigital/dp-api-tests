@@ -3,8 +3,8 @@ package mongo
 import (
 	"time"
 
-	"github.com/gedge/mgo"
-	"github.com/gedge/mgo/bson"
+	"github.com/globalsign/mgo"
+	"github.com/globalsign/mgo/bson"
 
 	datasetAPIModel "github.com/ONSdigital/dp-dataset-api/models"
 	importAPIModel "github.com/ONSdigital/dp-import-api/models"
@@ -201,11 +201,11 @@ type EditionUpdate struct {
 
 // Edition represents information related to a single edition for a dataset
 type Edition struct {
-	Edition     string        `bson:"edition,omitempty"      json:"edition,omitempty"`
-	ID          string        `bson:"id,omitempty"          json:"id,omitempty"`
-	Links       *EditionLinks `bson:"links,omitempty"        json:"links,omitempty"`
-	State       string        `bson:"state,omitempty"        json:"state,omitempty"`
-	LastUpdated time.Time     `bson:"last_updated,omitempty" json:"-"`
+	Edition   string        `bson:"edition,omitempty"      json:"edition,omitempty"`
+	ID        string        `bson:"id,omitempty"          json:"id,omitempty"`
+	Links     *EditionLinks `bson:"links,omitempty"        json:"links,omitempty"`
+	State     string        `bson:"state,omitempty"        json:"state,omitempty"`
+	time.Time `bson:"last_updated,omitempty" json:"-"`
 }
 
 // EditionLinks represents a list of specific links related to the edition resource of a dataset

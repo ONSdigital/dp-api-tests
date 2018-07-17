@@ -5,13 +5,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gedge/mgo"
+	"github.com/globalsign/mgo"
 
+	"github.com/ONSdigital/dp-api-tests/helpers"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	datasetAPIModel "github.com/ONSdigital/dp-dataset-api/models"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
-	uuid "github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -19,12 +19,13 @@ import (
 // web/datasetAPI/hidden_endpoints_test.go to check request returns 404
 
 func TestSuccessfullyPutInstanceDimensionOptionNodeID(t *testing.T) {
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
-	datasetID := uuid.NewV4().String()
-	instanceID := uuid.NewV4().String()
 	edition := "2017"
-	dimensionOptionID := uuid.NewV4().String()
-	nodeID := uuid.NewV4().String()
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
@@ -35,16 +36,16 @@ func TestSuccessfullyPutInstanceDimensionOptionNodeID(t *testing.T) {
 			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
-			Value:      instanceID,
-			Update:     validCreatedInstanceData(datasetID, edition, instanceID, "created"),
+			Value:      ids.InstanceCreated,
+			Update:     validCreatedInstanceData(ids.DatasetPublished, edition, ids.InstanceCreated, created, ids.UniqueTimestamp),
 		}
 
 		dimensionOption := &mongo.Doc{
 			Database:   cfg.MongoDB,
 			Collection: "dimension.options",
 			Key:        "_id",
-			Value:      dimensionOptionID,
-			Update:     validTimeDimensionsData(dimensionOptionID, instanceID),
+			Value:      ids.Dimension,
+			Update:     validTimeDimensionsData(ids.Dimension, ids.InstanceCreated),
 		}
 
 		if err := mongo.Setup(instance, dimensionOption); err != nil {
@@ -57,24 +58,24 @@ func TestSuccessfullyPutInstanceDimensionOptionNodeID(t *testing.T) {
 		Convey("When a PUT request is made to add node ID to dimension option for instance", func() {
 			Convey("Then the dimension option is updated and response returns status ok (200)", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.45/node_id/{node_id}", instanceID, nodeID).
+				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.45/node_id/{node_id}", ids.InstanceCreated, ids.Node).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPOSTAgeDimensionJSON)).
 					Expect().Status(http.StatusOK)
 
-				dimensionOption, err := mongo.GetDimensionOption(cfg.MongoDB, "dimension.options", "_id", dimensionOptionID)
+				dimensionOption, err := mongo.GetDimensionOption(cfg.MongoDB, "dimension.options", "_id", ids.Dimension)
 				if err != nil {
-					log.ErrorC("Was unable to retrieve dimension option test data", err, log.Data{"_id": dimensionOptionID, "instance_id": instanceID, "node_id": nodeID})
+					log.ErrorC("Was unable to retrieve dimension option test data", err, log.Data{"_id": ids.Dimension, "instance_id": ids.InstanceCreated, "node_id": ids.Node})
 					os.Exit(1)
 				}
 
-				checkDimensionOptionDocWithNodeID(instanceID, nodeID, &dimensionOption)
+				checkDimensionOptionDocWithNodeID(ids.InstanceCreated, ids.Node, &dimensionOption)
 
 				dimensionOptionDoc := &mongo.Doc{
 					Database:   cfg.MongoDB,
 					Collection: "dimension.options",
 					Key:        "instance_id",
-					Value:      instanceID,
+					Value:      ids.InstanceCreated,
 				}
 
 				docs = append(docs, dimensionOptionDoc)
@@ -90,13 +91,17 @@ func TestSuccessfullyPutInstanceDimensionOptionNodeID(t *testing.T) {
 }
 
 func TestFailureToPutDimensionOptionNodeID(t *testing.T) {
-	datasetID := uuid.NewV4().String()
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
+
 	edition := "2017"
-	nodeID := uuid.NewV4().String()
 
 	instances := make(map[string]string)
-	instances[created] = uuid.NewV4().String()
-	instances[invalid] = uuid.NewV4().String()
+	instances[created] = ids.InstanceCreated
+	instances[invalid] = ids.InstanceInvalid
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
@@ -107,7 +112,7 @@ func TestFailureToPutDimensionOptionNodeID(t *testing.T) {
 			Convey(`Then the response return a status not found (404)
 				with message 'instance not found'`, func() {
 
-				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", instances[created], nodeID).
+				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", instances[created], ids.Node).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
 					Body().Contains("instance not found")
@@ -117,7 +122,7 @@ func TestFailureToPutDimensionOptionNodeID(t *testing.T) {
 	})
 
 	Convey("Given a created instance exists", t, func() {
-		docs, err := setupInstances(datasetID, edition, instances)
+		docs, err := setupInstances(ids.DatasetPublished, edition, ids.UniqueTimestamp, instances)
 		if err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
@@ -127,7 +132,7 @@ func TestFailureToPutDimensionOptionNodeID(t *testing.T) {
 				 for an instance with a node id`, func() {
 			Convey("Then fail to create resource and return a status unauthorized (401)", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", instances[created], nodeID).
+				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", instances[created], ids.Node).
 					WithHeader(florenceTokenName, unauthorisedAuthToken).
 					Expect().Status(http.StatusUnauthorized)
 
@@ -138,7 +143,7 @@ func TestFailureToPutDimensionOptionNodeID(t *testing.T) {
 				dimension option for an instance with a node id`, func() {
 			Convey("Then fail to update resource and return a status unauthorized (401)", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", instances[created], nodeID).
+				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", instances[created], ids.Node).
 					Expect().Status(http.StatusUnauthorized)
 
 			})
@@ -150,7 +155,7 @@ func TestFailureToPutDimensionOptionNodeID(t *testing.T) {
 			Convey(`Then the response return a status internal server error (500)
 						with message 'internal error'`, func() {
 
-				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", instances[invalid], nodeID).
+				datasetAPI.PUT("/instances/{instance_id}/dimensions/time/options/202.5/node_id/{node_id}", instances[invalid], ids.Node).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusInternalServerError).
 					Body().Contains("internal error")

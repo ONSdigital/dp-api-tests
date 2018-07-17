@@ -1,7 +1,7 @@
 package downloadService
 
 import (
-	"github.com/gedge/mgo/bson"
+	"github.com/globalsign/mgo/bson"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 )

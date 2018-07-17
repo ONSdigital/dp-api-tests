@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/gavv/httpexpect"
-	"github.com/gedge/mgo"
+	"github.com/globalsign/mgo"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
