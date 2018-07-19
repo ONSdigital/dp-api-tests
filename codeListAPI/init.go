@@ -6,21 +6,8 @@ import (
 	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/ONSdigital/go-ns/log"
 	"os"
-)
-
-var (
-	tearItDown = bolt.Stmt{Query: "MATCH(n:`_api_test`) DETACH DELETE n", Params: nil}
-
-	setupStmts = []bolt.Stmt{
-		{Query: "CREATE (node:`_code_list`:`_name_gender`:`_api_test` { label:'sex', edition:'one-off' })", Params: nil},
-		{Query: "MATCH (parent:`_code_list`:`_name_gender`) WITH parent CREATE (node:`_code`:`_api_test` { value: {v}})-[:usedBy { label: {l}}]->(parent)", Params: map[string]interface{}{"v": "2", "l": "Female"}},
-		{Query: "MATCH (parent:`_code_list`:`_name_gender`) WITH parent CREATE (node:`_code`:`_api_test` { value: {v}})-[:usedBy { label: {l}}]->(parent)", Params: map[string]interface{}{"v": "1", "l": "Male"}},
-		{Query: "MATCH (parent:`_code_list`:`_name_gender`) WITH parent CREATE (node:`_code`:`_api_test` { value:{v}})-[:usedBy { label: {l}}]->(parent)", Params: map[string]interface{}{"v": "0", "l": "All"}},
-	}
-
-	codeListName = "sex"
-	codeListID   = "gender"
-	edition      = "one-off"
+	"github.com/pkg/errors"
+	"fmt"
 )
 
 type DB struct {
@@ -30,7 +17,7 @@ type DB struct {
 
 func NewDB() (*DB, error) {
 	cfg, _ := config.Get()
-	pool, err := golangNeo4jBoltDriver.NewClosableDriverPool(cfg.Neo4jAddr, 4)
+	pool, err := golangNeo4jBoltDriver.NewClosableDriverPool(cfg.Neo4jAddr, 2)
 	if err != nil {
 		return nil, err
 	}
@@ -41,11 +28,15 @@ func NewDB() (*DB, error) {
 	}, nil
 }
 
-func (db *DB) setUp() error {
-	for _, stmt := range setupStmts {
-		_, err := db.bolt.Exec(stmt)
+func (db *DB) setUp(stmts ... bolt.Stmt) error {
+	if len(stmts) == 0 {
+		return nil
+	}
+
+	for i, s := range stmts {
+		_, err := db.bolt.Exec(s)
 		if err != nil {
-			return err
+			return errors.WithMessage(err, fmt.Sprintf("stmt index: %d", i))
 		}
 	}
 	return nil
@@ -54,7 +45,7 @@ func (db *DB) setUp() error {
 func (db *DB) tearDown() {
 	_, err := db.bolt.Exec(tearItDown)
 	if err != nil {
-		log.ErrorC("test teardown failure", err, nil)
+		log.ErrorC("tear down failure", err, nil)
 		os.Exit(1)
 	}
 }
