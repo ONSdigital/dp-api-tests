@@ -21,7 +21,7 @@ func TestGetCodesSuccess(t *testing.T) {
 			response := codeListAPI.GET("/code-lists/fender-guitars/editions/2018/codes").Expect().Status(http.StatusOK).JSON().Object()
 
 			Convey("then the expected response is returned", func() {
-				response.Value("count").Equal(3)
+				response.Value("number_of_results").Equal(3)
 				response.Value("items").Array().Length().Equal(3)
 
 				response.Value("items").Array().Element(0).Object().Value("id").Equal("Jazzmaster")
