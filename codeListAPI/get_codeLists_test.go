@@ -2,8 +2,6 @@ package codeListAPI
 
 import (
 	"github.com/ONSdigital/dp-api-tests/config"
-	"github.com/ONSdigital/go-ns/log"
-	"os"
 	"testing"
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/gavv/httpexpect"
@@ -11,18 +9,11 @@ import (
 )
 
 func Test_GetCodeListsSuccess(t *testing.T) {
-	db, err := NewDB()
-	if err != nil {
-		os.Exit(1)
-	}
+	db := NewDB(t)
 	defer db.bolt.Close()
 
-	if err := db.setUp(allTestData()...); err != nil {
-		log.ErrorC("test setup failure", err, nil)
-		os.Exit(1)
-	}
-
 	Convey("given code lists exist", t, func() {
+		db.Setup(AllTestData()...)
 		Convey("when a valid request is sent to get CodeLists", func() {
 			codeListAPI := httpexpect.New(t, db.cfg.CodeListAPIURL)
 
@@ -42,14 +33,14 @@ func Test_GetCodeListsSuccess(t *testing.T) {
 		})
 
 		Reset(func() {
-			db.tearDown()
+			db.TearDown()
 		})
 	})
 }
 
 func Test_GetCodeListsNotFound(t *testing.T) {
 	cfg, _ := config.Get()
-	Convey("given non code lists exist", t, func() {
+	Convey("given no code lists exist", t, func() {
 		Convey("when a valid request is sent to get CodeLists", func() {
 			codeListAPI := httpexpect.New(t, cfg.CodeListAPIURL)
 
@@ -61,18 +52,11 @@ func Test_GetCodeListsNotFound(t *testing.T) {
 }
 
 func Test_GetCodeListSuccess(t *testing.T) {
-	db, err := NewDB()
-	if err != nil {
-		os.Exit(1)
-	}
+	db := NewDB(t)
 	defer db.bolt.Close()
 
-	if err := db.setUp(allTestData()...); err != nil {
-		log.ErrorC("test setup failure", err, nil)
-		os.Exit(1)
-	}
-
 	Convey("given a code lists exist", t, func() {
+		db.Setup(AllTestData()...)
 		Convey("when a valid request is sent to get CodeList", func() {
 			codeListAPI := httpexpect.New(t, db.cfg.CodeListAPIURL)
 
@@ -85,7 +69,7 @@ func Test_GetCodeListSuccess(t *testing.T) {
 		})
 
 		Reset(func() {
-			db.tearDown()
+			db.TearDown()
 		})
 	})
 }

@@ -1,8 +1,6 @@
 package codeListAPI
 
 import (
-	"os"
-	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	"net/http"
 	"testing"
@@ -11,18 +9,11 @@ import (
 )
 
 func Test_GetEditionsSuccess(t *testing.T) {
-	db, err := NewDB()
-	if err != nil {
-		os.Exit(1)
-	}
+	db := NewDB(t)
 	defer db.bolt.Close()
 
-	if err := db.setUp(allTestData()...); err != nil {
-		log.ErrorC("test setup failure", err, nil)
-		os.Exit(1)
-	}
-
 	Convey("given 2 editions of a code list exist", t, func() {
+		db.Setup(AllTestData()...)
 
 		Convey("when a valid getEditions request is sent", func() {
 			codeListAPI := httpexpect.New(t, db.cfg.CodeListAPIURL)
@@ -48,7 +39,7 @@ func Test_GetEditionsSuccess(t *testing.T) {
 		})
 
 		Reset(func() {
-			db.tearDown()
+			db.TearDown()
 		})
 	})
 }
@@ -68,18 +59,11 @@ func Test_GetEditionsNotFound(t *testing.T) {
 }
 
 func Test_GetEditionSuccess(t *testing.T) {
-	db, err := NewDB()
-	if err != nil {
-		os.Exit(1)
-	}
+	db := NewDB(t)
 	defer db.bolt.Close()
 
-	if err := db.setUp(allTestData()...); err != nil {
-		log.ErrorC("test setup failure", err, nil)
-		os.Exit(1)
-	}
-
 	Convey("given the requested edition of a code list exists", t, func() {
+		db.Setup(AllTestData()...)
 
 		Convey("when a valid getEdition request is sent", func() {
 			codeListAPI := httpexpect.New(t, db.cfg.CodeListAPIURL)
@@ -96,7 +80,7 @@ func Test_GetEditionSuccess(t *testing.T) {
 		})
 
 		Reset(func() {
-			db.tearDown()
+			db.TearDown()
 		})
 	})
 }
@@ -116,25 +100,15 @@ func Test_GetEditionNotFound(t *testing.T) {
 }
 
 func Test_GetEditionInternalServerError(t *testing.T) {
-	db, err := NewDB()
-	if err != nil {
-		os.Exit(1)
-	}
+	db := NewDB(t)
 	defer db.bolt.Close()
 
-	// Add the same data twice - to trigger a non unique result which should result in an internal server error.
-	testData := append(fender2017, fender2017...)
-
-	if err := db.setUp(testData...); err != nil {
-		log.ErrorC("test setup failure", err, nil)
-		os.Exit(1)
-	}
-
 	Convey("given the requested edition is not unique", t, func() {
-		cfg, err := config.Get()
-		So(err, ShouldBeNil)
+		// Add the same data twice - to trigger a non unique result which should result in an internal server error.
+		testData := append(fender2017, fender2017...)
+		db.Setup(testData...)
 		Convey("when a getEdition request is sent", func() {
-			codeListAPI := httpexpect.New(t, cfg.CodeListAPIURL)
+			codeListAPI := httpexpect.New(t, db.cfg.CodeListAPIURL)
 
 			Convey("then a 500 response is returned", func() {
 				codeListAPI.GET("/code-lists/fender-guitars/editions/2017").Expect().Status(http.StatusInternalServerError).Text().Equal("internal server error\n")
@@ -142,7 +116,7 @@ func Test_GetEditionInternalServerError(t *testing.T) {
 		})
 
 		Reset(func() {
-			db.tearDown()
+			db.TearDown()
 		})
 	})
 }
