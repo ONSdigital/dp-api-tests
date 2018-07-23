@@ -390,6 +390,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		// Waiting for version to have downloads before updating state to published
 		hasDownloads := false
 		var csvSize int
+		var csvwSize int
 		var xlsSize int
 	hasDownloadsLoop:
 		for !hasDownloads {
@@ -414,6 +415,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 							}
 							So(xlsSize, ShouldBeBetweenOrEqual, 19000, 20000)
 							So(instanceResource.Downloads.XLS.Private, ShouldNotBeEmpty)
+
 							csvSize, err = strconv.Atoi(instanceResource.Downloads.CSV.Size)
 							if err != nil {
 								log.ErrorC("cannot convert csv size of type string to integer", err, log.Data{"csv_size": instanceResource.Downloads.CSV.Size})
@@ -421,6 +423,14 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 							}
 							So(csvSize, ShouldBeBetweenOrEqual, 137000, 139000)
 							So(instanceResource.Downloads.CSV.URL, ShouldNotBeEmpty)
+
+							csvwSize, err = strconv.Atoi(instanceResource.Downloads.CSVW.Size)
+							if err != nil {
+								log.ErrorC("cannot convert csv size of type string to integer", err, log.Data{"csvw_size": instanceResource.Downloads.CSVW.Size})
+								t.FailNow()
+							}
+							So(csvwSize, ShouldBeBetweenOrEqual, 100, 200)
+							So(instanceResource.Downloads.CSVW.URL, ShouldNotBeEmpty)
 							hasDownloads = true
 						}
 					}
@@ -448,6 +458,8 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		logData := log.Data{
 			"private_csv_link": instanceResource.Downloads.CSV.Private,
 			"private_csv_size": instanceResource.Downloads.CSV.Size,
+			"private_csvw_link": instanceResource.Downloads.CSVW.Private,
+			"private_csvw_size": instanceResource.Downloads.CSVW.Size,
 			"private_xls_link": instanceResource.Downloads.XLS.Private,
 			"private_xls_size": instanceResource.Downloads.XLS.Size,
 		}
@@ -476,6 +488,9 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 		log.Debug("Pre publish - attempting to download full CSV file from the download service", logData)
 		testFileDownload(instanceResource.Downloads.CSV.URL, csvSize, false)
+
+		log.Debug("Pre publish - attempting to download full CSVW file from the download service", logData)
+		testFileDownload(instanceResource.Downloads.CSVW.URL, csvSize, false)
 
 		log.Debug("Pre publish - attempting to download full XLS file from the download service", logData)
 		testFileDownload(instanceResource.Downloads.XLS.URL, xlsSize, false)
@@ -591,15 +606,17 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			t.FailNow()
 		}
 		logData["after_loop_public_csv_link"] = versionResourcePostPublish.Downloads.CSV.Public
-		logData["after_loop_public_xls_link"] = versionResourcePostPublish.Downloads.CSV.Public
+		logData["after_loop_public_csvw_link"] = versionResourcePostPublish.Downloads.CSVW.Public
+		logData["after_loop_public_xls_link"] = versionResourcePostPublish.Downloads.XLS.Public
 		log.Debug("Pre publish full downloads have been generated", logData)
 
 		log.Info("Get downloads link from version document", nil)
 		csvURL := versionResource.Downloads.CSV.URL
 
-		log.Debug("getting downloads from the versheaderRow, err := csvReader.Read()ion",
+		log.Debug("getting downloads from the version",
 			log.Data{
 				"csv_link": versionResource.Downloads.CSV.URL,
+				"csvw_link": versionResource.Downloads.CSVW.URL,
 				"xls_link": versionResource.Downloads.XLS.URL,
 			})
 
@@ -644,6 +661,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		So(numberOfCSVRows, ShouldEqual, 1510)
 
 		testFileDownload(versionResource.Downloads.CSV.URL, csvSize, true)
+		testFileDownload(versionResource.Downloads.CSVW.URL, csvwSize, true)
 		testFileDownload(versionResource.Downloads.XLS.URL, xlsSize, true)
 
 		exitHasPublicDownloadsLoop := make(chan bool)

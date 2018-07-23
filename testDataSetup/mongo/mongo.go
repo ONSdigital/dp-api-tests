@@ -257,8 +257,9 @@ type CodeList struct {
 
 // DownloadList represents a list of objects of containing information on the downloadable files
 type DownloadList struct {
-	CSV *DownloadObject `bson:"csv,omitempty" json:"csv,omitempty"`
-	XLS *DownloadObject `bson:"xls,omitempty" json:"xls,omitempty"`
+	CSV  *DownloadObject `bson:"csv,omitempty" json:"csv,omitempty"`
+	CSVW *DownloadObject `bson:"csv,omitempty" json:"csvw,omitempty"`
+	XLS  *DownloadObject `bson:"xls,omitempty" json:"xls,omitempty"`
 }
 
 // DownloadObject represents information on the downloadable file
