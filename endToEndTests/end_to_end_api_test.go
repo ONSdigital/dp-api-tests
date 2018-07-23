@@ -15,12 +15,13 @@ import (
 	"github.com/gedge/mgo"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"net/url"
+
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/ONSdigital/go-ns/rchttp"
-	"net/url"
 )
 
 var timeout = time.Duration(30 * time.Second)
@@ -221,9 +222,9 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		getHierarchyParentDimensionResponse.Value("has_data").Equal(true)
 		getHierarchyParentDimensionResponse.Value("label").Equal("Overall Index")
 		getHierarchyParentDimensionResponse.Value("no_of_children").Equal(12)
-		getHierarchyParentDimensionResponse.Value("links").Object().Value("code").Object().Value("href").Equal("http://localhost:22400/code-lists/cpih1dim1aggid/codes/cpih1dim1A0")
+		getHierarchyParentDimensionResponse.Value("links").Object().Value("code").Object().Value("href").Equal(cfg.CodeListAPIURL + "/code-lists/cpih1dim1aggid/codes/cpih1dim1A0")
 		getHierarchyParentDimensionResponse.Value("links").Object().Value("code").Object().Value("id").Equal("cpih1dim1A0")
-		getHierarchyParentDimensionResponse.Value("links").Object().Value("self").Object().Value("href").Equal("http://localhost:22600/hierarchies/" + instanceID + "/aggregate")
+		getHierarchyParentDimensionResponse.Value("links").Object().Value("self").Object().Value("href").Equal(cfg.HierarchyAPIURL + "/hierarchies/" + instanceID + "/aggregate")
 		getHierarchyParentDimensionResponse.Value("links").Object().Value("self").Object().Value("id").Equal("cpih1dim1A0")
 
 		numberOfChildren := getHierarchyParentDimensionResponse.Value("no_of_children").Raw()
@@ -451,7 +452,6 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			"private_xls_size": instanceResource.Downloads.XLS.Size,
 		}
 		log.Debug("Pre publish full downloads have been generated", logData)
-
 
 		privateCSVURL, err := url.Parse(instanceResource.Downloads.CSV.Private)
 		if err != nil {

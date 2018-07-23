@@ -1,9 +1,10 @@
 package hierarchyAPI
 
 import (
+	"os"
+
 	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/ONSdigital/go-ns/log"
-	"os"
 )
 
 var cfg *config.Config

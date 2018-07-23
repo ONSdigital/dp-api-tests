@@ -178,7 +178,7 @@ func TestFailureToGetDimensionOption(t *testing.T) {
 
 func validateOptionResponse(responseObject httpexpect.Object, filterBlueprintID, dimensionID, option string) {
 
-	filterURL := "http://localhost:22100/filters/" + filterBlueprintID
+	filterURL := cfg.FilterAPIURL + "/filters/" + filterBlueprintID
 	dimensionURL := filterURL + "/dimensions/" + dimensionID
 	selfURL := dimensionURL + "/options/" + option
 
