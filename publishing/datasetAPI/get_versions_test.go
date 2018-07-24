@@ -73,6 +73,8 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 						checkVersionResponse(datasetID, editionID, instanceID, edition, response.Value("items").Array().Element(i).Object())
 						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("private").String().Match("private/myfile.csv")
 						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("public").String().Match("public/myfile.csv")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csvw").Object().Value("private").String().Match("private/myfile.csv-metadata.json")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csvw").Object().Value("public").String().Match("public/myfile.csv-metadata.json")
 						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("private").String().Match("private/myfile.xls")
 						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("public").String().Match("public/myfile.xls")
 					}
@@ -82,6 +84,8 @@ func TestGetVersions_ReturnsListOfVersions(t *testing.T) {
 						response.Value("items").Array().Element(i).Object().Value("state").Equal("associated")
 						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("private").String().Match("private/myfile.csv")
 						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csv").Object().Value("public").String().Match("public/myfile.csv")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csvw").Object().Value("private").String().Match("private/myfile.csv-metadata.json")
+						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("csvw").Object().Value("public").String().Match("public/myfile.csv-metadata.json")
 						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("private").String().Match("private/myfile.xls")
 						response.Value("items").Array().Element(i).Object().Value("downloads").Object().Value("xls").Object().Value("public").String().Match("public/myfile.xls")
 					}
@@ -306,6 +310,8 @@ func checkVersionResponse(datasetID, editionID, instanceID, edition string, resp
 	response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("aggregate")
 	response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("/aws/census-2017-1-csv$")
 	response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
+	response.Value("downloads").Object().Value("csvw").Object().Value("href").String().Match("/aws/census-2017-1-csv-metadata.json$")
+	response.Value("downloads").Object().Value("csvw").Object().Value("size").Equal("10")
 	response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("/aws/census-2017-1-xls$")
 	response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24")
 	response.Value("edition").Equal("2017")
@@ -330,6 +336,8 @@ func checkVersionResponse(datasetID, editionID, instanceID, edition string, resp
 func checkNeitherPublicOrPrivateLinksExistInResponse(response *httpexpect.Object) {
 	response.Value("csv").Object().NotContainsKey("public")
 	response.Value("csv").Object().NotContainsKey("private")
+	response.Value("csvw").Object().NotContainsKey("public")
+	response.Value("csvw").Object().NotContainsKey("private")
 	response.Value("xls").Object().NotContainsKey("public")
 	response.Value("xls").Object().NotContainsKey("private")
 }

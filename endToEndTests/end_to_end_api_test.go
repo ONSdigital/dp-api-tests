@@ -429,7 +429,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 								log.ErrorC("cannot convert csv size of type string to integer", err, log.Data{"csvw_size": instanceResource.Downloads.CSVW.Size})
 								t.FailNow()
 							}
-							So(csvwSize, ShouldBeBetweenOrEqual, 100, 200)
+							So(csvwSize, ShouldBeBetweenOrEqual, 2000, 2400)
 							So(instanceResource.Downloads.CSVW.URL, ShouldNotBeEmpty)
 							hasDownloads = true
 						}
@@ -490,7 +490,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		testFileDownload(instanceResource.Downloads.CSV.URL, csvSize, false)
 
 		log.Debug("Pre publish - attempting to download full CSVW file from the download service", logData)
-		testFileDownload(instanceResource.Downloads.CSVW.URL, csvSize, false)
+		testFileDownload(instanceResource.Downloads.CSVW.URL, csvwSize, false)
 
 		log.Debug("Pre publish - attempting to download full XLS file from the download service", logData)
 		testFileDownload(instanceResource.Downloads.XLS.URL, xlsSize, false)

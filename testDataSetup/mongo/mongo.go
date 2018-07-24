@@ -258,7 +258,7 @@ type CodeList struct {
 // DownloadList represents a list of objects of containing information on the downloadable files
 type DownloadList struct {
 	CSV  *DownloadObject `bson:"csv,omitempty" json:"csv,omitempty"`
-	CSVW *DownloadObject `bson:"csv,omitempty" json:"csvw,omitempty"`
+	CSVW *DownloadObject `bson:"csvw,omitempty" json:"csvw,omitempty"`
 	XLS  *DownloadObject `bson:"xls,omitempty" json:"xls,omitempty"`
 }
 
@@ -306,11 +306,11 @@ type Instance struct {
 	Events            *[]InstanceEvent     `bson:"events,omitempty"                      json:"events,omitempty"`
 	Headers           *[]string            `bson:"headers,omitempty"                     json:"headers,omitempty"`
 	ImportTasks       *InstanceImportTasks `bson:"import_tasks,omitempty"                json:"import_tasks,omitempty"`
-	LatestChanges     *[]LatestChange      `bson:"latest_changes,omitempty"              json:"latest_changes,omitempty"`
+	LatestChanges     []LatestChange       `bson:"latest_changes,omitempty"              json:"latest_changes,omitempty"`
 	Links             InstanceLinks        `bson:"links,omitempty"                       json:"links,omitempty"`
 	ReleaseDate       string               `bson:"release_date,omitempty"                json:"release_date,omitempty"`
 	State             string               `bson:"state,omitempty"                       json:"state,omitempty"`
-	Temporal          *[]TemporalFrequency `bson:"temporal,omitempty"                    json:"temporal,omitempty"`
+	Temporal          []TemporalFrequency  `bson:"temporal,omitempty"                    json:"temporal,omitempty"`
 	TotalObservations int64                `bson:"total_observations,omitempty"          json:"total_observations,omitempty"`
 	Version           int                  `bson:"version,omitempty"                     json:"version,omitempty"`
 	LastUpdated       time.Time            `bson:"last_updated,omitempty"                json:"last_updated,omitempty"`
