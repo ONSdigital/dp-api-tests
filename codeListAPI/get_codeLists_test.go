@@ -20,7 +20,10 @@ func Test_GetCodeListsSuccess(t *testing.T) {
 			response := codeListAPI.GET("/code-lists").Expect().Status(http.StatusOK).JSON().Object()
 
 			Convey("then a 200 response status is returned", func() {
-				response.Value("number_of_results").Equal(2)
+				response.Value("total_count").Equal(2)
+				response.Value("count").Equal(2)
+				response.Value("limit").Equal(2)
+				response.Value("offset").Equal(0)
 				response.Value("items").Array().Length().Equal(2)
 				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("self").Object().Value("id").Equal(gibsonGuitars2017.codeList)
 				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("self").Object().Value("href").String().Match(gibsonGuitars2017.codeListLink)
@@ -45,7 +48,7 @@ func Test_GetCodeListsNotFound(t *testing.T) {
 			codeListAPI := httpexpect.New(t, cfg.CodeListAPIURL)
 
 			Convey("then a 404 response is returned", func() {
-				codeListAPI.GET("/code-lists").Expect().Status(http.StatusNotFound).Text().Equal("resource not found\n")
+				codeListAPI.GET("/code-lists").Expect().Status(http.StatusNotFound).Text().Equal("code lists not found\n")
 			})
 		})
 	})
@@ -82,7 +85,7 @@ func Test_GetCodeListNotFound(t *testing.T) {
 			codeListAPI := httpexpect.New(t, cfg.CodeListAPIURL)
 
 			Convey("then a 404 response is returned", func() {
-				codeListAPI.GET("/code-lists/fender-guitars").Expect().Status(http.StatusNotFound).Text().Equal("resource not found\n")
+				codeListAPI.GET("/code-lists/fender-guitars").Expect().Status(http.StatusNotFound).Text().Equal("code list not found\n")
 			})
 		})
 	})
