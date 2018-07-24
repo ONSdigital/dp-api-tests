@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/gedge/mgo/bson"
+	"github.com/globalsign/mgo/bson"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	datasetAPI "github.com/ONSdigital/dp-dataset-api/models"
@@ -382,26 +382,28 @@ func validUnpublishedEditionData(datasetID, editionID, edition string) bson.M {
 	}
 }
 
-func validPublishedInstanceData(datasetID, edition, instanceID string) bson.M {
+func validPublishedInstanceData(datasetID, edition, instanceID string, uniqueTimestamp bson.MongoTimestamp) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"alerts":                                                       []mongo.Alert{alert},
-			"dimensions":                                                   []mongo.CodeList{dimensionTwo, dimensionThree, dimensionFour},
-			"downloads.csv.href":                                           cfg.DatasetAPIURL + "/aws/census-2017-1-csv",
-			"downloads.csv.size":                                           "10",
-			"downloads.csv.public":                                         "https://s3-eu-west-1.amazon.com/public/myfile.csv",
-			"downloads.csv.private":                                        "s3://private/myfile.csv",
-			"downloads.csvw.href":                                           cfg.DatasetAPIURL + "/aws/census-2017-1-csv-metadata.json",
-			"downloads.csvw.size":                                           "10",
-			"downloads.csvw.public":                                         "https://s3-eu-west-1.amazon.com/public/myfile.csv-metadata.json",
-			"downloads.csvw.private":                                        "s3://private/myfile.csv-metadata.json",
-			"downloads.xls.href":                                           cfg.DatasetAPIURL + "/aws/census-2017-1-xls",
-			"downloads.xls.size":                                           "24",
-			"downloads.xls.public":                                         "https://s3-eu-west-1.amazon.com/public/myfile.xls",
-			"downloads.xls.private":                                        "s3://private/myfile.xls",
-			"edition":                                                      edition,
-			"headers":                                                      []string{"v4_0", "time", "time", "uk-only", "geography", "cpi1dim1aggid", "aggregate"},
-			"id":                                                           instanceID,
+			"alerts":                 []mongo.Alert{alert},
+			"dimensions":             []mongo.CodeList{dimensionTwo, dimensionThree, dimensionFour},
+			"downloads.csv.href":     cfg.DatasetAPIURL + "/aws/census-2017-1-csv",
+			"downloads.csv.size":     "10",
+			"downloads.csv.public":   "https://s3-eu-west-1.amazon.com/public/myfile.csv",
+			"downloads.csv.private":  "s3://private/myfile.csv",
+			"downloads.csvw.href":    cfg.DatasetAPIURL + "/aws/census-2017-1-csv-metadata.json",
+			"downloads.csvw.size":    "10",
+			"downloads.csvw.public":  "https://s3-eu-west-1.amazon.com/public/myfile.csv-metadata.json",
+			"downloads.csvw.private": "s3://private/myfile.csv-metadata.json",
+			"downloads.xls.href":     cfg.DatasetAPIURL + "/aws/census-2017-1-xls",
+			"downloads.xls.size":     "24",
+			"downloads.xls.public":   "https://s3-eu-west-1.amazon.com/public/myfile.xls",
+			"downloads.xls.private":  "s3://private/myfile.xls",
+			"edition":                edition,
+			"headers":                []string{"v4_0", "time", "time", "uk-only", "geography", "cpi1dim1aggid", "aggregate"},
+			"id":                     instanceID,
+			"import_tasks.import_observations.state":                       "completed",
+			"import_tasks.import_observations.total_inserted_observations": 1000,
 			"latest_changes":                                               []mongo.LatestChange{latestChanges},
 			"last_updated":                                                 "2017-09-08", // TODO Should be isodate
 			"license":                                                      "ONS License",
@@ -421,76 +423,78 @@ func validPublishedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"temporal":                                                     []mongo.TemporalFrequency{temporal},
 			"total_inserted_observations":                                  1000,
 			"total_observations":                                           1000,
+			"unique_timestamp":                                             uniqueTimestamp,
 			"version":                                                      1,
 			"test_data":                                                    "true",
-			"import_tasks.import_observations.state":                       "completed",
-			"import_tasks.import_observations.total_inserted_observations": 1000,
 		},
 	}
 }
 
-func validAssociatedInstanceData(datasetID, edition, instanceID string) bson.M {
+func validAssociatedInstanceData(datasetID, edition, instanceID string, uniqueTimestamp bson.MongoTimestamp) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"collection_id":         "208064B3-A808-449B-9041-EA3A2F72CFAB",
-			"dimensions":            []mongo.CodeList{dimensionTwo, dimensionThree, dimensionFour},
-			"downloads.csv.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
-			"downloads.csv.size":    "10",
-			"downloads.csv.public":  "https://s3-eu-west-1.amazon.com/public/myfile.csv",
-			"downloads.csv.private": "s3://private/myfile.csv",
-			"downloads.csvw.href":                                           cfg.DatasetAPIURL + "/aws/census-2017-1-csv-metadata.json",
-			"downloads.csvw.size":                                           "10",
-			"downloads.csvw.public":                                         "https://s3-eu-west-1.amazon.com/public/myfile.csv-metadata.json",
-			"downloads.csvw.private":                                        "s3://private/myfile.csv-metadata.json",
-			"downloads.xls.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
-			"downloads.xls.size":    "24",
-			"downloads.xls.public":  "https://s3-eu-west-1.amazon.com/public/myfile.xls",
-			"downloads.xls.private": "s3://private/myfile.xls",
-			"edition":               edition,
-			"headers":               []string{"v4_0", "time", "time", "uk-only", "geography", "cpi1dim1aggid", "aggregate"},
-			"id":                    instanceID,
-			"last_updated":          "2017-09-08", // TODO Should be isodate
-			"latest_changes":        []mongo.LatestChange{latestChanges},
-			"license":               "ONS license",
-			"links.job.id":          "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
-			"links.job.href":        cfg.DatasetAPIURL + "/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
-			"links.dataset.id":      datasetID,
-			"links.dataset.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID,
-			"links.dimensions.href": cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/2/dimensions",
-			"links.edition.id":      edition,
-			"links.edition.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
-			"links.self.href":       cfg.DatasetAPIURL + "/instances/" + instanceID,
-			"links.spatial.href":    "http://ons.gov.uk/geographylist",
-			"links.version.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/2",
-			"links.version.id":      "2",
-			"release_date":          "2017-12-12", // TODO Should be isodate
-			"state":                 "associated",
-			"temporal":              []mongo.TemporalFrequency{temporal},
+			"collection_id":          "208064B3-A808-449B-9041-EA3A2F72CFAB",
+			"dimensions":             []mongo.CodeList{dimensionTwo, dimensionThree, dimensionFour},
+			"downloads.csv.href":     cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
+			"downloads.csv.size":     "10",
+			"downloads.csv.public":   "https://s3-eu-west-1.amazon.com/public/myfile.csv",
+			"downloads.csv.private":  "s3://private/myfile.csv",
+			"downloads.csvw.href":    cfg.DatasetAPIURL + "/aws/census-2017-1-csv-metadata.json",
+			"downloads.csvw.size":    "10",
+			"downloads.csvw.public":  "https://s3-eu-west-1.amazon.com/public/myfile.csv-metadata.json",
+			"downloads.csvw.private": "s3://private/myfile.csv-metadata.json",
+			"downloads.xls.href":     cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
+			"downloads.xls.size":     "24",
+			"downloads.xls.public":   "https://s3-eu-west-1.amazon.com/public/myfile.xls",
+			"downloads.xls.private":  "s3://private/myfile.xls",
+			"edition":                edition,
+			"headers":                []string{"v4_0", "time", "time", "uk-only", "geography", "cpi1dim1aggid", "aggregate"},
+			"id":                     instanceID,
 			"import_tasks.import_observations.total_inserted_observations": 1000,
 			"import_tasks.import_observations.state":                       "completed",
+			"last_updated":                                                 "2017-09-08", // TODO Should be isodate
+			"latest_changes":                                               []mongo.LatestChange{latestChanges},
+			"license":                                                      "ONS license",
+			"links.job.id":                                                 "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+			"links.job.href":                                               cfg.DatasetAPIURL + "/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+			"links.dataset.id":                                             datasetID,
+			"links.dataset.href":                                           cfg.DatasetAPIURL + "/datasets/" + datasetID,
+			"links.dimensions.href":                                        cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/2/dimensions",
+			"links.edition.id":                                             edition,
+			"links.edition.href":                                           cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
+			"links.self.href":                                              cfg.DatasetAPIURL + "/instances/" + instanceID,
+			"links.spatial.href":                                           "http://ons.gov.uk/geographylist",
+			"links.version.href":                                           cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/2",
+			"links.version.id":                                             "2",
+			"release_date":                                                 "2017-12-12", // TODO Should be isodate
+			"state":                                                        "associated",
+			"temporal":                                                     []mongo.TemporalFrequency{temporal},
 			"total_observations":                                           1000,
+			"unique_timestamp":                                             uniqueTimestamp,
 			"version":                                                      2,
 			"test_data":                                                    "true",
 		},
 	}
 }
 
-func validEditionConfirmedInstanceData(datasetID, edition, instanceID string) bson.M {
+func validEditionConfirmedInstanceData(datasetID, edition, instanceID string, uniqueTimestamp bson.MongoTimestamp) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"dimensions":            []mongo.CodeList{dimension},
-			"downloads.csv.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
-			"downloads.csv.private": "s3://private/myfile.csv",
-			"downloads.csv.size":    "10",
+			"dimensions":             []mongo.CodeList{dimension},
+			"downloads.csv.href":     cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
+			"downloads.csv.private":  "s3://private/myfile.csv",
+			"downloads.csv.size":     "10",
 			"downloads.csvw.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv-metadata.json",
 			"downloads.csvw.private": "s3://private/myfile.csv-metadata.json",
 			"downloads.csvw.size":    "10",
-			"downloads.xls.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
-			"downloads.xls.private": "s3://private/myfile.xls",
-			"downloads.xls.size":    "24",
-			"edition":               edition,
-			"headers":               []string{"time", "geography"},
-			"id":                    instanceID,
+			"downloads.xls.href":     cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
+			"downloads.xls.private":  "s3://private/myfile.xls",
+			"downloads.xls.size":     "24",
+			"edition":                edition,
+			"headers":                []string{"time", "geography"},
+			"id":                     instanceID,
+			"import_tasks.import_observations.state":                       "completed",
+			"import_tasks.import_observations.total_inserted_observations": 1000,
 			"last_updated":          "2017-09-08", // TODO Should be isodate
 			"license":               "ONS license",
 			"links.job.id":          "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
@@ -507,31 +511,32 @@ func validEditionConfirmedInstanceData(datasetID, edition, instanceID string) bs
 			"release_date":          "2017-12-12", // TODO Should be isodate
 			"state":                 "edition-confirmed",
 			"temporal":              []mongo.TemporalFrequency{temporal},
-			"import_tasks.import_observations.state":                       "completed",
-			"import_tasks.import_observations.total_inserted_observations": 1000,
-			"total_observations":                                           1000,
-			"version":                                                      2,
-			"test_data":                                                    "true",
+			"total_observations":    1000,
+			"unique_timestamp":      uniqueTimestamp,
+			"version":               2,
+			"test_data":             "true",
 		},
 	}
 }
 
-func editionConfirmedInstanceInvalidFields(datasetID, edition, instanceID string) bson.M {
+func editionConfirmedInstanceInvalidFields(datasetID, edition, instanceID string, uniqueTimestamp bson.MongoTimestamp) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"dimensions":            []mongo.CodeList{dimension},
-			"downloads.csv.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
-			"downloads.csv.private": "s3://private/myfile.csv",
-			"downloads.csv.size":    "ten",
+			"dimensions":             []mongo.CodeList{dimension},
+			"downloads.csv.href":     cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
+			"downloads.csv.private":  "s3://private/myfile.csv",
+			"downloads.csv.size":     "ten",
 			"downloads.csvw.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv-metadata.json",
 			"downloads.csvw.private": "s3://private/myfile.csv-metadata.json",
 			"downloads.csvw.size":    "ten",
-			"downloads.xls.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
-			"downloads.xls.private": "s3://private/myfile.xls",
-			"downloads.xls.size":    "twenty four",
-			"edition":               edition,
-			"headers":               []string{"time", "geography"},
-			"id":                    instanceID,
+			"downloads.xls.href":     cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
+			"downloads.xls.private":  "s3://private/myfile.xls",
+			"downloads.xls.size":     "twenty four",
+			"edition":                edition,
+			"headers":                []string{"time", "geography"},
+			"id":                     instanceID,
+			"import_tasks.import_observations.state":                       "completed",
+			"import_tasks.import_observations.total_inserted_observations": 1000,
 			"last_updated":          "2017-09-08", // TODO Should be isodate
 			"license":               "ONS license",
 			"links.job.id":          "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
@@ -548,25 +553,26 @@ func editionConfirmedInstanceInvalidFields(datasetID, edition, instanceID string
 			"release_date":          "2017-12-12", // TODO Should be isodate
 			"state":                 "edition-confirmed",
 			"temporal":              []mongo.TemporalFrequency{temporal},
-			"import_tasks.import_observations.state":                       "completed",
-			"import_tasks.import_observations.total_inserted_observations": 1000,
-			"total_observations":                                           1000,
-			"version":                                                      2,
-			"test_data":                                                    "true",
+			"unique_timestamp":      uniqueTimestamp,
+			"version":               2,
+			"test_data":             "true",
+			"total_observations":    1000,
 		},
 	}
 }
 
-func editionConfirmedInstanceMissingMandatoryFields(datasetID, edition, instanceID string) bson.M {
+func editionConfirmedInstanceMissingMandatoryFields(datasetID, edition, instanceID string, uniqueTimestamp bson.MongoTimestamp) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"dimensions":            []mongo.CodeList{dimension},
-			"downloads.csv.url":     cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
-			"downloads.csvw.url":     cfg.DatasetAPIURL + "/aws/census-2017-2-csv-metadata.json",
-			"downloads.xls.url":     cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
-			"edition":               edition,
-			"headers":               []string{"time", "geography"},
-			"id":                    instanceID,
+			"dimensions":         []mongo.CodeList{dimension},
+			"downloads.csv.url":  cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
+			"downloads.csvw.url": cfg.DatasetAPIURL + "/aws/census-2017-2-csv-metadata.json",
+			"downloads.xls.url":  cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
+			"edition":            edition,
+			"headers":            []string{"time", "geography"},
+			"id":                 instanceID,
+			"import_tasks.import_observations.state":                       "completed",
+			"import_tasks.import_observations.total_inserted_observations": 1000,
 			"last_updated":          "2017-09-08", // TODO Should be isodate
 			"license":               "ONS license",
 			"links.job.id":          "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
@@ -582,31 +588,32 @@ func editionConfirmedInstanceMissingMandatoryFields(datasetID, edition, instance
 			"links.version.id":      "2",
 			"state":                 "edition-confirmed",
 			"temporal":              []mongo.TemporalFrequency{temporal},
-			"import_tasks.import_observations.state":                       "completed",
-			"import_tasks.import_observations.total_inserted_observations": 1000,
-			"total_observations":                                           1000,
-			"version":                                                      2,
-			"test_data":                                                    "true",
+			"total_observations":    1000,
+			"unique_timestamp":      uniqueTimestamp,
+			"version":               2,
+			"test_data":             "true",
 		},
 	}
 }
 
-func validCompletedInstanceData(datasetID, edition, instanceID string) bson.M {
+func validCompletedInstanceData(datasetID, edition, instanceID string, uniqueTimestamp bson.MongoTimestamp) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"collection_id":         "208064B3-A808-449B-9041-EA3A2F72CFAB",
-			"downloads.csv.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
-			"downloads.csv.private": "s3://private/myfile.csv",
-			"downloads.csv.size":    "10",
+			"collection_id":          "208064B3-A808-449B-9041-EA3A2F72CFAB",
+			"downloads.csv.href":     cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
+			"downloads.csv.private":  "s3://private/myfile.csv",
+			"downloads.csv.size":     "10",
 			"downloads.csvw.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv-metadata.json",
 			"downloads.csvw.private": "s3://private/myfile.csv-metadata.json",
 			"downloads.csvw.size":    "10",
-			"downloads.xls.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
-			"downloads.xls.private": "s3://private/myfile.xls",
-			"downloads.xls.size":    "24",
-			"edition":               edition,
-			"headers":               []string{"time", "geography"},
-			"id":                    instanceID,
+			"downloads.xls.href":     cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
+			"downloads.xls.private":  "s3://private/myfile.xls",
+			"downloads.xls.size":     "24",
+			"edition":                edition,
+			"headers":                []string{"time", "geography"},
+			"id":                     instanceID,
+			"import_tasks.import_observations.state":                       "completed",
+			"import_tasks.import_observations.total_inserted_observations": 1000,
 			"last_updated":          "2017-09-08", // TODO Should be isodate
 			"latest_changes":        []mongo.LatestChange{latestChanges},
 			"license":               "ONS license",
@@ -620,10 +627,9 @@ func validCompletedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"links.self.href":       cfg.DatasetAPIURL + "/instances/" + instanceID,
 			"release_date":          "2017-12-12", // TODO Should be isodate
 			"state":                 "completed",
-			"import_tasks.import_observations.state":                       "completed",
-			"import_tasks.import_observations.total_inserted_observations": 1000,
-			"total_observations":                                           1000,
-			"test_data":                                                    "true",
+			"total_observations":    1000,
+			"test_data":             "true",
+			"unique_timestamp":      uniqueTimestamp,
 		},
 	}
 }
@@ -639,50 +645,41 @@ var searchIndex = mongo.BuildSearchIndexTask{
 	DimensionName: "geography",
 }
 
-func validSubmittedInstanceData(datasetID, edition, instanceID string) bson.M {
+func validSubmittedInstanceData(datasetID, edition, instanceID, state string, uniqueTimestamp bson.MongoTimestamp) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"collection_id":         "208064B3-A808-449B-9041-EA3A2F72CFAB",
-			"dimensions":            []mongo.CodeList{dimensionFour},
-			"downloads.csv.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
-			"downloads.csv.private": "s3://private/myfile.csv",
-			"downloads.csv.size":    "10",
-			"downloads.csvw.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv-metadata.json",
-			"downloads.csvw.private": "s3://private/myfile.csv-metadata.json",
-			"downloads.csvw.size":    "10",
-			"downloads.xls.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
-			"downloads.xls.private": "s3://private/myfile.xls",
-			"downloads.xls.size":    "24",
-			"edition":               edition,
-			"headers":               []string{"time", "geography"},
-			"id":                    instanceID,
-			"last_updated":          "2017-09-08", // TODO Should be isodate
-			"latest_changes":        []mongo.LatestChange{latestChanges},
-			"license":               "ONS license",
-			"links.job.id":          "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
-			"links.job.href":        cfg.DatasetAPIURL + "/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
-			"links.dataset.id":      datasetID,
-			"links.dataset.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID,
-			"links.dimensions.href": cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/2/dimensions",
-			"links.edition.id":      edition,
-			"links.edition.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017",
-			"links.self.href":       cfg.DatasetAPIURL + "/instances/" + instanceID,
-			"links.version.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/2",
-			"links.version.id":      "2",
-			"release_date":          "2017-12-12", // TODO Should be isodate
-			"state":                 "submitted",
+			"collection_id": "208064B3-A808-449B-9041-EA3A2F72CFAB",
+			"dimensions":    []mongo.CodeList{dimensionFour},
+			"edition":       edition,
+			"headers":       []string{"time", "geography"},
+			"id":            instanceID,
 			"import_tasks.import_observations.state":                       "created",
-			"import_tasks.import_observations.total_inserted_observations": 500,
+			"import_tasks.import_observations.total_inserted_observations": 1000,
 			"import_tasks.build_hierarchies":                               []mongo.BuildHierarchyTask{hierarchy},
 			"import_tasks.build_search_indexes":                            []mongo.BuildSearchIndexTask{searchIndex},
+			"last_updated":                                                 "2017-09-08", // TODO Should be isodate
+			"latest_changes":                                               []mongo.LatestChange{latestChanges},
+			"license":                                                      "ONS license",
+			"links.job.id":                                                 "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+			"links.job.href":                                               cfg.DatasetAPIURL + "/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+			"links.dataset.id":                                             datasetID,
+			"links.dataset.href":                                           cfg.DatasetAPIURL + "/datasets/" + datasetID,
+			"links.dimensions.href":                                        cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/2/dimensions",
+			"links.edition.id":                                             edition,
+			"links.edition.href":                                           cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017",
+			"links.self.href":                                              cfg.DatasetAPIURL + "/instances/" + instanceID,
+			"links.version.href":                                           cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/2",
+			"links.version.id":                                             "2",
+			"release_date":                                                 "2017-12-12", // TODO Should be isodate
+			"state":                                                        state,
 			"total_observations":                                           1000,
-			"version":                                                      2,
 			"test_data":                                                    "true",
+			"unique_timestamp":                                             uniqueTimestamp,
 		},
 	}
 }
 
-func validCreatedInstanceData(datasetID, edition, instanceID, state string) bson.M {
+func validCreatedInstanceData(datasetID, edition, instanceID, state string, uniqueTimestamp bson.MongoTimestamp) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"edition":            edition,
@@ -697,6 +694,7 @@ func validCreatedInstanceData(datasetID, edition, instanceID, state string) bson
 			"state":              state,
 			"total_observations": 1000,
 			"test_data":          "true",
+			"unique_timestamp":   uniqueTimestamp,
 		},
 	}
 }
@@ -938,15 +936,13 @@ var validPUTFullInstanceJSON = `
 		}
 	},
 	"release_date": "2017-11-11",
-  "state": "completed",
 	"temporal": [
 		{
 			"start_date": "2014-10-10",
 			"end_date": "2016-10-10",
 			"frequency": "monthly"
 		}
-	],
-	"total_inserted_observations": 1000
+	]
 }`
 
 var validPUTEditionConfirmedInstanceJSON = `

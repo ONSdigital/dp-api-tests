@@ -7,19 +7,21 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect"
-	"github.com/gedge/mgo"
-	uuid "github.com/satori/go.uuid"
+	"github.com/globalsign/mgo"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"github.com/ONSdigital/dp-api-tests/helpers"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 )
 
 func TestSuccessfullyGetInstance(t *testing.T) {
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
-	publishedInstanceID := uuid.NewV4().String()
-	unpublishedInstanceID := uuid.NewV4().String()
-	datasetID := uuid.NewV4().String()
 	edition := "2017"
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
@@ -29,8 +31,8 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
-			Value:      publishedInstanceID,
-			Update:     validPublishedInstanceData(datasetID, edition, publishedInstanceID),
+			Value:      ids.InstancePublished,
+			Update:     validPublishedInstanceData(ids.DatasetPublished, edition, ids.InstancePublished, ids.UniqueTimestamp),
 		}
 
 		if err := mongo.Setup(instance); err != nil {
@@ -41,7 +43,7 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 		Convey("When an authenticated request to get instance", func() {
 			Convey("Then response contains the expected json object and a status ok (200)", func() {
 
-				response := datasetAPI.GET("/instances/{id}", publishedInstanceID).
+				response := datasetAPI.GET("/instances/{id}", ids.InstancePublished).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
@@ -51,7 +53,7 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 
 				response.Value("state").Equal("published")
 
-				checkResponse(datasetID, edition, publishedInstanceID, "1", response)
+				checkResponse(ids.DatasetPublished, edition, ids.InstancePublished, "1", response)
 			})
 		})
 
@@ -67,8 +69,8 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
-			Value:      unpublishedInstanceID,
-			Update:     validAssociatedInstanceData(datasetID, edition, unpublishedInstanceID),
+			Value:      ids.InstanceAssociated,
+			Update:     validAssociatedInstanceData(ids.DatasetPublished, edition, ids.InstanceAssociated, ids.UniqueTimestamp),
 		}
 
 		if err := mongo.Setup(instance); err != nil {
@@ -79,11 +81,11 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 		Convey("When an authenticated request to get instance", func() {
 			Convey("Then response contains the expected json object and a status ok (200)", func() {
 
-				response := datasetAPI.GET("/instances/{id}", unpublishedInstanceID).
+				response := datasetAPI.GET("/instances/{id}", ids.InstanceAssociated).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				checkResponse(datasetID, edition, unpublishedInstanceID, "2", response)
+				checkResponse(ids.DatasetPublished, edition, ids.InstanceAssociated, "2", response)
 
 				response.Value("state").Equal("associated")
 
@@ -99,9 +101,12 @@ func TestSuccessfullyGetInstance(t *testing.T) {
 }
 
 func TestFailureToGetInstance(t *testing.T) {
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
-	instanceID := uuid.NewV4().String()
-	datasetID := uuid.NewV4().String()
 	edition := "2017"
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
@@ -110,7 +115,7 @@ func TestFailureToGetInstance(t *testing.T) {
 		Convey("When an authorised request is made to get instance", func() {
 			Convey("Then return a status not found (404) with message `instance not found`", func() {
 
-				datasetAPI.GET("/instances/{id}", instanceID).
+				datasetAPI.GET("/instances/{id}", ids.InstancePublished).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
 					Body().Contains("instance not found")
@@ -124,8 +129,8 @@ func TestFailureToGetInstance(t *testing.T) {
 			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
-			Value:      instanceID,
-			Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+			Value:      ids.InstancePublished,
+			Update:     validPublishedInstanceData(ids.DatasetPublished, edition, ids.InstancePublished, ids.UniqueTimestamp),
 		}
 
 		if err := mongo.Setup(instance); err != nil {
@@ -135,7 +140,7 @@ func TestFailureToGetInstance(t *testing.T) {
 		Convey("When no authentication header is provided in request to get resource", func() {
 			Convey("Then return a status of unauthorized (401)", func() {
 
-				datasetAPI.GET("/instances/{id}", instanceID).
+				datasetAPI.GET("/instances/{id}", ids.InstancePublished).
 					Expect().Status(http.StatusUnauthorized)
 
 			})
@@ -144,7 +149,7 @@ func TestFailureToGetInstance(t *testing.T) {
 		Convey("When an unauthorised request is made to get resource", func() {
 			Convey("Then return a status of unauthorized (401)", func() {
 
-				datasetAPI.GET("/instances/{id}", instanceID).
+				datasetAPI.GET("/instances/{id}", ids.InstancePublished).
 					WithHeader(florenceTokenName, unauthorisedAuthToken).
 					Expect().Status(http.StatusUnauthorized)
 

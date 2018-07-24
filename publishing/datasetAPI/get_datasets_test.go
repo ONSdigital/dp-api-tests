@@ -6,10 +6,10 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect"
-	"github.com/gedge/mgo"
-	uuid "github.com/satori/go.uuid"
+	"github.com/globalsign/mgo"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"github.com/ONSdigital/dp-api-tests/helpers"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 )
@@ -17,9 +17,11 @@ import (
 // This test may be slow due to iterating over results in dataset
 // (which could be many)
 func TestSuccessfulGetAListOfDatasets(t *testing.T) {
-
-	datasetID := uuid.NewV4().String()
-	unpublishedDatasetID := uuid.NewV4().String()
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
 	var docs []*mongo.Doc
 
@@ -27,16 +29,16 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
-		Value:      datasetID,
-		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
+		Value:      ids.DatasetPublished,
+		Update:     ValidPublishedWithUpdatesDatasetData(ids.DatasetPublished),
 	}
 
 	unpublishedDatasetDoc := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
-		Value:      unpublishedDatasetID,
-		Update:     validAssociatedDatasetData(unpublishedDatasetID),
+		Value:      ids.DatasetAssociated,
+		Update:     validAssociatedDatasetData(ids.DatasetAssociated),
 	}
 
 	docs = append(docs, publishedDatasetDoc, unpublishedDatasetDoc)
@@ -61,15 +63,15 @@ func TestSuccessfulGetAListOfDatasets(t *testing.T) {
 
 			for i := 0; i < len(response.Value("items").Array().Iter()); i++ {
 
-				if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == datasetID {
+				if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == ids.DatasetPublished {
 					// check the published test dataset document has the expected returned fields and values
-					checkDatasetResponse(datasetID, response.Value("items").Array().Element(i).Object().Value("current").Object())
+					checkDatasetResponse(ids.DatasetPublished, response.Value("items").Array().Element(i).Object().Value("current").Object())
 					response.Value("items").Array().Element(i).Object().Value("next").Object().NotEmpty()
 
 					expectedDatasets++
 				}
 
-				if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == unpublishedDatasetID {
+				if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == ids.DatasetAssociated {
 					// check the published test dataset document has the expected returned fields and values
 					response.Value("items").Array().Element(i).Object().NotContainsKey("current")
 					response.Value("items").Array().Element(i).Object().Value("next").Object().NotEmpty()

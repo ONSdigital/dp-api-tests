@@ -4,12 +4,15 @@ import (
 	"net/http"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/gavv/httpexpect"
-	"github.com/gedge/mgo"
-	"github.com/satori/go.uuid"
+	"github.com/globalsign/mgo"
+	"github.com/globalsign/mgo/bson"
+	uuid "github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"github.com/ONSdigital/dp-api-tests/helpers"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
 	"github.com/ONSdigital/go-ns/log"
@@ -19,11 +22,12 @@ import (
 // web/datasetAPI/hidden_endpoints_test.go to check request returns 404
 
 func TestSuccessfullyPutInstance(t *testing.T) {
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
-	datasetID := uuid.NewV4().String()
-	editionID := uuid.NewV4().String()
-	publishedInstanceID := uuid.NewV4().String()
-	instanceID := uuid.NewV4().String()
 	edition := "2017"
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
@@ -34,32 +38,32 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 		t.FailNow()
 	}
 
-	Convey("Given an instance has been created by an import job", t, func() {
+	Convey("Given an instance has been created by an import job and has been submitted", t, func() {
 		publishedInstance := &mongo.Doc{
 			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
-			Value:      publishedInstanceID,
-			Update:     validPublishedInstanceData(datasetID, edition, publishedInstanceID),
+			Value:      ids.InstancePublished,
+			Update:     validPublishedInstanceData(ids.DatasetPublished, edition, ids.InstancePublished, ids.UniqueTimestamp),
 		}
 
-		completedInstance := &mongo.Doc{
+		submittedInstance := &mongo.Doc{
 			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
-			Value:      instanceID,
-			Update:     validCompletedInstanceData(datasetID, edition, instanceID),
+			Value:      ids.InstanceSubmitted,
+			Update:     validSubmittedInstanceData(ids.DatasetPublished, edition, ids.InstanceSubmitted, submitted, ids.UniqueTimestamp),
 		}
 
 		editionDoc := &mongo.Doc{
 			Database:   cfg.MongoDB,
 			Collection: "editions",
 			Key:        "_id",
-			Value:      editionID,
-			Update:     ValidPublishedEditionData(datasetID, editionID, edition),
+			Value:      ids.EditionPublished,
+			Update:     ValidPublishedEditionData(ids.DatasetPublished, ids.EditionPublished, edition),
 		}
 
-		if err := mongo.Setup(publishedInstance, completedInstance, editionDoc); err != nil {
+		if err := mongo.Setup(publishedInstance, submittedInstance, editionDoc); err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
 		}
@@ -67,12 +71,12 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 		Convey("When a PUT request is made to update instance meta data", func() {
 			Convey("Then the instance is updated and return a status ok (200)", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+				datasetAPI.PUT("/instances/{instance_id}", ids.InstanceSubmitted).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTFullInstanceJSON)).
 					Expect().Status(http.StatusOK)
 
-				instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
+				instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", ids.InstanceSubmitted)
 				if err != nil {
 					if err != mgo.ErrNotFound {
 						log.ErrorC("Was unable to remove test data", err, nil)
@@ -82,19 +86,19 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 
 				log.Debug("next instance", log.Data{"instance": instance})
 
-				So(instance.InstanceID, ShouldEqual, instanceID)
-				checkInstanceDoc(datasetID, instanceID, "completed", instance)
+				So(instance.InstanceID, ShouldEqual, ids.InstanceSubmitted)
+				checkInstanceDoc(ids.DatasetPublished, ids.InstanceSubmitted, submitted, instance)
 			})
 		})
 
 		Convey("and is updated to a state of `completed`", func() {
 
-			datasetAPI.PUT("/instances/{instance_id}", instanceID).
+			datasetAPI.PUT("/instances/{instance_id}", ids.InstanceSubmitted).
 				WithHeader(florenceTokenName, florenceToken).
 				WithBytes([]byte(validPUTCompletedInstanceJSON)).
 				Expect().Status(http.StatusOK)
 
-			instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
+			instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", ids.InstanceSubmitted)
 			if err != nil {
 				if err != mgo.ErrNotFound {
 					log.ErrorC("Was unable to remove test data", err, nil)
@@ -102,26 +106,26 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 				}
 			}
 
-			So(instance.InstanceID, ShouldEqual, instanceID)
-			So(instance.State, ShouldEqual, "completed")
+			So(instance.InstanceID, ShouldEqual, ids.InstanceSubmitted)
+			So(instance.State, ShouldEqual, completed)
 
 			Convey("When a PUT request is made to update instance meta data and set state to `edition-confirmed`", func() {
 
-				count, err := neo4JStore.CreateInstanceNode(instanceID)
+				count, err := neo4JStore.CreateInstanceNode(ids.InstanceSubmitted)
 				if err != nil {
-					t.Errorf("failed to create neo4j instance node: [%v]\n error: [%v]\n", instanceID, err)
+					t.Errorf("failed to create neo4j instance node: [%v]\n error: [%v]\n", ids.InstanceSubmitted, err)
 					t.FailNow()
 				}
 				So(count, ShouldEqual, 1)
 
 				Convey("Then the instance is updated and return a status ok (200)", func() {
 
-					datasetAPI.PUT("/instances/{instance_id}", instanceID).
+					datasetAPI.PUT("/instances/{instance_id}", ids.InstanceSubmitted).
 						WithHeader(florenceTokenName, florenceToken).
 						WithBytes([]byte(validPUTEditionConfirmedInstanceJSON)).
 						Expect().Status(http.StatusOK)
 
-					instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
+					instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", ids.InstanceSubmitted)
 					if err != nil {
 						if err != mgo.ErrNotFound {
 							log.ErrorC("Was unable to remove test data", err, nil)
@@ -129,8 +133,8 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 						}
 					}
 
-					So(instance.InstanceID, ShouldEqual, instanceID)
-					checkInstanceDoc(datasetID, instanceID, "edition-confirmed", instance)
+					So(instance.InstanceID, ShouldEqual, ids.InstanceSubmitted)
+					checkInstanceDoc(ids.DatasetPublished, ids.InstanceSubmitted, editionConfirmed, instance)
 					So(instance.Version, ShouldEqual, 2)
 
 					// Check edition document has been created
@@ -142,17 +146,17 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 						}
 					}
 
-					checkEditionDoc(datasetID, instanceID, edition.Next)
+					checkEditionDoc(ids.DatasetPublished, ids.InstanceSubmitted, edition.Next)
 
 					Convey("and the dataset_id, edition and version values are set a properties on the neo4j instance node", func() {
 
-						instanceProps, err := neo4JStore.GetInstanceProperties(instanceID)
+						instanceProps, err := neo4JStore.GetInstanceProperties(ids.InstanceSubmitted)
 						if err != nil {
-							t.Errorf("failed to get properties from neo4j instance node: [%v]\n error: [%v]\n", instanceID, err)
+							t.Errorf("failed to get properties from neo4j instance node: [%v]\n error: [%v]\n", ids.InstanceSubmitted, err)
 							t.FailNow()
 						}
 
-						So(instanceProps["dataset_id"], ShouldEqual, datasetID)
+						So(instanceProps["dataset_id"], ShouldEqual, ids.DatasetPublished)
 						So(instanceProps["edition"], ShouldEqual, instance.Edition)
 						So(instanceProps["version"], ShouldEqual, instance.Version)
 					})
@@ -171,8 +175,8 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 							}
 						}
 
-						if err := neo4JStore.CleanUpInstance(instanceID); err != nil {
-							t.Errorf("failed to cleanup neo4j instances: [%v]\n error: [%v]\n", instanceID, err)
+						if err := neo4JStore.CleanUpInstance(ids.InstanceSubmitted); err != nil {
+							t.Errorf("failed to cleanup neo4j instances: [%v]\n error: [%v]\n", ids.InstanceSubmitted, err)
 							t.FailNow()
 						}
 					}
@@ -180,7 +184,7 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 			})
 		})
 
-		if err := mongo.Teardown(publishedInstance, completedInstance, editionDoc); err != nil {
+		if err := mongo.Teardown(publishedInstance, submittedInstance, editionDoc); err != nil {
 			if err != mgo.ErrNotFound {
 				os.Exit(1)
 			}
@@ -190,9 +194,12 @@ func TestSuccessfullyPutInstance(t *testing.T) {
 
 // TODO test to be able to update version after being published with an alert?
 func TestFailureToPutInstance(t *testing.T) {
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
-	datasetID := uuid.NewV4().String()
-	instanceID := uuid.NewV4().String()
 	edition := "2017"
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
@@ -202,7 +209,7 @@ func TestFailureToPutInstance(t *testing.T) {
 		Convey("When an authorised PUT request is made to update instance with meta data", func() {
 			Convey("Then the response return a status not found (404) with message `instance not found`", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+				datasetAPI.PUT("/instances/{instance_id}", ids.InstancePublished).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTFullInstanceJSON)).
 					Expect().Status(http.StatusNotFound).
@@ -213,7 +220,7 @@ func TestFailureToPutInstance(t *testing.T) {
 	})
 
 	Convey("Given a created instance exists", t, func() {
-		docs, err := setupInstance(datasetID, edition, instanceID)
+		docs, err := setupInstance(ids.DatasetPublished, edition, ids.InstanceCreated, ids.UniqueTimestamp)
 		if err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
@@ -222,7 +229,7 @@ func TestFailureToPutInstance(t *testing.T) {
 		Convey("When an authorised PUT request is made to update instance with invalid json", func() {
 			Convey("Then the response return a status not found (400) with message `failed to parse json body: unexpected end of JSON input`", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+				datasetAPI.PUT("/instances/{instance_id}", ids.InstanceCreated).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte("{")).
 					Expect().Status(http.StatusBadRequest).
@@ -234,7 +241,7 @@ func TestFailureToPutInstance(t *testing.T) {
 		Convey("When an unauthorised PUT request is made to update an instance resource with an invalid authentication header", func() {
 			Convey("Then fail to update resource and return a status unauthorized (401)", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+				datasetAPI.PUT("/instances/{instance_id}", ids.InstanceCreated).
 					WithBytes([]byte(validPUTFullInstanceJSON)).
 					WithHeader(florenceTokenName, unauthorisedAuthToken).
 					Expect().Status(http.StatusUnauthorized)
@@ -245,7 +252,7 @@ func TestFailureToPutInstance(t *testing.T) {
 		Convey("When no authentication header is provided in PUT request to update an instance resource", func() {
 			Convey("Then fail to update resource and return a status unauthorized (401)", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+				datasetAPI.PUT("/instances/{instance_id}", ids.InstanceCreated).
 					WithBytes([]byte(validPUTFullInstanceJSON)).
 					Expect().Status(http.StatusUnauthorized)
 
@@ -255,7 +262,7 @@ func TestFailureToPutInstance(t *testing.T) {
 		Convey("When a PUT request is made to update instance state to `edition-confirmed`", func() {
 			Convey("Then fail to update resource and return a status of forbidden (403) with a message `Unable to update resource, expected resource to have a state of completed`", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+				datasetAPI.PUT("/instances/{instance_id}", ids.InstanceCreated).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(`{"state": "edition-confirmed"}`)).
 					Expect().Status(http.StatusForbidden).Body().
@@ -267,7 +274,7 @@ func TestFailureToPutInstance(t *testing.T) {
 		Convey("When a PUT request is made to update instance state to `associated`", func() {
 			Convey("Then fail to update resource and return a status of forbidden (403) with a message `Unable to update resource, expected resource to have a state of edition-confirmed`", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+				datasetAPI.PUT("/instances/{instance_id}", ids.InstanceCreated).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(`{"state": "associated"}`)).
 					Expect().Status(http.StatusForbidden).
@@ -279,7 +286,7 @@ func TestFailureToPutInstance(t *testing.T) {
 		Convey("When a PUT request is made to update instance state to `published`", func() {
 			Convey("Then fail to update resource and return a status of forbidden (403) with a message `Unable to update resource, expected resource to have a state of edition-confirmed`", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+				datasetAPI.PUT("/instances/{instance_id}", ids.InstanceCreated).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(`{"state": "published"}`)).
 					Expect().Status(http.StatusForbidden).
@@ -291,7 +298,7 @@ func TestFailureToPutInstance(t *testing.T) {
 		Convey("When a PUT request is made to update instance state to `fake-state`", func() {
 			Convey("Then fail to update resource and return a status of bad request (400) with a message `Bad request - invalid filter state values: [fake-state]`", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}", instanceID).
+				datasetAPI.PUT("/instances/{instance_id}", ids.InstanceCreated).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(`{"state": "fake-state"}`)).
 					Expect().Status(http.StatusBadRequest).
@@ -312,6 +319,13 @@ func TestUpdatingStateOnPublishedDataset(t *testing.T) {
 	instanceID := uuid.NewV4().String()
 	datasetID := uuid.NewV4().String()
 	edition := "2017"
+
+	uniqueTimestamp, err := bson.NewMongoTimestamp(time.Now().UTC(), 1)
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
+
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Given an dataset has been published", t, func() {
@@ -321,7 +335,7 @@ func TestUpdatingStateOnPublishedDataset(t *testing.T) {
 				Collection: "instances",
 				Key:        "_id",
 				Value:      instanceID,
-				Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+				Update:     validPublishedInstanceData(datasetID, edition, instanceID, uniqueTimestamp),
 			}
 			if err := mongo.Setup(instance); err != nil {
 				log.ErrorC("Was unable to run test", err, nil)
@@ -345,7 +359,7 @@ func TestUpdatingStateOnPublishedDataset(t *testing.T) {
 	})
 }
 
-func setupInstance(datasetID, edition, instanceID string) ([]*mongo.Doc, error) {
+func setupInstance(datasetID, edition, instanceID string, uniqueTimestamp bson.MongoTimestamp) ([]*mongo.Doc, error) {
 	var docs []*mongo.Doc
 
 	datasetDoc := &mongo.Doc{
@@ -361,7 +375,7 @@ func setupInstance(datasetID, edition, instanceID string) ([]*mongo.Doc, error) 
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
-		Update:     validCreatedInstanceData(datasetID, edition, instanceID, "created"),
+		Update:     validCreatedInstanceData(datasetID, edition, instanceID, "created", uniqueTimestamp),
 	}
 
 	docs = append(docs, datasetDoc, instanceOneDoc)
@@ -373,7 +387,7 @@ func setupInstance(datasetID, edition, instanceID string) ([]*mongo.Doc, error) 
 	return docs, nil
 }
 
-func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instance) {
+func checkInstanceDoc(datasetID, instanceID, expectedState string, instance mongo.Instance) {
 	alert := mongo.Alert{
 		Date:        "2017-04-05",
 		Description: "All data entries (observations) for Plymouth have been updated",
@@ -394,13 +408,20 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 	}
 
 	links := mongo.InstanceLinks{
-		Job: &mongo.IDLink{
-			ID:   "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
-			HRef: cfg.DatasetAPIURL + "/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
-		},
 		Dataset: &mongo.IDLink{
 			ID:   datasetID,
 			HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID,
+		},
+		Dimensions: &mongo.IDLink{
+			HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/2/dimensions",
+		},
+		Edition: &mongo.IDLink{
+			ID:   "2017",
+			HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017",
+		},
+		Job: &mongo.IDLink{
+			ID:   "042e216a-7822-4fa0-a3d6-e3f5248ffc35",
+			HRef: cfg.DatasetAPIURL + "/jobs/042e216a-7822-4fa0-a3d6-e3f5248ffc35",
 		},
 		Self: &mongo.IDLink{
 			HRef: cfg.DatasetAPIURL + "/instances/" + instanceID,
@@ -408,28 +429,10 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 		Spatial: &mongo.IDLink{
 			HRef: "http://ons.gov.uk/geography-list",
 		},
-		Dimensions: &mongo.IDLink{
-			ID:   "",
-			HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/2/dimensions",
-		},
-		Edition: &mongo.IDLink{
-			ID:   "2017",
-			HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017",
-		},
-	}
-
-	if state == "edition-confirmed" {
-		links.Dimensions = &mongo.IDLink{
-			HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/2/dimensions",
-		}
-		links.Edition = &mongo.IDLink{
-			ID:   "2017",
-			HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017",
-		}
-		links.Version = &mongo.IDLink{
+		Version: &mongo.IDLink{
 			ID:   "2",
 			HRef: cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/2",
-		}
+		},
 	}
 
 	observations := 1000
@@ -451,7 +454,7 @@ func checkInstanceDoc(datasetID, instanceID, state string, instance mongo.Instan
 	So(instance.LatestChanges, ShouldResemble, &[]mongo.LatestChange{latestChange})
 	So(instance.Links, ShouldResemble, links)
 	So(instance.ReleaseDate, ShouldEqual, "2017-11-11")
-	So(instance.State, ShouldEqual, state)
+	So(instance.State, ShouldEqual, expectedState)
 	So(instance.Temporal, ShouldResemble, &[]mongo.TemporalFrequency{temporal})
 	So(instance.TotalObservations, ShouldEqual, observations)
 

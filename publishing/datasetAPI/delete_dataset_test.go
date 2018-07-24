@@ -6,10 +6,10 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect"
-	"github.com/gedge/mgo"
-	"github.com/satori/go.uuid"
+	"github.com/globalsign/mgo"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"github.com/ONSdigital/dp-api-tests/helpers"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 )
@@ -18,18 +18,22 @@ import (
 // web/datasetAPI/hidden_endpoints_test.go to check request returns 404
 
 func TestSuccessfullyDeleteDataset(t *testing.T) {
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
-	datasetID := uuid.NewV4().String()
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
-	Convey("Given a dataset with the an id of ["+datasetID+"] exists", t, func() {
+	Convey("Given a dataset with the an id of ["+ids.DatasetAssociated+"] exists", t, func() {
 
 		associatedDataset := &mongo.Doc{
 			Database:   cfg.MongoDB,
 			Collection: collection,
 			Key:        "_id",
-			Value:      datasetID,
-			Update:     validAssociatedDatasetData(datasetID),
+			Value:      ids.DatasetAssociated,
+			Update:     validAssociatedDatasetData(ids.DatasetAssociated),
 		}
 
 		if err := mongo.Setup(associatedDataset); err != nil {
@@ -39,7 +43,7 @@ func TestSuccessfullyDeleteDataset(t *testing.T) {
 
 		Convey("When an authorised DELETE request is made to delete a dataset resource", func() {
 
-			request := datasetAPI.DELETE("/datasets/{id}", datasetID).
+			request := datasetAPI.DELETE("/datasets/{id}", ids.DatasetAssociated).
 				WithHeader(florenceTokenName, florenceToken)
 
 			Convey("Then the expected response is returned", func() {
@@ -55,11 +59,11 @@ func TestSuccessfullyDeleteDataset(t *testing.T) {
 	})
 
 	// Check idempotent request, if resource is already deleted it should respond with 204
-	Convey("Given a dataset with the an id of ["+datasetID+"] does not already exist", t, func() {
+	Convey("Given a dataset with the an id of ["+ids.DatasetAssociated+"] does not already exist", t, func() {
 
 		Convey("When an authorised DELETE request is made to delete a dataset resource", func() {
 
-			request := datasetAPI.DELETE("/datasets/{id}", datasetID).
+			request := datasetAPI.DELETE("/datasets/{id}", ids.DatasetAssociated).
 				WithHeader(florenceTokenName, florenceToken)
 
 			Convey("Then the expected response is returned", func() {
@@ -70,18 +74,21 @@ func TestSuccessfullyDeleteDataset(t *testing.T) {
 }
 
 func TestFailureToDeleteDataset(t *testing.T) {
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
-	datasetID := uuid.NewV4().String()
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
-	secondDatasetID := uuid.NewV4().String()
 
-	Convey("Given a published dataset with the an id of ["+datasetID+"] exists", t, func() {
+	Convey("Given a published dataset with the an id of ["+ids.DatasetPublished+"] exists", t, func() {
 		publishedDataset := &mongo.Doc{
 			Database:   cfg.MongoDB,
 			Collection: collection,
 			Key:        "_id",
-			Value:      datasetID,
-			Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
+			Value:      ids.DatasetPublished,
+			Update:     ValidPublishedWithUpdatesDatasetData(ids.DatasetPublished),
 		}
 
 		if err := mongo.Setup(publishedDataset); err != nil {
@@ -91,7 +98,7 @@ func TestFailureToDeleteDataset(t *testing.T) {
 
 		Convey("When an authorised DELETE request is made to delete a dataset resource", func() {
 
-			request := datasetAPI.DELETE("/datasets/{id}", datasetID).
+			request := datasetAPI.DELETE("/datasets/{id}", ids.DatasetPublished).
 				WithHeader(florenceTokenName, florenceToken)
 
 			Convey("Then the expected response is returned", func() {
@@ -106,14 +113,14 @@ func TestFailureToDeleteDataset(t *testing.T) {
 		}
 	})
 
-	Convey("Given an associated dataset with the an id of ["+secondDatasetID+"] exists", t, func() {
+	Convey("Given an associated dataset with the an id of ["+ids.DatasetAssociated+"] exists", t, func() {
 
 		associatedDataset := &mongo.Doc{
 			Database:   cfg.MongoDB,
 			Collection: collection,
 			Key:        "_id",
-			Value:      secondDatasetID,
-			Update:     validAssociatedDatasetData(secondDatasetID),
+			Value:      ids.DatasetAssociated,
+			Update:     validAssociatedDatasetData(ids.DatasetAssociated),
 		}
 
 		if err := mongo.Setup(associatedDataset); err != nil {
@@ -123,7 +130,7 @@ func TestFailureToDeleteDataset(t *testing.T) {
 
 		Convey("When an unauthorised DELETE request is made to delete a dataset resource", func() {
 
-			request := datasetAPI.DELETE("/datasets/{id}", datasetID).
+			request := datasetAPI.DELETE("/datasets/{id}", ids.DatasetAssociated).
 				WithHeader(florenceTokenName, unauthorisedAuthToken)
 
 			Convey("Then the expected response is returned", func() {
@@ -133,7 +140,7 @@ func TestFailureToDeleteDataset(t *testing.T) {
 
 		Convey("When a DELETE request is made to delete a dataset resource without authentication", func() {
 
-			request := datasetAPI.DELETE("/datasets/{id}", datasetID)
+			request := datasetAPI.DELETE("/datasets/{id}", ids.DatasetAssociated)
 
 			Convey("Then the expected response is returned", func() {
 				request.Expect().Status(http.StatusUnauthorized)
