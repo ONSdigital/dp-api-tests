@@ -41,7 +41,7 @@ func TestGetInstanceDimensionOptions_ReturnsAllDimensionOptionsFromAnInstance(t 
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("dimension").Equal("time")
-				response.Value("values").Array().Element(0).Equal("202.45")
+				response.Value("options").Array().Element(0).Equal("202.45")
 			})
 		})
 
@@ -53,7 +53,7 @@ func TestGetInstanceDimensionOptions_ReturnsAllDimensionOptionsFromAnInstance(t 
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("dimension").Equal("aggregate")
-				response.Value("values").Array().Element(0).Equal("cpi1dimA19")
+				response.Value("options").Array().Element(0).Equal("cpi1dimA19")
 			})
 		})
 
