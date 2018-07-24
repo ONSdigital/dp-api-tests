@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gedge/mgo/bson"
+	"github.com/globalsign/mgo/bson"
 )
 
 // Instance which presents a single dataset being imported

@@ -6,18 +6,20 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect"
-	"github.com/gedge/mgo"
-	uuid "github.com/satori/go.uuid"
+	"github.com/globalsign/mgo"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"github.com/ONSdigital/dp-api-tests/helpers"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 )
 
 func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
-	datasetID := uuid.NewV4().String()
-	editionID := uuid.NewV4().String()
-	instanceID := uuid.NewV4().String()
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
 	edition := "2017"
 
@@ -27,24 +29,24 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
-		Value:      datasetID,
-		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
+		Value:      ids.DatasetPublished,
+		Update:     ValidPublishedWithUpdatesDatasetData(ids.DatasetPublished),
 	}
 
 	editionDoc := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
-		Value:      editionID,
-		Update:     ValidPublishedEditionData(datasetID, editionID, edition),
+		Value:      ids.EditionPublished,
+		Update:     ValidPublishedEditionData(ids.DatasetPublished, ids.EditionPublished, edition),
 	}
 
 	instanceOneDoc := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
-		Value:      instanceID,
-		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+		Value:      ids.InstancePublished,
+		Update:     validPublishedInstanceData(ids.DatasetPublished, edition, ids.InstancePublished, ids.UniqueTimestamp),
 	}
 
 	dimensionOneDoc := &mongo.Doc{
@@ -52,14 +54,14 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9811",
-		Update:     validTimeDimensionsData("9811", instanceID),
+		Update:     validTimeDimensionsData("9811", ids.InstancePublished),
 	}
 	dimensionTwoDoc := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9812",
-		Update:     validAggregateDimensionsData("9812", instanceID),
+		Update:     validAggregateDimensionsData("9812", ids.InstancePublished),
 	}
 
 	docs = append(docs, datasetDoc, editionDoc, dimensionOneDoc, dimensionTwoDoc, instanceOneDoc)
@@ -73,11 +75,11 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 	Convey("Get a list of all dimensions of a dataset", t, func() {
 		Convey("When user is authenticated", func() {
 
-			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions", datasetID, edition, 1).
+			response := datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/{version}/dimensions", ids.DatasetPublished, edition, 1).
 				WithHeader(florenceTokenName, florenceToken).
 				Expect().Status(http.StatusOK).JSON().Object()
 
-			checkDimensionsResponse(datasetID, edition, instanceID, response)
+			checkDimensionsResponse(ids.DatasetPublished, edition, ids.InstancePublished, response)
 		})
 	})
 
@@ -91,10 +93,11 @@ func TestGetDimensions_ReturnsAllDimensionsFromADataset(t *testing.T) {
 
 // TODO Unskip skipped tests when code has been refactored (and hence fixed)
 func TestGetDimensions_Failed(t *testing.T) {
-	datasetID := uuid.NewV4().String()
-	editionID := uuid.NewV4().String()
-	instanceID := uuid.NewV4().String()
-	unpublishedInstanceID := uuid.NewV4().String()
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
 	edition := "2017"
 
@@ -104,24 +107,24 @@ func TestGetDimensions_Failed(t *testing.T) {
 		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
-		Value:      datasetID,
-		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
+		Value:      ids.DatasetPublished,
+		Update:     ValidPublishedWithUpdatesDatasetData(ids.DatasetPublished),
 	}
 
 	editionDoc := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
-		Value:      editionID,
-		Update:     ValidPublishedEditionData(datasetID, editionID, edition),
+		Value:      ids.EditionPublished,
+		Update:     ValidPublishedEditionData(ids.DatasetPublished, ids.EditionPublished, edition),
 	}
 
 	instanceOneDoc := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
-		Value:      instanceID,
-		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+		Value:      ids.InstancePublished,
+		Update:     validPublishedInstanceData(ids.DatasetPublished, edition, ids.InstancePublished, ids.UniqueTimestamp),
 	}
 
 	docs = append(docs, datasetDoc, editionDoc, instanceOneDoc)
@@ -149,7 +152,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 		SkipConvey("When user is authenticated and the edition does not exist", func() {
 			Convey("Then return status not found (404)", func() {
 
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, "2018").
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", ids.DatasetPublished, "2018").
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
 					Body().Contains("edition not found")
@@ -159,7 +162,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 		Convey("When user is authenticated and there are no versions", func() {
 			Convey("Then return status not found (404)", func() {
 
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/3/dimensions", datasetID, edition).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/3/dimensions", ids.DatasetPublished, edition).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).
 					Body().Contains("version not found")
@@ -177,7 +180,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 		Convey("When user is unauthenticated and the edition does not exist", func() {
 			Convey("Then return status unauthorized (401)", func() {
 
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, "2018").
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", ids.DatasetPublished, "2018").
 					Expect().Status(http.StatusUnauthorized)
 			})
 		})
@@ -188,14 +191,14 @@ func TestGetDimensions_Failed(t *testing.T) {
 				Database:   cfg.MongoDB,
 				Collection: "instances",
 				Key:        "_id",
-				Value:      unpublishedInstanceID,
-				Update:     validEditionConfirmedInstanceData(datasetID, edition, unpublishedInstanceID),
+				Value:      ids.InstanceEditionConfirmed,
+				Update:     validEditionConfirmedInstanceData(ids.DatasetPublished, edition, ids.InstanceEditionConfirmed, ids.UniqueTimestamp),
 			}
 
 			mongo.Setup(unpublishedInstance)
 			Convey("Then return status unauthorized (401)", func() {
 
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/3/dimensions", datasetID, edition).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/3/dimensions", ids.DatasetPublished, edition).
 					Expect().Status(http.StatusUnauthorized)
 			})
 
@@ -207,7 +210,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 		Convey("When authenticated", func() {
 			Convey("Then return status not found (404)", func() {
 
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", ids.DatasetPublished, edition).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("dimensions not found")
 			})
@@ -216,7 +219,7 @@ func TestGetDimensions_Failed(t *testing.T) {
 		Convey("When user is unauthenticated", func() {
 			Convey("Then return status unauthorized (401)", func() {
 
-				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", datasetID, edition).
+				datasetAPI.GET("/datasets/{id}/editions/{edition}/versions/1/dimensions", ids.DatasetPublished, edition).
 					Expect().Status(http.StatusUnauthorized)
 			})
 		})

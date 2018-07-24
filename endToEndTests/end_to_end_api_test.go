@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/gavv/httpexpect"
-	"github.com/gedge/mgo"
+	"github.com/globalsign/mgo"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"net/url"
@@ -341,7 +341,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		observationsResource.Value("dimensions").Object().Value("aggregate").Object().Value("option").Object().Value("id").Equal("cpih1dim1G50100")
 		observationsResource.Value("dimensions").Object().Value("geography").Object().Value("option").Object().Value("href").String().Match("/code-lists/uk-only/codes/K02000001$")
 		observationsResource.Value("dimensions").Object().Value("geography").Object().Value("option").Object().Value("id").Equal("K02000001")
-		observationsResource.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("href").String().Match("/code-lists/time/codes/Apr-05$")
+		observationsResource.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("href").String().Match("/code-lists/mmm-yy/codes/Apr-05$")
 		observationsResource.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("id").Equal("Apr-05")
 		observationsResource.Value("limit").Equal(10000)
 		observationsResource.Value("links").Object().Value("dataset_metadata").Object().Value("href").String().Match("/datasets/" + datasetName + "/editions/2017/versions/1/metadata$")
@@ -572,7 +572,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		postObservationsResource.Value("dimensions").Object().Value("aggregate").Object().Value("option").Object().Value("id").Equal("cpih1dim1G50100")
 		postObservationsResource.Value("dimensions").Object().Value("geography").Object().Value("option").Object().Value("href").String().Match("/code-lists/uk-only/codes/K02000001$")
 		postObservationsResource.Value("dimensions").Object().Value("geography").Object().Value("option").Object().Value("id").Equal("K02000001")
-		postObservationsResource.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("href").String().Match("/code-lists/time/codes/Apr-05$")
+		postObservationsResource.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("href").String().Match("/code-lists/mmm-yy/codes/Apr-05$")
 		postObservationsResource.Value("dimensions").Object().Value("time").Object().Value("option").Object().Value("id").Equal("Apr-05")
 		postObservationsResource.Value("limit").Equal(10000)
 		postObservationsResource.Value("links").Object().Value("dataset_metadata").Object().Value("href").String().Match("/datasets/" + datasetName + "/editions/2017/versions/1/metadata$")

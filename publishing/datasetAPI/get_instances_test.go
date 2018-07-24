@@ -6,19 +6,21 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect"
-	"github.com/gedge/mgo"
-	uuid "github.com/satori/go.uuid"
+	"github.com/globalsign/mgo"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"github.com/ONSdigital/dp-api-tests/helpers"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 )
 
 func TestSuccessfullyGetAListOfInstances(t *testing.T) {
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
-	instanceID := uuid.NewV4().String()
-	secondInstanceID := uuid.NewV4().String()
-	datasetID := uuid.NewV4().String()
 	edition := "2017"
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
@@ -28,8 +30,8 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
-			Value:      instanceID,
-			Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+			Value:      ids.InstancePublished,
+			Update:     validPublishedInstanceData(ids.DatasetPublished, edition, ids.InstancePublished, ids.UniqueTimestamp),
 		}
 
 		if err := mongo.Setup(instance); err != nil {
@@ -59,16 +61,16 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
-			Value:      instanceID,
-			Update:     validCompletedInstanceData(datasetID, "2018", instanceID),
+			Value:      ids.InstanceCompleted,
+			Update:     validCompletedInstanceData(ids.DatasetPublished, "2018", ids.InstanceCompleted, ids.UniqueTimestamp),
 		}
 
 		editionConfirmedDoc := &mongo.Doc{
 			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
-			Value:      secondInstanceID,
-			Update:     validEditionConfirmedInstanceData(datasetID, "2017", secondInstanceID),
+			Value:      ids.InstanceEditionConfirmed,
+			Update:     validEditionConfirmedInstanceData(ids.DatasetPublished, "2017", ids.InstanceEditionConfirmed, ids.UniqueTimestamp),
 		}
 
 		docs = append(docs, completedDoc, editionConfirmedDoc)
@@ -87,8 +89,8 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 				var foundInstance bool
 
 				for i := 0; i < len(response.Value("items").Array().Iter()); i++ {
-					response.Value("items").Array().Element(i).Object().Value("id").NotEqual(secondInstanceID)
-					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == instanceID {
+					response.Value("items").Array().Element(i).Object().Value("id").NotEqual(ids.InstanceEditionConfirmed)
+					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == ids.InstanceCompleted {
 						foundInstance = true
 						response.Value("items").Array().Element(i).Object().Value("state").Equal("completed")
 					}
@@ -107,12 +109,12 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 				count := 0
 
 				for i := 0; i < len(response.Value("items").Array().Iter()); i++ {
-					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == instanceID {
+					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == ids.InstanceCompleted {
 						response.Value("items").Array().Element(i).Object().Value("state").Equal("completed")
 
 						count++
 					}
-					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == secondInstanceID {
+					if response.Value("items").Array().Element(i).Object().Value("id").String().Raw() == ids.InstanceEditionConfirmed {
 						response.Value("items").Array().Element(i).Object().Value("state").Equal("edition-confirmed")
 
 						count++
@@ -134,9 +136,12 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 }
 
 func TestFailureToGetAListOfInstances(t *testing.T) {
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
-	instanceID := uuid.NewV4().String()
-	datasetID := uuid.NewV4().String()
 	edition := "2017"
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
@@ -145,8 +150,8 @@ func TestFailureToGetAListOfInstances(t *testing.T) {
 		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
-		Value:      instanceID,
-		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+		Value:      ids.InstancePublished,
+		Update:     validPublishedInstanceData(ids.DatasetPublished, edition, ids.InstancePublished, ids.UniqueTimestamp),
 	}
 
 	Convey("Given an instance with state `published` exists", t, func() {

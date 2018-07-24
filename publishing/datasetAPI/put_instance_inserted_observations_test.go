@@ -5,12 +5,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gedge/mgo"
+	"github.com/globalsign/mgo"
 
+	"github.com/ONSdigital/dp-api-tests/helpers"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
-	uuid "github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -20,9 +20,12 @@ import (
 // This updates the instance resource with a dimension object to
 // it's list of dimensions in dimension array
 func TestSuccessfullyPutInsertedObservations(t *testing.T) {
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
-	datasetID := uuid.NewV4().String()
-	instanceID := uuid.NewV4().String()
 	edition := "2017"
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
@@ -34,8 +37,8 @@ func TestSuccessfullyPutInsertedObservations(t *testing.T) {
 			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
-			Value:      instanceID,
-			Update:     validSubmittedInstanceData(datasetID, edition, instanceID),
+			Value:      ids.InstanceSubmitted,
+			Update:     validSubmittedInstanceData(ids.DatasetPublished, edition, ids.InstanceSubmitted, submitted, ids.UniqueTimestamp),
 		}
 
 		if err := mongo.Setup(instance); err != nil {
@@ -50,18 +53,18 @@ func TestSuccessfullyPutInsertedObservations(t *testing.T) {
 
 			Convey("Then the instance resource is updated and response returns status ok (200)", func() {
 
-				datasetAPI.PUT("/instances/{instance_id}/inserted_observations/255", instanceID).
+				datasetAPI.PUT("/instances/{instance_id}/inserted_observations/255", ids.InstanceSubmitted).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK)
 
-				instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", instanceID)
+				instance, err := mongo.GetInstance(cfg.MongoDB, "instances", "_id", ids.InstanceSubmitted)
 				if err != nil {
-					log.ErrorC("Was unable to retrieve instance test data", err, log.Data{"instance_id": instanceID})
+					log.ErrorC("Was unable to retrieve instance test data", err, log.Data{"instance_id": ids.InstanceSubmitted})
 					os.Exit(1)
 				}
 
-				So(instance.InstanceID, ShouldEqual, instanceID)
-				So(instance.ImportTasks.ImportObservations.InsertedObservations, ShouldEqual, 755)
+				So(instance.InstanceID, ShouldEqual, ids.InstanceSubmitted)
+				So(instance.ImportTasks.ImportObservations.InsertedObservations, ShouldEqual, 1255)
 			})
 		})
 
@@ -74,12 +77,17 @@ func TestSuccessfullyPutInsertedObservations(t *testing.T) {
 }
 
 func TestFailureToPutInsertedObservations(t *testing.T) {
-	datasetID := uuid.NewV4().String()
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
+
 	edition := "2017"
 
 	instances := make(map[string]string)
-	instances[submitted] = uuid.NewV4().String()
-	instances[invalid] = uuid.NewV4().String()
+	instances[submitted] = ids.InstanceSubmitted
+	instances[invalid] = ids.InstanceInvalid
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
@@ -99,7 +107,7 @@ func TestFailureToPutInsertedObservations(t *testing.T) {
 	})
 
 	Convey("Given a created instance exists", t, func() {
-		docs, err := setupInstances(datasetID, edition, instances)
+		docs, err := setupInstances(ids.DatasetPublished, edition, ids.UniqueTimestamp, instances)
 		if err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
