@@ -52,7 +52,7 @@ func Test_GetEditionsNotFound(t *testing.T) {
 			codeListAPI := httpexpect.New(t, cfg.CodeListAPIURL)
 
 			Convey("then a 404 response is returned", func() {
-				codeListAPI.GET("/code-lists/fender-guitars").Expect().Status(http.StatusNotFound).Text().Equal("resource not found\n")
+				codeListAPI.GET("/code-lists/fender-guitars/editions").Expect().Status(http.StatusNotFound).Text().Equal("editions not found\n")
 			})
 		})
 	})
@@ -93,7 +93,7 @@ func Test_GetEditionNotFound(t *testing.T) {
 			codeListAPI := httpexpect.New(t, cfg.CodeListAPIURL)
 
 			Convey("then a 404 response is returned", func() {
-				codeListAPI.GET("/code-lists/fender-guitars/editions/2020").Expect().Status(http.StatusNotFound).Text().Equal("resource not found\n")
+				codeListAPI.GET("/code-lists/fender-guitars/editions/2020").Expect().Status(http.StatusNotFound).Text().Equal("edition not found\n")
 			})
 		})
 	})

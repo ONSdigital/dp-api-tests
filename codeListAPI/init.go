@@ -42,7 +42,7 @@ func (db *DB) Setup(stmts ... bolt.Stmt) {
 	}
 
 	for i, s := range stmts {
-		_, err := db.bolt.Exec(s)
+		_, _, err := db.bolt.Exec(s)
 		if err != nil {
 			db.t.Fatal(errors.WithMessage(err, fmt.Sprintf("stmt index: %d", i)))
 			os.Exit(1) // don't think this is required as Fail(...) will call runtime.GoExit()
@@ -52,7 +52,7 @@ func (db *DB) Setup(stmts ... bolt.Stmt) {
 
 func (db *DB) TearDown() {
 	db.t.Log("attempting tear down")
-	_, err := db.bolt.Exec(tearItDown)
+	_, _, err := db.bolt.Exec(tearItDown)
 	if err != nil {
 		db.t.Fatal(errors.WithMessage(err, "tear down failure"))
 		os.Exit(1) // don't think this is required as Fail(...) will call runtime.GoExit()

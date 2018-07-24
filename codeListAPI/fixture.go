@@ -69,80 +69,81 @@ var (
 	gibson2017 = []bolt.Stmt{
 		{
 			Query:  "CREATE (node:`_code_list`:`_code_list_gibson-guitars`:`_api_test` { label:'gibson', edition: {ed}})",
-			Params: map[string]interface{}{"ed": edition2017}},
-		{
-			Query:  "MATCH (parent:`_code_list`:`_code_list_gibson-guitars` {edition: {ed}}) WITH parent CREATE (node:`_code`:`_api_test` { value: {v}})-[:usedBy { label: {l}}]->(parent)",
-			Params: map[string]interface{}{"ed": edition2017, "v": "Les_Paul", "l": "Les Paul"},
+			Params: bolt.Params{"ed": edition2017},
 		},
 		{
 			Query:  "MATCH (parent:`_code_list`:`_code_list_gibson-guitars` {edition: {ed}}) WITH parent CREATE (node:`_code`:`_api_test` { value: {v}})-[:usedBy { label: {l}}]->(parent)",
-			Params: map[string]interface{}{"ed": edition2017, "v": "SG", "l": "SG"},
+			Params: bolt.Params{"ed": edition2017, "v": "Les_Paul", "l": "Les Paul"},
 		},
 		{
 			Query:  "MATCH (parent:`_code_list`:`_code_list_gibson-guitars` {edition: {ed}}) WITH parent CREATE (node:`_code`:`_api_test` { value: {v}})-[:usedBy { label: {l}}]->(parent)",
-			Params: map[string]interface{}{"ed": edition2017, "v": "Explorer", "l": "Explorer"},
+			Params: bolt.Params{"ed": edition2017, "v": "SG", "l": "SG"},
 		},
 		{
 			Query:  "MATCH (parent:`_code_list`:`_code_list_gibson-guitars` {edition: {ed}}) WITH parent CREATE (node:`_code`:`_api_test` { value: {v}})-[:usedBy { label: {l}}]->(parent)",
-			Params: map[string]interface{}{"ed": edition2017, "v": "Flying_V", "l": "Flying V"},
+			Params: bolt.Params{"ed": edition2017, "v": "Explorer", "l": "Explorer"},
+		},
+		{
+			Query:  "MATCH (parent:`_code_list`:`_code_list_gibson-guitars` {edition: {ed}}) WITH parent CREATE (node:`_code`:`_api_test` { value: {v}})-[:usedBy { label: {l}}]->(parent)",
+			Params: bolt.Params{"ed": edition2017, "v": "Flying_V", "l": "Flying V"},
 		},
 	}
 
 	gibson2018 = []bolt.Stmt{
 		{
 			Query:  "CREATE (node:`_code_list`:`_code_list_gibson-guitars`:`_api_test` { label:'gibson', edition: {ed}})",
-			Params: map[string]interface{}{"ed": edition2018}},
+			Params: bolt.Params{"ed": edition2018}},
 		{
 			Query:  "MATCH (parent:`_code_list`:`_code_list_gibson-guitars` {edition: {ed}}) WITH parent CREATE (node:`_code`:`_api_test` { value: {v}})-[:usedBy { label: {l}}]->(parent)",
-			Params: map[string]interface{}{"ed": edition2018, "v": "Les_Paul", "l": "Les Paul"},
+			Params: bolt.Params{"ed": edition2018, "v": "Les_Paul", "l": "Les Paul"},
 		},
 		{
 			Query:  "MATCH (parent:`_code_list`:`_code_list_gibson-guitars` {edition: {ed}}) WITH parent CREATE (node:`_code`:`_api_test` { value: {v}})-[:usedBy { label: {l}}]->(parent)",
-			Params: map[string]interface{}{"ed": edition2018, "v": "SG", "l": "SG"},
+			Params: bolt.Params{"ed": edition2018, "v": "SG", "l": "SG"},
 		},
 		{
 			Query:  "MATCH (parent:`_code_list`:`_code_list_gibson-guitars` {edition: {ed}}) WITH parent CREATE (node:`_code`:`_api_test` { value: {v}})-[:usedBy { label: {l}}]->(parent)",
-			Params: map[string]interface{}{"ed": edition2018, "v": "Explorer", "l": "Explorer"},
+			Params: bolt.Params{"ed": edition2018, "v": "Explorer", "l": "Explorer"},
 		},
 		{
 			Query:  "MATCH (parent:`_code_list`:`_code_list_gibson-guitars` {edition: {ed}}) WITH parent CREATE (node:`_code`:`_api_test` { value: {v}})-[:usedBy { label: {l}}]->(parent)",
-			Params: map[string]interface{}{"ed": edition2018, "v": "Flying_V", "l": "Flying V"},
+			Params: bolt.Params{"ed": edition2018, "v": "Flying_V", "l": "Flying V"},
 		},
 		{
 			Query:  "MATCH (parent:`_code_list`:`_code_list_gibson-guitars` {edition: {ed}}) WITH parent CREATE (node:`_code`:`_api_test` { value: {v}})-[:usedBy { label: {l}}]->(parent)",
-			Params: map[string]interface{}{"ed": edition2018, "v": "Firebird", "l": "Firebird"},
+			Params: bolt.Params{"ed": edition2018, "v": "Firebird", "l": "Firebird"},
 		},
 	}
 
 	fender2017 = []bolt.Stmt{
 		{
 			Query:  "CREATE (node:`_code_list`:`_code_list_fender-guitars`:`_api_test` { label:'fender', edition: {ed}})",
-			Params: map[string]interface{}{"ed": edition2017}},
+			Params: bolt.Params{"ed": edition2017}},
 		{
 			Query:  "MATCH (parent:`_code_list`:`_code_list_fender-guitars` {edition: {ed}}) WITH parent CREATE (node:`_code`:`_api_test` { value: {v}})-[:usedBy { label: {l}}]->(parent)",
-			Params: map[string]interface{}{"ed": edition2017, "v": "Strat", "l": "Stratocaster"},
+			Params: bolt.Params{"ed": edition2017, "v": "Strat", "l": "Stratocaster"},
 		},
 		{
 			Query:  "MATCH (parent:`_code_list`:`_code_list_fender-guitars` {edition: {ed}}) WITH parent CREATE (node:`_code`:`_api_test` { value: {v}})-[:usedBy { label: {l}}]->(parent)",
-			Params: map[string]interface{}{"ed": edition2017, "v": "Tele", "l": "Telecaster"},
+			Params: bolt.Params{"ed": edition2017, "v": "Tele", "l": "Telecaster"},
 		},
 	}
 
 	fender2018 = []bolt.Stmt{
 		{
 			Query:  "CREATE (node:`_code_list`:`_code_list_fender-guitars`:`_api_test` { label:'fender', edition: {ed}})",
-			Params: map[string]interface{}{"ed": edition2018}},
+			Params: bolt.Params{"ed": edition2018}},
 		{
 			Query:  "MATCH (parent:`_code_list`:`_code_list_fender-guitars` {edition: {ed}}) WITH parent CREATE (node:`_code`:`_api_test` { value: {v}})-[:usedBy { label: {l}}]->(parent)",
-			Params: map[string]interface{}{"ed": edition2018, "v": "Strat", "l": "Stratocaster"},
+			Params: bolt.Params{"ed": edition2018, "v": "Strat", "l": "Stratocaster"},
 		},
 		{
 			Query:  "MATCH (parent:`_code_list`:`_code_list_fender-guitars` {edition: {ed}}) WITH parent CREATE (node:`_code`:`_api_test` { value: {v}})-[:usedBy { label: {l}}]->(parent)",
-			Params: map[string]interface{}{"ed": edition2018, "v": "Tele", "l": "Telecaster"},
+			Params: bolt.Params{"ed": edition2018, "v": "Tele", "l": "Telecaster"},
 		},
 		{
 			Query:  "MATCH (parent:`_code_list`:`_code_list_fender-guitars` {edition: {ed}}) WITH parent CREATE (node:`_code`:`_api_test` { value: {v}})-[:usedBy { label: {l}}]->(parent)",
-			Params: map[string]interface{}{"ed": edition2018, "v": "Jazzmaster", "l": "Jazzmaster"},
+			Params: bolt.Params{"ed": edition2018, "v": "Jazzmaster", "l": "Jazzmaster"},
 		},
 	}
 )
