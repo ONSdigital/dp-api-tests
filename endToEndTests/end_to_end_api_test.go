@@ -24,7 +24,7 @@ import (
 	"github.com/ONSdigital/go-ns/rchttp"
 )
 
-var timeout = time.Duration(120 * time.Second)
+var timeout = time.Duration(30 * time.Second)
 
 func TestSuccessfulEndToEndProcess(t *testing.T) {
 
