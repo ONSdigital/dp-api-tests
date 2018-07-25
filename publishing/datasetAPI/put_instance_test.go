@@ -451,11 +451,11 @@ func checkInstanceDoc(datasetID, instanceID, expectedState string, instance mong
 	So(instance.ImportTasks.ImportObservations, ShouldNotBeNil)
 	So(instance.ImportTasks.ImportObservations.InsertedObservations, ShouldEqual, observations)
 	So(instance.LastUpdated, ShouldNotBeNil)
-	So(instance.LatestChanges, ShouldResemble, &[]mongo.LatestChange{latestChange})
+	So(instance.LatestChanges, ShouldResemble, []mongo.LatestChange{latestChange})
 	So(instance.Links, ShouldResemble, links)
 	So(instance.ReleaseDate, ShouldEqual, "2017-11-11")
 	So(instance.State, ShouldEqual, expectedState)
-	So(instance.Temporal, ShouldResemble, &[]mongo.TemporalFrequency{temporal})
+	So(instance.Temporal, ShouldResemble, []mongo.TemporalFrequency{temporal})
 	So(instance.TotalObservations, ShouldEqual, observations)
 
 	return

@@ -439,7 +439,7 @@ func validAssociatedInstanceData(datasetID, edition, instanceID string, uniqueTi
 			"downloads.csv.size":     "10",
 			"downloads.csv.public":   "https://s3-eu-west-1.amazon.com/public/myfile.csv",
 			"downloads.csv.private":  "s3://private/myfile.csv",
-			"downloads.csvw.href":    cfg.DatasetAPIURL + "/aws/census-2017-1-csv-metadata.json",
+			"downloads.csvw.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv-metadata.json",
 			"downloads.csvw.size":    "10",
 			"downloads.csvw.public":  "https://s3-eu-west-1.amazon.com/public/myfile.csv-metadata.json",
 			"downloads.csvw.private": "s3://private/myfile.csv-metadata.json",

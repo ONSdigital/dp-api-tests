@@ -218,20 +218,20 @@ type EditionLinks struct {
 
 // Version represents information related to a single version for an edition of a dataset
 type Version struct {
-	Alerts        *[]Alert             `bson:"alerts,omitempty"         json:"alerts,omitempty"`
-	CollectionID  string               `bson:"collection_id,omitempty"  json:"collection_id,omitempty"`
-	Dimensions    []CodeList           `bson:"dimensions,omitempty"     json:"dimensions,omitempty"`
-	Downloads     *DownloadList        `bson:"downloads,omitempty"      json:"downloads,omitempty"`
-	Edition       string               `bson:"edition,omitempty"        json:"edition,omitempty"`
-	ID            string               `bson:"id,omitempty"             json:"id,omitempty"`
-	LatestChanges *[]LatestChange      `bson:"latest_changes,omitempty" json:"latest_changes,omitempty"`
-	Links         *VersionLinks        `bson:"links,omitempty"          json:"links,omitempty"`
-	ReleaseDate   string               `bson:"release_date,omitempty"   json:"release_date,omitempty"`
-	State         string               `bson:"state,omitempty"          json:"state,omitempty"`
-	Temporal      *[]TemporalFrequency `bson:"temporal,omitempty"       json:"temporal,omitempty"`
-	LastUpdated   time.Time            `bson:"last_updated,omitempty"   json:"-"`
-	Version       int                  `bson:"version,omitempty"        json:"version,omitempty"`
-	UsageNotes    *[]UsageNote         `bson:"usage_notes,omitempty"     json:"usage_notes,omitempty"`
+	Alerts        *[]Alert            `bson:"alerts,omitempty"         json:"alerts,omitempty"`
+	CollectionID  string              `bson:"collection_id,omitempty"  json:"collection_id,omitempty"`
+	Dimensions    []CodeList          `bson:"dimensions,omitempty"     json:"dimensions,omitempty"`
+	Downloads     *DownloadList       `bson:"downloads,omitempty"      json:"downloads,omitempty"`
+	Edition       string              `bson:"edition,omitempty"        json:"edition,omitempty"`
+	ID            string              `bson:"id,omitempty"             json:"id,omitempty"`
+	LatestChanges []LatestChange      `bson:"latest_changes,omitempty" json:"latest_changes,omitempty"`
+	Links         *VersionLinks       `bson:"links,omitempty"          json:"links,omitempty"`
+	ReleaseDate   string              `bson:"release_date,omitempty"   json:"release_date,omitempty"`
+	State         string              `bson:"state,omitempty"          json:"state,omitempty"`
+	Temporal      []TemporalFrequency `bson:"temporal,omitempty"       json:"temporal,omitempty"`
+	LastUpdated   time.Time           `bson:"last_updated,omitempty"   json:"-"`
+	Version       int                 `bson:"version,omitempty"        json:"version,omitempty"`
+	UsageNotes    *[]UsageNote        `bson:"usage_notes,omitempty"     json:"usage_notes,omitempty"`
 }
 
 type UsageNote struct {

@@ -91,7 +91,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 					Type:        "Summary of Changes",
 				}
 
-				latestChangesList := &[]mongo.LatestChange{latestChange}
+				latestChangesList := []mongo.LatestChange{latestChange}
 
 				So(updatedVersion.LatestChanges, ShouldResemble, latestChangesList)
 
@@ -106,7 +106,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 					Frequency: "monthly",
 				}
 
-				temporalList := &[]mongo.TemporalFrequency{temporal}
+				temporalList := []mongo.TemporalFrequency{temporal}
 
 				So(updatedVersion.Temporal, ShouldResemble, temporalList)
 			})
