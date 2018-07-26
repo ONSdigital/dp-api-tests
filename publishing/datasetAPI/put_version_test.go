@@ -91,7 +91,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 					Type:        "Summary of Changes",
 				}
 
-				latestChangesList := &[]mongo.LatestChange{latestChange}
+				latestChangesList := []mongo.LatestChange{latestChange}
 
 				So(updatedVersion.LatestChanges, ShouldResemble, latestChangesList)
 
@@ -106,7 +106,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 					Frequency: "monthly",
 				}
 
-				temporalList := &[]mongo.TemporalFrequency{temporal}
+				temporalList := []mongo.TemporalFrequency{temporal}
 
 				So(updatedVersion.Temporal, ShouldResemble, temporalList)
 			})
@@ -517,7 +517,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 						WithHeader(florenceTokenName, florenceToken).
 						WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
 						Expect().Status(http.StatusBadRequest).
-						Body().Contains("missing mandatory fields: [release_date Downloads.XLS.HRef Downloads.XLS.Size Downloads.CSV.HRef Downloads.CSV.Size]")
+						Body().Contains("missing mandatory fields: [release_date Downloads.XLS.HRef Downloads.XLS.Size Downloads.CSV.HRef Downloads.CSV.Size Downloads.CSVW.HRef Downloads.CSVW.Size]")
 
 				})
 			})
@@ -544,7 +544,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 						WithHeader(florenceTokenName, florenceToken).
 						WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
 						Expect().Status(http.StatusBadRequest).
-						Body().Contains("invalid fields: [Downloads.XLS.Size not a number Downloads.CSV.Size not a number]")
+						Body().Contains("invalid fields: [Downloads.XLS.Size not a number Downloads.CSV.Size not a number Downloads.CSVW.Size not a number]")
 
 				})
 			})
