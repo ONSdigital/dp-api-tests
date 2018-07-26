@@ -426,7 +426,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 							csvwSize, err = strconv.Atoi(instanceResource.Downloads.CSVW.Size)
 							if err != nil {
-								log.ErrorC("cannot convert csv size of type string to integer", err, log.Data{"csvw_size": instanceResource.Downloads.CSVW.Size})
+								log.ErrorC("cannot convert csvw size of type string to integer", err, log.Data{"csvw_size": instanceResource.Downloads.CSVW.Size})
 								t.FailNow()
 							}
 							So(csvwSize, ShouldBeBetweenOrEqual, 2000, 2400)
