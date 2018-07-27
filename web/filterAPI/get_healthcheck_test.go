@@ -1,11 +1,12 @@
 package filterAPI
 
 import (
-"testing"
+	"testing"
 
-"github.com/gavv/httpexpect"
-. "github.com/smartystreets/goconvey/convey"
-"net/http"
+	"net/http"
+
+	"github.com/gavv/httpexpect"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestHealthcheck(t *testing.T) {
