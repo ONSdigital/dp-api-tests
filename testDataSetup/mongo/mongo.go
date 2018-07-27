@@ -15,11 +15,12 @@ var session *mgo.Session
 
 // Doc contains information to be able to query mongo db
 type Doc struct {
-	Database   string
-	Collection string
-	Key        string
-	Value      string
-	Update     bson.M
+	Database        string
+	Collection      string
+	Key             string
+	Value           string
+	Update          bson.M
+	UniqueTimestamp bson.MongoTimestamp
 }
 
 // NewDatastore creates a new mgo.Session with a strong consistency and a write mode of "majority"
