@@ -39,7 +39,7 @@ func TestSuccessfullyGetDimensionOption(t *testing.T) {
 		}
 
 		Convey("When checking the dimension options", func() {
-			Convey("Then return status no content (204) for dimension `age` options", func() {
+			Convey("Then return status ok (200) for dimension `age` options", func() {
 
 				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age/options/27", filterBlueprintID).
 					Expect().Status(http.StatusOK).JSON().Object()
@@ -47,7 +47,7 @@ func TestSuccessfullyGetDimensionOption(t *testing.T) {
 				validateOptionResponse(*response, filterBlueprintID, "age", "27")
 			})
 
-			Convey("Then return status no content (204) for dimension `sex` options", func() {
+			Convey("Then return status ok (200) for dimension `sex` options", func() {
 
 				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
 					Expect().Status(http.StatusOK).JSON().Object()
@@ -60,7 +60,7 @@ func TestSuccessfullyGetDimensionOption(t *testing.T) {
 				validateOptionResponse(*response, filterBlueprintID, "sex", "female")
 			})
 
-			Convey("Then return status no content (204) for dimension `goods and services` options", func() {
+			Convey("Then return status ok (200) for dimension `goods and services` options", func() {
 
 				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1S10201", filterBlueprintID).
 					Expect().Status(http.StatusOK).JSON().Object()
@@ -78,7 +78,7 @@ func TestSuccessfullyGetDimensionOption(t *testing.T) {
 				validateOptionResponse(*response, filterBlueprintID, "aggregate", "cpi1dim1T60000")
 			})
 
-			Convey("Then return status no content (204) for dimension `time` options", func() {
+			Convey("Then return status ok (200) for dimension `time` options", func() {
 
 				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/March 1997", filterBlueprintID).
 					Expect().Status(http.StatusOK).JSON().Object()
