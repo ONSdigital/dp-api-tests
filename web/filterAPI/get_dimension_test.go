@@ -41,23 +41,34 @@ func TestSuccessfullyGetDimension(t *testing.T) {
 		Convey("When requesting an existing dimension from the filter blueprint", func() {
 			Convey("Then return status no content (204) for `age` dimension", func() {
 
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
+				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age", filterBlueprintID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				validateDimensionResponse(*response, filterBlueprintID, "age")
 			})
 
 			Convey("Then return status no content (204) for `sex` dimension", func() {
 
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex", filterBlueprintID).Expect().Status(http.StatusNoContent)
+				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex", filterBlueprintID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				validateDimensionResponse(*response, filterBlueprintID, "sex")
 			})
 
 			Convey("Then return status no content (204) for `goods and services` dimension", func() {
 
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate", filterBlueprintID).Expect().Status(http.StatusNoContent)
+				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate", filterBlueprintID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				validateDimensionResponse(*response, filterBlueprintID, "aggregate")
 			})
 
 			Convey("Then return status no content (204) for `time` dimension", func() {
 
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time", filterBlueprintID).Expect().Status(http.StatusNoContent)
+				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time", filterBlueprintID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				validateDimensionResponse(*response, filterBlueprintID, "time")
 			})
 		})
 	})
@@ -117,4 +128,20 @@ func TestFailureToGetDimension(t *testing.T) {
 			os.Exit(1)
 		}
 	})
+}
+
+func validateDimensionResponse(responseObject httpexpect.Object, filterBlueprintID, dimensionID string) {
+
+	filterURL := cfg.FilterAPIURL + "/filters/" + filterBlueprintID
+	selfURL := filterURL + "/dimensions/" + dimensionID
+	optionsURL := selfURL + "/options"
+
+	links := responseObject.Value("links").Object()
+
+	So(responseObject.Value("name").Raw(), ShouldEqual, dimensionID)
+	So(links.Value("filter").Object().Value("href").Raw(), ShouldEqual, filterURL)
+	So(links.Value("filter").Object().Value("id").Raw(), ShouldEqual, filterBlueprintID)
+	So(links.Value("self").Object().Value("href").Raw(), ShouldEqual, selfURL)
+	So(links.Value("self").Object().Value("id").Raw(), ShouldEqual, dimensionID)
+	So(links.Value("options").Object().Value("href").Raw(), ShouldEqual, optionsURL)
 }

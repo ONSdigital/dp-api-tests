@@ -41,41 +41,69 @@ func TestSuccessfullyGetDimensionOption(t *testing.T) {
 		Convey("When checking the dimension options", func() {
 			Convey("Then return status no content (204) for dimension `age` options", func() {
 
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age/options/27", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
+				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age/options/27", filterBlueprintID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				validateOptionResponse(*response, filterBlueprintID, "age", "27")
 			})
 
 			Convey("Then return status no content (204) for dimension `sex` options", func() {
 
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex/options/female", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
+				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
+					Expect().Status(http.StatusOK).JSON().Object()
 
+				validateOptionResponse(*response, filterBlueprintID, "sex", "male")
+
+				response = filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex/options/female", filterBlueprintID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				validateOptionResponse(*response, filterBlueprintID, "sex", "female")
 			})
 
 			Convey("Then return status no content (204) for dimension `goods and services` options", func() {
 
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1S10201", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1S10105", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1T60000", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
+				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1S10201", filterBlueprintID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				validateOptionResponse(*response, filterBlueprintID, "aggregate", "cpi1dim1S10201")
+
+				response = filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1S10105", filterBlueprintID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				validateOptionResponse(*response, filterBlueprintID, "aggregate", "cpi1dim1S10105")
+
+				response = filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1T60000", filterBlueprintID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				validateOptionResponse(*response, filterBlueprintID, "aggregate", "cpi1dim1T60000")
 			})
 
 			Convey("Then return status no content (204) for dimension `time` options", func() {
 
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/March 1997", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/April 1997", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/June 1997", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/September 1997", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
-				filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/December 1997", filterBlueprintID).
-					Expect().Status(http.StatusNoContent)
+				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/March 1997", filterBlueprintID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				validateOptionResponse(*response, filterBlueprintID, "time", "March 1997")
+
+				response = filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/April 1997", filterBlueprintID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				validateOptionResponse(*response, filterBlueprintID, "time", "April 1997")
+
+				response = filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/June 1997", filterBlueprintID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				validateOptionResponse(*response, filterBlueprintID, "time", "June 1997")
+
+				response = filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/September 1997", filterBlueprintID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				validateOptionResponse(*response, filterBlueprintID, "time", "September 1997")
+
+				response = filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options/December 1997", filterBlueprintID).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				validateOptionResponse(*response, filterBlueprintID, "time", "December 1997")
 			})
 		})
 	})
@@ -143,4 +171,21 @@ func TestFailureToGetDimensionOption(t *testing.T) {
 		log.ErrorC("Unable to remove test data from mongo db", err, nil)
 		os.Exit(1)
 	}
+}
+
+func validateOptionResponse(responseObject httpexpect.Object, filterBlueprintID, dimensionID, option string) {
+
+	filterURL := cfg.FilterAPIURL + "/filters/" + filterBlueprintID
+	dimensionURL := filterURL + "/dimensions/" + dimensionID
+	selfURL := dimensionURL + "/options/" + option
+
+	links := responseObject.Value("links").Object()
+
+	So(responseObject.Value("option").Raw(), ShouldEqual, option)
+	So(links.Value("dimension").Object().Value("id").Raw(), ShouldEqual, dimensionID)
+	So(links.Value("dimension").Object().Value("href").Raw(), ShouldEqual, dimensionURL)
+	So(links.Value("filter").Object().Value("id").Raw(), ShouldEqual, filterBlueprintID)
+	So(links.Value("filter").Object().Value("href").Raw(), ShouldEqual, filterURL)
+	So(links.Value("self").Object().Value("id").Raw(), ShouldEqual, option)
+	So(links.Value("self").Object().Value("href").Raw(), ShouldEqual, selfURL)
 }

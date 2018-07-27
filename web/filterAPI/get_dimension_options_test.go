@@ -44,8 +44,7 @@ func TestSuccessfullyGetListOfDimensionOptions(t *testing.T) {
 				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/age/options", filterBlueprintID).
 					Expect().Status(http.StatusOK).JSON().Array()
 
-				response.Element(0).Object().Value("option").Equal("27")
-				response.Element(0).Object().Value("dimension_option_url").NotNull()
+				validateOptionsResponse(*response, filterBlueprintID, "age", []string{"27"})
 			})
 
 			Convey("Then return a list of options for `sex` dimension", func() {
@@ -53,11 +52,7 @@ func TestSuccessfullyGetListOfDimensionOptions(t *testing.T) {
 				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/sex/options", filterBlueprintID).
 					Expect().Status(http.StatusOK).JSON().Array()
 
-				response.Element(0).Object().Value("option").Equal("male")
-				response.Element(0).Object().Value("dimension_option_url").NotNull()
-
-				response.Element(1).Object().Value("option").Equal("female")
-				response.Element(1).Object().Value("dimension_option_url").NotNull()
+				validateOptionsResponse(*response, filterBlueprintID, "sex", []string{"male", "female"})
 			})
 
 			Convey("Then return a list of options for `goods and services` dimension", func() {
@@ -65,14 +60,7 @@ func TestSuccessfullyGetListOfDimensionOptions(t *testing.T) {
 				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/aggregate/options", filterBlueprintID).
 					Expect().Status(http.StatusOK).JSON().Array()
 
-				response.Element(0).Object().Value("option").Equal("cpi1dim1T60000")
-				response.Element(0).Object().Value("dimension_option_url").NotNull()
-
-				response.Element(1).Object().Value("option").Equal("cpi1dim1S10201")
-				response.Element(1).Object().Value("dimension_option_url").NotNull()
-
-				response.Element(2).Object().Value("option").Equal("cpi1dim1S10105")
-				response.Element(2).Object().Value("dimension_option_url").NotNull()
+				validateOptionsResponse(*response, filterBlueprintID, "aggregate", []string{"cpi1dim1T60000", "cpi1dim1S10201", "cpi1dim1S10105"})
 			})
 
 			Convey("Then return a list of options for `time` dimension", func() {
@@ -80,20 +68,7 @@ func TestSuccessfullyGetListOfDimensionOptions(t *testing.T) {
 				response := filterAPI.GET("/filters/{filter_blueprint_id}/dimensions/time/options", filterBlueprintID).
 					Expect().Status(http.StatusOK).JSON().Array()
 
-				response.Element(0).Object().Value("option").Equal("March 1997")
-				response.Element(0).Object().Value("dimension_option_url").NotNull()
-
-				response.Element(1).Object().Value("option").Equal("April 1997")
-				response.Element(1).Object().Value("dimension_option_url").NotNull()
-
-				response.Element(2).Object().Value("option").Equal("June 1997")
-				response.Element(2).Object().Value("dimension_option_url").NotNull()
-
-				response.Element(3).Object().Value("option").Equal("September 1997")
-				response.Element(3).Object().Value("dimension_option_url").NotNull()
-
-				response.Element(4).Object().Value("option").Equal("December 1997")
-				response.Element(4).Object().Value("dimension_option_url").NotNull()
+				validateOptionsResponse(*response, filterBlueprintID, "time", []string{"March 1997", "April 1997", "June 1997", "September 1997", "December 1997"})
 			})
 		})
 	})
@@ -152,5 +127,25 @@ func TestFailureToGetListOfDimensionOptions(t *testing.T) {
 	if err := mongo.Teardown(filter); err != nil {
 		log.ErrorC("Unable to remove test data from mongo db", err, nil)
 		os.Exit(1)
+	}
+}
+
+func validateOptionsResponse(responseArray httpexpect.Array, filterBlueprintID, dimensionID string, expectedOptions []string) {
+
+	for i, option := range expectedOptions {
+
+		filterURL := cfg.FilterAPIURL + "/filters/" + filterBlueprintID
+		dimensionURL := filterURL + "/dimensions/" + dimensionID
+		selfURL := dimensionURL + "/options/" + option
+
+		links := responseArray.Element(i).Object().Value("links").Object()
+
+		So(responseArray.Element(i).Object().Value("option").Raw(), ShouldEqual, option)
+		So(links.Value("dimension").Object().Value("id").Raw(), ShouldEqual, dimensionID)
+		So(links.Value("dimension").Object().Value("href").Raw(), ShouldEqual, dimensionURL)
+		So(links.Value("filter").Object().Value("id").Raw(), ShouldEqual, filterBlueprintID)
+		So(links.Value("filter").Object().Value("href").Raw(), ShouldEqual, filterURL)
+		So(links.Value("self").Object().Value("id").Raw(), ShouldEqual, option)
+		So(links.Value("self").Object().Value("href").Raw(), ShouldEqual, selfURL)
 	}
 }

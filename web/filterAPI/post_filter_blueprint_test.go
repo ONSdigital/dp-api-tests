@@ -127,7 +127,6 @@ func TestSuccessfullyPostFilterBlueprintForPublishedInstance(t *testing.T) {
 				So(len(filterOutput.Events), ShouldEqual, 1)
 				So(filterOutput.Events[0].Type, ShouldEqual, "FilterOutputCreated")
 
-
 				//enable teardown of resources created during test
 				docs = append(docs, &mongo.Doc{
 					Database:   cfg.MongoFiltersDB,
