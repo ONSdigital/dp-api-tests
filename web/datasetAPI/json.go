@@ -2,7 +2,7 @@ package datasetAPI
 
 import (
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
-	"github.com/gedge/mgo/bson"
+	"github.com/globalsign/mgo/bson"
 )
 
 var alert = mongo.Alert{
@@ -391,6 +391,10 @@ func validPublishedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"downloads.csv.size":                                           "10",
 			"downloads.csv.public":                                         "https://s3-eu-west-1.amazon.com/public/myfile.csv",
 			"downloads.csv.private":                                        "s3://private/myfile.csv",
+			"downloads.csvw.href":                                           cfg.DatasetAPIURL + "/aws/census-2017-1-csv-metadata.json",
+			"downloads.csvw.size":                                           "10",
+			"downloads.csvw.public":                                         "https://s3-eu-west-1.amazon.com/public/myfile.csv-metadata.json",
+			"downloads.csvw.private":                                        "s3://private/myfile.csv-metadata.json",
 			"downloads.xls.href":                                           cfg.DatasetAPIURL + "/aws/census-2017-1-xls",
 			"downloads.xls.size":                                           "24",
 			"downloads.xls.public":                                         "https://s3-eu-west-1.amazon.com/public/myfile.xls",
@@ -434,6 +438,10 @@ func validAssociatedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"downloads.csv.size":    "10",
 			"downloads.csv.public":  "https://s3-eu-west-1.amazon.com/public/myfile.csv",
 			"downloads.csv.private": "s3://private/myfile.csv",
+			"downloads.csvw.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv-metadata.json",
+			"downloads.csvw.size":    "10",
+			"downloads.csvw.public":  "https://s3-eu-west-1.amazon.com/public/myfile.csv-metadata.json",
+			"downloads.csvw.private": "s3://private/myfile.csv-metadata.json",
 			"downloads.xls.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
 			"downloads.xls.size":    "24",
 			"downloads.xls.public":  "https://s3-eu-west-1.amazon.com/public/myfile.xls",
@@ -474,6 +482,9 @@ func validEditionConfirmedInstanceData(datasetID, edition, instanceID string) bs
 			"downloads.csv.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
 			"downloads.csv.private": "s3://private/myfile.csv",
 			"downloads.csv.size":    "10",
+			"downloads.csvw.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv-metadata.json",
+			"downloads.csvw.private": "s3://private/myfile.csv-metadata.json",
+			"downloads.csvw.size":    "10",
 			"downloads.xls.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
 			"downloads.xls.private": "s3://private/myfile.xls",
 			"downloads.xls.size":    "24",
@@ -512,6 +523,9 @@ func validCompletedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"downloads.csv.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv",
 			"downloads.csv.private": "s3://private/myfile.csv",
 			"downloads.csv.size":    "10",
+			"downloads.csvw.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-csv-metadata.json",
+			"downloads.csvw.private": "s3://private/myfile.csv-metadata.json",
+			"downloads.csvw.size":    "10",
 			"downloads.xls.href":    cfg.DatasetAPIURL + "/aws/census-2017-2-xls",
 			"downloads.xls.private": "s3://private/myfile.xls",
 			"downloads.xls.size":    "24",

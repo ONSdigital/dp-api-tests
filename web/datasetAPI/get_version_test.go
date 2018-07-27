@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect"
-	"github.com/gedge/mgo"
+	"github.com/globalsign/mgo"
 	uuid "github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 
@@ -46,6 +46,8 @@ func TestSuccessfullyGetVersionOfADatasetEdition(t *testing.T) {
 				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("aggregate")
 				response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("/aws/census-2017-1-csv$")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
+				response.Value("downloads").Object().Value("csvw").Object().Value("href").String().Match("/aws/census-2017-1-csv-metadata.json$")
+				response.Value("downloads").Object().Value("csvw").Object().Value("size").Equal("10")
 				response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("/aws/census-2017-1-xls$")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24")
 				response.Value("edition").Equal(edition)

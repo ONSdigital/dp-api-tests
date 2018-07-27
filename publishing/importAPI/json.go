@@ -1,6 +1,6 @@
 package importAPI
 
-import "github.com/gedge/mgo/bson"
+import "github.com/globalsign/mgo/bson"
 
 var validPOSTCreateJobJSON = `{
   "recipe": "b944be78-f56d-409b-9ebd-ab2b77ffe187",

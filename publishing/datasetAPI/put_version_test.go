@@ -7,10 +7,12 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect"
-	"github.com/gedge/mgo"
+	"github.com/globalsign/mgo"
+	"github.com/globalsign/mgo/bson"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"github.com/ONSdigital/dp-api-tests/helpers"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
 	"github.com/ONSdigital/go-ns/log"
@@ -20,6 +22,11 @@ import (
 // web/datasetAPI/hidden_endpoints_test.go to check request returns 404
 
 func TestSuccessfullyUpdateVersion(t *testing.T) {
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
@@ -31,23 +38,18 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 	}
 
 	Convey("Given an unpublished dataset, edition and version", t, func() {
-
-		datasetID := uuid.NewV4().String()
-		editionID := uuid.NewV4().String()
-		instanceID := uuid.NewV4().String()
-
 		edition := "2018"
 		version := "2"
 
-		docs, err := setupResources(datasetID, editionID, edition, instanceID, 1)
+		docs, err := setupResources(ids.DatasetAssociated, ids.EditionUnpublished, edition, ids.InstanceEditionConfirmed, ids.UniqueTimestamp, 1)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			t.FailNow()
 		}
 
-		count, err := neo4JStore.CreateInstanceNode(instanceID)
+		count, err := neo4JStore.CreateInstanceNode(ids.InstanceEditionConfirmed)
 		if err != nil {
-			t.Errorf("failed to create neo4j instance node: [%v]\n error: [%v]\n", instanceID, err)
+			t.Errorf("failed to create neo4j instance node: [%v]\n error: [%v]\n", ids.InstanceEditionConfirmed, err)
 			t.FailNow()
 		}
 		So(count, ShouldEqual, 1)
@@ -55,19 +57,19 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		Convey("When a PUT request to update meta data against the version resource", func() {
 			Convey("Then version resource is updated and returns a status ok (200)", func() {
 
-				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", ids.DatasetAssociated, edition, version).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTUpdateVersionMetaDataJSON)).
 					Expect().Status(http.StatusOK)
 
-				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
+				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", ids.InstanceEditionConfirmed)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
 				}
 
 				// Check version has been updated
-				So(updatedVersion.ID, ShouldEqual, instanceID)
+				So(updatedVersion.ID, ShouldEqual, ids.InstanceEditionConfirmed)
 				So(updatedVersion.ReleaseDate, ShouldEqual, "2018-11-11")
 				So(len(*updatedVersion.UsageNotes), ShouldEqual, 2)
 
@@ -89,7 +91,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 					Type:        "Summary of Changes",
 				}
 
-				latestChangesList := &[]mongo.LatestChange{latestChange}
+				latestChangesList := []mongo.LatestChange{latestChange}
 
 				So(updatedVersion.LatestChanges, ShouldResemble, latestChangesList)
 
@@ -104,7 +106,7 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 					Frequency: "monthly",
 				}
 
-				temporalList := &[]mongo.TemporalFrequency{temporal}
+				temporalList := []mongo.TemporalFrequency{temporal}
 
 				So(updatedVersion.Temporal, ShouldResemble, temporalList)
 			})
@@ -113,30 +115,30 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		Convey("When a PUT request to update version resource with a collection id and state of associated", func() {
 			Convey("Then the dataset and version resources are updated and returns a status ok (200)", func() {
 
-				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", ids.DatasetAssociated, edition, version).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTUpdateVersionToAssociatedJSON)).
 					Expect().Status(http.StatusOK)
 
-				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
+				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", ids.InstanceEditionConfirmed)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
 				}
 
 				// Check version has been updated
-				So(updatedVersion.ID, ShouldEqual, instanceID)
+				So(updatedVersion.ID, ShouldEqual, ids.InstanceEditionConfirmed)
 				So(updatedVersion.CollectionID, ShouldEqual, "45454545")
 				So(updatedVersion.State, ShouldEqual, "associated")
 
-				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
+				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", ids.DatasetAssociated)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
 				}
 
 				// Check dataset has been updated
-				So(updatedDataset.ID, ShouldEqual, datasetID)
+				So(updatedDataset.ID, ShouldEqual, ids.DatasetAssociated)
 				So(updatedDataset.Next.CollectionID, ShouldEqual, "45454545")
 				So(updatedDataset.Next.State, ShouldEqual, "associated")
 			})
@@ -145,48 +147,48 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		Convey("When a PUT request to update version resource with a collection id and state of published", func() {
 			Convey("Then the dataset, edition and version resources are updated and returns a status ok (200)", func() {
 
-				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", ids.DatasetAssociated, edition, version).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTUpdateVersionToPublishedWithCollectionIDJSON)).
 					Expect().Status(http.StatusOK)
 
-				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
+				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", ids.InstanceEditionConfirmed)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
 				}
 
 				// Check version has been updated, and CollectionID removed
-				So(updatedVersion.ID, ShouldEqual, instanceID)
+				So(updatedVersion.ID, ShouldEqual, ids.InstanceEditionConfirmed)
 				So(updatedVersion.CollectionID, ShouldBeEmpty)
 				So(updatedVersion.State, ShouldEqual, "published")
 
-				log.Debug("edition id", log.Data{"edition_id": editionID})
+				log.Debug("edition id", log.Data{"edition_id": ids.EditionUnpublished})
 
-				updatedEdition, err := mongo.GetEdition(cfg.MongoDB, "editions", "_id", editionID)
+				updatedEdition, err := mongo.GetEdition(cfg.MongoDB, "editions", "_id", ids.EditionUnpublished)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
 				}
 
 				// Check edition has been updated
-				So(updatedEdition.ID, ShouldEqual, editionID)
+				So(updatedEdition.ID, ShouldEqual, ids.EditionUnpublished)
 				So(updatedEdition.Next.State, ShouldEqual, "published")
 				So(updatedEdition.Current, ShouldNotBeNil)
 				So(updatedEdition.Current.State, ShouldEqual, "published")
 
-				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
+				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", ids.DatasetAssociated)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
 				}
 
 				// Check dataset has been updated, and CollectionID removed
-				So(updatedDataset.ID, ShouldEqual, datasetID)
+				So(updatedDataset.ID, ShouldEqual, ids.DatasetAssociated)
 				So(updatedDataset.Current.CollectionID, ShouldBeEmpty)
 				So(updatedDataset.Current.State, ShouldEqual, "published")
 
-				instanceProps, err := neo4JStore.GetInstanceProperties(instanceID)
+				instanceProps, err := neo4JStore.GetInstanceProperties(ids.InstanceEditionConfirmed)
 				if err != nil {
 					log.ErrorC("failed to get properties from neo4j instance node", err, nil)
 					t.FailNow()
@@ -203,30 +205,25 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			}
 		}
 
-		if err := neo4JStore.CleanUpInstance(instanceID); err != nil {
-			t.Errorf("failed to cleanup neo4j instances: [%v]\n error: [%v]\n", instanceID, err)
+		if err := neo4JStore.CleanUpInstance(ids.InstanceEditionConfirmed); err != nil {
+			t.Errorf("failed to cleanup neo4j instances: [%v]\n error: [%v]\n", ids.InstanceEditionConfirmed, err)
 			t.FailNow()
 		}
 	})
 
 	Convey("Given an unpublished dataset, edition and a version that has been associated", t, func() {
-
-		datasetID := uuid.NewV4().String()
-		editionID := uuid.NewV4().String()
-		instanceID := uuid.NewV4().String()
-
 		edition := "2018"
 		version := "2"
 
-		docs, err := setupResources(datasetID, editionID, edition, instanceID, 2)
+		docs, err := setupResources(ids.DatasetAssociated, ids.EditionUnpublished, edition, ids.InstanceAssociated, ids.UniqueTimestamp, 2)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
 		}
 
-		count, err := neo4JStore.CreateInstanceNode(instanceID)
+		count, err := neo4JStore.CreateInstanceNode(ids.InstanceAssociated)
 		if err != nil {
-			t.Errorf("failed to create neo4j instance node: [%v]\n error: [%v]\n", instanceID, err)
+			t.Errorf("failed to create neo4j instance node: [%v]\n error: [%v]\n", ids.InstanceAssociated, err)
 			t.FailNow()
 		}
 		So(count, ShouldEqual, 1)
@@ -236,30 +233,30 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		SkipConvey("When a PUT request to update version resource to remove collection id", func() {
 			Convey("Then the dataset and version resources are updated accordingly and returns a status ok (200)", func() {
 
-				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", ids.DatasetAssociated, edition, version).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTUpdateVersionFromAssociatedToEditionConfirmedJSON)).
 					Expect().Status(http.StatusOK)
 
-				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
+				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", ids.InstanceAssociated)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
 				}
 
 				// Check version has been updated
-				So(updatedVersion.ID, ShouldEqual, instanceID)
+				So(updatedVersion.ID, ShouldEqual, ids.InstanceAssociated)
 				So(updatedVersion.CollectionID, ShouldEqual, "")
 				So(updatedVersion.State, ShouldEqual, "edition-confirmed")
 
-				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
+				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", ids.DatasetAssociated)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
 				}
 
 				// Check dataset has been updated
-				So(updatedDataset.ID, ShouldEqual, datasetID)
+				So(updatedDataset.ID, ShouldEqual, ids.DatasetAssociated)
 				So(updatedDataset.Next.CollectionID, ShouldEqual, "")
 				So(updatedDataset.Next.State, ShouldEqual, "edition-confirmed")
 			})
@@ -268,46 +265,46 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		Convey("When a PUT request to update version resource with a state of published", func() {
 			Convey("Then the dataset, edition and version resources are updated and returns a status ok (200)", func() {
 
-				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", ids.DatasetAssociated, edition, version).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
 					Expect().Status(http.StatusOK)
 
-				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
+				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", ids.InstanceAssociated)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
 				}
 
 				// Check version has been updated
-				So(updatedVersion.ID, ShouldEqual, instanceID)
+				So(updatedVersion.ID, ShouldEqual, ids.InstanceAssociated)
 				So(updatedVersion.State, ShouldEqual, "published")
 
-				updatedEdition, err := mongo.GetEdition(cfg.MongoDB, "editions", "_id", editionID)
+				updatedEdition, err := mongo.GetEdition(cfg.MongoDB, "editions", "_id", ids.EditionUnpublished)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
 				}
 
 				// Check edition has been updated
-				So(updatedEdition.ID, ShouldEqual, editionID)
+				So(updatedEdition.ID, ShouldEqual, ids.EditionUnpublished)
 				So(updatedEdition.Next.State, ShouldEqual, "published")
 				So(updatedEdition.Current, ShouldNotBeNil)
 				So(updatedEdition.Current.State, ShouldEqual, "published")
 				So(updatedEdition.Current.Links.LatestVersion.ID, ShouldEqual, "2")
-				So(updatedEdition.Current.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2018/versions/2")
+				So(updatedEdition.Current.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+ids.DatasetAssociated+"/editions/2018/versions/2")
 
-				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
+				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", ids.DatasetAssociated)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
 				}
 
 				// Check dataset has been updated, next sub document should be copied across to current sub doc
-				So(updatedDataset.ID, ShouldEqual, datasetID)
+				So(updatedDataset.ID, ShouldEqual, ids.DatasetAssociated)
 				So(updatedDataset.Current.State, ShouldEqual, "published")
 				So(updatedDataset.Next.State, ShouldEqual, "published") // Check next subdoc still exists
-				So(updatedDataset, ShouldResemble, expectedDatasetResource(datasetID, 0))
+				So(updatedDataset, ShouldResemble, expectedDatasetResource(ids.DatasetAssociated, 0))
 			})
 		})
 
@@ -318,30 +315,25 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			}
 		}
 
-		if err := neo4JStore.CleanUpInstance(instanceID); err != nil {
-			t.Errorf("failed to cleanup neo4j instances: [%v]\n error: [%v]\n", instanceID, err)
+		if err := neo4JStore.CleanUpInstance(ids.InstanceAssociated); err != nil {
+			t.Errorf("failed to cleanup neo4j instances: [%v]\n error: [%v]\n", ids.InstanceAssociated, err)
 			t.FailNow()
 		}
 	})
 
 	Convey("Given a published dataset and edition, and a version that has been associated", t, func() {
-
-		datasetID := uuid.NewV4().String()
-		editionID := uuid.NewV4().String()
-		instanceID := uuid.NewV4().String()
-
 		edition := "2017"
 		version := "2"
 
-		docs, err := setupResources(datasetID, editionID, edition, instanceID, 3)
+		docs, err := setupResources(ids.DatasetPublished, ids.EditionPublished, edition, ids.InstanceAssociated, ids.UniqueTimestamp, 3)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
 		}
 
-		count, err := neo4JStore.CreateInstanceNode(instanceID)
+		count, err := neo4JStore.CreateInstanceNode(ids.InstanceAssociated)
 		if err != nil {
-			t.Errorf("failed to create neo4j instance node: [%v]\n error: [%v]\n", instanceID, err)
+			t.Errorf("failed to create neo4j instance node: [%v]\n error: [%v]\n", ids.InstanceAssociated, err)
 			t.Fail()
 		}
 		So(count, ShouldEqual, 1)
@@ -349,46 +341,46 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 		Convey("When a PUT request to update version resource with a state of published", func() {
 			Convey("Then the dataset, edition and version resources are updated and returns a status ok (200)", func() {
 
-				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", datasetID, edition, version).
+				datasetAPI.PUT("/datasets/{id}/editions/{edition}/versions/{version}", ids.DatasetPublished, edition, version).
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
 					Expect().Status(http.StatusOK)
 
-				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", instanceID)
+				updatedVersion, err := mongo.GetVersion(cfg.MongoDB, "instances", "_id", ids.InstanceAssociated)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
 				}
 
 				// Check version has been updated
-				So(updatedVersion.ID, ShouldEqual, instanceID)
+				So(updatedVersion.ID, ShouldEqual, ids.InstanceAssociated)
 				So(updatedVersion.State, ShouldEqual, "published")
 
-				updatedEdition, err := mongo.GetEdition(cfg.MongoDB, "editions", "_id", editionID)
+				updatedEdition, err := mongo.GetEdition(cfg.MongoDB, "editions", "_id", ids.EditionPublished)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
 				}
 
 				// Check edition has been updated
-				So(updatedEdition.ID, ShouldEqual, editionID)
+				So(updatedEdition.ID, ShouldEqual, ids.EditionPublished)
 				So(updatedEdition.Next.State, ShouldEqual, "published")
 				So(updatedEdition.Current, ShouldNotBeNil)
 				So(updatedEdition.Current.State, ShouldEqual, "published")
 				So(updatedEdition.Current.Links.LatestVersion.ID, ShouldEqual, "1")
-				So(updatedEdition.Current.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+datasetID+"/editions/2017/versions/1")
+				So(updatedEdition.Current.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+ids.DatasetPublished+"/editions/2017/versions/1")
 
-				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", datasetID)
+				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", ids.DatasetPublished)
 				if err != nil {
 					log.ErrorC("Unable to retrieve updated version document", err, nil)
 					os.Exit(1)
 				}
 
 				// Check dataset has been updated, next sub document should be copied across to current sub doc
-				So(updatedDataset.ID, ShouldEqual, datasetID)
+				So(updatedDataset.ID, ShouldEqual, ids.DatasetPublished)
 				So(updatedDataset.Current.State, ShouldEqual, "published")
 				So(updatedDataset.Next.State, ShouldEqual, "published") // Check next subdoc still exists
-				So(updatedDataset, ShouldResemble, expectedDatasetResource(datasetID, 1))
+				So(updatedDataset, ShouldResemble, expectedDatasetResource(ids.DatasetPublished, 1))
 			})
 		})
 
@@ -399,14 +391,19 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 			}
 		}
 
-		if err := neo4JStore.CleanUpInstance(instanceID); err != nil {
-			t.Errorf("failed to cleanup neo4j instances: [%v]\n error: [%v]\n", instanceID, err)
+		if err := neo4JStore.CleanUpInstance(ids.InstanceAssociated); err != nil {
+			t.Errorf("failed to cleanup neo4j instances: [%v]\n error: [%v]\n", ids.InstanceAssociated, err)
 			t.FailNow()
 		}
 	})
 }
 
 func TestFailureToUpdateVersion(t *testing.T) {
+	ts, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
 	datasetID := uuid.NewV4().String()
 	editionID := uuid.NewV4().String()
@@ -420,7 +417,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 	// test for updating a version that has no dataset (bad request)
 	Convey("Given an edition and a version of state associated exist for a dataset that does not exist in datastore", t, func() {
 
-		docs, err := setupResources(datasetID, editionID, edition, instanceID, 4)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, ts.UniqueTimestamp, 4)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -448,7 +445,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 	// test for updating a version that has no edition (bad request)
 	Convey("Given a dataset and a version both of state associated exist but the edition does not", t, func() {
 
-		docs, err := setupResources(datasetID, editionID, edition, instanceID, 5)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, ts.UniqueTimestamp, 5)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -477,7 +474,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 	// test for updating a version that does not exist (not found)
 	Convey("Given a dataset and edition exist but the version for the dataset edition does not", t, func() {
 
-		docs, err := setupResources(datasetID, editionID, edition, instanceID, 6)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, ts.UniqueTimestamp, 6)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -507,7 +504,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 	Convey("Given a published dataset and edition and an unpublished version exist", t, func() {
 
 		Convey("with mandatory fields missing", func() {
-			docs, err := setupResources(datasetID, editionID, edition, instanceID, 9)
+			docs, err := setupResources(datasetID, editionID, edition, instanceID, ts.UniqueTimestamp, 9)
 			if err != nil {
 				log.ErrorC("Was unable to setup test data", err, nil)
 				os.Exit(1)
@@ -520,7 +517,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 						WithHeader(florenceTokenName, florenceToken).
 						WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
 						Expect().Status(http.StatusBadRequest).
-						Body().Contains("missing mandatory fields: [release_date Downloads.XLS.HRef Downloads.XLS.Size Downloads.CSV.HRef Downloads.CSV.Size]")
+						Body().Contains("missing mandatory fields: [release_date Downloads.XLS.HRef Downloads.XLS.Size Downloads.CSV.HRef Downloads.CSV.Size Downloads.CSVW.HRef Downloads.CSVW.Size]")
 
 				})
 			})
@@ -534,7 +531,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 		})
 
 		Convey("with invalid fields", func() {
-			docs, err := setupResources(datasetID, editionID, edition, instanceID, 10)
+			docs, err := setupResources(datasetID, editionID, edition, instanceID, ts.UniqueTimestamp, 10)
 			if err != nil {
 				log.ErrorC("Was unable to setup test data", err, nil)
 				os.Exit(1)
@@ -547,7 +544,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 						WithHeader(florenceTokenName, florenceToken).
 						WithBytes([]byte(validPUTUpdateVersionToPublishedJSON)).
 						Expect().Status(http.StatusBadRequest).
-						Body().Contains("invalid fields: [Downloads.XLS.Size not a number Downloads.CSV.Size not a number]")
+						Body().Contains("invalid fields: [Downloads.XLS.Size not a number Downloads.CSV.Size not a number Downloads.CSVW.Size not a number]")
 
 				})
 			})
@@ -580,7 +577,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 		edition := "2018"
 		version := "2"
 
-		docs, err := setupResources(datasetID, editionID, edition, instanceID, 7)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, ts.UniqueTimestamp, 7)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -634,7 +631,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 		edition := "2017"
 		version := "1"
 
-		docs, err := setupResources(datasetID, editionID, edition, instanceID, 8)
+		docs, err := setupResources(datasetID, editionID, edition, instanceID, ts.UniqueTimestamp, 8)
 		if err != nil {
 			log.ErrorC("Was unable to setup test data", err, nil)
 			os.Exit(1)
@@ -675,7 +672,7 @@ func TestFailureToUpdateVersion(t *testing.T) {
 	})
 }
 
-func setupResources(datasetID, editionID, edition, instanceID string, setup int) ([]*mongo.Doc, error) {
+func setupResources(datasetID, editionID, edition, instanceID string, uniqueTimestamp bson.MongoTimestamp, setup int) ([]*mongo.Doc, error) {
 	var docs []*mongo.Doc
 
 	publishedDatasetDoc := &mongo.Doc{
@@ -723,7 +720,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
-		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+		Update:     validPublishedInstanceData(datasetID, edition, instanceID, uniqueTimestamp),
 	}
 
 	associatedInstanceDoc := &mongo.Doc{
@@ -731,7 +728,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
-		Update:     validAssociatedInstanceData(datasetID, edition, instanceID),
+		Update:     validAssociatedInstanceData(datasetID, edition, instanceID, uniqueTimestamp),
 	}
 
 	editionConfirmedInstanceDoc := &mongo.Doc{
@@ -739,7 +736,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
-		Update:     validEditionConfirmedInstanceData(datasetID, edition, instanceID),
+		Update:     validEditionConfirmedInstanceData(datasetID, edition, instanceID, uniqueTimestamp),
 	}
 
 	editionConfirmedInstanceMissingMandatoryFieldsDoc := &mongo.Doc{
@@ -747,7 +744,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
-		Update:     editionConfirmedInstanceMissingMandatoryFields(datasetID, edition, instanceID),
+		Update:     editionConfirmedInstanceMissingMandatoryFields(datasetID, edition, instanceID, uniqueTimestamp),
 	}
 
 	editionConfirmedInstanceInvalidFieldsDoc := &mongo.Doc{
@@ -755,7 +752,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, setup int)
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
-		Update:     editionConfirmedInstanceInvalidFields(datasetID, edition, instanceID),
+		Update:     editionConfirmedInstanceInvalidFields(datasetID, edition, instanceID, uniqueTimestamp),
 	}
 
 	switch setup {

@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect"
-	"github.com/gedge/mgo"
+	"github.com/globalsign/mgo"
 	uuid "github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 
@@ -44,14 +44,19 @@ func TestSuccessfullyGetMetadataRelevantToVersion(t *testing.T) {
 				response.Value("dimensions").Array().Element(0).Object().Value("id").Equal("508064B3-A808-449B-9041-EA3A2F72CFAD")
 				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("aggregate")
 				response.Value("distribution").Array().Element(1).Equal("csv")
-				response.Value("distribution").Array().Element(2).Equal("xls")
+				response.Value("distribution").Array().Element(2).Equal("csvw")
+				response.Value("distribution").Array().Element(3).Equal("xls")
 				response.Value("downloads").Object().Value("csv").Object().Value("href").String().Match("/aws/census-2017-1-csv$")
-				response.Value("downloads").Object().Value("csv").Object().Value("private").String().Match("/private/myfile.csv$")
-				response.Value("downloads").Object().Value("csv").Object().Value("public").String().Match("/public/myfile.csv$")
+				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("private")
+				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("public")
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("10")
+				response.Value("downloads").Object().Value("csvw").Object().Value("href").String().Match("/aws/census-2017-1-csv-metadata.json$")
+				response.Value("downloads").Object().Value("csvw").Object().NotContainsKey("private")
+				response.Value("downloads").Object().Value("csvw").Object().NotContainsKey("public")
+				response.Value("downloads").Object().Value("csvw").Object().Value("size").Equal("10")
 				response.Value("downloads").Object().Value("xls").Object().Value("href").String().Match("/aws/census-2017-1-xls$")
-				response.Value("downloads").Object().Value("xls").Object().Value("private").String().Match("/private/myfile.xls$")
-				response.Value("downloads").Object().Value("xls").Object().Value("public").String().Match("/public/myfile.xls$")
+				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("private")
+				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("public")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24")
 				response.Value("keywords").Array().Element(0).Equal("cpi")
 				response.Value("keywords").Array().Element(1).Equal("boy")

@@ -3,8 +3,8 @@ package mongo
 import (
 	"time"
 
-	"github.com/gedge/mgo"
-	"github.com/gedge/mgo/bson"
+	"github.com/globalsign/mgo"
+	"github.com/globalsign/mgo/bson"
 
 	datasetAPIModel "github.com/ONSdigital/dp-dataset-api/models"
 	importAPIModel "github.com/ONSdigital/dp-import-api/models"
@@ -201,11 +201,11 @@ type EditionUpdate struct {
 
 // Edition represents information related to a single edition for a dataset
 type Edition struct {
-	Edition     string        `bson:"edition,omitempty"      json:"edition,omitempty"`
-	ID          string        `bson:"id,omitempty"          json:"id,omitempty"`
-	Links       *EditionLinks `bson:"links,omitempty"        json:"links,omitempty"`
-	State       string        `bson:"state,omitempty"        json:"state,omitempty"`
-	LastUpdated time.Time     `bson:"last_updated,omitempty" json:"-"`
+	Edition   string        `bson:"edition,omitempty"      json:"edition,omitempty"`
+	ID        string        `bson:"id,omitempty"          json:"id,omitempty"`
+	Links     *EditionLinks `bson:"links,omitempty"        json:"links,omitempty"`
+	State     string        `bson:"state,omitempty"        json:"state,omitempty"`
+	time.Time `bson:"last_updated,omitempty" json:"-"`
 }
 
 // EditionLinks represents a list of specific links related to the edition resource of a dataset
@@ -218,20 +218,20 @@ type EditionLinks struct {
 
 // Version represents information related to a single version for an edition of a dataset
 type Version struct {
-	Alerts        *[]Alert             `bson:"alerts,omitempty"         json:"alerts,omitempty"`
-	CollectionID  string               `bson:"collection_id,omitempty"  json:"collection_id,omitempty"`
-	Dimensions    []CodeList           `bson:"dimensions,omitempty"     json:"dimensions,omitempty"`
-	Downloads     *DownloadList        `bson:"downloads,omitempty"      json:"downloads,omitempty"`
-	Edition       string               `bson:"edition,omitempty"        json:"edition,omitempty"`
-	ID            string               `bson:"id,omitempty"             json:"id,omitempty"`
-	LatestChanges *[]LatestChange      `bson:"latest_changes,omitempty" json:"latest_changes,omitempty"`
-	Links         *VersionLinks        `bson:"links,omitempty"          json:"links,omitempty"`
-	ReleaseDate   string               `bson:"release_date,omitempty"   json:"release_date,omitempty"`
-	State         string               `bson:"state,omitempty"          json:"state,omitempty"`
-	Temporal      *[]TemporalFrequency `bson:"temporal,omitempty"       json:"temporal,omitempty"`
-	LastUpdated   time.Time            `bson:"last_updated,omitempty"   json:"-"`
-	Version       int                  `bson:"version,omitempty"        json:"version,omitempty"`
-	UsageNotes    *[]UsageNote         `bson:"usage_notes,omitempty"     json:"usage_notes,omitempty"`
+	Alerts        *[]Alert            `bson:"alerts,omitempty"         json:"alerts,omitempty"`
+	CollectionID  string              `bson:"collection_id,omitempty"  json:"collection_id,omitempty"`
+	Dimensions    []CodeList          `bson:"dimensions,omitempty"     json:"dimensions,omitempty"`
+	Downloads     *DownloadList       `bson:"downloads,omitempty"      json:"downloads,omitempty"`
+	Edition       string              `bson:"edition,omitempty"        json:"edition,omitempty"`
+	ID            string              `bson:"id,omitempty"             json:"id,omitempty"`
+	LatestChanges []LatestChange      `bson:"latest_changes,omitempty" json:"latest_changes,omitempty"`
+	Links         *VersionLinks       `bson:"links,omitempty"          json:"links,omitempty"`
+	ReleaseDate   string              `bson:"release_date,omitempty"   json:"release_date,omitempty"`
+	State         string              `bson:"state,omitempty"          json:"state,omitempty"`
+	Temporal      []TemporalFrequency `bson:"temporal,omitempty"       json:"temporal,omitempty"`
+	LastUpdated   time.Time           `bson:"last_updated,omitempty"   json:"-"`
+	Version       int                 `bson:"version,omitempty"        json:"version,omitempty"`
+	UsageNotes    *[]UsageNote        `bson:"usage_notes,omitempty"     json:"usage_notes,omitempty"`
 }
 
 type UsageNote struct {
@@ -257,8 +257,9 @@ type CodeList struct {
 
 // DownloadList represents a list of objects of containing information on the downloadable files
 type DownloadList struct {
-	CSV *DownloadObject `bson:"csv,omitempty" json:"csv,omitempty"`
-	XLS *DownloadObject `bson:"xls,omitempty" json:"xls,omitempty"`
+	CSV  *DownloadObject `bson:"csv,omitempty" json:"csv,omitempty"`
+	CSVW *DownloadObject `bson:"csvw,omitempty" json:"csvw,omitempty"`
+	XLS  *DownloadObject `bson:"xls,omitempty" json:"xls,omitempty"`
 }
 
 // DownloadObject represents information on the downloadable file
@@ -305,11 +306,11 @@ type Instance struct {
 	Events            *[]InstanceEvent     `bson:"events,omitempty"                      json:"events,omitempty"`
 	Headers           *[]string            `bson:"headers,omitempty"                     json:"headers,omitempty"`
 	ImportTasks       *InstanceImportTasks `bson:"import_tasks,omitempty"                json:"import_tasks,omitempty"`
-	LatestChanges     *[]LatestChange      `bson:"latest_changes,omitempty"              json:"latest_changes,omitempty"`
+	LatestChanges     []LatestChange       `bson:"latest_changes,omitempty"              json:"latest_changes,omitempty"`
 	Links             InstanceLinks        `bson:"links,omitempty"                       json:"links,omitempty"`
 	ReleaseDate       string               `bson:"release_date,omitempty"                json:"release_date,omitempty"`
 	State             string               `bson:"state,omitempty"                       json:"state,omitempty"`
-	Temporal          *[]TemporalFrequency `bson:"temporal,omitempty"                    json:"temporal,omitempty"`
+	Temporal          []TemporalFrequency  `bson:"temporal,omitempty"                    json:"temporal,omitempty"`
 	TotalObservations int64                `bson:"total_observations,omitempty"          json:"total_observations,omitempty"`
 	Version           int                  `bson:"version,omitempty"                     json:"version,omitempty"`
 	LastUpdated       time.Time            `bson:"last_updated,omitempty"                json:"last_updated,omitempty"`

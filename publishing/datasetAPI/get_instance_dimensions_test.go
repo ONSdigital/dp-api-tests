@@ -6,18 +6,21 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect"
-	"github.com/gedge/mgo"
-	uuid "github.com/satori/go.uuid"
+	"github.com/globalsign/mgo"
+	"github.com/globalsign/mgo/bson"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"github.com/ONSdigital/dp-api-tests/helpers"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/go-ns/log"
 )
 
 func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) {
-	datasetID := uuid.NewV4().String()
-	editionID := uuid.NewV4().String()
-	instanceID := uuid.NewV4().String()
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
 	edition := "2017"
 
@@ -27,24 +30,24 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 		Database:   cfg.MongoDB,
 		Collection: "datasets",
 		Key:        "_id",
-		Value:      datasetID,
-		Update:     ValidPublishedWithUpdatesDatasetData(datasetID),
+		Value:      ids.DatasetPublished,
+		Update:     ValidPublishedWithUpdatesDatasetData(ids.DatasetPublished),
 	}
 
 	editionDoc := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "editions",
 		Key:        "_id",
-		Value:      editionID,
-		Update:     ValidPublishedEditionData(datasetID, editionID, edition),
+		Value:      ids.EditionPublished,
+		Update:     ValidPublishedEditionData(ids.DatasetPublished, ids.EditionPublished, edition),
 	}
 
 	instanceOneDoc := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "instances",
 		Key:        "_id",
-		Value:      instanceID,
-		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+		Value:      ids.InstancePublished,
+		Update:     validPublishedInstanceData(ids.DatasetPublished, edition, ids.InstancePublished, ids.UniqueTimestamp),
 	}
 
 	dimensionOneDoc := &mongo.Doc{
@@ -52,7 +55,7 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9811",
-		Update:     validTimeDimensionsData("9811", instanceID),
+		Update:     validTimeDimensionsData("9811", ids.InstancePublished),
 	}
 
 	dimensionTwoDoc := &mongo.Doc{
@@ -60,7 +63,7 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 		Collection: "dimension.options",
 		Key:        "_id",
 		Value:      "9812",
-		Update:     validAggregateDimensionsData("9812", instanceID),
+		Update:     validAggregateDimensionsData("9812", ids.InstancePublished),
 	}
 
 	docs = append(docs, datasetDoc, editionDoc, dimensionOneDoc, dimensionTwoDoc, instanceOneDoc)
@@ -72,7 +75,7 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 	datasetAPI := httpexpect.New(t, cfg.DatasetAPIURL)
 
 	Convey("Given a list of dimensions for an instance exists", t, func() {
-		docs, err := getInstanceDimensionsSetup(datasetID, editionID, edition, instanceID)
+		docs, err := getInstanceDimensionsSetup(ids.DatasetPublished, ids.EditionPublished, edition, ids.InstancePublished, ids.UniqueTimestamp)
 		if err != nil {
 			log.ErrorC("Was unable to run test", err, nil)
 			os.Exit(1)
@@ -81,7 +84,7 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 		Convey("When an authenticated user sends a GET request for a list of dimensions for instance", func() {
 			Convey("Then a list of dimensions is returned with a status of OK (200)", func() {
 
-				response := datasetAPI.GET("/instances/{instance_id}/dimensions", instanceID).
+				response := datasetAPI.GET("/instances/{instance_id}/dimensions", ids.InstancePublished).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
@@ -104,8 +107,8 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
-			Value:      instanceID,
-			Update:     validEditionConfirmedInstanceData(datasetID, edition, instanceID),
+			Value:      ids.InstancePublished,
+			Update:     validEditionConfirmedInstanceData(ids.DatasetPublished, edition, ids.InstancePublished, ids.UniqueTimestamp),
 		}
 
 		if err := mongo.Setup(instance); err != nil {
@@ -116,7 +119,7 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 		Convey("When an authenticated user sends a GET request for a list of dimensions for instance", func() {
 			Convey("Then return status OK (200) with an empty items array", func() {
 
-				dimensionsResource := datasetAPI.GET("/instances/{id}/dimensions", instanceID).
+				dimensionsResource := datasetAPI.GET("/instances/{id}/dimensions", ids.InstancePublished).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
@@ -134,8 +137,11 @@ func TestGetInstanceDimensions_ReturnsAllDimensionsFromAnInstance(t *testing.T) 
 }
 
 func TestFailureToGetInstanceDimensions(t *testing.T) {
-	datasetID := uuid.NewV4().String()
-	instanceID := uuid.NewV4().String()
+	ids, err := helpers.GetIDsAndTimestamps()
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
 	edition := "2017"
 
@@ -145,7 +151,7 @@ func TestFailureToGetInstanceDimensions(t *testing.T) {
 		Convey("When a user sends a GET request of a list of dimensions for instance without sending a token", func() {
 			Convey("Then return status unauthorized (401)", func() {
 
-				datasetAPI.GET("/instances/{id}/dimensions", instanceID).
+				datasetAPI.GET("/instances/{id}/dimensions", ids.InstancePublished).
 					Expect().Status(http.StatusUnauthorized)
 			})
 		})
@@ -153,7 +159,7 @@ func TestFailureToGetInstanceDimensions(t *testing.T) {
 		Convey("When a user sends a GET request of a list of dimensions for instance with an invalid token", func() {
 			Convey("Then return status unauthorized (401)", func() {
 
-				datasetAPI.GET("/instances/{id}/dimensions", instanceID).
+				datasetAPI.GET("/instances/{id}/dimensions", ids.InstancePublished).
 					WithHeader(florenceTokenName, unauthorisedAuthToken).
 					Expect().Status(http.StatusUnauthorized)
 			})
@@ -162,7 +168,7 @@ func TestFailureToGetInstanceDimensions(t *testing.T) {
 		Convey("When an authenticated user sends a GET request of a list of dimensions for instance", func() {
 			Convey("Then return status not found (404) with a message `instance not found`", func() {
 
-				datasetAPI.GET("/instances/{id}/dimensions", instanceID).
+				datasetAPI.GET("/instances/{id}/dimensions", ids.InstancePublished).
 					WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusNotFound).Body().Contains("instance not found\n")
 			})
@@ -175,8 +181,8 @@ func TestFailureToGetInstanceDimensions(t *testing.T) {
 			Database:   cfg.MongoDB,
 			Collection: "instances",
 			Key:        "_id",
-			Value:      instanceID,
-			Update:     validEditionConfirmedInstanceData(datasetID, edition, instanceID),
+			Value:      ids.InstanceEditionConfirmed,
+			Update:     validEditionConfirmedInstanceData(ids.DatasetPublished, edition, ids.InstanceEditionConfirmed, ids.UniqueTimestamp),
 		}
 
 		if err := mongo.Setup(instance); err != nil {
@@ -187,7 +193,7 @@ func TestFailureToGetInstanceDimensions(t *testing.T) {
 		Convey("When a user sends a GET request for a list of dimensions for instance without sending a token", func() {
 			Convey("Then return status unauthorized (401)", func() {
 
-				datasetAPI.GET("/instances/{id}/dimensions", instanceID).
+				datasetAPI.GET("/instances/{id}/dimensions", ids.InstanceEditionConfirmed).
 					Expect().Status(http.StatusUnauthorized)
 			})
 		})
@@ -195,7 +201,7 @@ func TestFailureToGetInstanceDimensions(t *testing.T) {
 		Convey("When a user sends a GET request for a list of dimensions for instance with an invalid token", func() {
 			Convey("Then return status unauthorized (401)", func() {
 
-				datasetAPI.GET("/instances/{id}/dimensions", instanceID).
+				datasetAPI.GET("/instances/{id}/dimensions", ids.InstanceEditionConfirmed).
 					WithHeader(florenceTokenName, unauthorisedAuthToken).
 					Expect().Status(http.StatusUnauthorized)
 			})
@@ -246,7 +252,7 @@ func checkInstanceDimensionsResponse(response *httpexpect.Object) {
 
 }
 
-func getInstanceDimensionsSetup(datasetID, editionID, edition, instanceID string) ([]*mongo.Doc, error) {
+func getInstanceDimensionsSetup(datasetID, editionID, edition, instanceID string, uniqueTimestamp bson.MongoTimestamp) ([]*mongo.Doc, error) {
 	var docs []*mongo.Doc
 
 	datasetDoc := &mongo.Doc{
@@ -270,7 +276,7 @@ func getInstanceDimensionsSetup(datasetID, editionID, edition, instanceID string
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
-		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+		Update:     validPublishedInstanceData(datasetID, edition, instanceID, uniqueTimestamp),
 	}
 
 	dimensionOneDoc := &mongo.Doc{

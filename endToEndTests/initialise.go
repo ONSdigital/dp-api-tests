@@ -3,7 +3,7 @@ package generateFiles
 import (
 	"os"
 
-	"github.com/gedge/mgo"
+	"github.com/globalsign/mgo"
 
 	"github.com/ONSdigital/dp-api-tests/config"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
@@ -29,7 +29,7 @@ const (
 )
 
 var (
-	dropDatabases = []string{"tests"}
+	dropDatabases = []string{"test"}
 	vaultClient   *vault.VaultClient
 
 	headers = map[string]string{

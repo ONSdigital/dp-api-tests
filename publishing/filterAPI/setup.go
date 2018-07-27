@@ -1,7 +1,7 @@
 package filterAPI
 
 import (
-	"github.com/gedge/mgo/bson"
+	"github.com/globalsign/mgo/bson"
 	"github.com/satori/go.uuid"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"

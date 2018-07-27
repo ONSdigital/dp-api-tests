@@ -1,14 +1,19 @@
 package datasetAPI
 
-import "github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
-
-const (
-	created   = "created"
-	submitted = "submitted"
-	invalid   = "invalid"
+import (
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/globalsign/mgo/bson"
 )
 
-func setupInstances(datasetID, edition string, instances map[string]string) ([]*mongo.Doc, error) {
+const (
+	created          = "created"
+	submitted        = "submitted"
+	completed        = "completed"
+	editionConfirmed = "edition-confirmed"
+	invalid          = "invalid"
+)
+
+func setupInstances(datasetID, edition string, uniqueTimestamp bson.MongoTimestamp, instances map[string]string) ([]*mongo.Doc, error) {
 	var docs []*mongo.Doc
 
 	for instanceType, instanceID := range instances {
@@ -20,7 +25,7 @@ func setupInstances(datasetID, edition string, instances map[string]string) ([]*
 				Collection: "instances",
 				Key:        "_id",
 				Value:      instanceID,
-				Update:     validCreatedInstanceData(datasetID, edition, instanceID, "created"),
+				Update:     validCreatedInstanceData(datasetID, edition, instanceID, "created", uniqueTimestamp),
 			}
 
 			docs = append(docs, createdInstanceDoc)
@@ -30,7 +35,7 @@ func setupInstances(datasetID, edition string, instances map[string]string) ([]*
 				Collection: "instances",
 				Key:        "_id",
 				Value:      instanceID,
-				Update:     validSubmittedInstanceData(datasetID, edition, instanceID),
+				Update:     validSubmittedInstanceData(datasetID, edition, instanceID, "submitted", uniqueTimestamp),
 			}
 
 			docs = append(docs, submittedInstanceDoc)
@@ -40,7 +45,7 @@ func setupInstances(datasetID, edition string, instances map[string]string) ([]*
 				Collection: "instances",
 				Key:        "_id",
 				Value:      instanceID,
-				Update:     validCreatedInstanceData(datasetID, edition, instanceID, "gobbledygook"),
+				Update:     validCreatedInstanceData(datasetID, edition, instanceID, "gobbledygook", uniqueTimestamp),
 			}
 
 			docs = append(docs, invalidInstanceDoc)
