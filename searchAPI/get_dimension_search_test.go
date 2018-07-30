@@ -19,12 +19,6 @@ import (
 	"github.com/ONSdigital/go-ns/log"
 )
 
-const (
-	timeout               = 5 * time.Second
-	retryPause            = 750 * time.Millisecond
-	dimensionKeyAggregate = "aggregate"
-)
-
 func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 	datasetID := uuid.NewV4().String()
 	editionID := uuid.NewV4().String()
