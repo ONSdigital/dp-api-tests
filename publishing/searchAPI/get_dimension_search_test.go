@@ -275,7 +275,64 @@ func TestFailureToGetDimensionViaSearch(t *testing.T) {
 
 	searchAPI := httpexpect.New(t, cfg.SearchAPIURL)
 
-	Convey("Given a version for an edition of a dataset is not published", t, func() {
+	Convey("Given a version for an edition of a dataset does not exist", t, func() {
+		Convey("When a authenticated GET request is made to search API", func() {
+			Convey("Then the response returns not found (404)", func() {
+
+				searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
+					WithQuery("q", "Overall Index").
+					WithHeader(common.AuthHeaderKey, serviceToken).
+					Expect().Status(http.StatusNotFound).Body().Contains("dataset not found")
+			})
+		})
+	})
+
+	Convey("Given a dataset exists (unpublished)", t, func() {
+		if err := mongo.Setup(datasetDoc); err != nil {
+			log.ErrorC("was unable to run test", err, nil)
+			os.Exit(1)
+		}
+
+		Convey("but the edition and version of request do not exist", func() {
+			Convey("When a authenticated GET request is made to search API", func() {
+				Convey("Then the response returns not found (404)", func() {
+
+					searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
+						WithQuery("q", "Overall Index").
+						WithHeader(common.AuthHeaderKey, serviceToken).
+						Expect().Status(http.StatusNotFound).Body().Contains("edition not found")
+				})
+			})
+		})
+
+		Convey("and the edition exists (unpublished) but the version of request does not exist", func() {
+			if err := mongo.Setup(editionDoc); err != nil {
+				log.ErrorC("was unable to run test", err, nil)
+				os.Exit(1)
+			}
+			Convey("When a authenticated GET request is made to search API", func() {
+				Convey("Then the response returns not found (404)", func() {
+
+					searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
+						WithQuery("q", "Overall Index").
+						WithHeader(common.AuthHeaderKey, serviceToken).
+						Expect().Status(http.StatusNotFound).Body().Contains("version not found")
+				})
+			})
+
+			if err := mongo.Teardown(editionDoc); err != nil {
+				log.ErrorC("was unable to remove test data", err, nil)
+				os.Exit(1)
+			}
+		})
+
+		if err := mongo.Teardown(datasetDoc); err != nil {
+			log.ErrorC("was unable to remove test data", err, nil)
+			os.Exit(1)
+		}
+	})
+
+	Convey("Given a version for an edition of a dataset exists (unpublished)", t, func() {
 		Convey("When a GET request is made to search API", func() {
 			Convey("Then the response returns unauthorized (401)", func() {
 
@@ -297,7 +354,7 @@ func TestFailureToGetDimensionViaSearch(t *testing.T) {
 				searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
 					WithHeader(common.AuthHeaderKey, serviceToken).
 					WithQuery("limit", 10).
-					Expect().Status(http.StatusBadRequest).Body().Contains("search term empty\n")
+					Expect().Status(http.StatusBadRequest).Body().Contains("empty search term\n")
 			})
 		})
 

@@ -12,10 +12,8 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-// this is to cover "Resource" and "resource" not found
 const (
-	resourceNotFound = "esource not found"
-	unauthorizedReq  = "unauthorized request"
+	unauthorizedReq = "unauthorized request"
 )
 
 func TestSuccessfullyDeleteSearchIndex(t *testing.T) {
@@ -54,7 +52,7 @@ func TestFailToDeleteSearchIndex(t *testing.T) {
 			Convey("Then the response returns status not found (404)", func() {
 
 				searchAPI.DELETE("/search/instances/{instanceID}/dimensions/{dimension}", instanceID, dimensionKeyAggregate).
-					WithHeader(common.AuthHeaderKey, serviceToken).Expect().Status(http.StatusNotFound).Body().Contains(resourceNotFound)
+					WithHeader(common.AuthHeaderKey, serviceToken).Expect().Status(http.StatusNotFound).Body().Contains("search index not found")
 			})
 		})
 	})
