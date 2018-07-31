@@ -12,9 +12,6 @@ import (
 )
 
 var session *mgo.Session
-var snapshotIds = make(map[string][]string, 0)
-
-// XXX var sessionId = time.Now().Format("20060102150405") + "-" + os.Getpid()
 
 // Doc contains information to be able to query mongo db
 type Doc struct {
