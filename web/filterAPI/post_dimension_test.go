@@ -52,9 +52,11 @@ func TestSuccessfullyPostDimension(t *testing.T) {
 
 		Convey("Add a dimension to the filter blueprint", func() {
 
-			filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/{dimension}", filterBlueprintID, "Residence Type").
+			response := filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/{dimension}", filterBlueprintID, "Residence Type").
 				WithBytes([]byte(GetValidPOSTDimensionToFilterBlueprintJSON("Lives in a communal establishment", "Lives in a household"))).
-				Expect().Status(http.StatusCreated)
+				Expect().Status(http.StatusCreated).JSON().Object()
+
+			validateDimensionResponse(*response, filterBlueprintID, "Residence Type")
 
 			// Check data has been updated as expected
 			filterBlueprint, err := mongo.GetFilter(cfg.MongoFiltersDB, collection, "filter_id", filterBlueprintID)
