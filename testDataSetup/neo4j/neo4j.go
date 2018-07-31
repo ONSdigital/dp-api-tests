@@ -3,14 +3,15 @@ package neo4j
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
 	"html/template"
 	"os"
+
 	"github.com/ONSdigital/go-ns/log"
 	bolt "github.com/johnnadratowski/golang-neo4j-bolt-driver"
 	"github.com/johnnadratowski/golang-neo4j-bolt-driver/structures/graph"
 	. "github.com/smartystreets/goconvey/convey"
-	"errors"
 )
 
 const ObservationTestData = "../../testDataSetup/neo4j/instance.cypher"
@@ -201,7 +202,7 @@ func (ds *Datastore) CreateInstanceNode(instanceID string) (int64, error) {
 }
 
 // CleanUpInstance removes the instance node for the given instance ID
-func (ds *Datastore) CleanUpInstance(instanceID string) (error) {
+func (ds *Datastore) CleanUpInstance(instanceID string) error {
 	log.Info("cleaning up test instance", log.Data{"instanceID": instanceID})
 
 	query := fmt.Sprintf("MATCH (i:`_%s_Instance`) DETACH DELETE i", instanceID)
