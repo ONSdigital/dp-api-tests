@@ -12,15 +12,17 @@ import (
 )
 
 var session *mgo.Session
+var snapshotIds = make(map[string][]string, 0)
+
+// XXX var sessionId = time.Now().Format("20060102150405") + "-" + os.Getpid()
 
 // Doc contains information to be able to query mongo db
 type Doc struct {
-	Database        string
-	Collection      string
-	Key             string
-	Value           string
-	Update          bson.M
-	UniqueTimestamp bson.MongoTimestamp
+	Database   string
+	Collection string
+	Key        string
+	Value      string
+	Update     bson.M
 }
 
 // NewDatastore creates a new mgo.Session with a strong consistency and a write mode of "majority"
