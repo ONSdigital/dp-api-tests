@@ -17,6 +17,15 @@ import (
 
 func TestSuccessfullyUpdateImportJobState(t *testing.T) {
 
+	mongoTimestamp, err := bson.NewMongoTimestamp(time.Now(), uint32(os.Getpid()))
+	if err != nil {
+		log.ErrorC("Failed to set up test timestamp", err, nil)
+		os.Exit(1)
+	}
+
+	validCreatedInstanceDataTimed := validCreatedInstanceData
+	validCreatedInstanceDataTimed["$set"].(bson.M)["unique_timestamp"] = mongoTimestamp
+
 	importJob := &mongo.Doc{
 		Database:   cfg.MongoImportsDB,
 		Collection: collection,
@@ -25,19 +34,12 @@ func TestSuccessfullyUpdateImportJobState(t *testing.T) {
 		Update:     validCreatedImportJobData,
 	}
 
-	mongoTimestamp, err := bson.NewMongoTimestamp(time.Now(), uint32(os.Getpid()))
-	if err != nil {
-		log.ErrorC("Failed to set up test timestamp", err, nil)
-		os.Exit(1)
-	}
-
 	instance := &mongo.Doc{
-		Database:        cfg.MongoDB,
-		Collection:      "instances",
-		Key:             "id",
-		Value:           instanceID,
-		Update:          validCreatedInstanceData,
-		UniqueTimestamp: mongoTimestamp,
+		Database:   cfg.MongoDB,
+		Collection: "instances",
+		Key:        "id",
+		Value:      instanceID,
+		Update:     validCreatedInstanceDataTimed,
 	}
 
 	if err := mongo.Setup(importJob, instance); err != nil {
