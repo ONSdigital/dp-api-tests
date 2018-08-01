@@ -67,69 +67,39 @@ var temporal = mongo.TemporalFrequency{
 	StartDate: "2014-09-09",
 }
 
-func validPublishedDatasetData(datasetID string) bson.M {
+func validAssociatedDatasetData(datasetID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"id": datasetID,
-			"current.collection_id":             "108064B3-A808-449B-9041-EA3A2F72CFAA",
-			"current.contacts":                  []mongo.ContactDetails{contact},
-			"current.description":               "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
-			"current.id":                        datasetID,
-			"current.keywords":                  []string{"cpi", "boy"},
-			"current.last_updated":              "2017-06-06", // TODO this should be an isodate
-			"current.license":                   "ONS license",
-			"current.links.access_rights.href":  "http://ons.gov.uk/accessrights",
-			"current.links.editions.href":       cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions",
-			"current.links.latest_version.id":   "1",
-			"current.links.latest_version.href": cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2017/versions/1",
-			"current.links.self.href":           cfg.DatasetAPIURL + "/datasets/" + datasetID,
-			"current.methodologies":             []mongo.GeneralDetails{methodology},
-			"current.national_statistic":        true,
-			"current.next_release":              "2017-10-10",
-			"current.publications":              []mongo.GeneralDetails{publication},
-			"current.publisher.name":            "Automation Tester",
-			"current.publisher.type":            "publisher",
-			"current.publisher.href":            "https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/consumerpriceinflation/aug2017",
-			"current.qmi.description":           "Consumer price inflation is the rate at which the prices of goods and services bought by households rise and fall",
-			"current.qmi.href":                  "https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi",
-			"current.qmi.title":                 "Consumer Price Inflation (includes all 3 indices – CPIH, CPI and RPI)",
-			"current.related_datasets":          []mongo.GeneralDetails{relatedDatasets},
-			"current.release_frequency":         "Monthly",
-			"current.state":                     "published",
-			"current.theme":                     "Goods and services",
-			"current.title":                     "CPI",
-			"current.unit_of_measure":           "Pounds Sterling",
-			"current.uri":                       "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation",
-			"next.collection_id":                "208064B3-A808-449B-9041-EA3A2F72CFAB",
-			"next.contacts":                     []mongo.ContactDetails{contact},
-			"next.description":                  "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
-			"next.id":                           datasetID,
-			"next.keywords":                     []string{"cpi", "boy"},
-			"next.last_updated":                 "2017-10-11", // TODO this should be an isodate
-			"next.license":                      "ONS license",
-			"next.links.access_rights.href":     "http://ons.gov.uk/accessrights",
-			"next.links.editions.href":          cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions",
-			"next.links.latest_version.id":      "1",
-			"next.links.latest_version.href":    cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2018/versions/1",
-			"next.links.self.href":              cfg.DatasetAPIURL + "/datasets/" + datasetID,
-			"next.methodologies":                []mongo.GeneralDetails{methodology},
-			"next.national_statistic":           true,
-			"next.next_release":                 "2018-10-10",
-			"next.publications":                 []mongo.GeneralDetails{publication},
-			"next.publisher.name":               "Automation Tester",
-			"next.publisher.type":               "publisher",
-			"next.publisher.href":               "https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/consumerpriceinflation/aug2017",
-			"next.qmi.description":              "Consumer price inflation is the rate at which the prices of goods and services bought by households rise and fall",
-			"next.qmi.href":                     "https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi",
-			"next.qmi.title":                    "Consumer Price Inflation (includes all 3 indices – CPIH, CPI and RPI)",
-			"next.related_datasets":             []mongo.GeneralDetails{relatedDatasets},
-			"next.release_frequency":            "Monthly",
-			"next.state":                        "created",
-			"next.theme":                        "Goods and services",
-			"next.title":                        "CPI",
-			"next.unit_of_measure":              "Pounds Sterling",
-			"next.uri":                          "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation",
-			"test_data":                         "true",
+			"next.collection_id":             "208064B3-A808-449B-9041-EA3A2F72CFAB",
+			"next.contacts":                  []mongo.ContactDetails{contact},
+			"next.description":               "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",
+			"next.id":                        datasetID,
+			"next.keywords":                  []string{"cpi", "boy"},
+			"next.last_updated":              "2017-10-11", // TODO this should be an isodate
+			"next.license":                   "ONS license",
+			"next.links.access_rights.href":  "http://ons.gov.uk/accessrights",
+			"next.links.editions.href":       cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions",
+			"next.links.latest_version.id":   "1",
+			"next.links.latest_version.href": cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/2018/versions/1",
+			"next.links.self.href":           cfg.DatasetAPIURL + "/datasets/" + datasetID,
+			"next.methodologies":             []mongo.GeneralDetails{methodology},
+			"next.national_statistic":        true,
+			"next.next_release":              "2018-10-10",
+			"next.publications":              []mongo.GeneralDetails{publication},
+			"next.publisher.name":            "Automation Tester",
+			"next.publisher.type":            "publisher",
+			"next.publisher.href":            "https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/consumerpriceinflation/aug2017",
+			"next.qmi.description":           "Consumer price inflation is the rate at which the prices of goods and services bought by households rise and fall",
+			"next.qmi.href":                  "https://www.ons.gov.uk/economy/inflationandpriceindices/qmis/consumerpriceinflationqmi",
+			"next.qmi.title":                 "Consumer Price Inflation (includes all 3 indices – CPIH, CPI and RPI)",
+			"next.related_datasets":          []mongo.GeneralDetails{relatedDatasets},
+			"next.release_frequency":         "Monthly",
+			"next.state":                     "assoiated",
+			"next.theme":                     "Goods and services",
+			"next.title":                     "CPI",
+			"next.unit_of_measure":           "Pounds Sterling",
+			"next.uri":                       "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/consumerpriceinflation",
+			"test_data":                      "true",
 		},
 	}
 }
@@ -152,25 +122,7 @@ func validTimeDimensionsData(instanceID string) bson.M {
 	}
 }
 
-func validPublishedEditionData(datasetID, editionID, edition string) bson.M {
-	return bson.M{
-		"$set": bson.M{
-			"edition":                   edition,
-			"id":                        editionID,
-			"last_updated":              "2017-09-08", // TODO Should be isodate
-			"links.dataset.id":          datasetID,
-			"links.dataset.href":        cfg.DatasetAPIURL + "/datasets/" + datasetID,
-			"links.latest_version.id":   "1",
-			"links.latest_version.href": cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/1",
-			"links.self.href":           cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
-			"links.versions.href":       cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions",
-			"state":                     "published",
-			"test_data":                 "true",
-		},
-	}
-}
-
-func validPublishedInstanceData(datasetID, edition, instanceID string) bson.M {
+func validAssociatedInstanceData(datasetID, edition, instanceID string, uniqueTimestamp bson.MongoTimestamp) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"alerts":                      []mongo.Alert{alert},
@@ -203,6 +155,7 @@ func validPublishedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"total_inserted_observations": 1000,
 			"total_observations":          1000,
 			"version":                     1,
+			"unique_timestamp":            uniqueTimestamp,
 			"test_data":                   "true",
 		},
 	}

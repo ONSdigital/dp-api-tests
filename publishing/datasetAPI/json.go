@@ -364,7 +364,7 @@ func ValidPublishedEditionData(datasetID, editionID, edition string) bson.M {
 	}
 }
 
-func validUnpublishedEditionData(datasetID, editionID, edition string) bson.M {
+func ValidUnpublishedEditionData(datasetID, editionID, edition string) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"next.edition":                   edition,

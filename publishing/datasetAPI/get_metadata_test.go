@@ -201,7 +201,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 		Collection: "editions",
 		Key:        "_id",
 		Value:      ids.EditionUnpublished,
-		Update:     validUnpublishedEditionData(ids.DatasetAssociated, ids.EditionUnpublished, edition),
+		Update:     ValidUnpublishedEditionData(ids.DatasetAssociated, ids.EditionUnpublished, edition),
 	}
 
 	Convey("Given the dataset, edition and version do not exist", t, func() {
@@ -285,7 +285,7 @@ func TestFailureToGetMetadataRelevantToVersion(t *testing.T) {
 		}
 
 		Convey("and an unpublished edition", func() {
-			unpublishedEdition.Update = validUnpublishedEditionData(ids.DatasetPublished, ids.EditionUnpublished, edition)
+			unpublishedEdition.Update = ValidUnpublishedEditionData(ids.DatasetPublished, ids.EditionUnpublished, edition)
 			if err := mongo.Setup(unpublishedEdition); err != nil {
 				log.ErrorC("Was unable to run test", err, nil)
 				os.Exit(1)

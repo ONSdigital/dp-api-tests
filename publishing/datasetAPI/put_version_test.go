@@ -712,7 +712,7 @@ func setupResources(datasetID, editionID, edition, instanceID string, uniqueTime
 		Collection: "editions",
 		Key:        "_id",
 		Value:      editionID,
-		Update:     validUnpublishedEditionData(datasetID, editionID, edition),
+		Update:     ValidUnpublishedEditionData(datasetID, editionID, edition),
 	}
 
 	publishedInstanceDoc := &mongo.Doc{

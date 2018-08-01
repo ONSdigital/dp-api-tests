@@ -2,7 +2,6 @@ package searchAPI
 
 import (
 	"net/http"
-	"os"
 	"testing"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
@@ -11,6 +10,9 @@ import (
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 )
+
+// NOTE If endpoint is only available on publishing, remember to add a test to
+// web/searchAPI/hidden_endpoints_test.go to check request returns 404
 
 func TestSuccessfullyCreateSearchIndex(t *testing.T) {
 	searchAPI := httpexpect.New(t, cfg.SearchAPIURL)
@@ -26,10 +28,10 @@ func TestSuccessfullyCreateSearchIndex(t *testing.T) {
 		})
 	})
 
-	// Eventhough kafka message is created, the index will never be created as the
+	// Eventhough a kafka message is created, the index will never be created as the
 	// instance id will not match any instance that exists against an environment/local
 	// database, but just in the unlikely scenario this does create an index, delete it
-	deleteIndex(instanceID, dimension)
+	deleteIndex(t, instanceID, dimension)
 }
 
 func TestFailToCreateSearchIndex(t *testing.T) {
@@ -37,7 +39,7 @@ func TestFailToCreateSearchIndex(t *testing.T) {
 	dimension := dimensionKeyAggregate
 
 	Convey("Given an elasticsearch index does not exists for an instance dimension", t, func() {
-		deleteIndex(instanceID, dimension)
+		deleteIndex(t, instanceID, dimension)
 
 		Convey("When a PUT request is made to search API without an authentication header", func() {
 			Convey("Then the response returns status unauthorized (401)", func() {
@@ -57,18 +59,18 @@ func TestFailToCreateSearchIndex(t *testing.T) {
 					Status(http.StatusUnauthorized)
 			})
 		})
-	})
 
-	deleteIndex(instanceID, dimension)
+		deleteIndex(t, instanceID, dimension)
+	})
 }
 
-func deleteIndex(ID, dimension string) {
+func deleteIndex(t *testing.T, ID, dimension string) {
 	path := cfg.ElasticSearchAPIURL + "/" + ID + "_" + dimension
 	statusCode, err := elasticsearch.DeleteIndex(path)
 	if err != nil {
 		if statusCode != http.StatusNotFound {
 			log.ErrorC("failed to delete index", err, log.Data{"path": path})
-			os.Exit(1)
+			t.FailNow()
 		}
 	}
 }
