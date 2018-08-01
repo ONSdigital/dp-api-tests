@@ -52,16 +52,16 @@ func TestSuccessfullyDeleteDimensionOptions(t *testing.T) {
 
 			filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/age/options/27", filterBlueprintID).
 				WithHeader(serviceAuthTokenName, serviceAuthToken).
-				Expect().Status(http.StatusOK)
+				Expect().Status(http.StatusNoContent)
 			filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).
 				WithHeader(serviceAuthTokenName, serviceAuthToken).
-				Expect().Status(http.StatusOK)
+				Expect().Status(http.StatusNoContent)
 			filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1T60000", filterBlueprintID).
 				WithHeader(serviceAuthTokenName, serviceAuthToken).
-				Expect().Status(http.StatusOK)
+				Expect().Status(http.StatusNoContent)
 			filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/time/options/April 1997", filterBlueprintID).
 				WithHeader(serviceAuthTokenName, serviceAuthToken).
-				Expect().Status(http.StatusOK)
+				Expect().Status(http.StatusNoContent)
 
 			// TODO call mongo directly instead of using API to get dimension options
 			filterAPI.GET("/filters/{filter_blueprint_id}/dimensions", filterBlueprintID).

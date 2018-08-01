@@ -50,10 +50,10 @@ func TestSuccessfullyDeleteDimensionOptions(t *testing.T) {
 
 		Convey("Remove an option to a dimension to filter on and verify options are removed", func() {
 
-			filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/age/options/27", filterBlueprintID).Expect().Status(http.StatusOK)
-			filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).Expect().Status(http.StatusOK)
-			filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1T60000", filterBlueprintID).Expect().Status(http.StatusOK)
-			filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/time/options/April 1997", filterBlueprintID).Expect().Status(http.StatusOK)
+			filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/age/options/27", filterBlueprintID).Expect().Status(http.StatusNoContent)
+			filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/sex/options/male", filterBlueprintID).Expect().Status(http.StatusNoContent)
+			filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/aggregate/options/cpi1dim1T60000", filterBlueprintID).Expect().Status(http.StatusNoContent)
+			filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/time/options/April 1997", filterBlueprintID).Expect().Status(http.StatusNoContent)
 
 			// TODO call mongo directly instead of using API to get dimension options
 			filterAPI.GET("/filters/{filter_blueprint_id}/dimensions", filterBlueprintID).Expect().Status(http.StatusOK).JSON().Array().Length().Equal(4)

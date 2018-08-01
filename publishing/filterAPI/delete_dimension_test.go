@@ -42,7 +42,7 @@ func TestSuccessfullyDeleteDimension(t *testing.T) {
 			Convey("Then the filter blueprint should not contain that dimension", func() {
 				filterAPI.DELETE("/filters/{filter_blueprint_id}/dimensions/aggregate", filterBlueprintID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
-					Expect().Status(http.StatusOK)
+					Expect().Status(http.StatusNoContent)
 
 				var expectedDimensions []mongo.Dimension
 
