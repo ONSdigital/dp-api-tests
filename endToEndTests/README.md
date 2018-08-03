@@ -35,6 +35,7 @@ mongo db
 zookeeper
 kafka
 neo4j
+elasticsearch (5.x)
 recipe API
 import API
 dataset API
@@ -47,5 +48,6 @@ import tracker
 import reporter
 dataset exporter
 xlsx dataset exporter
+downloads service
 auth api stub (mimics zebedee)
 ```

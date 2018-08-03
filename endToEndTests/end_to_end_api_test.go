@@ -225,7 +225,6 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		getHierarchyParentDimensionResponse.Value("links").Object().Value("code").Object().Value("href").Equal(cfg.CodeListAPIURL + "/code-lists/cpih1dim1aggid/codes/cpih1dim1A0")
 		getHierarchyParentDimensionResponse.Value("links").Object().Value("code").Object().Value("id").Equal("cpih1dim1A0")
 		getHierarchyParentDimensionResponse.Value("links").Object().Value("self").Object().Value("href").Equal(cfg.HierarchyAPIURL + "/hierarchies/" + instanceID + "/aggregate")
-		getHierarchyParentDimensionResponse.Value("links").Object().Value("self").Object().Value("id").Equal("cpih1dim1A0")
 
 		numberOfChildren := getHierarchyParentDimensionResponse.Value("no_of_children").Raw()
 		getHierarchyParentDimensionResponse.Value("children").Array().Length().Equal(numberOfChildren)
@@ -429,7 +428,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 								log.ErrorC("cannot convert csvw size of type string to integer", err, log.Data{"csvw_size": instanceResource.Downloads.CSVW.Size})
 								t.FailNow()
 							}
-							So(csvwSize, ShouldBeBetweenOrEqual, 2000, 2400)
+							So(csvwSize, ShouldBeBetweenOrEqual, 1400, 1600)
 							So(instanceResource.Downloads.CSVW.URL, ShouldNotBeEmpty)
 							hasDownloads = true
 						}
@@ -443,7 +442,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		}
 
 		if hasDownloads == false {
-			err := errors.New("timed out")
+			err = errors.New("timed out")
 			log.ErrorC("Timed out - failed to get instance document with available downloads", err, log.Data{"instance_id": instanceID, "downloads": instanceResource.Downloads, "timeout": timeout})
 			t.FailNow()
 		}
@@ -456,12 +455,12 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		}
 
 		logData := log.Data{
-			"private_csv_link": instanceResource.Downloads.CSV.Private,
-			"private_csv_size": instanceResource.Downloads.CSV.Size,
+			"private_csv_link":  instanceResource.Downloads.CSV.Private,
+			"private_csv_size":  instanceResource.Downloads.CSV.Size,
 			"private_csvw_link": instanceResource.Downloads.CSVW.Private,
 			"private_csvw_size": instanceResource.Downloads.CSVW.Size,
-			"private_xls_link": instanceResource.Downloads.XLS.Private,
-			"private_xls_size": instanceResource.Downloads.XLS.Size,
+			"private_xls_link":  instanceResource.Downloads.XLS.Private,
+			"private_xls_size":  instanceResource.Downloads.XLS.Size,
 		}
 		log.Debug("Pre publish full downloads have been generated", logData)
 
@@ -615,12 +614,13 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 
 		log.Debug("getting downloads from the version",
 			log.Data{
-				"csv_link": versionResource.Downloads.CSV.URL,
+				"csv_link":  versionResource.Downloads.CSV.URL,
 				"csvw_link": versionResource.Downloads.CSVW.URL,
-				"xls_link": versionResource.Downloads.XLS.URL,
+				"xls_link":  versionResource.Downloads.XLS.URL,
 			})
 
-		req, err := http.NewRequest("GET", csvURL, nil)
+		var req *http.Request
+		req, err = http.NewRequest("GET", csvURL, nil)
 		req.Header.Set(authorizationTokenHeader, authorizationToken)
 
 		response, err := http.DefaultClient.Do(req)
@@ -631,7 +631,7 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 			"response_status": response.StatusCode,
 		})
 		defer func() {
-			if err := response.Body.Close(); err != nil {
+			if err = response.Body.Close(); err != nil {
 				log.ErrorC("get downloads link body", err, logData)
 			}
 		}()
@@ -676,12 +676,12 @@ func TestSuccessfulEndToEndProcess(t *testing.T) {
 		for {
 			select {
 			case <-exitHasPublicDownloadsLoop:
-				err := errors.New("timed out")
+				err = errors.New("timed out")
 				log.ErrorC("timeout waiting for public full download links to be generated", err, nil)
 				t.FailNow()
 			default:
-
-				versionResourcePostPublish, err := mongo.GetVersion(cfg.MongoDB, "instances", "id", instanceID)
+				var versionResourcePostPublish mongo.Version
+				versionResourcePostPublish, err = mongo.GetVersion(cfg.MongoDB, "instances", "id", instanceID)
 				if err != nil {
 					log.ErrorC("Unable to retrieve version resource", err, log.Data{"instance_id": instanceID})
 					t.FailNow()
