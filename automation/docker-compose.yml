@@ -30,13 +30,13 @@ services:
             - ./zk-single-kafka-single/kafka1/data:/var/lib/kafka/data
         depends_on:
             - zookeeper
-        
+
     mongo:
         image: 'mongo:3.4'
         container_name: 'mongo'
         ports:
             - '27100:27017'
-    
+
     neo4j:
         environment:
             - NEO4J_AUTH=none
@@ -50,7 +50,7 @@ services:
         ports:
             - "127.0.0.1:8201:8200"
         container_name: 'vault'
-    
+
     elasticsearch:
         image: 'elasticsearch:5.6.10'
         ports:
@@ -187,7 +187,7 @@ services:
         container_name: 'filter-api-web'
         build: ./filter-api
         working_dir: /go/src/github.com/ONSdigital/dp-filter-api
-        command: bash -c "git pull && git checkout ${FILTER_API_BRANCH} && make acceptance"
+        command: bash -c "git pull && git checkout ${FILTER_API_BRANCH} && make acceptance-web"
         ports:
             - '22100:22100'
         depends_on:
@@ -207,7 +207,7 @@ services:
         container_name: 'filter-api-publishing'
         build: ./filter-api
         working_dir: /go/src/github.com/ONSdigital/dp-filter-api
-        command: bash -c "git pull && git checkout ${FILTER_API_BRANCH} && make acceptance"
+        command: bash -c "git pull && git checkout ${FILTER_API_BRANCH} && make acceptance-publishing"
         ports:
             - '22100:22100'
         depends_on:
@@ -253,11 +253,11 @@ services:
             - RECIPE_API_URL=http://recipe-api:22300
             - HOST=http://import-api:21800
 
-    search_api:
-        container_name: 'search-api'
+    search_api_publishing:
+        container_name: 'search-api-publishing'
         build: ./search-api
         working_dir: /go/src/github.com/ONSdigital/dp-search-api
-        command: bash -c "git pull && git checkout ${SEARCH_API_BRANCH} && sleep 5 && make debug"
+        command: bash -c "git pull && git checkout ${SEARCH_API_BRANCH} && sleep 5 && make acceptance-publishing"
         ports:
             - '23100:23100'
         depends_on:
@@ -270,7 +270,26 @@ services:
             - DATASET_API_URL=http://dataset-api-publishing:22000
             - ELASTIC_SEARCH_URL=http://elasticsearch:9200
             - ENABLE_PRIVATE_ENDPOINTS=true
-            - SEARCH_API_URL=http://search-api:23100
+            - SEARCH_API_URL=http://search-api-publishing:23100
+
+    search_api_web:
+        container_name: 'search-api-web'
+        build: ./search-api
+        working_dir: /go/src/github.com/ONSdigital/dp-search-api
+        command: bash -c "git pull && git checkout ${SEARCH_API_BRANCH} && sleep 5 && make acceptance-web"
+        ports:
+            - '23100:23100'
+        depends_on:
+            - 'dataset_api_web'
+            - 'kafka'
+            - 'elasticsearch'
+        environment:
+            - ZEBEDEE_URL=http://zebedee:8082
+            - KAFKA_ADDR=kafka:9092
+            - DATASET_API_URL=http://dataset-api-web:22000
+            - ELASTIC_SEARCH_URL=http://elasticsearch:9200
+            - ENABLE_PRIVATE_ENDPOINTS=true
+            - SEARCH_API_URL=http://search-api-web:23100
 
     hierarchy_api:
         container_name: 'hierarchy-api'
@@ -497,17 +516,29 @@ services:
         depends_on:
             - 'import_api'
 
-    search_api_tests:
+    search_api_publishing_tests:
         environment:
-            - SEARCH_API_URL=http://search-api:23100
+            - SEARCH_API_URL=http://search-api-publishing:23100
             - ELASTIC_SEARCH_URL=http://elasticsearch:9200
             - MONGODB_BIND_ADDR=mongodb://mongo:27017
-        container_name: 'search-api-tests'
-        build: ./search-api-tests
-        working_dir: /go/src/github.com/ONSdigital/dp-api-tests/searchAPI
+        container_name: 'search-api-publishing-tests'
+        build: ./search-api-publishing-tests
+        working_dir: /go/src/github.com/ONSdigital/dp-api-tests/publishing/searchAPI
         command: bash -c "git pull && git checkout ${API_TESTS_BRANCH} && sleep 20 && HUMAN_LOG=1 go test ./..."
         depends_on:
-            - 'search_api'
+            - 'search_api_publishing'
+
+    search_api_web_tests:
+        environment:
+            - SEARCH_API_URL=http://search-api-web:23100
+            - ELASTIC_SEARCH_URL=http://elasticsearch:9200
+            - MONGODB_BIND_ADDR=mongodb://mongo:27017
+        container_name: 'search-api-web-tests'
+        build: ./search-api-web-tests
+        working_dir: /go/src/github.com/ONSdigital/dp-api-tests/web/searchAPI
+        command: bash -c "git pull && git checkout ${API_TESTS_BRANCH} && sleep 20 && HUMAN_LOG=1 go test ./..."
+        depends_on:
+            - 'search_api_web'
 
     hierarchy_api_tests:
         environment:
@@ -528,7 +559,7 @@ services:
             - HIERARCHY_API_URL=http://hierarchy-api:22600
             - IMPORT_API_URL=http://import-api:21800
             - RECIPE_API_URL=http://recipe-api:22300
-            - SEARCH_API_URL=http://search-api:23100
+            - SEARCH_API_URL=http://search-api-publishing:23100
             - ELASTIC_SEARCH_URL=http://elasticsearch:9200
             - MONGODB_BIND_ADDR=mongodb://mongo:27017
             - NEO4J_BIND_ADDR=bolt://neo4j:7687
@@ -547,7 +578,7 @@ services:
             - 'hierarchy_api'
             - 'import_api'
             - 'recipe_api'
-            - 'search_api'
+            - 'search_api_publishing'
             - 'elasticsearch'
             - 'mongo'
             - 'neo4j'
@@ -563,5 +594,3 @@ services:
             - 'dataset_exporter_xlsx'
             - 'search_builder'
             - 'hierarchy_builder'
-
-
