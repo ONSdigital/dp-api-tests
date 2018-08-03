@@ -53,11 +53,6 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 			Expect().Status(http.StatusCreated).JSON().Object()
 		validateOptionResponse(*response, filterBlueprintID, "age", "28")
 
-		// Add a duplicate option, this should not be added into the dimension option
-		response = filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/age/options/28", filterBlueprintID).
-			WithHeader(serviceAuthTokenName, serviceAuthToken).
-			Expect().Status(http.StatusCreated).JSON().Object()
-		validateOptionResponse(*response, filterBlueprintID, "age", "28")
 		response = filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/sex/options/unknown", filterBlueprintID).
 			WithHeader(serviceAuthTokenName, serviceAuthToken).
 			Expect().Status(http.StatusCreated).JSON().Object()
@@ -70,6 +65,12 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 			WithHeader(serviceAuthTokenName, serviceAuthToken).
 			Expect().Status(http.StatusCreated).JSON().Object()
 		validateOptionResponse(*response, filterBlueprintID, "time", "February 2007")
+
+		// Re-adding an existing option should not change the dimension option
+		response = filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/age/options/28", filterBlueprintID).
+			WithHeader(serviceAuthTokenName, serviceAuthToken).
+			Expect().Status(http.StatusCreated).JSON().Object()
+		validateOptionResponse(*response, filterBlueprintID, "age", "28")
 
 		filterJob, err := mongo.GetFilter(cfg.MongoFiltersDB, collection, "filter_id", filterBlueprintID)
 		if err != nil {
