@@ -1,14 +1,15 @@
 package searchAPI
 
 import (
+	"context"
 	"errors"
 	"net/http"
-	"os"
 	"testing"
 	"time"
 
 	"github.com/gavv/httpexpect"
 	"github.com/globalsign/mgo"
+	"github.com/globalsign/mgo/bson"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 
@@ -19,15 +20,15 @@ import (
 	"github.com/ONSdigital/go-ns/log"
 )
 
-const (
-	timeout               = 5 * time.Second
-	retryPause            = 750 * time.Millisecond
-	dimensionKeyAggregate = "aggregate"
-)
-
 func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 	datasetID := uuid.NewV4().String()
 	editionID := uuid.NewV4().String()
+
+	uniqueTimestamp, err := bson.NewMongoTimestamp(time.Now().UTC(), 1)
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
 	edition := "2017"
 
@@ -52,39 +53,38 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
-		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+		Update:     validPublishedInstanceData(datasetID, edition, instanceID, uniqueTimestamp),
 	}
 
-	if err := mongo.Setup(datasetDoc, editionDoc, versionDoc); err != nil {
+	if err = mongo.Setup(datasetDoc, editionDoc, versionDoc); err != nil {
 		log.ErrorC("was unable to run test", err, nil)
-		os.Exit(1)
+		t.FailNow()
 	}
 
 	searchAPI := httpexpect.New(t, cfg.SearchAPIURL)
 
-	if err := createSearchIndex(cfg.ElasticSearchAPIURL, instanceID, dimensionKeyAggregate); err != nil {
+	if err = createSearchIndex(cfg.ElasticSearchAPIURL, instanceID, dimensionKeyAggregate); err != nil {
 		log.ErrorC("Unable to setup elasticsearch index with test data", err, nil)
-		os.Exit(1)
+		t.FailNow()
 	}
 
 	Convey("Given an existing version for an edition of a dataset is published", t, func() {
 		Convey("When a GET request is made with a query term matching a dimension code", func() {
 			Convey("Then the response returns a json document containing a list of results with a status ok (200)", func() {
 
-				exitSearchCompleteLoop := make(chan bool)
-				go func() {
-					time.Sleep(timeout)
-					close(exitSearchCompleteLoop)
-				}()
+				ctx, cancel := context.WithTimeout(context.Background(), timeout)
+				defer cancel()
 
 				foundCount := false
+				var response *httpexpect.Object
+
 			searchCompleteLoop:
 				for {
 					select {
-					case <-exitSearchCompleteLoop:
+					case <-ctx.Done():
 						break searchCompleteLoop
 					default:
-						response := searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
+						response = searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
 							WithQuery("q", "cpih1dim1S10201").
 							WithHeader(common.AuthHeaderKey, serviceToken).
 							Expect().Status(http.StatusOK).
@@ -101,16 +101,11 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 					}
 				}
 
-				if !foundCount && false {
-					err := errors.New("timed out")
+				if !foundCount {
+					err = errors.New("timed out")
 					log.ErrorC("Timed out - failed to get list of search results", err, log.Data{"timeout": timeout})
-					os.Exit(1)
+					t.FailNow()
 				}
-
-				response := searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
-					WithQuery("q", "cpih1dim1S10201").
-					WithHeader(common.AuthHeaderKey, serviceToken).
-					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("count").Equal(1)
 				response.Value("items").Array().Length().Equal(1)
@@ -232,10 +227,10 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 	}
 
 	// delete mongo test data
-	if err := mongo.Teardown(datasetDoc, editionDoc, versionDoc); err != nil {
+	if err = mongo.Teardown(datasetDoc, editionDoc, versionDoc); err != nil {
 		if err != mgo.ErrNotFound {
 			log.ErrorC("was unable to remove test data", err, nil)
-			os.Exit(1)
+			t.FailNow()
 		}
 	}
 
@@ -245,13 +240,19 @@ func TestSuccessfullyGetDimensionViaSearch(t *testing.T) {
 	status, err := elasticsearch.DeleteIndex(path)
 	if err != nil {
 		log.ErrorC("failed to remove elastic search index", err, log.Data{"status_code": status})
-		os.Exit(1)
+		t.FailNow()
 	}
 }
 
 func TestFailureToGetDimensionViaSearch(t *testing.T) {
 	datasetID := uuid.NewV4().String()
 	editionID := uuid.NewV4().String()
+
+	uniqueTimestamp, err := bson.NewMongoTimestamp(time.Now().UTC(), 1)
+	if err != nil {
+		log.ErrorC("unable to generate mongo timestamp", err, nil)
+		t.FailNow()
+	}
 
 	edition := "2017"
 
@@ -276,26 +277,73 @@ func TestFailureToGetDimensionViaSearch(t *testing.T) {
 		Collection: "instances",
 		Key:        "_id",
 		Value:      instanceID,
-		Update:     validPublishedInstanceData(datasetID, edition, instanceID),
+		Update:     validPublishedInstanceData(datasetID, edition, instanceID, uniqueTimestamp),
 	}
 
 	searchAPI := httpexpect.New(t, cfg.SearchAPIURL)
 
 	Convey("Given a version for an edition of a dataset is not published", t, func() {
 		Convey("When a GET request is made to search API", func() {
-			Convey("Then the response returns unauthorized (401)", func() {
+			Convey("Then the response returns not found (404)", func() {
 
 				searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
 					WithQuery("q", "Overall Index").
-					Expect().Status(http.StatusUnauthorized)
+					Expect().Status(http.StatusNotFound).
+					Body().Contains("dataset not found\n")
 			})
 		})
+	})
+
+	Convey("Given a dataset is published", t, func() {
+		if err := mongo.Setup(datasetDoc); err != nil {
+			log.ErrorC("was unable to run test", err, nil)
+			t.FailNow()
+		}
+
+		Convey("but the edition is not", func() {
+			Convey("When a GET request is made to search API", func() {
+				Convey("Then the response returns not found (404)", func() {
+
+					searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
+						WithQuery("q", "Overall Index").
+						Expect().Status(http.StatusNotFound).
+						Body().Contains("edition not found\n")
+				})
+			})
+		})
+
+		Convey("and the edition is published but not the version", func() {
+			if err := mongo.Setup(editionDoc); err != nil {
+				log.ErrorC("was unable to run test", err, nil)
+				t.FailNow()
+			}
+
+			Convey("When a GET request is made to search API", func() {
+				Convey("Then the response returns not found (404)", func() {
+
+					searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
+						WithQuery("q", "Overall Index").
+						Expect().Status(http.StatusNotFound).
+						Body().Contains("version not found\n")
+				})
+			})
+
+			if err := mongo.Teardown(editionDoc); err != nil {
+				log.ErrorC("was unable to remove test data", err, nil)
+				t.FailNow()
+			}
+		})
+
+		if err := mongo.Teardown(datasetDoc); err != nil {
+			log.ErrorC("was unable to remove test data", err, nil)
+			t.FailNow()
+		}
 	})
 
 	Convey("Given a version for an edition of a dataset is published", t, func() {
 		if err := mongo.Setup(datasetDoc, editionDoc, versionDoc); err != nil {
 			log.ErrorC("was unable to run test", err, nil)
-			os.Exit(1)
+			t.FailNow()
 		}
 		Convey("When a GET request is made to search API without the query parameter 'q'", func() {
 			Convey("Then the response returns Bad request (400)", func() {
@@ -303,7 +351,7 @@ func TestFailureToGetDimensionViaSearch(t *testing.T) {
 				searchAPI.GET("/search/datasets/{datasetID}/editions/{edition}/versions/{version}/dimensions/{dimension}", datasetID, edition, "1", dimensionKeyAggregate).
 					WithHeader(common.AuthHeaderKey, serviceToken).
 					WithQuery("limit", 10).
-					Expect().Status(http.StatusBadRequest).Body().Contains("search term empty\n")
+					Expect().Status(http.StatusBadRequest).Body().Contains("empty search term\n")
 			})
 		})
 
@@ -325,7 +373,7 @@ func TestFailureToGetDimensionViaSearch(t *testing.T) {
 
 		if err := mongo.Teardown(datasetDoc, editionDoc, versionDoc); err != nil {
 			log.ErrorC("was unable to remove test data", err, nil)
-			os.Exit(1)
+			t.FailNow()
 		}
 	})
 }

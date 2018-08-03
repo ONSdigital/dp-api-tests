@@ -47,7 +47,7 @@ func TestSuccessfullyGetListOfDatasetEditions(t *testing.T) {
 		Collection: "editions",
 		Key:        "_id",
 		Value:      ids.EditionUnpublished,
-		Update:     validUnpublishedEditionData(ids.DatasetPublished, ids.EditionUnpublished, unpublishedEdition),
+		Update:     ValidUnpublishedEditionData(ids.DatasetPublished, ids.EditionUnpublished, unpublishedEdition),
 	}
 
 	docs = append(docs, datasetDoc, publishedEditionDoc, unpublishedEditionDoc)
@@ -107,7 +107,7 @@ func TestFailureToGetListOfDatasetEditions(t *testing.T) {
 		Collection: "editions",
 		Key:        "_id",
 		Value:      "466",
-		Update:     validUnpublishedEditionData(ids.DatasetPublished, ids.EditionUnpublished, "2018"),
+		Update:     ValidUnpublishedEditionData(ids.DatasetPublished, ids.EditionUnpublished, "2018"),
 	}
 
 	Convey("Given the dataset does not exist", t, func() {

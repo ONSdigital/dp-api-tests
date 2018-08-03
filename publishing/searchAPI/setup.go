@@ -13,7 +13,7 @@ func createSearchIndex(url, instanceID, dimension string) error {
 		return err
 	}
 
-	directory := ".."
+	directory := "../.."
 	if filepath.Base(currentPath) == "dp-api-tests" {
 		directory = "."
 	}

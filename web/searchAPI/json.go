@@ -152,25 +152,7 @@ func validTimeDimensionsData(instanceID string) bson.M {
 	}
 }
 
-func validPublishedEditionData(datasetID, editionID, edition string) bson.M {
-	return bson.M{
-		"$set": bson.M{
-			"edition":                   edition,
-			"id":                        editionID,
-			"last_updated":              "2017-09-08", // TODO Should be isodate
-			"links.dataset.id":          datasetID,
-			"links.dataset.href":        cfg.DatasetAPIURL + "/datasets/" + datasetID,
-			"links.latest_version.id":   "1",
-			"links.latest_version.href": cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions/1",
-			"links.self.href":           cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition,
-			"links.versions.href":       cfg.DatasetAPIURL + "/datasets/" + datasetID + "/editions/" + edition + "/versions",
-			"state":                     "published",
-			"test_data":                 "true",
-		},
-	}
-}
-
-func validPublishedInstanceData(datasetID, edition, instanceID string) bson.M {
+func validPublishedInstanceData(datasetID, edition, instanceID string, uniqueTimestamp bson.MongoTimestamp) bson.M {
 	return bson.M{
 		"$set": bson.M{
 			"alerts":                      []mongo.Alert{alert},
@@ -202,6 +184,7 @@ func validPublishedInstanceData(datasetID, edition, instanceID string) bson.M {
 			"temporal":                    []mongo.TemporalFrequency{temporal},
 			"total_inserted_observations": 1000,
 			"total_observations":          1000,
+			"unique_timestamp":            uniqueTimestamp,
 			"version":                     1,
 			"test_data":                   "true",
 		},
