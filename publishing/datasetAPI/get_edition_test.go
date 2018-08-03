@@ -47,7 +47,7 @@ func TestSuccessfullyGetDatasetEdition(t *testing.T) {
 		Collection: "editions",
 		Key:        "_id",
 		Value:      ids.EditionUnpublished,
-		Update:     validUnpublishedEditionData(ids.DatasetPublished, ids.EditionUnpublished, unpublishedEdition),
+		Update:     ValidUnpublishedEditionData(ids.DatasetPublished, ids.EditionUnpublished, unpublishedEdition),
 	}
 
 	docs = append(docs, datasetDoc, unpublishedEditionDoc, publishedEditionDoc)

@@ -144,7 +144,7 @@ func TestGetVersions_Failed(t *testing.T) {
 		Collection: "editions",
 		Key:        "_id",
 		Value:      ids.EditionUnpublished,
-		Update:     validUnpublishedEditionData(ids.DatasetPublished, ids.EditionUnpublished, unpublishedEdition),
+		Update:     ValidUnpublishedEditionData(ids.DatasetPublished, ids.EditionUnpublished, unpublishedEdition),
 	}
 
 	Convey("Given the dataset and subsequently the edition does not exist", t, func() {

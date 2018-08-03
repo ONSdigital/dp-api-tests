@@ -4,9 +4,11 @@ import (
 	"net/http"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/gavv/httpexpect"
 	"github.com/globalsign/mgo"
+	"github.com/globalsign/mgo/bson"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
@@ -14,6 +16,15 @@ import (
 )
 
 func TestSuccessfullyUpdateImportJobState(t *testing.T) {
+
+	mongoTimestamp, err := bson.NewMongoTimestamp(time.Now(), uint32(os.Getpid()))
+	if err != nil {
+		log.ErrorC("Failed to set up test timestamp", err, nil)
+		os.Exit(1)
+	}
+
+	validCreatedInstanceDataTimed := validCreatedInstanceData
+	validCreatedInstanceDataTimed["$set"].(bson.M)["unique_timestamp"] = mongoTimestamp
 
 	importJob := &mongo.Doc{
 		Database:   cfg.MongoImportsDB,
@@ -28,7 +39,7 @@ func TestSuccessfullyUpdateImportJobState(t *testing.T) {
 		Collection: "instances",
 		Key:        "id",
 		Value:      instanceID,
-		Update:     validCreatedInstanceData,
+		Update:     validCreatedInstanceDataTimed,
 	}
 
 	if err := mongo.Setup(importJob, instance); err != nil {

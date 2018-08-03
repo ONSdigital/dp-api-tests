@@ -2,7 +2,6 @@ package searchAPI
 
 import (
 	"net/http"
-	"os"
 	"testing"
 
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/elasticsearch"
@@ -12,11 +11,12 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-// this is to cover "Resource" and "resource" not found
 const (
-	resourceNotFound = "esource not found"
-	unauthorizedReq  = "unauthorized request"
+	unauthorizedReq = "unauthorized request"
 )
+
+// NOTE If endpoint is only available on publishing, remember to add a test to
+// web/searchAPI/hidden_endpoints_test.go to check request returns 404
 
 func TestSuccessfullyDeleteSearchIndex(t *testing.T) {
 	searchAPI := httpexpect.New(t, cfg.SearchAPIURL)
@@ -24,7 +24,7 @@ func TestSuccessfullyDeleteSearchIndex(t *testing.T) {
 	Convey("Given an elasticsearch index exists for an instance", t, func() {
 		if err := createSearchIndex(cfg.ElasticSearchAPIURL, instanceID, dimensionKeyAggregate); err != nil {
 			log.ErrorC("Unable to setup elasticsearch index with test data", err, nil)
-			os.Exit(1)
+			t.FailNow()
 		}
 
 		Convey("When a DELETE request is made to search API with valid authentication header", func() {
@@ -46,7 +46,7 @@ func TestFailToDeleteSearchIndex(t *testing.T) {
 		if err != nil {
 			if statusCode != http.StatusNotFound {
 				log.ErrorC("failed to delete index", err, log.Data{"path": path})
-				os.Exit(1)
+				t.FailNow()
 			}
 		}
 
@@ -54,7 +54,7 @@ func TestFailToDeleteSearchIndex(t *testing.T) {
 			Convey("Then the response returns status not found (404)", func() {
 
 				searchAPI.DELETE("/search/instances/{instanceID}/dimensions/{dimension}", instanceID, dimensionKeyAggregate).
-					WithHeader(common.AuthHeaderKey, serviceToken).Expect().Status(http.StatusNotFound).Body().Contains(resourceNotFound)
+					WithHeader(common.AuthHeaderKey, serviceToken).Expect().Status(http.StatusNotFound).Body().Contains("search index not found")
 			})
 		})
 	})
@@ -62,7 +62,7 @@ func TestFailToDeleteSearchIndex(t *testing.T) {
 	Convey("Given an elasticsearch index exist for an instance", t, func() {
 		if err := createSearchIndex(cfg.ElasticSearchAPIURL, instanceID, dimensionKeyAggregate); err != nil {
 			log.ErrorC("Unable to setup elasticsearch index with test data", err, nil)
-			os.Exit(1)
+			t.FailNow()
 		}
 		Convey("When a DELETE request is made to search API without an authentication header", func() {
 			Convey("Then the response returns status unauthorized (401)", func() {
@@ -87,7 +87,7 @@ func TestFailToDeleteSearchIndex(t *testing.T) {
 	if err != nil {
 		if statusCode != http.StatusNotFound {
 			log.ErrorC("failed to delete index", err, log.Data{"path": path})
-			os.Exit(1)
+			t.FailNow()
 		}
 	}
 }
