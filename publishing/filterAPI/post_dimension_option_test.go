@@ -52,7 +52,6 @@ func TestSuccessfulPostDimensionOptions(t *testing.T) {
 			WithHeader(serviceAuthTokenName, serviceAuthToken).
 			Expect().Status(http.StatusCreated).JSON().Object()
 		validateOptionResponse(*response, filterBlueprintID, "age", "28")
-
 		response = filterAPI.POST("/filters/{filter_blueprint_id}/dimensions/sex/options/unknown", filterBlueprintID).
 			WithHeader(serviceAuthTokenName, serviceAuthToken).
 			Expect().Status(http.StatusCreated).JSON().Object()
