@@ -4,6 +4,7 @@ import "github.com/kelseyhightower/envconfig"
 
 // Config values for the application.
 type Config struct {
+	IdentityAPIURL            string   `envconfig:"IDENTITY_API_URL"`
 	CodeListAPIURL            string   `envconfig:"CODELIST_API_URL"`
 	DatasetAPIURL             string   `envconfig:"DATASET_API_URL"`
 	DownloadServiceURL        string   `envconfig:"DOWNLOAD_SERVICE_URL"`
@@ -34,6 +35,7 @@ var cfg *Config
 func Get() (*Config, error) {
 
 	cfg := &Config{
+		IdentityAPIURL:            "http://localhost:23800",
 		CodeListAPIURL:            "http://localhost:22400",
 		DatasetAPIURL:             "http://localhost:22000",
 		DownloadServiceURL:        "http://localhost:23600",

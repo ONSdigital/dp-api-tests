@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	"github.com/ONSdigital/dp-identity-api/identity"
 	"time"
 
 	"github.com/globalsign/mgo"
@@ -444,6 +445,18 @@ func CountDimensionOptions(database, collection, key, value string) (int, error)
 	defer s.Close()
 
 	return s.DB(database).C(collection).Find(bson.M{key: value}).Count()
+}
+
+func GetIdentity(database, collection, key, value string) (*identity.Model, error) {
+	s := session.Copy()
+	defer s.Close()
+
+	var i identity.Model
+	if err := s.DB(database).C(collection).Find(bson.M{key: value}).One(&i); err != nil {
+		return nil, err
+	}
+
+	return &i, nil
 }
 
 // Possible values for flagging whether a filter resource (output or blueprint)
