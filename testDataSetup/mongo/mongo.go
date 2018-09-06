@@ -459,6 +459,17 @@ func GetIdentity(database, collection, key, value string) (*identity.Model, erro
 	return &i, nil
 }
 
+func GetIdentities(database, collection string) ([]identity.Model, error) {
+	s := session.Copy()
+	defer s.Close()
+
+	var results []identity.Model
+	if err := s.DB(database).C(collection).Find(nil).All(&results); err != nil {
+		return nil, err
+	}
+	return results, nil
+}
+
 // Possible values for flagging whether a filter resource (output or blueprint)
 // is a filter against a published or unpublished version
 var (
