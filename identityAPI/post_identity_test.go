@@ -2,25 +2,27 @@ package codeListAPI
 
 import (
 	"encoding/json"
+	"github.com/ONSdigital/dp-api-tests/identityAPIModels"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/dp-identity-api/api"
 	"github.com/ONSdigital/dp-identity-api/identity"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"strings"
 	"testing"
 )
 
 var (
-	newIdentity = identity.Model{
+	newIdentity = identityAPIModels.API{
 		Name:              "Peter Venkman",
 		Email:             "venkman@whoyougunnacall.com",
 		Deleted:           false,
 		Migrated:          true,
 		Password:          "There is no Dana only zuul!",
-		TemporaryPassword: "",
+		TemporaryPassword: false,
 		UserType:          "admin",
 	}
 )
@@ -48,6 +50,11 @@ func TestCreateIdentitySuccess(t *testing.T) {
 				So(i.ID, ShouldEqual, newID)
 				So(i.Name, ShouldEqual, newIdentity.Name)
 				So(i.Email, ShouldEqual, newIdentity.Email)
+
+				Convey("and the password is encrypted", func() {
+					pwdErr := bcrypt.CompareHashAndPassword(i.HashedPassword(), []byte(newIdentity.Password))
+					So(pwdErr, ShouldBeNil)
+				})
 
 				tearDown(i.ID)
 			})
@@ -78,7 +85,7 @@ func TestCreateIdentity_ValidationError(t *testing.T) {
 	Convey("Given the identity.name is empty", t, func() {
 		Convey("When post request is made to the API", func() {
 			Convey("Then a Bad Request status is returned and no identity is stored", func() {
-				b, err := json.Marshal(identity.Model{})
+				b, err := json.Marshal(identityAPIModels.API{})
 				So(err, ShouldBeNil)
 
 				resp := identityAPI.POST("/identity", nil).

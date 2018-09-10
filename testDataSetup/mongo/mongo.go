@@ -1,7 +1,7 @@
 package mongo
 
 import (
-	"github.com/ONSdigital/dp-identity-api/identity"
+	"github.com/ONSdigital/dp-api-tests/identityAPIModels"
 	"time"
 
 	"github.com/globalsign/mgo"
@@ -447,11 +447,11 @@ func CountDimensionOptions(database, collection, key, value string) (int, error)
 	return s.DB(database).C(collection).Find(bson.M{key: value}).Count()
 }
 
-func GetIdentity(database, collection, key, value string) (*identity.Model, error) {
+func GetIdentity(database, collection, key, value string) (*identityAPIModels.Mongo, error) {
 	s := session.Copy()
 	defer s.Close()
 
-	var i identity.Model
+	var i identityAPIModels.Mongo
 	if err := s.DB(database).C(collection).Find(bson.M{key: value}).One(&i); err != nil {
 		return nil, err
 	}
@@ -459,11 +459,11 @@ func GetIdentity(database, collection, key, value string) (*identity.Model, erro
 	return &i, nil
 }
 
-func GetIdentities(database, collection string) ([]identity.Model, error) {
+func GetIdentities(database, collection string) ([]identityAPIModels.Mongo, error) {
 	s := session.Copy()
 	defer s.Close()
 
-	var results []identity.Model
+	var results []identityAPIModels.Mongo
 	if err := s.DB(database).C(collection).Find(nil).All(&results); err != nil {
 		return nil, err
 	}
