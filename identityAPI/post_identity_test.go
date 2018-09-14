@@ -62,6 +62,33 @@ func TestCreateIdentitySuccess(t *testing.T) {
 	})
 }
 
+func TestCreateIdentity_EmailAlreadyAssociated(t *testing.T) {
+	identityAPI := httpexpect.New(t, cfg.IdentityAPIURL)
+
+	Convey("Given an email is already associated with an identity", t, func() {
+		id := createIdentity(identityAPI)
+
+		Convey("When a post request made to the API with the same email", func() {
+			body, err := json.Marshal(newIdentity)
+			So(err, ShouldBeNil)
+
+			resp := identityAPI.POST("/identity", nil).
+				WithHeader("Content-Type", "application/json").
+				WithBytes(body).
+				Expect()
+
+			Convey("Then a 400 status is returned", func() {
+				resp.Status(http.StatusBadRequest)
+				So(getErrorBody(resp), ShouldEqual, "active identity already exists with email")
+			})
+		})
+
+		Reset(func() {
+			tearDown(id)
+		})
+	})
+}
+
 func TestCreateIdentity_ValidationError(t *testing.T) {
 	identityAPI := httpexpect.New(t, cfg.IdentityAPIURL)
 
