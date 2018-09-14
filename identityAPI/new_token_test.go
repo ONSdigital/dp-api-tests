@@ -10,27 +10,27 @@ import (
 	"testing"
 )
 
-func TestAuthenticate_Success(t *testing.T) {
+func TestNewToken_Success(t *testing.T) {
 	identityAPI := httpexpect.New(t, cfg.IdentityAPIURL)
 
 	Convey("Given an identity exists", t, func() {
-		newID := createIdentity(identityAPI)
+		identityID := createIdentity(identityAPI)
 
-		Convey("When authentication request made with the correct password", func() {
-			authRequest := models.AuthRequest{
-				ID:       newID,
+		Convey("When a newTokenRequest made with the correct password", func() {
+			authRequest := models.NewTokenRequest{
+				Email:       newIdentity.Email,
 				Password: newIdentity.Password,
 			}
 
 			body, err := json.Marshal(authRequest)
 			So(err, ShouldBeNil)
 
-			resp := identityAPI.POST("/authenticate", nil).
+			resp := identityAPI.POST("/token", nil).
 				WithHeader("Content-Type", "application/json").
 				WithBytes(body).
 				Expect()
 
-			Convey("Then a 200 and auth token status are returned", func() {
+			Convey("Then a 200 status and auth token are returned", func() {
 				resp.Status(http.StatusOK)
 
 				token := resp.JSON().Object().Value("token").String().Raw()
@@ -39,27 +39,27 @@ func TestAuthenticate_Success(t *testing.T) {
 		})
 
 		Reset(func() {
-			tearDown(newID)
+			tearDown(identityID)
 		})
 	})
 }
 
-func TestAuthenticate_PasswordIncorrect(t *testing.T) {
+func TestNewToken_PasswordIncorrect(t *testing.T) {
 	identityAPI := httpexpect.New(t, cfg.IdentityAPIURL)
 
 	Convey("Given an identity exists", t, func() {
-		newID := createIdentity(identityAPI)
+		identityID := createIdentity(identityAPI)
 
-		Convey("When authentication request made with an incorrect password", func() {
-			authRequest := models.AuthRequest{
-				ID:       newID,
+		Convey("When a newTokenRequest is made with an incorrect password", func() {
+			authRequest := models.NewTokenRequest{
+				Email:       newIdentity.Email,
 				Password: "this password is incorrect",
 			}
 
 			body, err := json.Marshal(authRequest)
 			So(err, ShouldBeNil)
 
-			resp := identityAPI.POST("/authenticate", nil).
+			resp := identityAPI.POST("/token", nil).
 				WithHeader("Content-Type", "application/json").
 				WithBytes(body).
 				Expect()
@@ -71,26 +71,26 @@ func TestAuthenticate_PasswordIncorrect(t *testing.T) {
 		})
 
 		Reset(func() {
-			tearDown(newID)
+			tearDown(identityID)
 		})
 	})
 }
 
-func TestAuthenticate_UserNotFound(t *testing.T) {
+func TestNewToken_UserNotFound(t *testing.T) {
 	identityAPI := httpexpect.New(t, cfg.IdentityAPIURL)
 
 	Convey("Given no user exists with the provided identity ID", t, func() {
 
-		Convey("When authentication request made", func() {
-			authRequest := models.AuthRequest{
-				ID:       "1234567890",
+		Convey("When a newTokenRest is made", func() {
+			authRequest := models.NewTokenRequest{
+				Email:       newIdentity.Email,
 				Password: newIdentity.Password,
 			}
 
 			body, err := json.Marshal(authRequest)
 			So(err, ShouldBeNil)
 
-			resp := identityAPI.POST("/authenticate", nil).
+			resp := identityAPI.POST("/token", nil).
 				WithHeader("Content-Type", "application/json").
 				WithBytes(body).
 				Expect()

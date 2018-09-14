@@ -22,8 +22,8 @@ type Mongo struct {
 	Deleted           bool   `bson:"deleted" json:"deleted"`
 }
 
-type AuthRequest struct {
-	ID       string `json:"id"`
+type NewTokenRequest struct {
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
