@@ -87,10 +87,10 @@
 			"revisionTime": "2018-06-04T12:37:22Z"
 		},
 		{
-			"checksumSHA1": "+dN6az4ffZ3Lw0L5eWorSheN+oQ=",
-			"path": "github.com/ONSdigital/dp-identity-api/api",
-			"revision": "9c29d3d927f49baf6697cd899f481c74f2e6d7b1",
-			"revisionTime": "2018-09-10T10:57:19Z"
+			"checksumSHA1": "e33PuS+69kBi7pXghvsDlAHOl3g=",
+			"path": "github.com/ONSdigital/dp-identity-api/api/apitest",
+			"revision": "fb028db9c0d6ab21d00364f905bb5c87b243d384",
+			"revisionTime": "2018-09-14T15:14:35Z"
 		},
 		{
 			"checksumSHA1": "MfW/bJpSk1uDITcBqw4FfUifTYU=",
@@ -99,10 +99,10 @@
 			"revisionTime": "2018-09-10T10:57:19Z"
 		},
 		{
-			"checksumSHA1": "eov/3nhpMBtT3wVUpPawHFVy+Ro=",
-			"path": "github.com/ONSdigital/dp-identity-api/identity",
-			"revision": "9c29d3d927f49baf6697cd899f481c74f2e6d7b1",
-			"revisionTime": "2018-09-10T10:57:19Z"
+			"checksumSHA1": "86fNy4xY2aoj0oeJXzgObZdWwO0=",
+			"path": "github.com/ONSdigital/dp-identity-api/identity/identitytest",
+			"revision": "fb028db9c0d6ab21d00364f905bb5c87b243d384",
+			"revisionTime": "2018-09-14T15:14:35Z"
 		},
 		{
 			"checksumSHA1": "bCtFVsGIQh7XMZ4ZHI42x9+Hnnk=",
