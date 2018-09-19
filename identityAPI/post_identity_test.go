@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 	"github.com/ONSdigital/dp-api-tests/identityAPIModels"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
-	"github.com/ONSdigital/dp-identity-api/api"
-	"github.com/ONSdigital/dp-identity-api/identity"
+	"github.com/ONSdigital/dp-identity-api/schema"
 	"github.com/ONSdigital/go-ns/log"
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
@@ -100,7 +99,7 @@ func TestCreateIdentity_ValidationError(t *testing.T) {
 					Expect().
 					Status(http.StatusBadRequest)
 
-				So(getErrorBody(resp), ShouldEqual, api.ErrRequestBodyNil.Error())
+				So(getErrorBody(resp), ShouldEqual, "error expected request body but was empty")
 
 				identities, err := mongo.GetIdentities(cfg.MongoDB, collection)
 				So(err, ShouldBeNil)
@@ -121,7 +120,7 @@ func TestCreateIdentity_ValidationError(t *testing.T) {
 					Expect().
 					Status(http.StatusBadRequest)
 
-				So(getErrorBody(resp), ShouldEqual, identity.ErrNameValidation.Error())
+				So(getErrorBody(resp), ShouldEqual, schema.ErrNameValidation.Error())
 
 				identities, err := mongo.GetIdentities(cfg.MongoDB, collection)
 				So(err, ShouldBeNil)
@@ -133,7 +132,7 @@ func TestCreateIdentity_ValidationError(t *testing.T) {
 	Convey("Given the identity.email is empty", t, func() {
 		Convey("When post request is made to the API", func() {
 			Convey("Then a Bad Request status is returned and no identity is stored", func() {
-				b, err := json.Marshal(identity.Model{Name: "Edmund Blackadder"})
+				b, err := json.Marshal(schema.Identity{Name: "Edmund Blackadder"})
 				So(err, ShouldBeNil)
 
 				resp := identityAPI.POST("/identity", nil).
@@ -142,7 +141,7 @@ func TestCreateIdentity_ValidationError(t *testing.T) {
 					Expect().
 					Status(http.StatusBadRequest)
 
-				So(getErrorBody(resp), ShouldEqual, identity.ErrEmailValidation.Error())
+				So(getErrorBody(resp), ShouldEqual, schema.ErrEmailValidation.Error())
 
 				identities, err := mongo.GetIdentities(cfg.MongoDB, collection)
 				So(err, ShouldBeNil)
@@ -154,7 +153,7 @@ func TestCreateIdentity_ValidationError(t *testing.T) {
 	Convey("Given the identity.password is empty", t, func() {
 		Convey("When post request is made to the API", func() {
 			Convey("Then a Bad Request status is returned and no identity is stored", func() {
-				b, err := json.Marshal(identity.Model{Name: "Edmund Blackadder", Email: "captainB@thefrontline.com"})
+				b, err := json.Marshal(schema.Identity{Name: "Edmund Blackadder", Email: "captainB@thefrontline.com"})
 				So(err, ShouldBeNil)
 
 				resp := identityAPI.POST("/identity", nil).
@@ -163,7 +162,7 @@ func TestCreateIdentity_ValidationError(t *testing.T) {
 					Expect().
 					Status(http.StatusBadRequest)
 
-				So(getErrorBody(resp), ShouldEqual, identity.ErrPasswordValidation.Error())
+				So(getErrorBody(resp), ShouldEqual, schema.ErrPasswordValidation.Error())
 
 				identities, err := mongo.GetIdentities(cfg.MongoDB, collection)
 				So(err, ShouldBeNil)

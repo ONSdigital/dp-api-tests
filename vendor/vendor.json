@@ -87,28 +87,34 @@
 			"revisionTime": "2018-06-04T12:37:22Z"
 		},
 		{
-			"checksumSHA1": "+dN6az4ffZ3Lw0L5eWorSheN+oQ=",
-			"path": "github.com/ONSdigital/dp-identity-api/api",
-			"revision": "9c29d3d927f49baf6697cd899f481c74f2e6d7b1",
-			"revisionTime": "2018-09-10T10:57:19Z"
-		},
-		{
 			"checksumSHA1": "MfW/bJpSk1uDITcBqw4FfUifTYU=",
 			"path": "github.com/ONSdigital/dp-identity-api/config",
 			"revision": "9c29d3d927f49baf6697cd899f481c74f2e6d7b1",
 			"revisionTime": "2018-09-10T10:57:19Z"
 		},
 		{
-			"checksumSHA1": "eov/3nhpMBtT3wVUpPawHFVy+Ro=",
+			"checksumSHA1": "lodqCYXmG8czkPUpTDB6fXx1JTc=",
 			"path": "github.com/ONSdigital/dp-identity-api/identity",
-			"revision": "9c29d3d927f49baf6697cd899f481c74f2e6d7b1",
-			"revisionTime": "2018-09-10T10:57:19Z"
+			"revision": "5d478ac19e2699d18fb0fd0c80c9c2f0ed28ba0e",
+			"revisionTime": "2018-09-19T11:48:27Z"
 		},
 		{
 			"checksumSHA1": "bCtFVsGIQh7XMZ4ZHI42x9+Hnnk=",
 			"path": "github.com/ONSdigital/dp-identity-api/mongo",
 			"revision": "9c29d3d927f49baf6697cd899f481c74f2e6d7b1",
 			"revisionTime": "2018-09-10T10:57:19Z"
+		},
+		{
+			"checksumSHA1": "rh9iO6ybggX0KNyxzMEl3gdzlfU=",
+			"path": "github.com/ONSdigital/dp-identity-api/persistence",
+			"revision": "5d478ac19e2699d18fb0fd0c80c9c2f0ed28ba0e",
+			"revisionTime": "2018-09-19T11:48:27Z"
+		},
+		{
+			"checksumSHA1": "8WLsMb9l04/LOVfxzZoRFA3u/Pg=",
+			"path": "github.com/ONSdigital/dp-identity-api/schema",
+			"revision": "5d478ac19e2699d18fb0fd0c80c9c2f0ed28ba0e",
+			"revisionTime": "2018-09-19T11:48:27Z"
 		},
 		{
 			"checksumSHA1": "6iv9mxHoz86Rp4kewL4ZBLZIBns=",
@@ -935,6 +941,18 @@
 			"path": "github.com/yudai/golcs",
 			"revision": "081cda2ee95045a2c26da52c2ba80860838549de",
 			"revisionTime": "2017-06-26T13:12:58Z"
+		},
+		{
+			"checksumSHA1": "oCH3J96RWvO8W4xjix47PModpio=",
+			"path": "golang.org/x/crypto/bcrypt",
+			"revision": "0709b304e793a5edb4a2c0145f281ecdc20838a4",
+			"revisionTime": "2018-08-31T22:38:59Z"
+		},
+		{
+			"checksumSHA1": "oVPHWesOmZ02vLq2fglGvf+AMgk=",
+			"path": "golang.org/x/crypto/blowfish",
+			"revision": "0709b304e793a5edb4a2c0145f281ecdc20838a4",
+			"revisionTime": "2018-08-31T22:38:59Z"
 		},
 		{
 			"checksumSHA1": "GtamqiJoL7PGHsN454AoffBFMa8=",
