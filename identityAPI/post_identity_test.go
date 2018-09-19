@@ -76,8 +76,8 @@ func TestCreateIdentity_EmailAlreadyAssociated(t *testing.T) {
 				WithBytes(body).
 				Expect()
 
-			Convey("Then a 400 status is returned", func() {
-				resp.Status(http.StatusBadRequest)
+			Convey("Then a 409 status is returned", func() {
+				resp.Status(http.StatusConflict)
 				So(getErrorBody(resp), ShouldEqual, "active identity already exists with email")
 			})
 		})
