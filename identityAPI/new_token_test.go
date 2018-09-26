@@ -1,4 +1,4 @@
-package codeListAPI
+package identityAPI
 
 import (
 	"encoding/json"
@@ -18,7 +18,7 @@ func TestNewToken_Success(t *testing.T) {
 
 		Convey("When a newTokenRequest made with the correct password", func() {
 			authRequest := models.NewTokenRequest{
-				Email:       newIdentity.Email,
+				Email:    newIdentity.Email,
 				Password: newIdentity.Password,
 			}
 
@@ -52,7 +52,7 @@ func TestNewToken_PasswordIncorrect(t *testing.T) {
 
 		Convey("When a newTokenRequest is made with an incorrect password", func() {
 			authRequest := models.NewTokenRequest{
-				Email:       newIdentity.Email,
+				Email:    newIdentity.Email,
 				Password: "this password is incorrect",
 			}
 
@@ -83,7 +83,7 @@ func TestNewToken_UserNotFound(t *testing.T) {
 
 		Convey("When a newTokenRest is made", func() {
 			authRequest := models.NewTokenRequest{
-				Email:       newIdentity.Email,
+				Email:    newIdentity.Email,
 				Password: newIdentity.Password,
 			}
 

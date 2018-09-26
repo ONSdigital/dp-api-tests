@@ -1,4 +1,4 @@
-package codeListAPI
+package identityAPI
 
 import (
 	"encoding/json"
