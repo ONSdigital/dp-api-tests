@@ -470,6 +470,26 @@ func GetIdentities(database, collection string) ([]identityAPIModels.Mongo, erro
 	return results, nil
 }
 
+func DropIdentities(database string, collections ... string) error {
+	s := session.Copy()
+	defer s.Close()
+
+	log.Info("dropping identities DB and collections", nil)
+
+	var info *mgo.ChangeInfo
+	var err error
+
+	for _, c := range collections {
+		info, err = s.DB(database).C(c).RemoveAll(bson.M{})
+		if err != nil {
+			return err
+		}
+	}
+
+	log.Info("successfully dropped identities DB and collections", log.Data{"info": info})
+	return nil
+}
+
 // Possible values for flagging whether a filter resource (output or blueprint)
 // is a filter against a published or unpublished version
 var (

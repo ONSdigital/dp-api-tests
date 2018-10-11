@@ -1,4 +1,4 @@
-package codeListAPI
+package identityAPI
 
 import (
 	"os"
@@ -27,14 +27,7 @@ func init() {
 		os.Exit(1)
 	}
 
-	test := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: collection,
-		Key:        "test_data",
-		Value:      "true",
-	}
-
-	if err = mongo.Teardown(test); err != nil {
+	if err = mongo.DropIdentities(cfg.MongoDB, "identities", "test"); err != nil {
 		log.ErrorC("Unable to remove all test data from mongo db", err, nil)
 		os.Exit(1)
 	}

@@ -1,7 +1,6 @@
-package codeListAPI
+package identityAPI
 
 import (
-	"encoding/json"
 	"github.com/ONSdigital/dp-api-tests/identityAPIModels"
 	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
 	"github.com/ONSdigital/dp-identity-api/schema"
@@ -32,15 +31,8 @@ func TestCreateIdentitySuccess(t *testing.T) {
 	Convey("Given a valid identity", t, func() {
 		Convey("When post request made to the API", func() {
 			Convey("Then the identity is stored", func() {
-
-				body, err := json.Marshal(newIdentity)
-				So(err, ShouldBeNil)
-
-				resp := identityAPI.POST("/identity", nil).
-					WithHeader("Content-Type", "application/json").
-					WithBytes(body).
-					Expect().
-					Status(http.StatusCreated)
+				resp := DoCreateIdentity(newIdentity, identityAPI)
+				resp.Status(http.StatusCreated)
 
 				newID := resp.JSON().Object().Value("id").String().Raw()
 				i, err := mongo.GetIdentity(cfg.MongoDB, collection, "id", newID)
@@ -65,16 +57,10 @@ func TestCreateIdentity_EmailAlreadyAssociated(t *testing.T) {
 	identityAPI := httpexpect.New(t, cfg.IdentityAPIURL)
 
 	Convey("Given an email is already associated with an identity", t, func() {
-		id := createIdentity(identityAPI)
+		id := DoCreateIdentitySuccess(newIdentity, identityAPI)
 
 		Convey("When a post request made to the API with the same email", func() {
-			body, err := json.Marshal(newIdentity)
-			So(err, ShouldBeNil)
-
-			resp := identityAPI.POST("/identity", nil).
-				WithHeader("Content-Type", "application/json").
-				WithBytes(body).
-				Expect()
+			resp := DoCreateIdentity(newIdentity, identityAPI)
 
 			Convey("Then a 409 status is returned", func() {
 				resp.Status(http.StatusConflict)
@@ -111,14 +97,8 @@ func TestCreateIdentity_ValidationError(t *testing.T) {
 	Convey("Given the identity.name is empty", t, func() {
 		Convey("When post request is made to the API", func() {
 			Convey("Then a Bad Request status is returned and no identity is stored", func() {
-				b, err := json.Marshal(identityAPIModels.API{})
-				So(err, ShouldBeNil)
-
-				resp := identityAPI.POST("/identity", nil).
-					WithHeader("Content-Type", "application/json").
-					WithBytes(b).
-					Expect().
-					Status(http.StatusBadRequest)
+				resp := DoCreateIdentity(identityAPIModels.API{}, identityAPI)
+				resp.Status(http.StatusBadRequest)
 
 				So(getErrorBody(resp), ShouldEqual, schema.ErrNameValidation.Error())
 
@@ -132,14 +112,8 @@ func TestCreateIdentity_ValidationError(t *testing.T) {
 	Convey("Given the identity.email is empty", t, func() {
 		Convey("When post request is made to the API", func() {
 			Convey("Then a Bad Request status is returned and no identity is stored", func() {
-				b, err := json.Marshal(schema.Identity{Name: "Edmund Blackadder"})
-				So(err, ShouldBeNil)
-
-				resp := identityAPI.POST("/identity", nil).
-					WithHeader("Content-Type", "application/json").
-					WithBytes(b).
-					Expect().
-					Status(http.StatusBadRequest)
+				resp := DoCreateIdentity(identityAPIModels.API{Name: "Edmund Blackadder"}, identityAPI)
+				resp.Status(http.StatusBadRequest)
 
 				So(getErrorBody(resp), ShouldEqual, schema.ErrEmailValidation.Error())
 
@@ -153,14 +127,8 @@ func TestCreateIdentity_ValidationError(t *testing.T) {
 	Convey("Given the identity.password is empty", t, func() {
 		Convey("When post request is made to the API", func() {
 			Convey("Then a Bad Request status is returned and no identity is stored", func() {
-				b, err := json.Marshal(schema.Identity{Name: "Edmund Blackadder", Email: "captainB@thefrontline.com"})
-				So(err, ShouldBeNil)
-
-				resp := identityAPI.POST("/identity", nil).
-					WithHeader("Content-Type", "application/json").
-					WithBytes(b).
-					Expect().
-					Status(http.StatusBadRequest)
+				resp := DoCreateIdentity(identityAPIModels.API{Name: "Edmund Blackadder", Email: "captainB@thefrontline.com"}, identityAPI)
+				resp.Status(http.StatusBadRequest)
 
 				So(getErrorBody(resp), ShouldEqual, schema.ErrPasswordValidation.Error())
 
