@@ -228,6 +228,34 @@ func GetValidFilterOutputWithMultipleDimensionsBSON(host, filterID, instanceID, 
 	}
 }
 
+func GetValidFilterOutputWithSkippedOutputBSON(host, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition string, version int, published bool) bson.M {
+	return bson.M{
+		"$set": bson.M{
+			"_id":                         filterID,
+			"dataset.id":                  datasetID,
+			"dataset.edition":             edition,
+			"dataset.version":             version,
+			"dimensions":                  []Dimension{ageDimension(host, ""), sexDimension(host, ""), goodsAndServicesDimension(host, ""), timeDimension(host, "")},
+			"downloads.csv.href":          "download-service-url.csv",
+			"downloads.csv.private":       "private-s3-csv-location",
+			"downloads.csv.public":        "public-s3-csv-location",
+			"downloads.csv.size":          "12mb",
+			"downloads.xls.skipped":       true,
+			"instance_id":                 instanceID,
+			"filter_id":                   filterOutputID,
+			"links.filter_blueprint.href": host + "/filters/" + filterBlueprintID,
+			"links.filter_blueprint.id":   filterBlueprintID,
+			"links.self.href":             host + "/filter-outputs/" + filterOutputID,
+			"links.version.id":            "1",
+			"links.version.href":          "http://localhost:8080/datasets/123/editions/2017/versions/1",
+			"state":                       "completed",
+			"published":                   published,
+			"test_data":                   "true",
+			"unique_timestamp":            bson.MongoTimestamp(1),
+		},
+	}
+}
+
 func GetValidFilterOutputBSON(host, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, csvPublicLink, xlsPublicLink string, version int, dimension Dimension) bson.M {
 	return bson.M{
 		"$set": bson.M{
@@ -619,7 +647,7 @@ func GetValidPUTFilterOutputWithDimensionsJSON(options ...string) string {
 		  {
 			  "name": "age",
 			  "options": [
-			    ` + optionsToString(options...) + ` 
+			    ` + optionsToString(options...) + `
 			  ]
 		  }
 		]

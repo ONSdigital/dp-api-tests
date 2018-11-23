@@ -115,7 +115,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 
 				response := filterAPI.GET("/filter-outputs/{filter_output_id}", unpublishedFilterOutputID).
 					Expect().
-					Status(http.StatusOK).JSON().Object()
+					Status(http.StatusNotFound).JSON().Object()
 
 				response.Value("dataset").Object().Value("id").Equal(datasetID)
 				response.Value("dataset").Object().Value("edition").Equal(edition)
