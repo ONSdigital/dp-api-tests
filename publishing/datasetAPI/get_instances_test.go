@@ -80,7 +80,7 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 			os.Exit(1)
 		}
 
-		Convey("When the authorised request Contains a query parameter 'state' of value completed", func() {
+		Convey("When the authorised request contains a query parameter 'state' of value completed", func() {
 			Convey("Then return only instances that contain a 'state' of value completed", func() {
 
 				response := datasetAPI.GET("/instances").WithQuery("state", "completed").WithHeader(florenceTokenName, florenceToken).
@@ -100,7 +100,7 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 			})
 		})
 
-		Convey("When the authorised request Contains a query parameter 'state' of value `completed` and `edition-confirmed`", func() {
+		Convey("When the authorised request contains a query parameter 'state' of value `completed` and `edition-confirmed`", func() {
 			Convey("Then return all instances that contain a 'state' of value `completed` or `edition-confirmed`", func() {
 
 				response := datasetAPI.GET("/instances").WithQuery("state", "completed,edition-confirmed").WithHeader(florenceTokenName, florenceToken).
@@ -123,6 +123,46 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 
 				// Check both resources were found in response
 				So(count, ShouldEqual, 2)
+			})
+		})
+
+		Convey("When the authorised request contains a query parameter 'dataset'", func() {
+			Convey("Then return all instances have a 'dataset' ID of the given value", func() {
+
+				response := datasetAPI.GET("/instances").WithQuery("dataset", ids.DatasetPublished).WithHeader(florenceTokenName, florenceToken).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				count := 0
+
+				for i := 0; i < len(response.Value("items").Array().Iter()); i++ {
+					if response.Value("items").Array().Element(i).Object().Value("links").Object().Value("dataset").Object().Value("id").String().Raw() == ids.DatasetPublished {
+						count++
+					}
+				}
+
+				// Check both resources were found in response
+				So(count, ShouldEqual, 2)
+			})
+		})
+
+		Convey("When the authorised request contains a query parameter 'dataset' and a 'state' of value `completed`", func() {
+			Convey("Then return all instances have a 'dataset' ID of the given value and 'state' of value `completed`", func() {
+
+				response := datasetAPI.GET("/instances").WithQuery("dataset", ids.DatasetPublished).WithQuery("state", "completed").WithHeader(florenceTokenName, florenceToken).
+					Expect().Status(http.StatusOK).JSON().Object()
+
+				count := 0
+
+				for i := 0; i < len(response.Value("items").Array().Iter()); i++ {
+					if response.Value("items").Array().Element(i).Object().Value("links").Object().Value("dataset").Object().Value("id").String().Raw() == ids.DatasetPublished  {
+						response.Value("items").Array().Element(i).Object().Value("state").Equal("completed")
+
+						count++
+					}
+				}
+
+				// Check both resources were found in response
+				So(count, ShouldEqual, 1)
 			})
 		})
 
