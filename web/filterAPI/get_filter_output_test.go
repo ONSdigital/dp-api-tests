@@ -47,7 +47,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 			Collection: collection,
 			Key:        "_id",
 			Value:      filterID,
-			Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, true),
+			Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, false),
 		}
 
 	instance := &mongo.Doc{
