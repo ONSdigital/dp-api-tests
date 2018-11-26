@@ -11,7 +11,6 @@ import (
 	"github.com/gavv/httpexpect"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
-	"github.com/davecgh/go-spew/spew"
 )
 
 func TestSuccessfullyGetFilterOutput(t *testing.T) {
@@ -42,6 +41,14 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 		Value:      filterID,
 		Update:     GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, unpublishedFilterOutputID, filterBlueprintID, datasetID, edition, version, false),
 	}
+
+	filterBlueprint := &mongo.Doc{
+			Database:   cfg.MongoFiltersDB,
+			Collection: collection,
+			Key:        "_id",
+			Value:      filterID,
+			Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, true),
+		}
 
 	instance := &mongo.Doc{
 		Database:   cfg.MongoDB,
@@ -98,7 +105,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 
 	Convey("Given an unpublished instance, and an existing pre-publish filter output with downloads", t, func() {
 
-		if err := mongo.Setup(instance, unpublishedOutput); err != nil {
+		if err := mongo.Setup(instance, filterBlueprint, unpublishedOutput); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -156,11 +163,6 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 
 			Convey("Then filter output is returned in the response body", func() {
 
-				log.Info("\n\n ------------------------ ", nil)
-				spew.Dump(mongo.GetInstance(	cfg.MongoDB, "instances", "instance_id", instanceID))
-				log.Info(" ------------------------\n\n ", nil)
-
-
 				response := filterAPI.GET("/filter-outputs/{filter_output_id}", unpublishedFilterOutputID).
 					Expect().Status(http.StatusOK).JSON().Object()
 
@@ -190,7 +192,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 			})
 		})
 
-		if err := mongo.Teardown(instance, unpublishedOutput); err != nil {
+		if err := mongo.Teardown(instance, filterBlueprint, unpublishedOutput); err != nil {
 			log.ErrorC("Unable to remove test data from mongo db", err, nil)
 			os.Exit(1)
 		}
