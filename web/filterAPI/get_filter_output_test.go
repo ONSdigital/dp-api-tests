@@ -11,6 +11,7 @@ import (
 	"github.com/gavv/httpexpect"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
+	"github.com/davecgh/go-spew/spew"
 )
 
 func TestSuccessfullyGetFilterOutput(t *testing.T) {
@@ -20,7 +21,6 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 	unpublishedFilterOutputID := uuid.NewV4().String()
 	filterBlueprintID := uuid.NewV4().String()
 	instanceID := uuid.NewV4().String()
-	newInstanceID := uuid.NewV4().String()
 	datasetID := uuid.NewV4().String()
 	edition := "2017"
 	version := 1
@@ -57,14 +57,6 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 		Key:        "instance_id",
 		Value:      instanceID,
 		Update:     GetUnpublishedInstanceDataBSON(instanceID, datasetID, edition, version),
-	}
-
-	newInstance := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "instances",
-		Key:        "instance_id",
-		Value:      instanceID,
-		Update:     GetValidPublishedInstanceDataBSON(newInstanceID, datasetID, edition, version),
 	}
 
 	Convey("Given an existing public filter output with downloads", t, func() {
@@ -163,12 +155,19 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 
 		Convey("When the instance has been published and a request is made with no authentication to get filter output", func() {
 
-			if err := mongo.Setup(newInstance); err != nil {
+			instance.Update = GetValidPublishedInstanceDataBSON(instanceID, datasetID, edition, version)
+
+			if err := mongo.Setup(instance); err != nil {
 				log.ErrorC("Unable to setup test data", err, nil)
 				os.Exit(1)
 			}
 
 			Convey("Then filter output is returned in the response body", func() {
+
+				log.Info("\n\n ------------------------ ", nil)
+				spew.Dump(mongo.GetInstance(	cfg.MongoDB, "instances", "instance_id", instanceID))
+				log.Info(" ------------------------\n\n ", nil)
+
 
 				response := filterAPI.GET("/filter-outputs/{filter_output_id}", unpublishedFilterOutputID).
 					Expect().Status(http.StatusOK).JSON().Object()
@@ -189,7 +188,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("public")
 				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
 				response.Value("filter_id").Equal(unpublishedFilterOutputID)
-				response.Value("instance_id").Equal(newInstanceID)
+				response.Value("instance_id").Equal(instanceID)
 				response.Value("links").Object().Value("filter_blueprint").Object().Value("href").String().Match("/filters/" + filterBlueprintID + "$")
 				response.Value("links").Object().Value("filter_blueprint").Object().Value("id").Equal(filterBlueprintID)
 				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filter-outputs/" + unpublishedFilterOutputID + "$")
@@ -199,7 +198,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 			})
 		})
 
-		if err := mongo.Teardown(instance, newInstance, unpublishedOutput); err != nil {
+		if err := mongo.Teardown(instance, unpublishedOutput); err != nil {
 			log.ErrorC("Unable to remove test data from mongo db", err, nil)
 			os.Exit(1)
 		}
