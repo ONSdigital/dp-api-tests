@@ -206,7 +206,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 		}
 
 		Convey("When making an authenticated request to get filter output", func() {
-			Convey("Then filter output is returned in the response body without private or public download links", func() {
+			Convey("Then filter output is returned in the response body with a skipped flag", func() {
 				response := filterAPI.GET("/filter-outputs/{filter_output_id}", publishedFilterOutputID).
 					WithHeader(serviceAuthTokenName, serviceAuthToken).
 					Expect().Status(http.StatusOK).JSON().Object()
@@ -222,7 +222,7 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("12mb")
 				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("private")
 				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("public")
-				response.Value("downloads").Object().Value("xls").Object().Value("skipped").Equal("true")
+				response.Value("downloads").Object().Value("xls").Object().Value("skipped").Equal(true)
 				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("private")
 				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("public")
 				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("size")

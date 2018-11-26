@@ -110,36 +110,13 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 			os.Exit(1)
 		}
 
-		Convey("When making an request to get filter output", func() {
-			Convey("Then filter output is returned in the response body", func() {
+		Convey("When making an unauthenticated request to get filter output", func() {
+			Convey("Then the output is not found and the response body is empty", func() {
 
-				response := filterAPI.GET("/filter-outputs/{filter_output_id}", unpublishedFilterOutputID).
+				filterAPI.GET("/filter-outputs/{filter_output_id}", unpublishedFilterOutputID).
 					Expect().
-					Status(http.StatusNotFound).JSON().Object()
+					Status(http.StatusNotFound).Body().Contains(filterOutputNotFoundResponse)
 
-				response.Value("dataset").Object().Value("id").Equal(datasetID)
-				response.Value("dataset").Object().Value("edition").Equal(edition)
-				response.Value("dataset").Object().Value("version").Equal(version)
-				response.Value("dimensions").Array().Length().Equal(4)
-				response.Value("dimensions").Array().Element(0).Object().NotContainsKey("dimension_url") // Check dimension url is not set
-				response.Value("dimensions").Array().Element(0).Object().Value("name").Equal("age")
-				response.Value("dimensions").Array().Element(0).Object().Value("options").Equal([]string{"27"})
-				response.Value("downloads").Object().Value("csv").Object().Value("href").Equal("download-service-url.csv")
-				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("private")
-				response.Value("downloads").Object().Value("csv").Object().NotContainsKey("public")
-				response.Value("downloads").Object().Value("csv").Object().Value("size").Equal("12mb")
-				response.Value("downloads").Object().Value("xls").Object().Value("href").Equal("download-service-url.xlsx")
-				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("private")
-				response.Value("downloads").Object().Value("xls").Object().NotContainsKey("public")
-				response.Value("downloads").Object().Value("xls").Object().Value("size").Equal("24mb")
-				response.Value("filter_id").Equal(unpublishedFilterOutputID)
-				response.Value("instance_id").Equal(instanceID)
-				response.Value("links").Object().Value("filter_blueprint").Object().Value("href").String().Match("/filters/" + filterBlueprintID + "$")
-				response.Value("links").Object().Value("filter_blueprint").Object().Value("id").Equal(filterBlueprintID)
-				response.Value("links").Object().Value("self").Object().Value("href").String().Match("/filter-outputs/" + unpublishedFilterOutputID + "$")
-				response.Value("links").Object().Value("version").Object().Value("href").String().Match("/datasets/" + datasetID + "/editions/2017/versions/1$")
-				response.Value("links").Object().Value("version").Object().Value("id").Equal("1")
-				response.Value("state").Equal("completed")
 			})
 		})
 
