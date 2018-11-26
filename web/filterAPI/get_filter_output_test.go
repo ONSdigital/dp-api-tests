@@ -43,14 +43,6 @@ func TestSuccessfullyGetFilterOutput(t *testing.T) {
 		Update:     GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, unpublishedFilterOutputID, filterBlueprintID, datasetID, edition, version, false),
 	}
 
-	// filterBlueprint := &mongo.Doc{
-	// 	Database:   cfg.MongoFiltersDB,
-	// 	Collection: collection,
-	// 	Key:        "_id",
-	// 	Value:      filterID,
-	// 	Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, true),
-	// }
-
 	instance := &mongo.Doc{
 		Database:   cfg.MongoDB,
 		Collection: "instances",
@@ -225,6 +217,23 @@ func TestFailureToGetFilterOutput(t *testing.T) {
 		Update:     GetValidFilterOutputWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, filterOutputID, filterBlueprintID, datasetID, edition, version, false),
 	}
 
+		filterBlueprint := &mongo.Doc{
+			Database:   cfg.MongoFiltersDB,
+			Collection: collection,
+			Key:        "_id",
+			Value:      filterID,
+			Update:     GetValidFilterWithMultipleDimensionsBSON(cfg.FilterAPIURL, filterID, instanceID, datasetID, edition, filterBlueprintID, version, false),
+		}
+
+		instance := &mongo.Doc{
+			Database:   cfg.MongoDB,
+			Collection: "instances",
+			Key:        "instance_id",
+			Value:      instanceID,
+			Update:     GetUnpublishedInstanceDataBSON(instanceID, datasetID, edition, version),
+		}
+
+
 	Convey("Given filter output does not exist", t, func() {
 		Convey("When requesting to get filter output", func() {
 			Convey("Then the response returns status not found (404)", func() {
@@ -237,7 +246,7 @@ func TestFailureToGetFilterOutput(t *testing.T) {
 
 	Convey("Given an unpublished instance, and an existing pre-publish filter output with downloads", t, func() {
 
-		if err := mongo.Setup(unpublishedOutput); err != nil {
+		if err := mongo.Setup(instance, filterBlueprint, unpublishedOutput); err != nil {
 			log.ErrorC("Unable to setup test data", err, nil)
 			os.Exit(1)
 		}
@@ -250,7 +259,7 @@ func TestFailureToGetFilterOutput(t *testing.T) {
 			})
 		})
 
-		if err := mongo.Teardown(unpublishedOutput); err != nil {
+		if err := mongo.Teardown(instance, filterBlueprint, unpublishedOutput); err != nil {
 			log.ErrorC("Unable to remove test data from mongo db", err, nil)
 			os.Exit(1)
 		}
