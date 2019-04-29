@@ -11,13 +11,13 @@ import (
 var cfg *config.Config
 
 const (
-	collection  = "datasets"
-	publicLink  = "https://s3-eu-west-1.amazonaws.com/dp-frontend-florence-file-uploads/2470609-cpicoicoptestcsv"
-	privateLink = "s3://csv-exported/v4TestFile.csv"
-	region      = "eu-west-1"
-	bucketName  = "csv-exported"
-	fileName    = "v4TestFile.csv"
-	publishedTrue = true
+	collection     = "datasets"
+	publicLink     = "https://s3-eu-west-1.amazonaws.com/dp-frontend-florence-file-uploads/2470609-cpicoicoptestcsv"
+	privateLink    = "s3://csv-exported/v4TestFile.csv"
+	region         = "eu-west-1"
+	bucketName     = "csv-exported"
+	fileName       = "v4TestFile.csv"
+	publishedTrue  = true
 	publishedFalse = false
 )
 

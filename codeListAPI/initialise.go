@@ -11,18 +11,27 @@ import (
 var cfg *config.Config
 
 const (
-	collection                = "codelists"
-	firstCodeListID           = "1C322128-3FD5-44F0-BBAD-619779D8960E"
-	firstCodeListFirstCodeID  = "45251AEA-B4DD-409C-8C0E-CD5867399843"
-	firstCodeListSecondCodeID = "0A78FEAC-E5D5-48B3-BA91-270468B432D1"
-	firstCodeListThirdCodeID  = "4A335104-8C52-49C6-BA68-828AE16F9EBB"
-	secondCodeListID          = "C5FA175A-7EA0-4B39-B252-7B52BE75C9DE"
-	thirdCodelistID           = "5A561370-9AB5-48A4-A619-BEC996DD0BDA"
-	invalidCodeListID         = "1C3221283FD544F0BBAD619779D8960E"
-	firstCode                 = "LS_00998877"
-	secondCode                = "LS_00998811"
-	thirdCode                 = "LS_00998822"
-	invalidCode               = "AC!@£$)98"
+	collection = "test"
+
+	firstCodeListID           = "cpih1dim1aggid"
+	firstCodeListEdition      = "one-off"
+	firstCodeListFirstCodeID  = "cpih1dim1S90401"
+	firstCodeListFirstLabel   = "09.4.1 Recreational and sporting services"
+	firstCodeListSecondCodeID = "cpih1dim1S90501"
+	firstCodeListSecondLabel  = "09.5.1 Books"
+	firstCodeListThirdCodeID  = "cpih1dim1S90402"
+	firstCodeListThirdLabel   = "09.4.2 Cultural services"
+
+	secondCodeListID          = "uk-only"
+	secondCodeListFirstCodeID = "K02000001"
+	secondCodeListFirstLabel  = "United Kingdom"
+	secondCodeListEdition     = "one-off"
+
+	invalidCodeListID = "1C3221283FD544F0BBAD619779D8960E"
+	firstCode         = "cpih1dim1S90401"
+	secondCode        = "cpih1dim1S90501"
+	thirdCode         = "cpih1dim1S90402"
+	invalidCode       = "AC!@£$)98"
 )
 
 func init() {

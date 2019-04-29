@@ -6,6 +6,7 @@ import (
 	"github.com/gavv/httpexpect"
 	. "github.com/smartystreets/goconvey/convey"
 	"net/http"
+	"fmt"
 )
 
 func TestHealthcheck(t *testing.T) {
@@ -18,10 +19,16 @@ func TestHealthcheck(t *testing.T) {
 
 				response := downloadService.
 					GET("/healthcheck").
+					WithHeader(authHeader, serviceToken).
 					Expect().Raw()
 
-				isValidResponse := response.StatusCode == http.StatusOK ||
-					response.StatusCode == http.StatusTooManyRequests
+				isValidResponse := false
+
+				if response.StatusCode == http.StatusOK || response.StatusCode == http.StatusTooManyRequests {
+					isValidResponse = true
+				}
+
+				fmt.Println(response.StatusCode)
 
 				So(isValidResponse, ShouldBeTrue)
 			})

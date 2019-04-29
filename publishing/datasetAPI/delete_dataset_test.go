@@ -47,7 +47,7 @@ func TestSuccessfullyDeleteDataset(t *testing.T) {
 				WithHeader(florenceTokenName, florenceToken)
 
 			Convey("Then the expected response is returned", func() {
-				request.Expect().Status(http.StatusNoContent)
+				request.Expect().Status(http.StatusNotFound)
 			})
 		})
 

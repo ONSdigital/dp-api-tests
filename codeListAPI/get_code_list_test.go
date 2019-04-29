@@ -37,13 +37,9 @@ func TestSuccessfullyGetACodeList(t *testing.T) {
 				response := codeListAPI.GET("/code-lists/{id}", secondCodeListID).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				response.Value("id").Equal(secondCodeListID)
-				response.Value("name").Equal("Second Code List")
 				response.Value("links").Object().Value("self").Object().Value("id").Equal(secondCodeListID)
 				response.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + secondCodeListID + "$")
-
-				response.Value("links").Object().Value("codes").Object().Value("id").Equal("code")
-				response.Value("links").Object().Value("codes").Object().Value("href").String().Match("(.+)/code-lists/" + secondCodeListID + "/codes$")
+				response.Value("links").Object().Value("editions").Object().Value("href").String().Match("(.+)/code-lists/" + secondCodeListID + "/editions$")
 
 			})
 		})

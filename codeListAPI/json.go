@@ -66,16 +66,3 @@ var validSecondCodeListData = bson.M{
 		"test_data":        "true",
 	},
 }
-
-var validThirdCodeListData = bson.M{
-	"$set": bson.M{
-
-		"_id":              thirdCodelistID,
-		"name":             "Third Code List",
-		"links.self.id":    thirdCodelistID,
-		"links.self.href":  "http://localhost:22400/code-lists/5A561370-9AB5-48A4-A619-BEC996DD0BDA",
-		"links.codes.id":   "code",
-		"links.codes.href": "http://localhost:22400/code-lists/5A561370-9AB5-48A4-A619-BEC996DD0BDA/codes",
-		"test_data":        "true",
-	},
-}

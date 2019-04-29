@@ -367,8 +367,8 @@ func TestSuccessfullyUpdateVersion(t *testing.T) {
 				So(updatedEdition.Next.State, ShouldEqual, "published")
 				So(updatedEdition.Current, ShouldNotBeNil)
 				So(updatedEdition.Current.State, ShouldEqual, "published")
-				So(updatedEdition.Current.Links.LatestVersion.ID, ShouldEqual, "1")
-				So(updatedEdition.Current.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+ids.DatasetPublished+"/editions/2017/versions/1")
+				So(updatedEdition.Current.Links.LatestVersion.ID, ShouldEqual, "2")
+				So(updatedEdition.Current.Links.LatestVersion.HRef, ShouldEqual, cfg.DatasetAPIURL+"/datasets/"+ids.DatasetPublished+"/editions/2017/versions/2")
 
 				updatedDataset, err := mongo.GetDataset(cfg.MongoDB, collection, "_id", ids.DatasetPublished)
 				if err != nil {

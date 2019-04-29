@@ -62,26 +62,23 @@ func TestSuccessfullyGetAListOfAllCodesWithinCodeList(t *testing.T) {
 		Convey("When you request a list of all codes", func() {
 			Convey("Then the list of codes within a code list should appear", func() {
 
-				response := codeListAPI.GET("/code-lists/{id}/codes", firstCodeListID).
+				response := codeListAPI.GET("/code-lists/{id}/editions/one-off/codes", firstCodeListID).
 					Expect().Status(http.StatusOK).JSON().Object()
 
 				response.Value("items").Array().Element(0).Object().Value("id").Equal(firstCode)
-				response.Value("items").Array().Element(0).Object().Value("label").Equal("First Code List label one")
-				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().ValueEqual("id", firstCodeListID)
-				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/codes$")
-				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
+				response.Value("items").Array().Element(0).Object().Value("label").Equal(firstCodeListFirstLabel)
+				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
+				response.Value("items").Array().Element(0).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/editions/")
 
 				response.Value("items").Array().Element(1).Object().Value("id").Equal(secondCode)
-				response.Value("items").Array().Element(1).Object().Value("label").Equal("First Code List label two")
-				response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code_list").Object().ValueEqual("id", firstCodeListID)
-				response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/codes$")
-				response.Value("items").Array().Element(1).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
+				response.Value("items").Array().Element(1).Object().Value("label").Equal(firstCodeListSecondLabel)
+				response.Value("items").Array().Element(1).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
+				response.Value("items").Array().Element(1).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/editions/")
 
 				response.Value("items").Array().Element(2).Object().Value("id").Equal(thirdCode)
-				response.Value("items").Array().Element(2).Object().Value("label").Equal("First Code List label three")
-				response.Value("items").Array().Element(2).Object().Value("links").Object().Value("code_list").Object().ValueEqual("id", firstCodeListID)
-				response.Value("items").Array().Element(2).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/codes$")
-				response.Value("items").Array().Element(2).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
+				response.Value("items").Array().Element(2).Object().Value("label").Equal(firstCodeListThirdLabel)
+				response.Value("items").Array().Element(2).Object().Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
+				response.Value("items").Array().Element(2).Object().Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/editions/")
 
 			})
 		})

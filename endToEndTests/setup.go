@@ -126,7 +126,7 @@ func getS3File(region, bucket, filename string, decrypt bool) (io.ReadCloser, er
 	log.Debug("attempting to get file from s3",
 		log.Data{"bucket": bucket,
 			"filename": filename,
-			"decrypt": decrypt})
+			"decrypt":  decrypt})
 
 	store := &Store{
 		config: config,
@@ -172,7 +172,7 @@ func getS3File(region, bucket, filename string, decrypt bool) (io.ReadCloser, er
 		log.Debug("reading file with psk",
 			log.Data{"vault_path": cfg.VaultPath,
 				"filename": filename,
-				"psk": psk,
+				"psk":      psk,
 			})
 
 		output, err = client.GetObjectWithPSK(input, psk)

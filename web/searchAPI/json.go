@@ -70,7 +70,7 @@ var temporal = mongo.TemporalFrequency{
 func validPublishedDatasetData(datasetID string) bson.M {
 	return bson.M{
 		"$set": bson.M{
-			"id": datasetID,
+			"id":                                datasetID,
 			"current.collection_id":             "108064B3-A808-449B-9041-EA3A2F72CFAA",
 			"current.contacts":                  []mongo.ContactDetails{contact},
 			"current.description":               "Comprehensive database of time series covering measures of inflation data including CPIH, CPI and RPI.",

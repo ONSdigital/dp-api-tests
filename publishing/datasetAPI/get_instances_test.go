@@ -44,7 +44,7 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 				response := datasetAPI.GET("/instances").WithHeader(florenceTokenName, florenceToken).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				response.Value("items").Array().Element(0).Object().Value("id").NotNull()
+				response.Value("items").Array().Element(0).Object().Value("last_updated").NotNull()
 			})
 		})
 
@@ -154,7 +154,7 @@ func TestSuccessfullyGetAListOfInstances(t *testing.T) {
 				count := 0
 
 				for i := 0; i < len(response.Value("items").Array().Iter()); i++ {
-					if response.Value("items").Array().Element(i).Object().Value("links").Object().Value("dataset").Object().Value("id").String().Raw() == ids.DatasetPublished  {
+					if response.Value("items").Array().Element(i).Object().Value("links").Object().Value("dataset").Object().Value("id").String().Raw() == ids.DatasetPublished {
 						response.Value("items").Array().Element(i).Object().Value("state").Equal("completed")
 
 						count++

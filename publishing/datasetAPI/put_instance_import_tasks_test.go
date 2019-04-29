@@ -218,7 +218,7 @@ func TestFailureToPutImportTasks(t *testing.T) {
 					WithHeader(florenceTokenName, florenceToken).
 					WithBytes([]byte("{")).
 					Expect().Status(http.StatusBadRequest).
-					Body().Contains("failed to parse json body")
+					Body().Contains("unexpected end of JSON input")
 
 			})
 		})

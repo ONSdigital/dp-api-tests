@@ -62,34 +62,37 @@ func TestSuccessfullyGetCodeInformationAboutACode(t *testing.T) {
 			Convey("Then that particular code information about that code should appear", func() {
 
 				// first code information
-				firstCodeResponse := codeListAPI.GET("/code-lists/{id}/codes/{code_id}", firstCodeListID, firstCode).
+				firstCodeResponse := codeListAPI.GET("/code-lists/{}/editions/{}/codes/{}", firstCodeListID, firstCodeListEdition, firstCodeListFirstCodeID).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				firstCodeResponse.Value("id").Equal(firstCode)
-				firstCodeResponse.Value("label").Equal("First Code List label one")
-				firstCodeResponse.Value("links").Object().Value("code_list").Object().ValueEqual("id", firstCodeListID)
-				firstCodeResponse.Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/codes$")
-				firstCodeResponse.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
+				firstCodeResponse.Value("id").Equal(firstCodeListFirstCodeID)
+				firstCodeResponse.Value("label").Equal(firstCodeListFirstLabel)
+				firstCodeResponse.Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID)
+				firstCodeResponse.Value("links").Object().Value("self").Object().Value("href").String().
+					Match("(.+)/code-lists/" + firstCodeListID + "/editions/" + firstCodeListEdition + "/codes/" + firstCodeListFirstCodeID)
+
 
 				// second code information
-				secondCodeResponse := codeListAPI.GET("/code-lists/{id}/codes/{code_id}", firstCodeListID, secondCode).
+				secondCodeResponse := codeListAPI.GET("/code-lists/{}/editions/{}/codes/{}", firstCodeListID, firstCodeListEdition, firstCodeListSecondCodeID).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				secondCodeResponse.Value("id").Equal(secondCode)
-				secondCodeResponse.Value("label").Equal("First Code List label two")
-				secondCodeResponse.Value("links").Object().Value("code_list").Object().ValueEqual("id", firstCodeListID)
-				secondCodeResponse.Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/codes$")
-				secondCodeResponse.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
+				secondCodeResponse.Value("id").Equal(firstCodeListSecondCodeID)
+				secondCodeResponse.Value("label").Equal(firstCodeListSecondLabel)
+				secondCodeResponse.Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID)
+				secondCodeResponse.Value("links").Object().Value("self").Object().Value("href").String().
+					Match("(.+)/code-lists/" + firstCodeListID + "/editions/" + firstCodeListEdition + "/codes/" + firstCodeListSecondCodeID)
+
 
 				// third code information
-				thirdCodeResponse := codeListAPI.GET("/code-lists/{id}/codes/{code_id}", firstCodeListID, thirdCode).
+				thirdCodeResponse := codeListAPI.GET("/code-lists/{}/editions/{}/codes/{}", firstCodeListID, firstCodeListEdition, firstCodeListThirdCodeID).
 					Expect().Status(http.StatusOK).JSON().Object()
 
-				thirdCodeResponse.Value("id").Equal(thirdCode)
-				thirdCodeResponse.Value("label").Equal("First Code List label three")
-				thirdCodeResponse.Value("links").Object().Value("code_list").Object().ValueEqual("id", firstCodeListID)
-				thirdCodeResponse.Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "/codes$")
-				thirdCodeResponse.Value("links").Object().Value("self").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID + "$")
+				thirdCodeResponse.Value("id").Equal(firstCodeListThirdCodeID)
+				thirdCodeResponse.Value("label").Equal(firstCodeListThirdLabel)
+				thirdCodeResponse.Value("links").Object().Value("code_list").Object().Value("href").String().Match("(.+)/code-lists/" + firstCodeListID)
+				thirdCodeResponse.Value("links").Object().Value("self").Object().Value("href").String().
+					Match("(.+)/code-lists/" + firstCodeListID + "/editions/" + firstCodeListEdition + "/codes/" + firstCodeListThirdCodeID)
+
 			})
 		})
 	})
@@ -109,14 +112,14 @@ func TestFailureToGetInDepthInformationAboutACode(t *testing.T) {
 	SkipConvey("Given a code list and codes exists", t, func() {
 		Convey("When you pass a code list that does not exist", func() {
 			Convey("Then the response should be status not found (404)", func() {
-				codeListAPI.GET("/code-lists/{id}/codes/{code_id}", invalidCodeListID, firstCode).
+				codeListAPI.GET("/code-lists/{id}/editions/{}/codes/{code_id}", invalidCodeListID, firstCodeListEdition, firstCode).
 					Expect().Status(http.StatusNotFound)
 			})
 		})
 
 		Convey("When you pass a code that does not exist", func() {
 			Convey("Then the response should be status not found (404)", func() {
-				codeListAPI.GET("/code-lists/{id}/codes/{code_id}", firstCodeListID, invalidCode).
+				codeListAPI.GET("/code-lists/{id}/editions/{}/codes/{code_id}", firstCodeListID, firstCodeListEdition, invalidCode).
 					Expect().Status(http.StatusNotFound)
 			})
 		})

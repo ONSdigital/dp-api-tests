@@ -1,7 +1,7 @@
 package mongo
 
 import (
-	"github.com/ONSdigital/dp-api-tests/identityAPIModels"
+	//"github.com/ONSdigital/dp-api-tests/identityAPIModels"
 	"time"
 
 	"github.com/globalsign/mgo"
@@ -447,6 +447,7 @@ func CountDimensionOptions(database, collection, key, value string) (int, error)
 	return s.DB(database).C(collection).Find(bson.M{key: value}).Count()
 }
 
+/*
 func GetIdentity(database, collection, key, value string) (*identityAPIModels.Mongo, error) {
 	s := session.Copy()
 	defer s.Close()
@@ -469,6 +470,7 @@ func GetIdentities(database, collection string) ([]identityAPIModels.Mongo, erro
 	}
 	return results, nil
 }
+*/
 
 // Possible values for flagging whether a filter resource (output or blueprint)
 // is a filter against a published or unpublished version

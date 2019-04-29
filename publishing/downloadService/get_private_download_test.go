@@ -17,6 +17,7 @@ import (
 )
 
 func TestPrivateDownloadDecryptedAndStreamed(t *testing.T) {
+	
 	if len(os.Getenv("VAULT_ADDR")) == 0 || len(os.Getenv("VAULT_TOKEN")) == 0 {
 		log.Info("failing test as no vault token or address set - use make test", nil)
 		t.FailNow()
