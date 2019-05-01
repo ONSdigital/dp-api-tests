@@ -108,5 +108,8 @@ var validCreatedInstanceData = bson.M{
 		"id":            instanceID,
 		"state":         "created",
 		"collection_id": "123",
+		"links": bson.M{
+			"dataset": bson.M{"id":"foo"},
+		},
 	},
 }
