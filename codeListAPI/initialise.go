@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/ONSdigital/dp-api-tests/config"
-	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
+	"github.com/ONSdigital/dp-api-tests/testDataSetup/neo4j"
 	"github.com/ONSdigital/go-ns/log"
 )
 
@@ -42,20 +42,15 @@ func init() {
 		os.Exit(1)
 	}
 
-	if err = mongo.NewDatastore(cfg.MongoAddr); err != nil {
-		log.ErrorC("mongodb datastore error", err, nil)
+	store, err := neo4j.NewDatastore(cfg.Neo4jAddr, "", neo4j.GenericHierarchyCPIHTestData)
+	if err != nil {
+		log.ErrorC("neo4j datastore error", err, nil)
 		os.Exit(1)
 	}
 
-	test := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: collection,
-		Key:        "test_data",
-		Value:      "true",
-	}
-
-	if err = mongo.Teardown(test); err != nil {
-		log.ErrorC("Unable to remove all test data from mongo db", err, nil)
+	err = store.CreateCPIHCodeList()
+	if err != nil {
+		log.ErrorC("neo4j datastore error", err, nil)
 		os.Exit(1)
 	}
 

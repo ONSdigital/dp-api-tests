@@ -2,59 +2,14 @@ package codeListAPI
 
 import (
 	"net/http"
-	"os"
 	"testing"
 
 	"github.com/gavv/httpexpect"
-	"github.com/globalsign/mgo"
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
-	"github.com/ONSdigital/go-ns/log"
 )
 
 func TestSuccessfullyGetAListOfAllCodesWithinCodeList(t *testing.T) {
-
-	var docs []*mongo.Doc
-
-	firstCodeListDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "codelists",
-		Key:        "_id",
-		Value:      firstCodeListID,
-		Update:     validFirstCodeListData,
-	}
-
-	firstCodeListCodesDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "codes",
-		Key:        "_id",
-		Value:      firstCodeListFirstCodeID,
-		Update:     validFirstCodeListFirstCodeData,
-	}
-
-	secondCodeListCodesDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "codes",
-		Key:        "_id",
-		Value:      firstCodeListSecondCodeID,
-		Update:     validFirstCodeListSecondCodeData,
-	}
-
-	thirdCodeListCodesDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "codes",
-		Key:        "_id",
-		Value:      firstCodeListThirdCodeID,
-		Update:     validFirstCodeListThirdCodeData,
-	}
-
-	docs = append(docs, firstCodeListDoc, firstCodeListCodesDoc, secondCodeListCodesDoc, thirdCodeListCodesDoc)
-
-	if err := mongo.Setup(docs...); err != nil {
-		log.ErrorC("Failed to set up test data", err, nil)
-		os.Exit(1)
-	}
 
 	codeListAPI := httpexpect.New(t, cfg.CodeListAPIURL)
 
@@ -84,12 +39,6 @@ func TestSuccessfullyGetAListOfAllCodesWithinCodeList(t *testing.T) {
 		})
 	})
 
-	if err := mongo.Teardown(docs...); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Failed to tear down test data", err, nil)
-			os.Exit(1)
-		}
-	}
 }
 
 func TestFailureToGetAListOfAllCodesWithinCodeList(t *testing.T) {

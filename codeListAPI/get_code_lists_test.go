@@ -2,43 +2,14 @@ package codeListAPI
 
 import (
 	"net/http"
-	"os"
 	"testing"
 
 	"github.com/gavv/httpexpect"
-	"github.com/globalsign/mgo"
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/ONSdigital/dp-api-tests/testDataSetup/mongo"
-	"github.com/ONSdigital/go-ns/log"
 )
 
 func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
-
-	var docs []*mongo.Doc
-
-	firstCodeListDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "codelists",
-		Key:        "_id",
-		Value:      firstCodeListID,
-		Update:     validFirstCodeListData,
-	}
-
-	secondCodeListDoc := &mongo.Doc{
-		Database:   cfg.MongoDB,
-		Collection: "codelists",
-		Key:        "_id",
-		Value:      secondCodeListID,
-		Update:     validSecondCodeListData,
-	}
-
-	docs = append(docs, firstCodeListDoc, secondCodeListDoc)
-
-	if err := mongo.Setup(docs...); err != nil {
-		log.ErrorC("Failed to set up test data", err, nil)
-		os.Exit(1)
-	}
 
 	codeListAPI := httpexpect.New(t, cfg.CodeListAPIURL)
 
@@ -62,13 +33,7 @@ func TestSuccessfullyGetASetOfCodeLists(t *testing.T) {
 			})
 		})
 	})
-
-	if err := mongo.Teardown(docs...); err != nil {
-		if err != mgo.ErrNotFound {
-			log.ErrorC("Failed to tear down test data", err, nil)
-			os.Exit(1)
-		}
-	}
+	
 }
 
 // TODO Need to write failure tests
