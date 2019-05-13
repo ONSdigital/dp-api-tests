@@ -23,9 +23,6 @@ const (
 	firstCodeListThirdLabel   = "09.4.2 Cultural services"
 
 	secondCodeListID          = "uk-only"
-	secondCodeListFirstCodeID = "K02000001"
-	secondCodeListFirstLabel  = "United Kingdom"
-	secondCodeListEdition     = "one-off"
 
 	invalidCodeListID = "1C3221283FD544F0BBAD619779D8960E"
 	firstCode         = "cpih1dim1S90401"
